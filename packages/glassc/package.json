@@ -1,0 +1,79 @@
+{
+  "name": "@glass-lang/glassc",
+  "version": "0.1.13",
+  "description": "Glass language compiler",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "test": "mocha --exit",
+    "test:watch": "mocha --watch --parallel",
+    "build": "tsup src/index.ts",
+    "dev": "npm run build -- --watch",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/foundation-ui/glassc.git"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "homepage": "https://github.com/foundation-ui/glassc",
+  "bugs": "https://github.com/foundation-ui/glassc/issues",
+  "keywords": [],
+  "authors": [
+    "John Rothfels <john@foundation-ui.com>",
+    "Elliott Burris <elliott@foundation-ui.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "camelcase": "^7.0.1",
+    "mdast-util-from-markdown": "^1.3.0",
+    "mdast-util-frontmatter": "^1.0.1",
+    "mdast-util-mdx": "^2.0.1",
+    "micromark-extension-frontmatter": "^1.1.0",
+    "micromark-extension-mdxjs": "^1.0.0",
+    "prettier": "^2.8.8"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "18.11.18",
+    "@types/prettier": "^2.7.2",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "tsc-watch": "^6.0.4",
+    "tslib": "^2.4.1",
+    "tsup": "^6.7.0",
+    "typescript": "^4.9.4"
+  },
+  "tsup": {
+    "sourcemap": true,
+    "format": [
+      "esm"
+    ],
+    "clean": true,
+    "dts": true
+  },
+  "prettier": {
+    "printWidth": 120,
+    "proseWrap": "preserve",
+    "semi": false,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "arrowParens": "avoid",
+    "overrides": [
+      {
+        "files": "{*.js?(on),*.md,.prettierrc,.babelrc}",
+        "options": {
+          "tabWidth": 2
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "settings": {
+    "git.openRepositoryInParentFolders": "never",
+    "glass.language": "typescript",
+    "glass.outputDirectory": "${workspaceFolder}/src"
+  },
+  "folders": [{ "path": "chat" }]
+}

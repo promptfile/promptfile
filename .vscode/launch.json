@@ -1,0 +1,36 @@
+// A launch configuration that compiles the extension and then opens it inside a new window
+// Use IntelliSense to learn about possible attributes.
+// Hover to view descriptions of existing attributes.
+// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--disable-updates",
+        "--disable-workspace-trust",
+        "--profile-temp",
+        "--skip-release-notes",
+        "--skip-welcome",
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-glass",
+        "${workspaceFolder}/apps/demo/demo.code-workspace"
+      ],
+      "outFiles": ["${workspaceFolder}/apps/vscode-glass/out/**/*.js"],
+      "preLaunchTask": "${defaultBuildTask}"
+    },
+    {
+      "name": "Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-glass",
+        "--extensionTestsPath=${workspaceFolder}/apps/vscode-glass/dist/test/suite/index"
+      ],
+      "outFiles": ["${workspaceFolder}/apps/vscode-glass/dist/test/**/*.js"],
+      "preLaunchTask": "${defaultBuildTask}"
+    }
+  ]
+}

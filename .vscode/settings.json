@@ -1,0 +1,19 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports": true,
+    "source.organizeImports": true,
+    "source.fixAll": true
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "search.exclude": {
+    "out": true, // set this to false to include "out" folder in search results
+    "dist": true
+  },
+  // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+  "typescript.tsc.autoDetect": "off"
+}
