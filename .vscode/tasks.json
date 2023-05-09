@@ -19,10 +19,20 @@
       },
       "group": {
         "kind": "build",
-        "isDefault": true
+        "isDefault": false
       },
       "runOptions": {
         "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "turbo build",
+      "type": "process",
+      "command": "npx",
+      "args": ["turbo", "build"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
       }
     }
   ]
