@@ -10,6 +10,11 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "typescript.preferences.importModuleSpecifier": "relative",
+  "eslint.workingDirectories": [
+    { "directory": "apps/vscode-glass", "changeProcessCWD": true },
+    { "directory": "apps/docs", "changeProcessCWD": true },
+    { "directory": "packages/glassc", "changeProcessCWD": true }
+  ],
   "search.exclude": {
     "out": true, // set this to false to include "out" folder in search results
     "dist": true

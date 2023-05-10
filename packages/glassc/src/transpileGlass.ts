@@ -402,7 +402,7 @@ function parseAst(
     }
 
     case 'mdxjsEsm': {
-      const { workspaceFolder, folderPath, fileName } = folders
+      const { workspaceFolder, folderPath } = folders
       const importLine = node.value
 
       // find the import groups, importLine will match `import (.+) from '(.+)'`

@@ -4,12 +4,12 @@ import { interpolate } from './util/interpolate.js'
 /**
  * Takes a glass template string and interpolation variables and outputs a string you can use to prompt GPT-3 (e.g. text-davinci-003).
  */
-export function interpolateGlass(fnName: string, content: string, variables: any = {}): string {
+export function interpolateGlass(fnName: string, content: string, variables = {}): string {
   const doc = removeGlassComments(content)
   return interpolateBlock(fnName, doc, variables)
 }
 
-function interpolateBlock(fnName: string, template: string, variables: any) {
+function interpolateBlock(fnName: string, template: string, variables: Record<string, string>) {
   const interpolateBlock = interpolate(template, variables)
 
   // check that there are no uninterpolated variables

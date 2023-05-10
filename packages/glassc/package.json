@@ -11,7 +11,8 @@
     "test:watch": "mocha --watch --parallel",
     "build": "tsup src/index.ts",
     "dev": "npm run build -- --watch",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "lint": "eslint src --ext ts"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,7 @@
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "source-map-support": "^0.5.21",
+    "eslint-config-custom": "*",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
     "tslib": "^2.4.1",
@@ -59,21 +61,5 @@
     ],
     "clean": true,
     "dts": true
-  },
-  "prettier": {
-    "printWidth": 120,
-    "proseWrap": "preserve",
-    "semi": false,
-    "trailingComma": "es5",
-    "singleQuote": true,
-    "arrowParens": "avoid",
-    "overrides": [
-      {
-        "files": "{*.js?(on),*.md,.prettierrc,.babelrc}",
-        "options": {
-          "tabWidth": 2
-        }
-      }
-    ]
   }
 }

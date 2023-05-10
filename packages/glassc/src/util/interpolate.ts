@@ -1,4 +1,4 @@
-export function interpolate(template: string, variables: any, prefix?: string) {
+export function interpolate(template: string, variables: Record<string, string>, prefix?: string) {
   let interpolatedBlock = template
   for (const key of Object.keys(variables)) {
     const isInt = !isNaN(parseInt(key))
