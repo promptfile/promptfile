@@ -289,12 +289,6 @@
         }
       }
     ],
-    "jsonValidation": [
-      {
-        "fileMatch": "tsconfig.json",
-        "url": "./tsconfig.schema.json"
-      }
-    ],
     "documentFormattingProvider": {
       "language": "glass",
       "scheme": "file"
