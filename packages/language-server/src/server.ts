@@ -14,7 +14,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { findUnmatchedTags } from './diagnostics'
+import { findUnmatchedTags, findUnsupportedTags } from './diagnostics'
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -124,23 +124,19 @@ documents.onDidChangeContent(change => {
 })
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-  connection.console.log('Running validateTextDocument')
-  // In this simple example we get the settings for every validate run.
-  const settings = await getDocumentSettings(textDocument.uri)
+  // Running validateTextDocumentconnection.console.log('Running validateTextDocument')
+  // const settings = await getDocumentSettings(textDocument.uri)
 
-  // The validator creates diagnostics for all uppercase words length 2 and more
   const text = textDocument.getText()
-
-  // Add your new validation logic
   const unmatchedTags = findUnmatchedTags(text)
-
+  const unsupportedTags = findUnsupportedTags(text)
+  console.log(unsupportedTags)
   const diagnostics: Diagnostic[] = unmatchedTags.map(({ tag, start }) => {
     const tagName = tag.startsWith('/') ? tag.slice(1) : tag
     const range = {
       start: textDocument.positionAt(start),
       end: textDocument.positionAt(start + tagName.length + (tag.startsWith('/') ? 3 : 2)),
     }
-
     const diagnostic: Diagnostic = {
       severity: DiagnosticSeverity.Error,
       range,
@@ -150,6 +146,23 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 
     return diagnostic
   })
+  diagnostics.push(
+    ...unsupportedTags.map(({ tag, start }) => {
+      const range = {
+        start: textDocument.positionAt(start + 1),
+        end: textDocument.positionAt(start + tag.length + 1),
+      }
+
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `Unsupported ${tag} tag.`,
+        source: 'glass',
+      }
+
+      return diagnostic
+    })
+  )
 
   // Send the computed diagnostics to VSCode.
   connection.console.log('Sending diagnostics: ' + diagnostics)

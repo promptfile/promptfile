@@ -1,3 +1,20 @@
+export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
+  const tagPattern = /<\/?([\w-]+).*?>/g
+  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt'])
+  const unsupportedTags: { tag: string; start: number }[] = []
+
+  let match
+  while ((match = tagPattern.exec(text))) {
+    const tag = match[1]
+
+    if (!supportedTags.has(tag)) {
+      unsupportedTags.push({ tag, start: match.index })
+    }
+  }
+
+  return unsupportedTags
+}
+
 export function findUnmatchedTags(text: string): { tag: string; start: number }[] {
   const tagPattern = /<\/?(Code|User|System|Assistant|Prompt).*?>/g
   const tagStack: { tag: string; start: number }[] = []
