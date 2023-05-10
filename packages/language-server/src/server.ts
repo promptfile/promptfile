@@ -44,9 +44,9 @@ connection.onInitialize((params: InitializeParams) => {
   const result: InitializeResult = {
     capabilities: {
       textDocumentSync: TextDocumentSyncKind.Incremental,
-      // Tell the client that this server supports code completion.
       completionProvider: {
-        resolveProvider: true,
+        resolveProvider: false,
+        triggerCharacters: ['<'],
       },
       foldingRangeProvider: true,
     },
@@ -176,36 +176,80 @@ connection.onDidChangeWatchedFiles(_change => {
   connection.console.log('We received an file change event')
 })
 
-// This handler provides the initial list of the completion items.
-connection.onCompletion((_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-  // The pass parameter contains the position of the text document in
-  // which code complete got requested. For the example we ignore this
-  // info and always provide the same completion items.
-  return [
+connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
+  const completionItems: CompletionItem[] = [
     {
-      label: 'TypeScript',
-      kind: CompletionItemKind.Text,
+      label: '<User>',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'User>\n$0\n</User>',
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a User tag with inner content',
+      },
+      detail: '"user" role block for chat inference',
       data: 1,
     },
     {
-      label: 'JavaScript',
-      kind: CompletionItemKind.Text,
+      label: '<Assistant>',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'Assistant>\n$0\n</Assistant>',
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates an Assistant tag with inner content',
+      },
+      detail: '"assistant" role block for chat inference',
       data: 2,
     },
+    {
+      label: '<System>',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'System>\n$0\n</System>',
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a System tag with inner content',
+      },
+      detail: '"system" role block for chat inference',
+      data: 3,
+    },
+    {
+      label: '<Prompt>',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'Prompt>\n$0\n</Prompt>',
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a Prompt tag with inner content',
+      },
+      detail: 'prompt block for non-chat inference',
+      data: 4,
+    },
+    {
+      label: '<Code>',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'Code>\n$0\n</Code>',
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a Code tag with inner content',
+      },
+      detail: 'executable typescript code block',
+      data: 5,
+    },
   ]
-})
-
-// This handler resolves additional information for the item selected in
-// the completion list.
-connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
-  if (item.data === 1) {
-    item.detail = 'TypeScript details'
-    item.documentation = 'TypeScript documentation'
-  } else if (item.data === 2) {
-    item.detail = 'JavaScript details'
-    item.documentation = 'JavaScript documentation'
+  const document = documents.get(textDocumentPosition.textDocument.uri)
+  if (!document) {
+    return []
   }
-  return item
+
+  const linePrefix = document.getText({
+    start: { line: textDocumentPosition.position.line, character: 0 },
+    end: textDocumentPosition.position,
+  })
+
+  // If the prefix is empty, return all the completion items
+  if (!linePrefix.startsWith('<')) {
+    return completionItems
+  }
+  // Otherwise, filter the items based on the prefix
+  return completionItems.filter(item => item.label.startsWith(linePrefix))
 })
 
 connection.onFoldingRanges(params => {

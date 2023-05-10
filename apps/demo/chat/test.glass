@@ -1,13 +1,20 @@
+---
+message: string
+---
+
 <System>
 Hello, how are you?
 This is great, thanks!
 </System>
 
 <Code>
-import {sayHello} from './sayHello' 
 const res = await fetch("https://elliottburris.com")
 return res.text();
 </Code>
+
+<User>
+
+</User>
 
 
 <System>

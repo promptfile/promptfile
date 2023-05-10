@@ -13,31 +13,6 @@
     ["[", "]"],
     ["(", ")"],
     {
-      "open": "<Prompt>",
-      "close": "</Prompt>",
-      "notIn": ["string", "comment"]
-    },
-    {
-      "open": "<Code>",
-      "close": "</Code>",
-      "notIn": ["string", "comment"]
-    },
-    {
-      "open": "<User>",
-      "close": "</User>",
-      "notIn": ["string", "comment"]
-    },
-    {
-      "open": "<Assistant>",
-      "close": "</Assistant>",
-      "notIn": ["string", "comment"]
-    },
-    {
-      "open": "<System>",
-      "close": "</System>",
-      "notIn": ["string", "comment"]
-    },
-    {
       "open": "\"",
       "close": "\"",
       "notIn": ["string"]
@@ -65,7 +40,6 @@
     ["```", "```"],
     ["\"", "\""],
     ["'", "'"],
-    ["<", ">"],
     ["`", "`"],
     ["_", "_"],
     ["*", "*"]
@@ -78,3 +52,4 @@
     }
   }
 }
+'
