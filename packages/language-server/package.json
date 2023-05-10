@@ -1,0 +1,21 @@
+{
+  "name": "@glass-lang/language-server",
+  "version": "1.0.0",
+  "description": "Glass language server",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint src --ext ts",
+    "build": "esbuild language-server=./src/server.ts --bundle --platform=node --target=node16 --external:vscode --outdir=out",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-textdocument": "^1.0.8"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.18",
+    "eslint-config-custom": "*"
+  }
+}

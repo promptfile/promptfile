@@ -1,13 +1,38 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode'
+import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
+
+let client: LanguageClient | null = null
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "vscode-glass" is now active!')
+  // The server is implemented in node
+  const languageServerModule = context.asAbsolutePath('out/language-server.js')
+
+  client = new LanguageClient(
+    'Glass',
+    // If the extension is launched in debug mode then the debug server options are used
+    // Otherwise the run options are used
+    {
+      run: { module: languageServerModule, transport: TransportKind.ipc },
+      debug: {
+        module: languageServerModule,
+        transport: TransportKind.ipc,
+        options: { execArgv: ['--nolazy', '--inspect=6009'] },
+      },
+    },
+    {
+      documentSelector: [
+        { scheme: 'file', language: 'glass' },
+        // { scheme: 'file', language: 'typescript' },
+        // { scheme: 'file', language: 'typescriptreact' },
+        // { scheme: 'file', language: 'javascript' },
+        // { scheme: 'file', language: 'javascriptreact' },
+      ],
+    }
+  )
 
   // await executeGlassFile()
 
@@ -94,6 +119,8 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {
-  // nothing to do
+export async function deactivate() {
+  if (client) {
+    return await client.stop()
+  }
 }
