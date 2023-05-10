@@ -15,6 +15,7 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { findUnmatchedTags, findUnsupportedTags } from './diagnostics'
+import { findFoldableTagPairs } from './folding'
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -47,6 +48,7 @@ connection.onInitialize((params: InitializeParams) => {
       completionProvider: {
         resolveProvider: true,
       },
+      foldingRangeProvider: true,
     },
   }
   if (hasWorkspaceFolderCapability) {
@@ -204,6 +206,21 @@ connection.onCompletionResolve((item: CompletionItem): CompletionItem => {
     item.documentation = 'JavaScript documentation'
   }
   return item
+})
+
+connection.onFoldingRanges(params => {
+  const textDocument = documents.get(params.textDocument.uri)
+  if (!textDocument) {
+    return null
+  }
+
+  const text = textDocument.getText()
+  const tagPairs = findFoldableTagPairs(text)
+
+  return tagPairs.map(tagPair => ({
+    startLine: textDocument.positionAt(tagPair.start).line,
+    endLine: textDocument.positionAt(tagPair.closingStart).line,
+  }))
 })
 
 // Make the text document manager listen on the connection
