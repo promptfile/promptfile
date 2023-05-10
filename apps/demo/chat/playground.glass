@@ -3,8 +3,24 @@ const res = await fetch("https://elliottburris.com");
 return res.text();
 </Code>
 
+
+
 <User name="teeuee">
+
 Awesome, hello!
+
+--blah----
+
+###
+```python
+import requests
+
+def go():
+    r = requests.get("hello")
+```
+1. yes
+2. no
+3. maybe?
 </User>
 
 <Assistant name="hi">

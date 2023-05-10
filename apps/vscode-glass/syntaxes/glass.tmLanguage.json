@@ -19,6 +19,31 @@
           "name": "source.glass.content"
         },
         {
+          "begin": "^(<)(User|Assistant|System|Prompt)(\\b[^>]*>)",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.tag.begin.tsx" },
+            "2": { "name": "support.class.component.tsx" },
+            "3": { "name": "punctuation.definition.tag.end.tsx" }
+          },
+          "end": "^(<\\/)(\\2)(>)",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.tag.begin.tsx" },
+            "2": { "name": "support.class.component.tsx" },
+            "3": { "name": "punctuation.definition.tag.end.tsx" }
+          },
+          "patterns": [
+            {
+              "include": "#line-comments"
+            },
+            {
+              "include": "#transcript-speaker"
+            },
+            {
+              "include": "#markdown-sections"
+            }
+          ]
+        },
+        {
           "begin": "^(<)(Code)(>)",
           "end": "^(<\\/)(Code)(>)",
           "name": "source.glass.code",
