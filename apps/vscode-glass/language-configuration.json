@@ -1,0 +1,80 @@
+{
+  "comments": {
+    "blockComment": ["{/*", "*/}"]
+  },
+  "brackets": [
+    ["[", "]"],
+    ["{", "}"],
+    ["(", ")"]
+  ],
+  "autoClosingPairs": [
+    ["{", "}"],
+    ["```", "```"],
+    ["[", "]"],
+    ["(", ")"],
+    {
+      "open": "<Prompt>",
+      "close": "</Prompt>",
+      "notIn": ["string", "comment"]
+    },
+    {
+      "open": "<Code>",
+      "close": "</Code>",
+      "notIn": ["string", "comment"]
+    },
+    {
+      "open": "<User>",
+      "close": "</User>",
+      "notIn": ["string", "comment"]
+    },
+    {
+      "open": "<Assistant>",
+      "close": "</Assistant>",
+      "notIn": ["string", "comment"]
+    },
+    {
+      "open": "<System>",
+      "close": "</System>",
+      "notIn": ["string", "comment"]
+    },
+    {
+      "open": "\"",
+      "close": "\"",
+      "notIn": ["string"]
+    },
+    {
+      "open": "'",
+      "close": "'",
+      "notIn": ["string"]
+    },
+    {
+      "open": "/**",
+      "close": " */",
+      "notIn": ["string"]
+    },
+    {
+      "open": "{/*",
+      "close": "*/}",
+      "notIn": ["string", "comment"]
+    }
+  ],
+  "surroundingPairs": [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
+    ["```", "```"],
+    ["\"", "\""],
+    ["'", "'"],
+    ["<", ">"],
+    ["`", "`"],
+    ["_", "_"],
+    ["*", "*"]
+  ],
+  "folding": {
+    "offSide": true,
+    "markers": {
+      "start": "^\\s*{/*\\s*#?region\\b.**/}",
+      "end": "^\\s*{/*\\s*#?endregion\\b.**/}"
+    }
+  }
+}
