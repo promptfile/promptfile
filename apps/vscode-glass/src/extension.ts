@@ -17,10 +17,15 @@ export async function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand('vscode-glass.helloWorld', () => {
     // The code you place here will be executed every time your command is executed
     // Display a message box to the user
-    vscode.window.showInformationMessage('Hello World from vscode-glass!')
+    void vscode.window.showInformationMessage('Hello World from vscode-glass!')
   })
 
   let activeEditor = vscode.window.activeTextEditor
+
+  const codeDecorations = vscode.window.createTextEditorDecorationType({
+    backgroundColor: new vscode.ThemeColor('glass.code.background'),
+    isWholeLine: true,
+  })
 
   if (activeEditor) {
     updateDecorations()
@@ -48,11 +53,6 @@ export async function activate(context: vscode.ExtensionContext) {
     )
     // vscode.workspace.onDidCloseTextDocument(document => diagnosticCollection.delete(document.uri))
   )
-
-  const codeDecorations = vscode.window.createTextEditorDecorationType({
-    backgroundColor: new vscode.ThemeColor('glass.block.background'),
-    isWholeLine: true,
-  })
 
   function updateDecorations() {
     if (!activeEditor) {
@@ -84,6 +84,8 @@ export async function activate(context: vscode.ExtensionContext) {
       const range = new vscode.Range(contentStartPosition, contentEndPosition)
       highlights.push(range)
     }
+
+    console.log('highlights are', highlights)
 
     activeEditor.setDecorations(codeDecorations, highlights)
   }
