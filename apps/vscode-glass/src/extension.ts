@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
+import { LeftPanelWebview, getInteroplationVariables, isFileWithDesiredExtension } from './LeftWebviewProvider'
 
 let client: LanguageClient | null = null
 
@@ -33,6 +34,61 @@ export async function activate(context: vscode.ExtensionContext) {
       ],
     }
   )
+
+  // Register rig view
+
+  const leftPanelWebViewProvider = new LeftPanelWebview(context?.extensionUri, {})
+  const view = vscode.window.registerWebviewViewProvider('left-panel-webview', leftPanelWebViewProvider)
+  context.subscriptions.push(view)
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor(editor => {
+      if (editor && isFileWithDesiredExtension(editor.document)) {
+        const text = editor.document.getText()
+        const vars = getInteroplationVariables(text)
+
+        console.log('interpolationVariableNames from change active editor', vars)
+
+        if (leftPanelWebViewProvider._view.webview) {
+          console.log('posting a message')
+          leftPanelWebViewProvider._view.webview.postMessage({
+            command: 'updateInterpolationVariables',
+            data: vars,
+          })
+        }
+      }
+    })
+  )
+
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeTextDocument(event => {
+      if (!event.document.fileName.endsWith('.glass')) {
+        console.log('non-glass document changed')
+        return
+      }
+      const activeEditor = vscode.window.activeTextEditor
+
+      if (!activeEditor || activeEditor.document !== event.document) {
+        // didn't modify active editor, ignoring
+        console.log('not active editor')
+        return
+      }
+
+      if (leftPanelWebViewProvider._view.webview) {
+        const text = event.document.getText()
+        const vars = getInteroplationVariables(text)
+
+        leftPanelWebViewProvider._view.webview.postMessage({
+          command: 'updateInterpolationVariables',
+          data: vars,
+        })
+      } else {
+        console.log('webview not ready')
+      }
+    })
+  )
+
+  // end register rig
 
   // await executeGlassFile()
 

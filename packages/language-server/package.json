@@ -2,7 +2,7 @@
   "name": "@glass-lang/language-server",
   "version": "1.0.0",
   "description": "Glass language server",
-  "main": "index.js",
+  "main": "out/language-server.js",
   "scripts": {
     "lint": "eslint src --ext ts",
     "build": "esbuild language-server=./src/server.ts --bundle --platform=node --target=node16 --external:vscode --outdir=out",

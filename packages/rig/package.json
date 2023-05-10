@@ -1,0 +1,23 @@
+{
+  "name": "@glass-lang/rig",
+  "version": "1.0.0",
+  "description": "",
+  "main": "out/rig.js",
+  "scripts": {
+    "lint": "eslint src --ext ts --ext tsx",
+    "build": "esbuild rig=./src/rig.tsx --bundle --outdir=out",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vscode/webview-ui-toolkit": "^1.2.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/vscode-webview": "^1.57.1",
+    "esbuild": "^0.17.18",
+    "eslint-config-custom": "*"
+  }
+}
