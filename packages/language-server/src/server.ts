@@ -14,6 +14,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { findUnmatchedTags } from './diagnostics'
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -61,7 +62,7 @@ connection.onInitialize((params: InitializeParams) => {
 connection.onInitialized(() => {
   if (hasConfigurationCapability) {
     // Register for all configuration changes.
-    connection.client.register(DidChangeConfigurationNotification.type, undefined)
+    void connection.client.register(DidChangeConfigurationNotification.type, undefined)
   }
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders(_event => {
@@ -104,7 +105,7 @@ function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
   if (!result) {
     result = connection.workspace.getConfiguration({
       scopeUri: resource,
-      section: 'languageServerExample',
+      section: 'glass',
     })
     documentSettings.set(resource, result)
   }
@@ -119,54 +120,40 @@ documents.onDidClose(e => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
-  validateTextDocument(change.document)
+  void validateTextDocument(change.document)
 })
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
+  connection.console.log('Running validateTextDocument')
   // In this simple example we get the settings for every validate run.
   const settings = await getDocumentSettings(textDocument.uri)
 
   // The validator creates diagnostics for all uppercase words length 2 and more
   const text = textDocument.getText()
-  const pattern = /\b[A-Z]{2,}\b/g
-  let m: RegExpExecArray | null
 
-  let problems = 0
-  const diagnostics: Diagnostic[] = []
-  while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-    problems++
+  // Add your new validation logic
+  const unmatchedTags = findUnmatchedTags(text)
+
+  const diagnostics: Diagnostic[] = unmatchedTags.map(({ tag, start }) => {
+    const tagName = tag.startsWith('/') ? tag.slice(1) : tag
+    const range = {
+      start: textDocument.positionAt(start),
+      end: textDocument.positionAt(start + tagName.length + (tag.startsWith('/') ? 3 : 2)),
+    }
+
     const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: textDocument.positionAt(m.index),
-        end: textDocument.positionAt(m.index + m[0].length),
-      },
-      message: `${m[0]} is all uppercase.`,
-      source: 'ex',
+      severity: DiagnosticSeverity.Error,
+      range,
+      message: `<${tagName}> tag requires a closing </${tagName}> tag.`,
+      source: 'glass',
     }
-    if (hasDiagnosticRelatedInformationCapability) {
-      diagnostic.relatedInformation = [
-        {
-          location: {
-            uri: textDocument.uri,
-            range: Object.assign({}, diagnostic.range),
-          },
-          message: 'Spelling matters',
-        },
-        {
-          location: {
-            uri: textDocument.uri,
-            range: Object.assign({}, diagnostic.range),
-          },
-          message: 'Particularly for names',
-        },
-      ]
-    }
-    diagnostics.push(diagnostic)
-  }
+
+    return diagnostic
+  })
 
   // Send the computed diagnostics to VSCode.
-  connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })
+  connection.console.log('Sending diagnostics: ' + diagnostics)
+  void connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })
 }
 
 connection.onDidChangeWatchedFiles(_change => {

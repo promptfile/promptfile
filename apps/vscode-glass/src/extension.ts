@@ -32,8 +32,10 @@ export async function activate(context: vscode.ExtensionContext) {
         // { scheme: 'file', language: 'javascript' },
         // { scheme: 'file', language: 'javascriptreact' },
       ],
+      outputChannelName: 'Glass Language Server',
     }
   )
+  await client.start()
 
   // Register rig view
 
@@ -166,7 +168,7 @@ export async function activate(context: vscode.ExtensionContext) {
       highlights.push(range)
     }
 
-    console.log('highlights are', highlights)
+    // console.log('highlights are', highlights)
 
     activeEditor.setDecorations(codeDecorations, highlights)
   }
