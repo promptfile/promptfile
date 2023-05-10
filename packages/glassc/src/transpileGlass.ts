@@ -40,7 +40,7 @@ export function transpileGlassFile(
   if (blocks.length === 0) {
     throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
   }
-  const codeBlocks = blocks.filter(b => b.content === 'code')
+  const codeBlocks = blocks.filter(b => b.tag === 'Code')
 
   // remove all block comments before any processing happens
   doc = removeGlassComments(doc)
@@ -183,7 +183,7 @@ export function transpileGlassFile(
     if (indexOfInterpolation === -1) {
       continue
     }
-    codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `{${j}}`)
+    codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${${j}}`)
     if (expr.trim().startsWith('async')) {
       codeInterpolationMap['' + j] = `await (${expr.trim()})()`
     } else if (expr.trim().startsWith('function')) {
@@ -205,14 +205,14 @@ export function transpileGlassFile(
 
 export ${isAsync ? 'async' : ''} function ${exportName}(${fullArgString}) {
   ${argsString ? `const {${allInterpolationNames.join(',')}} = args` : ''}
+  ${codeBlocks.map(b => b.content).join('\n')}
   const interpolations = {
     ${Object.keys(codeInterpolationMap)
       .map(k => `"${k}": ${codeInterpolationMap[k]}`)
       .join(',')}
   }
-  ${codeBlocks.map(b => b.content).join('\n')}
   const TEMPLATE = ${JSON.stringify(codeSanitizedDoc)}
-  return interpolateGlass${isChat ? 'Chat' : ''}('${fileName}', TEMPLATE, { ...interpolations, ...kshots })
+  return interpolateGlass${isChat ? 'Chat' : ''}('${fileName}', TEMPLATE, interpolations)
 }`
   const formattedCode = prettier.format(code, {
     parser: 'babel',

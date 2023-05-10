@@ -1,0 +1,9 @@
+import {sayHello} from './sayHello'
+
+<System>
+You are a helpful assistant.
+</System>
+
+<User>
+${sayHello({name: 'john'})}
+</User>

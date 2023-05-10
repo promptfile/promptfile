@@ -1,0 +1,7 @@
+<System>
+this is a system prompt
+</System>
+
+<User>
+${query}
+</User>

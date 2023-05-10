@@ -4,5 +4,5 @@
     "glass.language": "typescript",
     "glass.outputDirectory": "${workspaceFolder}/src"
   },
-  "folders": [{ "path": "chat" }]
+  "folders": [{ "path": "chat" }, { "path": "gpt3" }]
 }

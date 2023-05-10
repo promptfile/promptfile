@@ -1,5 +1,6 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+import { transpileGlass } from '@glass-lang/glassc'
+import fs from 'fs'
+import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { LeftPanelWebview, getInteroplationVariables, isFileWithDesiredExtension } from './LeftWebviewProvider'
@@ -49,10 +50,7 @@ export async function activate(context: vscode.ExtensionContext) {
         const text = editor.document.getText()
         const vars = getInteroplationVariables(text)
 
-        console.log('interpolationVariableNames from change active editor', vars)
-
         if (leftPanelWebViewProvider._view.webview) {
-          console.log('posting a message')
           leftPanelWebViewProvider._view.webview.postMessage({
             command: 'updateInterpolationVariables',
             data: vars,
@@ -65,14 +63,11 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument(event => {
       if (!event.document.fileName.endsWith('.glass')) {
-        console.log('non-glass document changed')
         return
       }
       const activeEditor = vscode.window.activeTextEditor
 
       if (!activeEditor || activeEditor.document !== event.document) {
-        // didn't modify active editor, ignoring
-        console.log('not active editor')
         return
       }
 
@@ -93,15 +88,6 @@ export async function activate(context: vscode.ExtensionContext) {
   // end register rig
 
   // await executeGlassFile()
-
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  const disposable = vscode.commands.registerCommand('vscode-glass.helloWorld', () => {
-    // The code you place here will be executed every time your command is executed
-    // Display a message box to the user
-    void vscode.window.showInformationMessage('Hello World from vscode-glass!')
-  })
 
   let activeEditor = vscode.window.activeTextEditor
 
@@ -173,7 +159,55 @@ export async function activate(context: vscode.ExtensionContext) {
     activeEditor.setDecorations(codeDecorations, highlights)
   }
 
-  context.subscriptions.push(disposable)
+  context.subscriptions.push(
+    vscode.commands.registerCommand('glass.transpileAll', async () => {
+      const workspaceFolders = vscode.workspace.workspaceFolders
+      if (workspaceFolders) {
+        for (const workspaceFolder of workspaceFolders) {
+          const outputDirectory: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+          const folderPath = workspaceFolder.uri.fsPath
+          /* eslint no-template-curly-in-string: "off" */
+          const outDir = outputDirectory.replace('${workspaceFolder}', folderPath)
+
+          if (!fs.existsSync(outDir)) {
+            fs.mkdirSync(outDir)
+          }
+
+          console.log('about to transpile')
+          try {
+            const output = transpileGlass(folderPath, folderPath, 'typescript', outDir)
+
+            console.log({ output })
+
+            fs.writeFileSync(path.join(outDir, 'glass.ts'), output)
+          } catch (error) {
+            console.error(error)
+          }
+        }
+      }
+
+      await vscode.window.showInformationMessage(`Transpiled all glass files!`)
+    }),
+    vscode.commands.registerCommand('glass.transpileCurrentFile', async () => {
+      const editor = vscode.window.activeTextEditor
+      if (editor) {
+        const document = editor.document
+        const filePath = document.uri.fsPath
+        try {
+          const file = filePath.split('/').slice(-1)[0]
+          const code = transpileGlass(path.dirname(filePath), filePath, 'typescript', path.join(path.dirname(filePath)))
+
+          // Fs.writeFileSync(path.join(outputDirectory, 'glassPrompts.ts'), code)
+          // const code = processFile(filePath)
+          await vscode.env.clipboard.writeText(code)
+          await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      }
+    })
+  )
 }
 
 // This method is called when your extension is deactivated

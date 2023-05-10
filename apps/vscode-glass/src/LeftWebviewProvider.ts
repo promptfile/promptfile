@@ -98,7 +98,7 @@ export class LeftPanelWebview implements WebviewViewProvider {
           const transpiled = transpileGlassFile(content, {
             workspaceFolder: '/Users/me/glassc',
             folderPath: '/Users/me/glassc',
-            fileName: 'test',
+            fileName: path.basename(fileName),
             language: 'javascript',
             outputDirectory: '/Users/me/glassc/src',
           })
@@ -119,9 +119,13 @@ export class LeftPanelWebview implements WebviewViewProvider {
           //   outDir
           // })
 
+          if (!fs.existsSync(outDir)) {
+            fs.mkdirSync(outDir)
+          }
+
           const outPath = path.join(outDir, 'glass-tmp.ts')
 
-          const functionName = 'getTestPrompt'
+          const functionName = 'getSimplePrompt'
 
           const outfile = `${transpiled2}
 
@@ -137,14 +141,15 @@ context.response = ${functionName}(${JSON.stringify(message.data)});
             bundle: true,
             platform: 'node',
             write: false,
-            format: 'iife',
+            format: 'cjs',
             target: 'es2020',
             // packages: 'external',
             // outfile: '/Users/rothfels/foundation/lambda/src/prompts/out.cjs',
           })
 
           const code = new TextDecoder().decode(result.outputFiles[0].contents)
-          // console.log('esbuild code is', code)
+
+          fs.unlinkSync(outPath)
 
           const script = new vm.Script(code, { filename: 'outputFile.js' })
 
@@ -152,11 +157,11 @@ context.response = ${functionName}(${JSON.stringify(message.data)});
 
           const ctx = {
             console,
-            // parcelRequire: function () {
-            //   // void
-            // },
             context,
+            global,
             process,
+            module: { exports: {} },
+            require: require,
           }
 
           vm.createContext(ctx)
@@ -169,20 +174,6 @@ context.response = ${functionName}(${JSON.stringify(message.data)});
             data: context.response,
           })
 
-          // executeJS(
-          //   'getTestPrompt',
-          //   transpiled.code.replace(/export /gm, ''),
-          //   message.data
-          // ).then((res) => {
-          //   // executeJS('getTestPrompt', code, context).then((res) => {
-          //   console.log('ran code and got', JSON.stringify(res))
-          //   window.showInformationMessage('Transpiled current file')
-
-          //   this._view.webview.postMessage({
-          //     command: 'messageFromExtension',
-          //     data: res
-          //   })
-          // })
           break
         default:
           break

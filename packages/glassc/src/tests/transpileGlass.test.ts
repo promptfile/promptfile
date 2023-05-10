@@ -18,9 +18,8 @@ foo
 
     expect(transpiled.code).to.equal(`export function getFooPrompt() {
   const interpolations = {}
-
   const TEMPLATE = '<Prompt>\\nfoo\\n</Prompt>'
-  return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
+  return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
 
@@ -40,9 +39,8 @@ foo
 
     expect(transpiled.code).to.equal(`export function getFooPrompt() {
   const interpolations = {}
-
   const TEMPLATE = '<Prompt>\\nfoo\\n</Prompt>'
-  return interpolateGlass('get-foo', TEMPLATE, { ...interpolations, ...kshots })
+  return interpolateGlass('get-foo', TEMPLATE, interpolations)
 }`)
   })
 
@@ -62,12 +60,12 @@ foo
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: string }) {
   const { foo } = args
+
   const interpolations = {
     0: foo,
   }
-
-  const TEMPLATE = '<Prompt>\\n{0}\\n</Prompt>'
-  return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
+  const TEMPLATE = '<Prompt>\\n\${0}\\n</Prompt>'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
 
@@ -87,12 +85,12 @@ foo
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args) {
   const { foo } = args
+
   const interpolations = {
     0: foo,
   }
-
-  const TEMPLATE = '<Prompt>\\n{0}\\n</Prompt>'
-  return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
+  const TEMPLATE = '<Prompt>\\n\${0}\\n</Prompt>'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
 
@@ -112,12 +110,12 @@ foo
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: string }) {
   const { foo } = args
+
   const interpolations = {
     0: foo,
   }
-
-  const TEMPLATE = '<Prompt>\\n{0} and {foo}\\n</Prompt>'
-  return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
+  const TEMPLATE = '<Prompt>\\n\${0} and {foo}\\n</Prompt>'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
 
@@ -137,13 +135,13 @@ foo
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: string, bar: string }) {
   const { foo, bar } = args
+
   const interpolations = {
     0: foo,
     1: bar,
   }
-
-  const TEMPLATE = '<Prompt>\\n{0} {1}\\n</Prompt>'
-  return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
+  const TEMPLATE = '<Prompt>\\n\${0} \${1}\\n</Prompt>'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
 
@@ -164,15 +162,15 @@ foo
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: string, bar: string }) {
   const { foo, bar } = args
+
   const interpolations = {
     0: foo,
     1: bar,
     2: foo,
     3: bar,
   }
-
-  const TEMPLATE = '<Prompt>\\n{0} {1} {2}\\n{3}\\n</Prompt>'
-  return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
+  const TEMPLATE = '<Prompt>\\n\${0} \${1} \${2}\\n\${3}\\n</Prompt>'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
 
@@ -196,13 +194,41 @@ bar: string
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: number, bar: string }) {
   const { foo, bar } = args
+
   const interpolations = {
     0: foo,
     1: bar,
   }
+  const TEMPLATE = '<Prompt>\\n\${0} \${1}\\n</Prompt>'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
+}`)
+  })
 
-  const TEMPLATE = '<Prompt>\\n{0} {1}\\n</Prompt>'
-  return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
+  it('should transpile with code block', () => {
+    const transpiled = transpileGlassFile(
+      `<Code>
+console.log(a)
+</Code>
+<Prompt>
+\${a}
+</Prompt>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
+
+    expect(transpiled.code).to.equal(`export function getFooPrompt(args: { a: string }) {
+  const { a } = args
+  console.log(a)
+  const interpolations = {
+    0: a,
+  }
+  const TEMPLATE = '<Code>\\nconsole.log(a)\\n</Code>\\n<Prompt>\\n\${0}\\n</Prompt>'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
 
@@ -259,6 +285,7 @@ export function getFooPrompt(args: {
   transcript: string,
 }) {
   const { agentName, instructions, transcript } = args
+
   const interpolations = {
     0: sayHello({ name: 'chat' }),
     1: sayHello({ name: 'chat' }),
@@ -276,10 +303,9 @@ export function getFooPrompt(args: {
     7: instructions,
     8: transcript,
   }
-
   const TEMPLATE =
-    "import {sayHello} from './say-hello'\\n\\n      {0}\\n\\n<System>\\nRead a Transcript and determine how to respond about the property's {1}. Valid responses are:\\n\\n- \`NO_RESPONSE\`: use this if the transcript has nothing to do with {2}\\n- \`HELP: <reason>\`: use this if the information you have about the {3} is insufficient to provide an answer and you require more information\\n- \`<your response>\`: a useful response to the User given the property's {4}\\n\\n{5}\\n</System>\\n\\n<User>\\n{6}\\n###\\n{7}\\n###\\n\\nTranscript\\n###\\n{8}\\n###\\n</User>\\n"
-  return interpolateGlassChat('foo', TEMPLATE, { ...interpolations, ...kshots })
+    "import {sayHello} from './say-hello'\\n\\n      \${0}\\n\\n<System>\\nRead a Transcript and determine how to respond about the property's \${1}. Valid responses are:\\n\\n- \`NO_RESPONSE\`: use this if the transcript has nothing to do with \${2}\\n- \`HELP: <reason>\`: use this if the information you have about the \${3} is insufficient to provide an answer and you require more information\\n- \`<your response>\`: a useful response to the User given the property's \${4}\\n\\n\${5}\\n</System>\\n\\n<User>\\n\${6}\\n###\\n\${7}\\n###\\n\\nTranscript\\n###\\n\${8}\\n###\\n</User>\\n"
+  return interpolateGlassChat('foo', TEMPLATE, interpolations)
 }`)
   })
 
