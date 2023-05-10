@@ -1,24 +1,38 @@
 {
   "name": "vscode-glass",
-  "displayName": "vscode-glass",
-  "description": "",
+  "displayName": "Glass",
+  "description": "Language support for Glass",
+  "categories": [
+    "Programming Languages"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/foundation-ui/glass.git",
+    "directory": "packages/vscode-glass"
+  },
+  "publisher": "foundation",
+  "private": true,
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.78.0"
   },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [],
   "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "vscode-glass.helloWorld",
-        "title": "Hello World"
-      }
-    ]
-  },
+  "keywords": [
+    "glass",
+    "foundation",
+    "gpt",
+    "llm"
+  ],
+  "icon": "assets/glass.png",
+  "activationEvents": [
+    "onView:left-panel-webview",
+    "onCommand:react-webview.start",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:glass",
+    "onLanguage:typescript",
+    "onLanguage:typescriptreact"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "build": "esbuild extension=./src/extension.ts --bundle --platform=node --target=node16 --external:vscode --external:esbuild --outdir=out",
@@ -42,5 +56,264 @@
   "dependencies": {
     "@glass-lang/glassc": "*",
     "esbuild": "^0.17.18"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "webview",
+          "title": "Glass",
+          "icon": "./assets/glass.png"
+        }
+      ]
+    },
+    "views": {
+      "webview": [
+        {
+          "type": "webview",
+          "id": "left-panel-webview",
+          "name": "playground",
+          "icon": "src/assets/glass.png"
+        }
+      ]
+    },
+    "colors": [
+      {
+        "id": "glass.code.background",
+        "description": "Background color for <Code> blocks",
+        "defaults": {
+          "dark": "#4a4a4a26",
+          "light": "#b8caf9"
+        }
+      },
+      {
+        "id": "glass.system.background",
+        "description": "Background color for System blocks",
+        "defaults": {
+          "dark": "#f467c60D",
+          "light": "#b8caf9"
+        }
+      },
+      {
+        "id": "glass.user.background",
+        "description": "Background color for User blocks",
+        "defaults": {
+          "dark": "#4EC9B00D",
+          "light": "#b8caf9"
+        }
+      },
+      {
+        "id": "glass.assistant.background",
+        "description": "Background color for Assistant blocks",
+        "defaults": {
+          "dark": "#5EC5E50D",
+          "light": "#b8caf9"
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "glass.transpileCurrentFile",
+        "title": "Glass: Transpile current file"
+      },
+      {
+        "command": "glass.transpileAll",
+        "title": "Glass: Transpile all"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "Glass",
+        "properties": {
+          "glass.defaultModel": {
+            "type": "string",
+            "default": "gpt-3.5-turbo",
+            "description": "Default model for new .glass files"
+          },
+          "glass.language": {
+            "type": "string",
+            "default": "typescript",
+            "enum": [
+              "typescript",
+              "javascript",
+              "python"
+            ],
+            "description": "Language to transpile .glass files to"
+          },
+          "glass.openaiKey": {
+            "type": "string",
+            "default": "",
+            "description": "OpenAI secret API key"
+          },
+          "glass.outputDirectory": {
+            "type": "string",
+            "default": "${workspaceFolder}/src",
+            "description": "Output directory for generated code"
+          }
+        }
+      }
+    ],
+    "configurationDefaults": {
+      "[glass]": {
+        "editor.formatOnSave": true,
+        "editor.quickSuggestions": {
+          "other": "on",
+          "comments": "on",
+          "strings": "on"
+        },
+        "files.insertFinalNewline": false
+      },
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "source.glass.content",
+            "settings": {
+              "foreground": "#575757",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.prompt.name",
+            "settings": {
+              "foreground": "#4EC9B0",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.code.name",
+            "settings": {
+              "foreground": "#FFB454",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.system.name",
+            "settings": {
+              "foreground": "#f467c6",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.assistant.name",
+            "settings": {
+              "foreground": "#5EC5E5",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.user.name",
+            "settings": {
+              "foreground": "#4EC9B0",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.punctuation",
+            "settings": {
+              "foreground": "#7a7a7a"
+            }
+          },
+          {
+            "scope": "source.glass.transcript.row.speaker",
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": "source.glass.comment",
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": "string.other.begin.expression.mdx.js",
+            "settings": {
+              "foreground": "#4dff00"
+            }
+          }
+        ]
+      }
+    },
+    "grammars": [
+      {
+        "language": "glass",
+        "scopeName": "source.glass",
+        "path": "./syntaxes/glass.tmLanguage.json",
+        "embeddedLanguages": {
+          "source.js": "javascript",
+          "source.js.jsx": "javascriptreact",
+          "meta.tag.js": "jsx-tags",
+          "meta.tag.without-attributes.js": "jsx-tags",
+          "meta.embedded.block.frontmatter": "yaml",
+          "meta.embedded.block.css": "css",
+          "meta.embedded.block.ini": "ini",
+          "meta.embedded.block.java": "java",
+          "meta.embedded.block.lua": "lua",
+          "meta.embedded.block.makefile": "makefile",
+          "meta.embedded.block.perl": "perl",
+          "meta.embedded.block.r": "r",
+          "meta.embedded.block.ruby": "ruby",
+          "meta.embedded.block.php": "php",
+          "meta.embedded.block.sql": "sql",
+          "meta.embedded.block.vs_net": "vs_net",
+          "meta.embedded.block.html": "html",
+          "meta.embedded.block.xml": "xml",
+          "meta.embedded.block.xsl": "xsl",
+          "meta.embedded.block.yaml": "yaml",
+          "meta.embedded.block.dosbatch": "dosbatch",
+          "meta.embedded.block.clojure": "clojure",
+          "meta.embedded.block.coffee": "coffee",
+          "meta.embedded.block.c": "c",
+          "meta.embedded.block.cpp": "cpp",
+          "meta.embedded.block.diff": "diff",
+          "meta.embedded.block.dockerfile": "dockerfile",
+          "meta.embedded.block.go": "go",
+          "meta.embedded.block.groovy": "groovy",
+          "meta.embedded.block.pug": "jade",
+          "meta.embedded.block.javascript": "javascript",
+          "meta.embedded.block.javascriptreact": "javascriptreact",
+          "meta.embedded.block.json": "json",
+          "meta.embedded.block.less": "less",
+          "meta.embedded.block.objc": "objc",
+          "meta.embedded.block.scss": "scss",
+          "meta.embedded.block.perl6": "perl6",
+          "meta.embedded.block.powershell": "powershell",
+          "meta.embedded.block.python": "python",
+          "meta.embedded.block.rust": "rust",
+          "meta.embedded.block.scala": "scala",
+          "meta.embedded.block.shellscript": "shellscript",
+          "meta.embedded.block.typescript": "typescript",
+          "meta.embedded.block.typescriptreact": "typescriptreact",
+          "meta.embedded.block.csharp": "csharp",
+          "meta.embedded.block.fsharp": "fsharp"
+        }
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "tsconfig.json",
+        "url": "./tsconfig.schema.json"
+      }
+    ],
+    "documentFormattingProvider": {
+      "language": "glass",
+      "scheme": "file"
+    },
+    "languages": [
+      {
+        "id": "glass",
+        "aliases": [
+          "Glass"
+        ],
+        "extensions": [
+          ".glass"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "dark": "./images/dark.svg",
+          "light": "./images/light.svg"
+        }
+      }
+    ]
   }
 }
