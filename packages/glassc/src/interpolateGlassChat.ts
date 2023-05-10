@@ -15,7 +15,7 @@ export interface ChatCompletionRequestMessage {
 export function interpolateGlassChat(
   fileName: string,
   content: string,
-  variables: Record<string, string> = {}
+  variables: any = {}
 ): ChatCompletionRequestMessage[] {
   const doc = removeGlassComments(content)
 

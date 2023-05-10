@@ -9,7 +9,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "vscode-glass" is now active!')
 
-  // await executeGlassFile();
+  // await executeGlassFile()
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
