@@ -3,107 +3,137 @@ import { constructGlassOutputFile, transpileGlassFile } from '../transpileGlass'
 
 describe('transpileGlass', () => {
   it('should transpile without interpolation variables', () => {
-    const transpiled = transpileGlassFile('foo', {
-      workspaceFolder: '/Users/me/glassc',
-      folderPath: '/Users/me/glassc',
-      fileName: 'foo',
-      language: 'typescript',
-      outputDirectory: '/Users/me/glassc/src',
-    })
+    const transpiled = transpileGlassFile(
+      `<Prompt>
+foo
+</Prompt>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
 
     expect(transpiled.code).to.equal(`export function getFooPrompt() {
   const interpolations = {}
-  const kshots = {}
-  const TEMPLATE = 'foo'
+
+  const TEMPLATE = '<Prompt>\\nfoo\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
 }`)
   })
 
   it('should transpile with get-prefixed named', () => {
-    const transpiled = transpileGlassFile('foo', {
-      workspaceFolder: '/Users/me/glassc',
-      folderPath: '/Users/me/glassc',
-      fileName: 'get-foo',
-      language: 'typescript',
-      outputDirectory: '/Users/me/glassc/src',
-    })
+    const transpiled = transpileGlassFile(
+      `<Prompt>
+foo
+</Prompt>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'get-foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
 
     expect(transpiled.code).to.equal(`export function getFooPrompt() {
   const interpolations = {}
-  const kshots = {}
-  const TEMPLATE = 'foo'
+
+  const TEMPLATE = '<Prompt>\\nfoo\\n</Prompt>'
   return interpolateGlass('get-foo', TEMPLATE, { ...interpolations, ...kshots })
 }`)
   })
 
   it('should transpile with interpolation variables', () => {
-    const transpiled = transpileGlassFile('{foo}', {
-      workspaceFolder: '/Users/me/glassc',
-      folderPath: '/Users/me/glassc',
-      fileName: 'foo',
-      language: 'typescript',
-      outputDirectory: '/Users/me/glassc/src',
-    })
+    const transpiled = transpileGlassFile(
+      `<Prompt>
+\${foo}
+</Prompt>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: string }) {
   const { foo } = args
   const interpolations = {
     0: foo,
   }
-  const kshots = {}
-  const TEMPLATE = '{0}'
+
+  const TEMPLATE = '<Prompt>\\n{0}\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
 }`)
   })
 
   it('should transpile into javascript', () => {
-    const transpiled = transpileGlassFile('{foo}', {
-      workspaceFolder: '/Users/me/glassc',
-      folderPath: '/Users/me/glassc',
-      fileName: 'foo',
-      language: 'javascript',
-      outputDirectory: '/Users/me/glassc/src',
-    })
+    const transpiled = transpileGlassFile(
+      `<Prompt>
+\${foo}
+</Prompt>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'javascript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args) {
   const { foo } = args
   const interpolations = {
     0: foo,
   }
-  const kshots = {}
-  const TEMPLATE = '{0}'
+
+  const TEMPLATE = '<Prompt>\\n{0}\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
 }`)
   })
 
-  it('should transpile with escape sequences', () => {
-    const transpiled = transpileGlassFile(`{foo} and \\{foo\\}`, {
-      workspaceFolder: '/Users/me/glassc',
-      folderPath: '/Users/me/glassc',
-      fileName: 'foo',
-      language: 'typescript',
-      outputDirectory: '/Users/me/glassc/src',
-    })
+  it('should transpile with non-interpolation sequences', () => {
+    const transpiled = transpileGlassFile(
+      `<Prompt>
+\${foo} and {foo}
+</Prompt>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: string }) {
   const { foo } = args
   const interpolations = {
     0: foo,
   }
-  const kshots = {}
-  const TEMPLATE = '{0} and {foo}'
+
+  const TEMPLATE = '<Prompt>\\n{0} and {foo}\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
 }`)
   })
 
   it('should transpile with multiple interpolation variables', () => {
-    const transpiled = transpileGlassFile('{foo} {bar}', {
-      workspaceFolder: '/Users/me/glassc',
-      folderPath: '/Users/me/glassc',
-      fileName: 'foo',
-      language: 'typescript',
-      outputDirectory: '/Users/me/glassc/src',
-    })
+    const transpiled = transpileGlassFile(
+      `<Prompt>
+\${foo} \${bar}
+</Prompt>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
 
     expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: string, bar: string }) {
   const { foo, bar } = args
@@ -111,16 +141,18 @@ describe('transpileGlass', () => {
     0: foo,
     1: bar,
   }
-  const kshots = {}
-  const TEMPLATE = '{0} {1}'
+
+  const TEMPLATE = '<Prompt>\\n{0} {1}\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
 }`)
   })
 
   it('should transpile with duplicate interpolation variables', () => {
     const transpiled = transpileGlassFile(
-      `{foo} {bar} {foo}
-{bar}`,
+      `<Prompt>
+\${foo} \${bar} \${foo}
+\${bar}
+</Prompt>`,
       {
         workspaceFolder: '/Users/me/glassc',
         folderPath: '/Users/me/glassc',
@@ -138,8 +170,8 @@ describe('transpileGlass', () => {
     2: foo,
     3: bar,
   }
-  const kshots = {}
-  const TEMPLATE = '{0} {1} {2}\\n{3}'
+
+  const TEMPLATE = '<Prompt>\\n{0} {1} {2}\\n{3}\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
 }`)
   })
@@ -150,7 +182,9 @@ describe('transpileGlass', () => {
 foo: number
 bar: string
 ---
-{foo} {bar}`,
+<Prompt>
+\${foo} \${bar}
+</Prompt>`,
       {
         workspaceFolder: '/Users/me/glassc',
         folderPath: '/Users/me/glassc',
@@ -166,8 +200,8 @@ bar: string
     0: foo,
     1: bar,
   }
-  const kshots = {}
-  const TEMPLATE = '{0} {1}'
+
+  const TEMPLATE = '<Prompt>\\n{0} {1}\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, { ...interpolations, ...kshots })
 }`)
   })
@@ -176,16 +210,16 @@ bar: string
     const transpiled = transpileGlassFile(
       `import {sayHello} from './say-hello'
 
-      {sayHello({ name: 'chat' })}
+      \${sayHello({ name: 'chat' })}
 
 <System>
-Read a Transcript and determine how to respond about the property's {sayHello({ name: 'chat' })}. Valid responses are:
+Read a Transcript and determine how to respond about the property's \${sayHello({ name: 'chat' })}. Valid responses are:
 
-- \`NO_RESPONSE\`: use this if the transcript has nothing to do with {agentName}
-- \`HELP: <reason>\`: use this if the information you have about the {agentName} is insufficient to provide an answer and you require more information
-- \`<your response>\`: a useful response to the User given the property's {agentName}
+- \`NO_RESPONSE\`: use this if the transcript has nothing to do with \${agentName}
+- \`HELP: <reason>\`: use this if the information you have about the \${agentName} is insufficient to provide an answer and you require more information
+- \`<your response>\`: a useful response to the User given the property's \${agentName}
 
-{
+\${
   function generateCodeExamples() {
     const examples = []
     for (let i = 0; i < 10; i++) {
@@ -197,14 +231,14 @@ Read a Transcript and determine how to respond about the property's {sayHello({ 
 </System>
 
 <User>
-{agentName}
+\${agentName}
 ###
-{instructions}
+\${instructions}
 ###
 
 Transcript
 ###
-{transcript}
+\${transcript}
 ###
 </User>
 `,
@@ -242,7 +276,7 @@ export function getFooPrompt(args: {
     7: instructions,
     8: transcript,
   }
-  const kshots = {}
+
   const TEMPLATE =
     "import {sayHello} from './say-hello'\\n\\n      {0}\\n\\n<System>\\nRead a Transcript and determine how to respond about the property's {1}. Valid responses are:\\n\\n- \`NO_RESPONSE\`: use this if the transcript has nothing to do with {2}\\n- \`HELP: <reason>\`: use this if the information you have about the {3} is insufficient to provide an answer and you require more information\\n- \`<your response>\`: a useful response to the User given the property's {4}\\n\\n{5}\\n</System>\\n\\n<User>\\n{6}\\n###\\n{7}\\n###\\n\\nTranscript\\n###\\n{8}\\n###\\n</User>\\n"
   return interpolateGlassChat('foo', TEMPLATE, { ...interpolations, ...kshots })

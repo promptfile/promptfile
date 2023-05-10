@@ -49,30 +49,35 @@ export function interpolateGlassChat(
   }
 
   for (const block of blocks) {
+    const role = block.tag.toLowerCase()
+    if (role !== 'system' && role !== 'user' && role !== 'assistant') {
+      continue // ignore
+    }
     // return { role: role as any, content: doc }
-    if (block.role === 'system' || block.role === 'user' || block.role === 'assistant') {
+    if (role === 'system' || role === 'user' || role === 'assistant') {
       if (lastKshotSequence) {
         drainKshotSequence(kshotBlocks[lastKshotSequence], lastKshotSequence, variables[lastKshotSequence])
       }
       const interpolatedBlock = interpolateBlock(fileName, block.content, variables)
-      res.push({ role: block.role as any, content: interpolatedBlock })
+      res.push({ role: role as any, content: interpolatedBlock })
       lastKshotSequence = ''
-    } else {
-      const [kshotName, kshotRole] = block.role.split('.')
-      checkOk(kshotName.startsWith('[') && kshotName.endsWith(']'), `invalid kshot name ${kshotName}`)
-      const kshotVarName = kshotName.slice(1, -1)
-
-      if (kshotBlocks[kshotVarName] == null) {
-        // starting a new kshot sequence, possibly drain the last one
-        if (lastKshotSequence) {
-          drainKshotSequence(kshotBlocks[lastKshotSequence], lastKshotSequence, variables[lastKshotSequence])
-        }
-        kshotBlocks[kshotVarName] = [{ role: kshotRole as any, content: block.content }]
-        lastKshotSequence = kshotVarName
-      } else {
-        kshotBlocks[kshotVarName].push({ role: kshotRole as any, content: block.content })
-      }
     }
+    // else {
+    //   const [kshotName, kshotRole] = role.split('.')
+    //   checkOk(kshotName.startsWith('[') && kshotName.endsWith(']'), `invalid kshot name ${kshotName}`)
+    //   const kshotVarName = kshotName.slice(1, -1)
+
+    //   if (kshotBlocks[kshotVarName] == null) {
+    //     // starting a new kshot sequence, possibly drain the last one
+    //     if (lastKshotSequence) {
+    //       drainKshotSequence(kshotBlocks[lastKshotSequence], lastKshotSequence, variables[lastKshotSequence])
+    //     }
+    //     kshotBlocks[kshotVarName] = [{ role: kshotRole as any, content: block.content }]
+    //     lastKshotSequence = kshotVarName
+    //   } else {
+    //     kshotBlocks[kshotVarName].push({ role: kshotRole as any, content: block.content })
+    //   }
+    // }
   }
 
   return res
@@ -82,28 +87,11 @@ export function interpolateBlock(fnName: string, template: string, variables: an
   const interpolateBlock = interpolate(template, variables, prefix)
 
   // check that there are no uninterpolated variables
-  const uninterpolatedVariables = interpolateBlock.match(/{([A-Za-z]*)}/g)
+  const uninterpolatedVariables = interpolateBlock.match(/\${([A-Za-z]*)}/g)
   if (uninterpolatedVariables && !prefix) {
+    // TODO: these will show names like "1", "2", etc instead of the actual variable names, since the transpiler rewrites them
     throw new Error(`un-interpolated variables in ${fnName}.glass: ${uninterpolatedVariables.join(', ')}`)
   }
 
   return interpolateBlock
 }
-
-/**
- * Takes a Glass template like the following:
- *
- * ```
- * -- system
- * {{systemPrompt}}
- * --
- *
- * -- user
- * {{userPrompt}}
- * --
- * ```
- *
- * And returns an array of ChatCompletionRequestMessage objects like the following:
- *
- * { role: 'system', content: '{{systemPrompt}}' }
- */

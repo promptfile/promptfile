@@ -13,7 +13,7 @@ world`
   it('should remove multiple line comments', () => {
     const mdx = `Hello
 {/* comment */}
-{/* comment2 */}
+{  /* comment2 */  }
 world`
 
     expect(removeGlassComments(mdx)).to.equal(`Hello\nworld`)

@@ -42,11 +42,11 @@ Goodbye world
       interpolateGlassChat(
         'test',
         `<System>
-Hello {foo}
+Hello \${foo}
 </System>
 
 <User>
-Goodbye {foo}, {bar}
+Goodbye \${foo}, \${bar}
 </User>`,
         { foo: 'world', bar: 'bar' }
       )
@@ -54,22 +54,6 @@ Goodbye {foo}, {bar}
       { role: 'system', content: 'Hello world' },
       { role: 'user', content: 'Goodbye world, bar' },
     ])
-  })
-
-  it('should throw if there are any interpolated variables', () => {
-    expect(() =>
-      interpolateGlassChat(
-        'test',
-        `<System>
-Hello {foo}
-</System>
-
-<User>
-Goodbye {foo}, {bar}
-</User>`,
-        { foo: 'world' }
-      )
-    ).throws('un-interpolated variables in test.glass: {bar}')
   })
 
   it('should ignore comments', () => {
@@ -115,6 +99,45 @@ Goodbye world
       { role: 'system', content: 'Hello world' },
       { role: 'user', content: 'Goodbye world' },
     ])
+  })
+
+  it('should ignore code blocks', () => {
+    expect(
+      interpolateGlassChat(
+        'test',
+        `<System>
+Hello world
+</System>
+
+<Code>
+ignore me
+</Code>
+
+<User>
+Goodbye world
+</User>`,
+        {}
+      )
+    ).to.deep.equal([
+      { role: 'system', content: 'Hello world' },
+      { role: 'user', content: 'Goodbye world' },
+    ])
+  })
+
+  it('should throw if there are any interpolated variables', () => {
+    expect(() =>
+      interpolateGlassChat(
+        'test',
+        `<System>
+Hello \${foo}
+</System>
+
+<User>
+Goodbye \${foo}, \${bar}
+</User>`,
+        { foo: 'world' }
+      )
+    ).throws('un-interpolated variables in test.glass: ${bar}')
   })
 
   describe.skip('kshots', () => {

@@ -6,6 +6,13 @@ describe('parseGlassBlocks', () => {
     expect(parseGlassBlocks('')).to.deep.equal([])
   })
 
+  it('should parse empty block', () => {
+    expect(
+      parseGlassBlocks(`<System>
+</System>`)
+    ).to.deep.equal([{ tag: 'System', content: '' }])
+  })
+
   it('should parse normal blocks', () => {
     expect(
       parseGlassBlocks(`<System>
@@ -14,17 +21,97 @@ Hello world
 
 <User>
 Goodbye world
-</User>`)
+</User>
+
+<Code>
+
+
+code
+</Code>
+
+<Assistant>
+
+assistant
+
+</Assistant>`)
     ).to.deep.equal([
       {
-        role: 'system',
+        tag: 'System',
         content: 'Hello world',
       },
       {
-        role: 'user',
+        tag: 'User',
+        content: 'Goodbye world',
+      },
+      {
+        tag: 'Code',
+        content: '\n\ncode',
+      },
+      {
+        tag: 'Assistant',
+        content: '\nassistant\n',
+      },
+    ])
+  })
+
+  it('should ignore interstitial space', () => {
+    expect(
+      parseGlassBlocks(`ignore me
+<System>
+Hello world
+</System>
+
+ignore me too
+
+<User>
+Goodbye world
+</User>`)
+    ).to.deep.equal([
+      {
+        tag: 'System',
+        content: 'Hello world',
+      },
+      {
+        tag: 'User',
         content: 'Goodbye world',
       },
     ])
+  })
+
+  it('should parse tags', () => {
+    expect(
+      parseGlassBlocks(`<User name="foo" bar="baz">
+Goodbye world
+</User>`)
+    ).to.deep.equal([
+      {
+        tag: 'User',
+        content: 'Goodbye world',
+        attrs: {
+          name: 'foo',
+          bar: 'baz',
+        },
+      },
+    ])
+  })
+
+  it('should throw exception on unbalanced closing tag', () => {
+    expect(() =>
+      parseGlassBlocks(`</System>
+<User>
+Goodbye world
+</User>`)
+    ).to.throw('Unbalanced closing tag </System> (line 1)')
+  })
+
+  it('should throw exception on nested tags', () => {
+    expect(() =>
+      parseGlassBlocks(`<System>
+hello world
+<User>
+Goodbye world
+</User>`)
+    ).to.throw('Must complete tag <System> (line 1) before starting tag <User> (line 3)')
   })
 
   it.skip('should parse kshot blocks', () => {
@@ -46,19 +133,19 @@ Goodbye world
 --`)
     ).to.deep.equal([
       {
-        role: 'system',
+        tag: 'System',
         content: 'Hello world',
       },
       {
-        role: '[examples].user',
+        tag: '[examples].user',
         content: 'example user {examples.i}',
       },
       {
-        role: '[examples].assistant',
+        tag: '[examples].assistant',
         content: 'example assistant {examples.i}',
       },
       {
-        role: 'user',
+        tag: 'User',
         content: 'Goodbye world',
       },
     ])

@@ -1,15 +1,21 @@
+import { Parser } from 'acorn'
+import acornJsx from 'acorn-jsx'
 import camelcase from 'camelcase'
 import { fromMarkdown } from 'mdast-util-from-markdown'
 import { frontmatterFromMarkdown } from 'mdast-util-frontmatter'
 import { mdxFromMarkdown } from 'mdast-util-mdx'
 import { frontmatter } from 'micromark-extension-frontmatter'
-import { mdxjs } from 'micromark-extension-mdxjs'
+import { mdxExpression } from 'micromark-extension-mdx-expression'
+import { mdxJsx } from 'micromark-extension-mdx-jsx'
+import { mdxMd } from 'micromark-extension-mdx-md'
+import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
+import { combineExtensions } from 'micromark-util-combine-extensions'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
+import { parseGlassBlocks } from './parseGlassBlocks.js'
 import { removeGlassComments } from './removeGlassComments.js'
 import { removeGlassFrontmatter } from './removeGlassFrontmatter.js'
-import { unescapeGlass } from './util/unescapeGlass.js'
 
 const extension = 'glass'
 
@@ -28,14 +34,35 @@ export function transpileGlassFile(
     language,
   }: { workspaceFolder: string; folderPath: string; outputDirectory: string; fileName: string; language: string }
 ) {
+  // first, parse the document blocks to make sure the document is valid
+  // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output
+  const blocks = parseGlassBlocks(doc)
+  if (blocks.length === 0) {
+    throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
+  }
+  const codeBlocks = blocks.filter(b => b.content === 'code')
+
   // remove all block comments before any processing happens
   doc = removeGlassComments(doc)
-
   const functionName = camelcase(fileName)
   const isChat = isChatTemplate(doc)
 
+  const mdxSettings = {
+    acorn: Parser.extend(acornJsx()),
+    acornOptions: { ecmaVersion: 2020, sourceType: 'module' },
+    addResult: true,
+  }
+
+  const mdxExtension = combineExtensions([
+    mdxjsEsm(mdxSettings as any),
+    mdxExpression(),
+    mdxJsx(mdxSettings as any),
+    mdxMd,
+  ])
+
   const tree = fromMarkdown(doc, {
-    extensions: [mdxjs(), frontmatter(['yaml', 'toml'])],
+    // extensions: [mdxjs(), frontmatter(['yaml', 'toml'])],
+    extensions: [mdxExtension, frontmatter(['yaml', 'toml'])],
     mdastExtensions: [mdxFromMarkdown(), frontmatterFromMarkdown(['yaml', 'toml'])],
   })
 
@@ -139,6 +166,9 @@ export function transpileGlassFile(
 
   let codeSanitizedDoc = doc
   const codeInterpolationMap: any = {}
+
+  // iterate over all the jsxExpressions (values inside `{ }`) and replace them with a number if they're supposed to be treated like code (values inside `${ }`)
+
   for (let j = 0; j < jsxExpressions.length; j++) {
     const expr = jsxExpressions[j]
 
@@ -148,10 +178,10 @@ export function transpileGlassFile(
       continue
     }
 
-    const codeInterpolation = '{' + expr + '}'
+    const codeInterpolation = '${' + expr + '}'
     const indexOfInterpolation = codeSanitizedDoc.indexOf(codeInterpolation)
     if (indexOfInterpolation === -1) {
-      throw new Error('could not find code interpolation: ' + codeInterpolation)
+      continue
     }
     codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `{${j}}`)
     if (expr.trim().startsWith('async')) {
@@ -164,7 +194,7 @@ export function transpileGlassFile(
   }
 
   // after interpolating everything, we can unescape `\{ \}` sequences
-  codeSanitizedDoc = unescapeGlass(codeSanitizedDoc)
+  // codeSanitizedDoc = unescapeGlass(codeSanitizedDoc)
 
   const prefixGet = !(functionName.startsWith('get') && functionName[3] === functionName[3].toUpperCase())
   const exportName = `${
@@ -180,11 +210,7 @@ export ${isAsync ? 'async' : ''} function ${exportName}(${fullArgString}) {
       .map(k => `"${k}": ${codeInterpolationMap[k]}`)
       .join(',')}
   }
-  const kshots = {
-    ${Object.keys(kshotMap)
-      .map(k => `${k}`)
-      .join(', ')}
-  }
+  ${codeBlocks.map(b => b.content).join('\n')}
   const TEMPLATE = ${JSON.stringify(codeSanitizedDoc)}
   return interpolateGlass${isChat ? 'Chat' : ''}('${fileName}', TEMPLATE, { ...interpolations, ...kshots })
 }`
@@ -194,7 +220,14 @@ export ${isAsync ? 'async' : ''} function ${exportName}(${fullArgString}) {
     singleQuote: true,
     trailingComma: 'es5',
   })
-  return { code: formattedCode.trim(), args: frontmatterArgs, imports, functionName, exportName }
+  return {
+    code: formattedCode.trim(),
+    args: frontmatterArgs,
+    imports,
+    functionName,
+    exportName,
+    variableNames: allInterpolationNames,
+  }
 }
 
 function isChatTemplate(doc: string) {
