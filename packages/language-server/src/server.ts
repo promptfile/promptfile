@@ -14,7 +14,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { findUnmatchedTags, findUnsupportedTags } from './diagnostics'
+import { findInvalidAttributes, findUnmatchedTags, findUnsupportedTags } from './diagnostics'
 import { findFoldableTagPairs } from './folding'
 
 // Create a connection for the server, using Node's IPC as a transport.
@@ -130,24 +130,28 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   // const settings = await getDocumentSettings(textDocument.uri)
 
   const text = textDocument.getText()
-  const unmatchedTags = findUnmatchedTags(text)
-  const unsupportedTags = findUnsupportedTags(text)
-  console.log(unsupportedTags)
-  const diagnostics: Diagnostic[] = unmatchedTags.map(({ tag, start }) => {
-    const tagName = tag.startsWith('/') ? tag.slice(1) : tag
-    const range = {
-      start: textDocument.positionAt(start),
-      end: textDocument.positionAt(start + tagName.length + (tag.startsWith('/') ? 3 : 2)),
-    }
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Error,
-      range,
-      message: `<${tagName}> tag requires a closing </${tagName}> tag.`,
-      source: 'glass',
-    }
+  const diagnostics: Diagnostic[] = []
 
-    return diagnostic
-  })
+  const unmatchedTags = findUnmatchedTags(text)
+  diagnostics.push(
+    ...unmatchedTags.map(({ tag, start }) => {
+      const tagName = tag.startsWith('/') ? tag.slice(1) : tag
+      const range = {
+        start: textDocument.positionAt(start),
+        end: textDocument.positionAt(start + tagName.length + (tag.startsWith('/') ? 3 : 2)),
+      }
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `<${tagName}> tag requires a closing </${tagName}> tag.`,
+        source: 'glass',
+      }
+
+      return diagnostic
+    })
+  )
+
+  const unsupportedTags = findUnsupportedTags(text)
   diagnostics.push(
     ...unsupportedTags.map(({ tag, start }) => {
       const range = {
@@ -159,6 +163,25 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         severity: DiagnosticSeverity.Error,
         range,
         message: `Unsupported ${tag} tag.`,
+        source: 'glass',
+      }
+
+      return diagnostic
+    })
+  )
+
+  const invalidAttributes = findInvalidAttributes(text)
+  diagnostics.push(
+    ...invalidAttributes.map(({ tag, attribute, start }) => {
+      const range = {
+        start: textDocument.positionAt(start),
+        end: textDocument.positionAt(start + attribute.length),
+      }
+
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `Invalid attribute "${attribute}" for <${tag}> tag.`,
         source: 'glass',
       }
 
@@ -181,7 +204,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<User>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'User>\n$0\n</User>',
+      insertText: 'User>\n\n</User>',
       documentation: {
         kind: 'markdown',
         value: 'Creates a User tag with inner content',
@@ -192,7 +215,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<Assistant>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'Assistant>\n$0\n</Assistant>',
+      insertText: 'Assistant>\n\n</Assistant>',
       documentation: {
         kind: 'markdown',
         value: 'Creates an Assistant tag with inner content',
@@ -203,7 +226,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<System>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'System>\n$0\n</System>',
+      insertText: 'System>\n\n</System>',
       documentation: {
         kind: 'markdown',
         value: 'Creates a System tag with inner content',
@@ -214,7 +237,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<Prompt>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'Prompt>\n$0\n</Prompt>',
+      insertText: 'Prompt>\n\n</Prompt>',
       documentation: {
         kind: 'markdown',
         value: 'Creates a Prompt tag with inner content',
@@ -225,7 +248,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<Code>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'Code>\n$0\n</Code>',
+      insertText: 'Code>\n\n</Code>',
       documentation: {
         kind: 'markdown',
         value: 'Creates a Code tag with inner content',
@@ -244,12 +267,58 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     end: textDocumentPosition.position,
   })
 
-  // If the prefix is empty, return all the completion items
-  if (!linePrefix.startsWith('<')) {
-    return completionItems
+  const attributeNameCompletion: CompletionItem[] = [
+    {
+      label: 'name',
+      kind: CompletionItemKind.Property,
+      insertText: 'name=""',
+      documentation: {
+        kind: 'markdown',
+        value: 'The `name` attribute allows you to assign a name to a User or Assistant.',
+      },
+      detail: 'User or Assistant name attribute',
+      data: 7,
+    },
+  ]
+
+  if (linePrefix.endsWith('<')) {
+    // Find the unclosed tags
+    const text = document.getText()
+    const openTags = findUnmatchedTags(text)
+
+    // If there are unclosed tags, suggest the latest unclosed tag as a closing tag
+    let closingTagCompletion: CompletionItem | null = null
+    if (openTags.length > 0) {
+      const lastTag = openTags[openTags.length - 1].tag
+      closingTagCompletion = {
+        label: `</${lastTag}>`,
+        kind: CompletionItemKind.Snippet,
+        insertText: `/${lastTag}>`,
+        documentation: {
+          kind: 'markdown',
+          value: `Closes the <${lastTag}> tag.`,
+        },
+        detail: `closing </${lastTag}> tag`,
+        data: 6,
+      }
+    }
+
+    // Return both opening tags and the relevant closing tag (if any)
+    return closingTagCompletion ? completionItems.concat(closingTagCompletion) : completionItems
+  } else {
+    const text = document.getText()
+    const positionOffset = document.offsetAt(textDocumentPosition.position)
+    const openingTagRegex = /<(User|Assistant)(\s+[^>]*)?$/i
+
+    // Check if the user is typing inside a <User> or <Assistant> opening tag
+    const openingTagMatch = text.slice(0, positionOffset).match(openingTagRegex)
+
+    if (openingTagMatch) {
+      // Return attribute completions
+      return attributeNameCompletion
+    }
   }
-  // Otherwise, filter the items based on the prefix
-  return completionItems.filter(item => item.label.startsWith(linePrefix))
+  return []
 })
 
 connection.onFoldingRanges(params => {

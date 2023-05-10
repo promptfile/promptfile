@@ -1,3 +1,33 @@
+export function findInvalidAttributes(text: string) {
+  const invalidAttributes: { tag: string; attribute: string; start: number }[] = []
+
+  const tagRegex = /<(User|Assistant)(\s+[^>]*)?>/g
+  let tagMatch
+  while ((tagMatch = tagRegex.exec(text))) {
+    const tagName = tagMatch[1]
+    const attributesStr = tagMatch[2]
+
+    if (attributesStr) {
+      const attributeRegex = /\s*(\w+)(?:\s*=\s*"([^"]*)")?/g
+      let attributeMatch
+      while ((attributeMatch = attributeRegex.exec(attributesStr))) {
+        const attributeName = attributeMatch[1]
+        if (tagName === 'User' || tagName === 'Assistant') {
+          if (attributeName !== 'name') {
+            invalidAttributes.push({
+              tag: tagName,
+              attribute: attributeName,
+              start: tagMatch.index + tagMatch[0].indexOf(attributeName),
+            })
+          }
+        }
+      }
+    }
+  }
+
+  return invalidAttributes
+}
+
 export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
   const tagPattern = /<\/?([\w-]+).*?>/g
   const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt'])

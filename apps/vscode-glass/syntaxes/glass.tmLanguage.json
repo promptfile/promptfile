@@ -19,58 +19,29 @@
           "name": "source.glass.content"
         },
         {
-          "include": "#line-comments"
-        },
-        {
-          "include": "#system-block"
-        },
-        {
-          "include": "#user-block"
-        },
-        {
-          "include": "#assistant-block"
-        },
-        {
-          "include": "#prompt-block"
-        },
-        {
-          "include": "#code-block"
-        },
-        {
-          "include": "#markdown-sections"
-        }
-      ]
-    },
-    "line-comments": {
-      "name": "source.glass.comment",
-      "match": "^//.*$"
-    },
-    "code-block": {
-      "patterns": [
-        {
           "begin": "^(<)(Code)(>)",
           "end": "^(<\\/)(Code)(>)",
           "name": "source.glass.code",
           "captures": {
             "1": {
-              "name": "source.glass.punctuation"
+              "name": "punctuation.definition.tag.begin.tsx"
             },
             "2": {
               "name": "source.glass.code.name"
             },
             "3": {
-              "name": "source.glass.punctuation"
+              "name": "punctuation.definition.tag.end.tsx"
             }
           },
           "endCaptures": {
             "1": {
-              "name": "source.glass.punctuation"
+              "name": "punctuation.definition.tag.begin.tsx"
             },
             "2": {
               "name": "source.glass.code.name"
             },
             "3": {
-              "name": "source.glass.punctuation"
+              "name": "punctuation.definition.tag.end.tsx"
             }
           },
           "patterns": [
@@ -78,176 +49,15 @@
               "include": "source.js"
             }
           ]
+        },
+        {
+          "include": "source.tsx"
         }
       ]
     },
-    "prompt-block": {
-      "patterns": [
-        {
-          "begin": "^(<)(Prompt)(>)",
-          "end": "^(<\\/)(Prompt)(>)",
-          "name": "source.glass.prompt",
-          "captures": {
-            "1": {
-              "name": "source.glass.punctuation"
-            },
-            "2": {
-              "name": "source.glass.prompt.name"
-            },
-            "3": {
-              "name": "source.glass.punctuation"
-            }
-          },
-          "endCaptures": {
-            "1": {
-              "name": "source.glass.punctuation"
-            },
-            "2": {
-              "name": "source.glass.prompt.name"
-            },
-            "3": {
-              "name": "source.glass.punctuation"
-            }
-          },
-          "patterns": [
-            {
-              "include": "#line-comments"
-            },
-            {
-              "include": "#transcript-speaker"
-            },
-            {
-              "include": "#markdown-sections"
-            }
-          ]
-        }
-      ]
-    },
-    "system-block": {
-      "patterns": [
-        {
-          "begin": "^(<)(System)(>)",
-          "end": "^(<\\/)(System)(>)",
-          "name": "source.glass.system",
-          "captures": {
-            "1": {
-              "name": "source.glass.punctuation"
-            },
-            "2": {
-              "name": "source.glass.system.name"
-            },
-            "3": {
-              "name": "source.glass.punctuation"
-            }
-          },
-          "endCaptures": {
-            "1": {
-              "name": "source.glass.punctuation"
-            },
-            "2": {
-              "name": "source.glass.system.name"
-            },
-            "3": {
-              "name": "source.glass.punctuation"
-            }
-          },
-          "patterns": [
-            {
-              "include": "#line-comments"
-            },
-            {
-              "include": "#transcript-speaker"
-            },
-            {
-              "include": "#markdown-sections"
-            }
-          ]
-        }
-      ]
-    },
-    "user-block": {
-      "patterns": [
-        {
-          "begin": "^(<)(User)(>)",
-          "end": "^(<\\/)(User)(>)",
-          "name": "source.glass.user",
-          "captures": {
-            "1": {
-              "name": "source.glass.punctuation"
-            },
-            "2": {
-              "name": "source.glass.user.name"
-            },
-            "3": {
-              "name": "source.glass.punctuation"
-            }
-          },
-          "endCaptures": {
-            "1": {
-              "name": "source.glass.punctuation"
-            },
-            "2": {
-              "name": "source.glass.user.name"
-            },
-            "3": {
-              "name": "source.glass.punctuation"
-            }
-          },
-          "patterns": [
-            {
-              "include": "#line-comments"
-            },
-            {
-              "include": "#transcript-speaker"
-            },
-            {
-              "include": "#markdown-sections"
-            }
-          ]
-        }
-      ]
-    },
-    "assistant-block": {
-      "patterns": [
-        {
-          "begin": "(<)(Assistant)(>)",
-          "end": "(<\\/)(Assistant)(>)",
-          "name": "source.glass.assistant",
-          "captures": {
-            "1": {
-              "name": "source.glass.punctuation"
-            },
-            "2": {
-              "name": "source.glass.assistant.name"
-            },
-            "3": {
-              "name": "source.glass.punctuation"
-            }
-          },
-          "endCaptures": {
-            "1": {
-              "name": "source.glass.punctuation"
-            },
-            "2": {
-              "name": "source.glass.assistant.name"
-            },
-            "3": {
-              "name": "source.glass.punctuation"
-            }
-          },
-          "patterns": [
-            {
-              "include": "#line-comments"
-            },
-            {
-              "include": "#transcript-speaker"
-            },
-            {
-              "include": "#markdown-sections"
-            }
-          ]
-        }
-      ]
+    "line-comments": {
+      "name": "source.glass.comment",
+      "match": "^//.*$"
     },
     "transcript-speaker": {
       "patterns": [
