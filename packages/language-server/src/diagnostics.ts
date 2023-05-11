@@ -63,7 +63,7 @@ export function findUnsupportedTags(text: string): { tag: string; start: number 
 }
 
 export function findUnmatchedTags(text: string): { tag: string; start: number }[] {
-  const tagPattern = /<\/?(Code|User|System|Assistant|Prompt).*?>/g
+  const tagPattern = /^<\/?(Code|User|System|Assistant|Prompt)(\s+[^>]*)?>/gm
   const tagStack: { tag: string; start: number }[] = []
   const unmatchedTags: { tag: string; start: number }[] = []
 

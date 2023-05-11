@@ -5,6 +5,11 @@ const res = await fetch("https://elliottburris.com");
 return res.text();
 </Code>
 
+<User>
+Hi there!
+</User>
+
+
 <System>
 Hello, how are you?
 </System>
