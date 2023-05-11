@@ -62,6 +62,13 @@
     "vscode-languageclient": "^8.1.0"
   },
   "contributes": {
+    "iconThemes": [
+      {
+        "id": "glass-icon-theme",
+        "label": "Glass Icon Theme",
+        "path": "./assets/glass-icon-theme.json"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {

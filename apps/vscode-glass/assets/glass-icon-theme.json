@@ -1,0 +1,11 @@
+{
+  "iconDefinitions": {
+    "_file_glass": {
+      "iconPath": "./icon.svg"
+    }
+  },
+  "fileExtensions": {
+    "glass": "_file_glass"
+  },
+  "version": "1.0.0"
+}

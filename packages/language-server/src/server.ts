@@ -17,9 +17,9 @@ import {
 
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
 import {
-  findEmptyBlocks,
   findInvalidAttributes,
   findInvalidLines,
+  findMultiplePromptBlocks,
   findUnmatchedTags,
   findUnsupportedTags,
 } from './diagnostics'
@@ -211,6 +211,24 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         severity: DiagnosticSeverity.Warning,
         range,
         message: `Content not contained in a block — will be ignored by compiler.`,
+        source: 'glass',
+      }
+
+      return diagnostic
+    })
+  )
+
+  const multiplePromptBlocks = findMultiplePromptBlocks(text)
+  diagnostics.push(
+    ...multiplePromptBlocks.map(({ start, end }) => {
+      const range = {
+        start: textDocument.positionAt(start),
+        end: textDocument.positionAt(end),
+      }
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `Only one <Prompt> block allowed per file.`,
         source: 'glass',
       }
 

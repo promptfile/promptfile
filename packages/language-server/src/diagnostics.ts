@@ -164,3 +164,24 @@ export function findEmptyBlocks(text: string): { tag: string; start: number; end
 
   return emptyBlocks
 }
+
+export function findMultiplePromptBlocks(text: string): { start: number; end: number }[] {
+  const promptBlocks: { start: number; end: number }[] = []
+
+  const blockRegex = /<(Prompt)(\s+[^>]*)?>[\s\S]*?<\/\1>/g
+  let blockMatch
+  while ((blockMatch = blockRegex.exec(text))) {
+    const blockStart = blockMatch.index
+    const blockEnd = blockMatch.index + blockMatch[0].length
+
+    promptBlocks.push({ start: blockStart, end: blockEnd })
+  }
+
+  // If there is only one or no Prompt block, it's not an issue.
+  if (promptBlocks.length <= 1) {
+    return []
+  }
+
+  // If there are multiple Prompt blocks, return all but the first one.
+  return promptBlocks.slice(1)
+}
