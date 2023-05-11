@@ -14,7 +14,7 @@ import { render } from 'react-dom'
 
 interface State {
   currFilename: string
-  isChat: boolean // whether the current file is a chat file
+  isChat: boolean // whether the current file is af chat file
   currVariableValues: Record<string, string>
   result: string
   currVariables: string[]
@@ -291,162 +291,187 @@ function MyComponent() {
   const modelSelection = isChat ? chatModels : completionModels
 
   return (
-    <VSCodePanels>
-      <VSCodePanelTab id="tab1">Test</VSCodePanelTab>
-      <VSCodePanelTab id="tab2">Logs</VSCodePanelTab>
-      <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
-        {!openaiKeyIsFromConfig && (
-          <Fragment>
-            <div style={{ paddingBottom: '16px' }}>
-              <div style={{ paddingBottom: '4px' }}>OpenAI Key</div>
-              <div style={{ paddingBottom: '8px', opacity: '0.5', fontSize: '10px' }}>
-                You may also set this with the <span style={{ fontFamily: 'monospace' }}>glass.openaiKey</span> setting
-              </div>
-              <VSCodeTextField
-                style={{ width: '100%' }}
-                value={openaiKey}
-                onInput={e => {
-                  const value = (e.target as any).value
-                  setOpenaiKey(value)
-                }}
-              />
-            </div>
-            <VSCodeDivider />
-          </Fragment>
-        )}
-        <div style={{ paddingBottom: '14px' }}>
-          <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8', fontStyle: 'italic' }}>
-            {currFilename}
-          </span>
-        </div>
-        <div style={{ paddingBottom: '8px' }}>
-          <div style={{ paddingBottom: '4px' }}>Model</div>
-          <VSCodeDropdown
-            id="model-dropdown"
-            onChange={e => {
-              const value = (e.target as any).value
-              setModel(value)
-            }}
-          >
-            {modelSelection.map(m => (
-              <VSCodeOption
-                key={m}
-                value={m}
-                selected={m === model}
-                onSelect={() => {
-                  setModel(m)
-                }}
-              >
-                {m}
-              </VSCodeOption>
-            ))}
-          </VSCodeDropdown>
-        </div>
-        {currVariables.map((v, i) => (
-          <div key={i} style={{ paddingBottom: '8px' }}>
-            <div style={{ paddingBottom: '4px' }}>{v}</div>
-            <VSCodeTextArea
-              style={{ width: '100%' }}
-              value={currVariableValues[v] || ''}
-              onInput={e => {
-                const value = (e.target as any).value
-                setCurrVariableValues(curr => ({ ...curr, [v]: value }))
-              }}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && !e.metaKey) {
-                  e.currentTarget.blur()
-                  exec()
-                }
-              }}
-            />
-          </div>
-        ))}
-        <div style={{ display: 'flex', paddingTop: '8px', paddingBottom: '8px' }}>
-          <VSCodeButton id="run-button" onClick={() => exec()}>
-            Send
-          </VSCodeButton>
-          <div style={{ flex: 1 }} />
-          <VSCodeButton id="reset-button" appearance="secondary" onClick={() => reset()}>
-            Reset
-          </VSCodeButton>
-        </div>
-        <span style={{ color: textColor, paddingTop: '16px', whiteSpace: 'pre-wrap' }}>
-          {result}
-          {isLoading && <span style={{ backgroundColor: '#007ACC' }}>A</span>}
+    <div style={{ flexDirection: 'column' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', paddingBottom: '4px' }}>
+        <svg
+          style={{ opacity: 0.5 }}
+          width="24"
+          height="24"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask id="path-1-inside-1_2_11" fill="white">
+            <rect width="120" height="120" rx="3" />
+          </mask>
+          <rect width="120" height="120" rx="3" stroke="gray" stroke-width="24" mask="url(#path-1-inside-1_2_11)" />
+          <line x1="94.2565" y1="83.8838" x2="72.694" y2="106.384" stroke="gray" stroke-width="4" />
+          <line x1="116.796" y1="47.2793" x2="98.9831" y2="66.9668" stroke="gray" stroke-width="4" />
+          <line x1="23.0065" y1="67.0088" x2="1.44398" y2="89.5088" stroke="gray" stroke-width="4" />
+          <line x1="78.319" y1="44.5088" x2="56.7565" y2="67.0088" stroke="gray" stroke-width="4" />
+          <line x1="39.8815" y1="89.5088" x2="18.319" y2="112.009" stroke="gray" stroke-width="4" />
+          <line x1="56.7991" y1="10.7129" x2="39.9241" y2="29.4629" stroke="gray" stroke-width="4" />
+        </svg>
+        <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>
+          {currFilename.split('.glass')[0]}
+          <span style={{ opacity: 0.3, fontStyle: 'italic' }}>.glass</span>
         </span>
-      </VSCodePanelView>
-
-      {/* Logs */}
-      <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
-        {logs.length === 0 && <span>No requests</span>}
-        {logs
-          .map((log, i) => (
-            <Fragment key={i}>
-              <div>
-                <div style={{ paddingBottom: '14px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8', fontStyle: 'italic' }}>
-                    {log.file}
-                  </span>
+      </div>
+      <VSCodePanels>
+        <VSCodePanelTab id="tab1">Playground</VSCodePanelTab>
+        <VSCodePanelTab id="tab2">Logs</VSCodePanelTab>
+        <VSCodePanelTab id="tab3">Config</VSCodePanelTab>
+        <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
+          {!openaiKeyIsFromConfig && (
+            <Fragment>
+              <div style={{ paddingBottom: '16px' }}>
+                <div style={{ paddingBottom: '4px' }}>OpenAI Key</div>
+                <div style={{ paddingBottom: '8px', opacity: '0.5', fontSize: '10px' }}>
+                  You may also set this with the <span style={{ fontFamily: 'monospace' }}>glass.openaiKey</span>{' '}
+                  setting
                 </div>
-                <div style={{ paddingBottom: '8px' }}>
-                  <div style={{ paddingBottom: '4px' }}>Model</div>
-                  <VSCodeDropdown disabled={true}>
-                    <VSCodeOption value={log.model} selected={true}>
-                      {log.model}
-                    </VSCodeOption>
-                  </VSCodeDropdown>
-                </div>
-                {Object.keys(log.args).map((v, k) => (
-                  <div key={k} style={{ paddingBottom: '8px' }}>
-                    <div style={{ paddingBottom: '4px' }}>{v}</div>
-                    <VSCodeTextArea style={{ width: '100%' }} value={log.args[v] || ''} readOnly={true} />
-                  </div>
-                ))}
-                <div style={{ paddingBottom: '8px', paddingTop: '8px' }}>
-                  <div style={{ fontWeight: 'bold' }}>Prompt</div>
-                  <VSCodePanels>
-                    <VSCodePanelTab id={`logprompt${i}`}>glass</VSCodePanelTab>
-                    <VSCodePanelTab id={`lograw${i}`}>json</VSCodePanelTab>
-                    <VSCodePanelView>
-                      <VSCodeTextArea
-                        resize={'vertical'}
-                        rows={10}
-                        style={{ width: '100%' }}
-                        value={
-                          log.isChat
-                            ? (log.prompt as any)
-                                .map((block: { role: string; content: string }) => {
-                                  const tagName = block.role[0].toUpperCase() + block.role.slice(1)
-                                  return `<${tagName}>\n${block.content}\n</${tagName}>`
-                                })
-                                .join('\n\n')
-                            : `<Prompt>\n${log.prompt}\n</Prompt>`
-                        }
-                        readOnly={true}
-                      />
-                    </VSCodePanelView>
-                    <VSCodePanelView>
-                      <VSCodeTextArea
-                        resize={'vertical'}
-                        rows={10}
-                        style={{ width: '100%', fontFamily: 'monospace' }}
-                        value={JSON.stringify(log.prompt, null, 2)}
-                        readOnly={true}
-                      />
-                    </VSCodePanelView>
-                  </VSCodePanels>
-                </div>
-                {log.result != null && (
-                  <div style={{ paddingBottom: '8px' }}>
-                    <span style={{ color: textColor, paddingTop: '16px', whiteSpace: 'pre-wrap' }}>{log.result}</span>
-                  </div>
-                )}
+                <VSCodeTextField
+                  style={{ width: '100%' }}
+                  value={openaiKey}
+                  onInput={e => {
+                    const value = (e.target as any).value
+                    setOpenaiKey(value)
+                  }}
+                />
               </div>
               <VSCodeDivider />
             </Fragment>
-          ))
-          .reverse()}
-      </VSCodePanelView>
-    </VSCodePanels>
+          )}
+          <div style={{ paddingBottom: '8px' }}>
+            <div style={{ paddingBottom: '4px' }}>Model</div>
+            <VSCodeDropdown
+              id="model-dropdown"
+              onChange={e => {
+                const value = (e.target as any).value
+                setModel(value)
+              }}
+            >
+              {modelSelection.map(m => (
+                <VSCodeOption
+                  key={m}
+                  value={m}
+                  selected={m === model}
+                  onSelect={() => {
+                    setModel(m)
+                  }}
+                >
+                  {m}
+                </VSCodeOption>
+              ))}
+            </VSCodeDropdown>
+          </div>
+          {currVariables.map((v, i) => (
+            <div key={i} style={{ paddingBottom: '8px' }}>
+              <div style={{ paddingBottom: '4px' }}>{v}</div>
+              <VSCodeTextArea
+                style={{ width: '100%' }}
+                value={currVariableValues[v] || ''}
+                onInput={e => {
+                  const value = (e.target as any).value
+                  setCurrVariableValues(curr => ({ ...curr, [v]: value }))
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.metaKey) {
+                    e.currentTarget.blur()
+                    exec()
+                  }
+                }}
+              />
+            </div>
+          ))}
+          <div style={{ display: 'flex', paddingTop: '8px', paddingBottom: '8px' }}>
+            <VSCodeButton id="run-button" onClick={() => exec()}>
+              Send
+            </VSCodeButton>
+            <div style={{ flex: 1 }} />
+            <VSCodeButton id="reset-button" appearance="secondary" onClick={() => reset()}>
+              Reset
+            </VSCodeButton>
+          </div>
+          <span style={{ color: textColor, paddingTop: '16px', whiteSpace: 'pre-wrap' }}>
+            {result}
+            {isLoading && <span style={{ backgroundColor: '#007ACC' }}>A</span>}
+          </span>
+        </VSCodePanelView>
+
+        {/* Logs */}
+        <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
+          {logs.length === 0 && <span>No requests</span>}
+          {logs
+            .map((log, i) => (
+              <Fragment key={i}>
+                <div>
+                  <div style={{ paddingBottom: '14px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8', fontStyle: 'italic' }}>
+                      {log.file}
+                    </span>
+                  </div>
+                  <div style={{ paddingBottom: '8px' }}>
+                    <div style={{ paddingBottom: '4px' }}>Model</div>
+                    <VSCodeDropdown disabled={true}>
+                      <VSCodeOption value={log.model} selected={true}>
+                        {log.model}
+                      </VSCodeOption>
+                    </VSCodeDropdown>
+                  </div>
+                  {Object.keys(log.args).map((v, k) => (
+                    <div key={k} style={{ paddingBottom: '8px' }}>
+                      <div style={{ paddingBottom: '4px' }}>{v}</div>
+                      <VSCodeTextArea style={{ width: '100%' }} value={log.args[v] || ''} readOnly={true} />
+                    </div>
+                  ))}
+                  <div style={{ paddingBottom: '8px', paddingTop: '8px' }}>
+                    <div style={{ fontWeight: 'bold' }}>Prompt</div>
+                    <VSCodePanels>
+                      <VSCodePanelTab id={`logprompt${i}`}>glass</VSCodePanelTab>
+                      <VSCodePanelTab id={`lograw${i}`}>json</VSCodePanelTab>
+                      <VSCodePanelView>
+                        <VSCodeTextArea
+                          resize={'vertical'}
+                          rows={10}
+                          style={{ width: '100%' }}
+                          value={
+                            log.isChat
+                              ? (log.prompt as any)
+                                  .map((block: { role: string; content: string }) => {
+                                    const tagName = block.role[0].toUpperCase() + block.role.slice(1)
+                                    return `<${tagName}>\n${block.content}\n</${tagName}>`
+                                  })
+                                  .join('\n\n')
+                              : `<Prompt>\n${log.prompt}\n</Prompt>`
+                          }
+                          readOnly={true}
+                        />
+                      </VSCodePanelView>
+                      <VSCodePanelView>
+                        <VSCodeTextArea
+                          resize={'vertical'}
+                          rows={10}
+                          style={{ width: '100%', fontFamily: 'monospace' }}
+                          value={JSON.stringify(log.prompt, null, 2)}
+                          readOnly={true}
+                        />
+                      </VSCodePanelView>
+                    </VSCodePanels>
+                  </div>
+                  {log.result != null && (
+                    <div style={{ paddingBottom: '8px' }}>
+                      <span style={{ color: textColor, paddingTop: '16px', whiteSpace: 'pre-wrap' }}>{log.result}</span>
+                    </div>
+                  )}
+                </div>
+                <VSCodeDivider />
+              </Fragment>
+            ))
+            .reverse()}
+        </VSCodePanelView>
+        <VSCodePanelView>Coming soon!</VSCodePanelView>
+      </VSCodePanels>
+    </div>
   )
 }

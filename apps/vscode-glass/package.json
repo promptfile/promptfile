@@ -83,7 +83,7 @@
         {
           "type": "webview",
           "id": "left-panel-webview",
-          "name": "playground",
+          "name": "",
           "icon": "src/assets/icon.svg"
         }
       ]
@@ -240,7 +240,8 @@
           {
             "scope": "string.other.begin.expression.mdx.js",
             "settings": {
-              "foreground": "#4dff00"
+              "foreground": "#4dff00",
+              "fontStyle": "bold"
             }
           }
         ]

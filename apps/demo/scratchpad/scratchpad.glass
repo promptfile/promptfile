@@ -7,5 +7,5 @@ foo
 
 
 <User>
-bar
+${bar}
 </User>

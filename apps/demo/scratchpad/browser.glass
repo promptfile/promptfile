@@ -1,0 +1,18 @@
+<Code>
+const res = await fetch(url)
+const text = await res.text()
+</Code>
+
+<System>
+Your job is to answer questions about this website content:
+
+###
+${text}
+###
+
+Answer the user's question based on the content above:
+</System>
+
+<User>
+${question}
+</User>
