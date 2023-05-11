@@ -168,7 +168,8 @@ export function findEmptyBlocks(text: string): { tag: string; start: number; end
 export function findMultiplePromptBlocks(text: string): { start: number; end: number }[] {
   const promptBlocks: { start: number; end: number }[] = []
 
-  const blockRegex = /<(Prompt)(\s+[^>]*)?>[\s\S]*?<\/\1>/g
+  // Match Prompt blocks that are not preceded by // on the same line
+  const blockRegex = /(^|[\r\n]+)\s*(?!\/\/)<(Prompt)(\s+[^>]*)?>[\s\S]*?<\/\2>/g
   let blockMatch
   while ((blockMatch = blockRegex.exec(text))) {
     const blockStart = blockMatch.index
@@ -190,23 +191,21 @@ export function findInvalidPromptBlocks(text: string): { start: number; end: num
   const promptBlocks: { start: number; end: number }[] = []
   const userSystemAssistantBlocks: { start: number; end: number }[] = []
 
-  // Remove comment lines
-  const lines = text.split('\n')
-  const uncommentedLines = lines.filter(line => !line.trim().startsWith('//'))
-  const uncommentedText = uncommentedLines.join('\n')
+  // Match Prompt blocks that are not preceded by // on the same line
+  const promptBlockRegex = /^(?!\/\/).*<(Prompt)(\s+[^>]*)?>[\s\S]*?<\/\1>/gm
 
-  const promptBlockRegex = /<(Prompt)(\s+[^>]*)?>[\s\S]*?<\/\1>/g
-  const userSystemAssistantBlockRegex = /<(User|System|Assistant)(\s+[^>]*)?>[\s\S]*?<\/\1>/g
+  // Match User/System/Assistant blocks that are not preceded by // on the same line
+  const userSystemAssistantBlockRegex = /^(?!\/\/).*<(User|System|Assistant)(\s+[^>]*)?>[\s\S]*?<\/\1>/gm
 
   let blockMatch
-  while ((blockMatch = promptBlockRegex.exec(uncommentedText))) {
+  while ((blockMatch = promptBlockRegex.exec(text))) {
     const blockStart = blockMatch.index
     const blockEnd = blockMatch.index + blockMatch[0].length
 
     promptBlocks.push({ start: blockStart, end: blockEnd })
   }
 
-  while ((blockMatch = userSystemAssistantBlockRegex.exec(uncommentedText))) {
+  while ((blockMatch = userSystemAssistantBlockRegex.exec(text))) {
     const blockStart = blockMatch.index
     const blockEnd = blockMatch.index + blockMatch[0].length
 
