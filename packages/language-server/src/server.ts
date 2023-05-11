@@ -7,6 +7,7 @@ import {
   DocumentFormattingParams,
   InitializeParams,
   InitializeResult,
+  InsertTextFormat,
   ProposedFeatures,
   Range,
   TextDocumentPositionParams,
@@ -290,7 +291,8 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<User>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'User>\n\n</User>',
+      insertText: 'User>\n$1\n</User>',
+      insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
         value: 'Creates a User tag with inner content',
@@ -301,7 +303,8 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<Assistant>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'Assistant>\n\n</Assistant>',
+      insertText: 'Assistant>\n$1\n</Assistant>',
+      insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
         value: 'Creates an Assistant tag with inner content',
@@ -312,7 +315,8 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<System>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'System>\n\n</System>',
+      insertText: 'System>\n$1\n</System>',
+      insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
         value: 'Creates a System tag with inner content',
@@ -323,7 +327,8 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<Prompt>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'Prompt>\n\n</Prompt>',
+      insertText: 'Prompt>\n$1\n</Prompt>',
+      insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
         value: 'Creates a Prompt tag with inner content',
@@ -334,7 +339,8 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     {
       label: '<Code>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'Code>\n\n</Code>',
+      insertText: 'Code>\n$1\n</Code>',
+      insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
         value: 'Creates a Code tag with inner content',

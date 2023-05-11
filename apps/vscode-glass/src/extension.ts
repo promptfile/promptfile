@@ -27,13 +27,7 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     },
     {
-      documentSelector: [
-        { scheme: 'file', language: 'glass' },
-        // { scheme: 'file', language: 'typescript' },
-        // { scheme: 'file', language: 'typescriptreact' },
-        // { scheme: 'file', language: 'javascript' },
-        // { scheme: 'file', language: 'javascriptreact' },
-      ],
+      documentSelector: [{ scheme: 'file', language: 'glass' }],
       outputChannelName: 'Glass Language Server',
     }
   )
