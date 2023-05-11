@@ -14,7 +14,7 @@ import {
 } from 'vscode-languageserver/node'
 
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { findInvalidAttributes, findUnmatchedTags, findUnsupportedTags } from './diagnostics'
+import { findInvalidAttributes, findInvalidLines, findUnmatchedTags, findUnsupportedTags } from './diagnostics'
 import { findFoldableTagPairs } from './folding'
 
 // Create a connection for the server, using Node's IPC as a transport.
@@ -182,6 +182,25 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         severity: DiagnosticSeverity.Error,
         range,
         message: `Invalid attribute "${attribute}" for <${tag}> tag.`,
+        source: 'glass',
+      }
+
+      return diagnostic
+    })
+  )
+
+  const invalidLines = findInvalidLines(text)
+  diagnostics.push(
+    ...invalidLines.map(({ line, start, end }) => {
+      const range = {
+        start: textDocument.positionAt(textDocument.offsetAt({ line, character: start })),
+        end: textDocument.positionAt(textDocument.offsetAt({ line, character: end })),
+      }
+
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `Invalid content outside of <User>, <Assistant>, <System>, <Prompt>, or <Code> elements.`,
         source: 'glass',
       }
 

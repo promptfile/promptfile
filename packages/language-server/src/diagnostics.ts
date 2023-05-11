@@ -1,7 +1,7 @@
 export function findInvalidAttributes(text: string) {
   const invalidAttributes: { tag: string; attribute: string; start: number }[] = []
 
-  const tagRegex = /<(User|Assistant)(\s+[^>]*)?>/g
+  const tagRegex = /<(\w+)(\s+[^>]*)?>/g
   let tagMatch
   while ((tagMatch = tagRegex.exec(text))) {
     const tagName = tagMatch[1]
@@ -12,14 +12,31 @@ export function findInvalidAttributes(text: string) {
       let attributeMatch
       while ((attributeMatch = attributeRegex.exec(attributesStr))) {
         const attributeName = attributeMatch[1]
-        if (tagName === 'User' || tagName === 'Assistant') {
-          if (attributeName !== 'name') {
-            invalidAttributes.push({
-              tag: tagName,
-              attribute: attributeName,
-              start: tagMatch.index + tagMatch[0].indexOf(attributeName),
-            })
-          }
+
+        let isInvalidAttribute = false
+
+        switch (tagName) {
+          case 'User':
+          case 'Assistant':
+            if (attributeName !== 'name') {
+              isInvalidAttribute = true
+            }
+            break
+          case 'Code':
+            if (attributeName !== 'language') {
+              isInvalidAttribute = true
+            }
+            break
+          default:
+            isInvalidAttribute = true
+        }
+
+        if (isInvalidAttribute) {
+          invalidAttributes.push({
+            tag: tagName,
+            attribute: attributeName,
+            start: tagMatch.index + tagMatch[0].indexOf(attributeName),
+          })
         }
       }
     }
@@ -73,4 +90,61 @@ export function findUnmatchedTags(text: string): { tag: string; start: number }[
   unmatchedTags.push(...tagStack)
 
   return unmatchedTags
+}
+
+function isInvalidLine(line: string): boolean {
+  const trimmedLine = line.trim()
+
+  // Check if the line is a comment, import, or export line
+  if (
+    trimmedLine.length === 0 ||
+    trimmedLine.startsWith('//') ||
+    trimmedLine.startsWith('import') ||
+    trimmedLine.startsWith('export')
+  ) {
+    return false
+  }
+
+  // Check if the line is inside a valid element or contains a valid element with attributes
+  const openTagCount = (line.match(/<(User|Assistant|System|Prompt|Code)(\s+[^>]*)?>/g) || []).length
+  const closeTagCount = (line.match(/<\/(User|Assistant|System|Prompt|Code)>/g) || []).length
+
+  return openTagCount === 0 && closeTagCount === 0
+}
+
+export function findInvalidLines(text: string): { line: number; start: number; end: number }[] {
+  const invalidLines: { line: number; start: number; end: number }[] = []
+  const lines = text.split('\n')
+
+  let insideValidElement = 0
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+
+    if (
+      line.includes('<User') ||
+      line.includes('<Assistant') ||
+      line.includes('<System') ||
+      line.includes('<Prompt') ||
+      line.includes('<Code')
+    ) {
+      insideValidElement++
+    }
+
+    if (
+      line.includes('</User>') ||
+      line.includes('</Assistant>') ||
+      line.includes('</System>') ||
+      line.includes('</Prompt>') ||
+      line.includes('</Code>')
+    ) {
+      insideValidElement--
+    }
+
+    if (!insideValidElement && isInvalidLine(line)) {
+      invalidLines.push({ line: i, start: 0, end: line.length })
+    }
+  }
+
+  return invalidLines
 }
