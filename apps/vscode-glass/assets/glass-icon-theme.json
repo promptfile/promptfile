@@ -1,7 +1,7 @@
 {
   "iconDefinitions": {
     "_file_glass": {
-      "iconPath": "./icon.svg"
+      "iconPath": "./icon-color.svg"
     }
   },
   "fileExtensions": {
