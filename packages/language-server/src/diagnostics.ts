@@ -190,18 +190,23 @@ export function findInvalidPromptBlocks(text: string): { start: number; end: num
   const promptBlocks: { start: number; end: number }[] = []
   const userSystemAssistantBlocks: { start: number; end: number }[] = []
 
+  // Remove comment lines
+  const lines = text.split('\n')
+  const uncommentedLines = lines.filter(line => !line.trim().startsWith('//'))
+  const uncommentedText = uncommentedLines.join('\n')
+
   const promptBlockRegex = /<(Prompt)(\s+[^>]*)?>[\s\S]*?<\/\1>/g
   const userSystemAssistantBlockRegex = /<(User|System|Assistant)(\s+[^>]*)?>[\s\S]*?<\/\1>/g
 
   let blockMatch
-  while ((blockMatch = promptBlockRegex.exec(text))) {
+  while ((blockMatch = promptBlockRegex.exec(uncommentedText))) {
     const blockStart = blockMatch.index
     const blockEnd = blockMatch.index + blockMatch[0].length
 
     promptBlocks.push({ start: blockStart, end: blockEnd })
   }
 
-  while ((blockMatch = userSystemAssistantBlockRegex.exec(text))) {
+  while ((blockMatch = userSystemAssistantBlockRegex.exec(uncommentedText))) {
     const blockStart = blockMatch.index
     const blockEnd = blockMatch.index + blockMatch[0].length
 
