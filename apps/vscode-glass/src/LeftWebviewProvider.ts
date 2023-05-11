@@ -48,7 +48,7 @@ export class LeftPanelWebview implements WebviewViewProvider {
 
     const vars = getInteroplationVariables(currentEditor.document.getText())
     webviewView.webview.postMessage({
-      command: 'updateInterpolationVariables',
+      action: 'updateInterpolationVariables',
       data: vars,
     })
   }
@@ -56,19 +56,26 @@ export class LeftPanelWebview implements WebviewViewProvider {
   private activateMessageListener() {
     this._view.webview.onDidReceiveMessage(async (message: any) => {
       switch (message.action) {
-        case 'GET_OPENAI_KEY':
-          console.log('GET_OPENAI_KEY')
-          const configValue = vscode.workspace.getConfiguration().get('glass.openaiKey')
-          console.log(configValue)
+        case 'getOpenaiKey':
           this._view.webview.postMessage({
-            command: 'updateOpenaiKey',
-            data: configValue,
+            action: 'setOpenaiKey',
+            data: vscode.workspace.getConfiguration().get('glass.openaiKey'),
           })
           break
-        case 'SHOW_WARNING_LOG':
-          window.showWarningMessage(message.data.message)
+
+        case 'showMessage':
+          const level = message.data.level
+          const text = message.data.text
+          if (level === 'error') {
+            await window.showErrorMessage(text)
+          } else if (level === 'warn') {
+            await window.showWarningMessage(text)
+          } else {
+            await window.showInformationMessage(text)
+          }
           break
-        case 'TRANSPILE_CURRENT_FILE':
+
+        case 'execCurrentFile':
           const currentEditor = window.activeTextEditor
           if (!currentEditor) {
             window.showErrorMessage('No active editor')
@@ -86,7 +93,7 @@ export class LeftPanelWebview implements WebviewViewProvider {
           const output = await executeGlassFile(document, message.data)
 
           this._view.webview.postMessage({
-            command: 'messageFromExtension',
+            action: 'execFileOutput',
             data: output,
           })
 

@@ -15,6 +15,13 @@ interface State {
   result: string
   currVariables: string[]
   model: string
+  history: {
+    file: string
+    args: Record<string, string>
+    model: string
+    prompt: string | { role: string; content: string }[]
+    result: string
+  }[]
 }
 
 const vscode = acquireVsCodeApi<State>()
@@ -34,17 +41,29 @@ function MyComponent() {
     result: '',
     currVariables: [],
     model: allModels[0],
+    history: [],
   }
+
   const [currVariables, setCurrVariables] = useState(initialState?.currVariables || [])
   const [currVariableValues, setCurrVariableValues] = useState(initialState?.currVariableValues || {})
   const [result, setResult] = useState(initialState?.result || '')
   const [model, setModel] = useState(initialState?.model || allModels[0])
+  const [history, setHistory] = useState(initialState?.history || [])
 
+  // when React state changes, persist to vscode state
   useEffect(() => {
-    vscode.setState({ currVariableValues, result, currVariables, model })
-  }, [currVariableValues, result, model, currVariables])
+    vscode.setState({ currVariableValues, result, currVariables, model, history })
+  }, [currVariableValues, result, model, currVariables, history])
 
-  const processEvent = useCallback(
+  // when the webview loads, send a message to the extension to get the openai key
+  useEffect(() => {
+    vscode.postMessage({
+      action: 'getOpenaiKey',
+    })
+  }, [])
+
+  // when new streaming data comes in, update the result with the content delta
+  const processStream = useCallback(
     (eventData: { choices: { delta: { content: string } }[] }) => {
       if (eventData.choices[0].delta.content) {
         setResult(res => res + eventData.choices[0].delta.content)
@@ -53,32 +72,31 @@ function MyComponent() {
     [result]
   )
 
-  useEffect(() => {
-    vscode.postMessage({
-      action: 'GET_OPENAI_KEY',
-    })
-  }, [])
-
+  // register a callback for when the extension sends a message
   useEffect(() => {
     const cb = (event: any) => {
-      console.log('got a message', JSON.stringify(event))
       const message = event.data // The JSON data our extension sent
-      switch (message.command) {
-        case 'updateOpenaiKey':
+
+      switch (message.action) {
+        case 'setOpenaiKey':
           const key = message.data
           setOpenaiKey(() => key)
           break
+
         case 'updateInterpolationVariables':
-          console.log('got update interpolation variables', message.data)
           const removedRepeats = message.data.filter((v: string, i: number, a: string[]) => a.indexOf(v) === i)
           setCurrVariables(() => removedRepeats) // filter away empty variables
           break
-        case 'messageFromExtension':
-          console.log(`Received message from extension: ${message.data}`)
-          console.log('openaiKey: ', openaiKey)
+
+        case 'execFileOutput':
           if (openaiKey === '') {
-            setIsError(true)
-            setResult('no openai key set — please set it in the extension settings')
+            vscode.postMessage({
+              action: 'showMessage',
+              data: {
+                level: 'error',
+                text: 'Please set `glass.openaiKey` in your extension settings.',
+              },
+            })
             break
           }
           setIsError(false)
@@ -110,45 +128,38 @@ function MyComponent() {
               const reader = r.body!.getReader()
               const decoder = new TextDecoder()
 
-              // Process received events
-
-              // Read data from the stream
               const readStream = async () => {
-                try {
-                  const { done, value } = await reader.read()
+                const { done, value } = await reader.read()
 
-                  if (done) {
-                    console.log('Stream has been closed by the server.')
-                    return
-                  }
-
-                  const chunk = decoder.decode(value, { stream: true })
-                  const lines = chunk.split('\n')
-
-                  for (const line of lines) {
-                    if (line.startsWith('data:')) {
-                      const content = line.slice('data:'.length).trim()
-                      if (content === '[DONE]') {
-                        break
-                      }
-                      const eventData = JSON.parse(content)
-                      processEvent(eventData)
-                    }
-                  }
-
-                  // Continue reading the stream
-                  readStream()
-                } catch (error) {
-                  console.error('Error reading the stream:', error)
+                if (done) {
+                  console.log('Stream has been closed by the server.')
+                  return
                 }
+
+                const chunk = decoder.decode(value, { stream: true })
+                const lines = chunk.split('\n')
+
+                for (const line of lines) {
+                  if (line.startsWith('data:')) {
+                    const content = line.slice('data:'.length).trim()
+                    if (content === '[DONE]') {
+                      break
+                    }
+                    const eventData = JSON.parse(content)
+                    processStream(eventData)
+                  }
+                }
+
+                // Continue reading the stream
+                await readStream()
               }
 
               // Start reading the stream
-              readStream()
+              return readStream()
             })
-            .catch(() => {
+            .catch((e: any) => {
               setIsError(true)
-              setResult('failed')
+              setResult(() => e.message)
             })
             .finally(() => {
               setIsLoading(false)
@@ -162,28 +173,18 @@ function MyComponent() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [openaiKey, model, processEvent])
+  }, [openaiKey, model, processStream])
 
-  // const transpiled = transpileGlassFile('foo', {
-  //   workspaceFolder: '/Users/me/glassc',
-  //   folderPath: '/Users/me/glassc',
-  //   fileName: 'foo',
-  //   language: 'typescript',
-  //   outputDirectory: '/Users/me/glassc/src'
-  // })
-
-  // console.log('transpiled is', transpiled)
-
-  const send = () => {
+  const exec = () => {
     vscode.postMessage({
-      action: 'TRANSPILE_CURRENT_FILE',
+      action: 'execCurrentFile',
       data: currVariableValues,
     })
   }
 
   const reset = () => {
     setCurrVariableValues({})
-    setResult('')
+    setResult(() => '')
   }
 
   const textColor = isError ? '#F44747' : '#007ACC'
@@ -230,24 +231,22 @@ function MyComponent() {
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.metaKey) {
                   e.currentTarget.blur()
-                  send()
+                  exec()
                 }
               }}
             />
           </div>
         ))}
         <div style={{ display: 'flex', paddingTop: '8px', paddingBottom: '8px' }}>
-          <VSCodeButton id="run-button" onClick={() => send()}>
+          <VSCodeButton id="run-button" onClick={() => exec()}>
             Send
           </VSCodeButton>
           <div style={{ flex: 1 }} />
-          {/* <div style={{paddingLeft: '8px'}}> */}
           <VSCodeButton id="reset-button" appearance="secondary" onClick={() => reset()}>
             Reset
           </VSCodeButton>
-          {/* </div> */}
         </div>
-        <span style={{ color: textColor, paddingTop: '16px', whiteSpace: 'pre-line' }}>
+        <span style={{ color: textColor, paddingTop: '16px', whiteSpace: 'pre-wrap' }}>
           {result}
           {isLoading && <span style={{ backgroundColor: '#007ACC' }}>A</span>}
         </span>
