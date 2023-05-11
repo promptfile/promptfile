@@ -11,6 +11,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { render } from 'react-dom'
 
 interface State {
+  currFilename: string
+  isChat: boolean // whether the current file is a chat file
   currVariableValues: Record<string, string>
   result: string
   currVariables: string[]
@@ -31,29 +33,35 @@ const container = document.getElementById('root')
 render(<MyComponent />, container)
 
 function MyComponent() {
-  const allModels = ['gpt-3.5-turbo', 'gpt-4']
+  const chatModels = ['gpt-3.5-turbo', 'gpt-4']
+  const completionModels = ['text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
+
   const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [openaiKey, setOpenaiKey] = useState('')
 
   const initialState = vscode.getState() || {
+    currFilename: '',
+    isChat: true,
     currVariableValues: {},
     result: '',
     currVariables: [],
-    model: allModels[0],
+    model: chatModels[0],
     history: [],
   }
 
-  const [currVariables, setCurrVariables] = useState(initialState?.currVariables || [])
-  const [currVariableValues, setCurrVariableValues] = useState(initialState?.currVariableValues || {})
-  const [result, setResult] = useState(initialState?.result || '')
-  const [model, setModel] = useState(initialState?.model || allModels[0])
-  const [history, setHistory] = useState(initialState?.history || [])
+  const [currFilename, setCurrFilename] = useState(initialState.currFilename || '')
+  const [currVariables, setCurrVariables] = useState(initialState.currVariables || [])
+  const [isChat, setIsChat] = useState(initialState.isChat ?? true)
+  const [currVariableValues, setCurrVariableValues] = useState(initialState.currVariableValues || {})
+  const [result, setResult] = useState(initialState.result || '')
+  const [model, setModel] = useState(initialState.model || chatModels[0])
+  const [history, setHistory] = useState(initialState.history || [])
 
   // when React state changes, persist to vscode state
   useEffect(() => {
-    vscode.setState({ currVariableValues, result, currVariables, model, history })
-  }, [currVariableValues, result, model, currVariables, history])
+    vscode.setState({ currFilename, isChat, currVariableValues, result, currVariables, model, history })
+  }, [currFilename, isChat, currVariableValues, result, model, currVariables, history])
 
   // when the webview loads, send a message to the extension to get the openai key
   useEffect(() => {
@@ -140,7 +148,7 @@ function MyComponent() {
       },
       body: JSON.stringify({
         prompt,
-        model: 'text-davinci-003',
+        model,
         stream: true,
       }),
     })
@@ -174,9 +182,16 @@ function MyComponent() {
           setOpenaiKey(() => key)
           break
 
-        case 'updateInterpolationVariables':
-          const removedRepeats = message.data.filter((v: string, i: number, a: string[]) => a.indexOf(v) === i)
-          setCurrVariables(() => removedRepeats) // filter away empty variables
+        case 'updateDocumentMetadata':
+          const metadata = message.data
+          setCurrVariables(() => metadata.interpolationVariables)
+          setIsChat(() => metadata.isChat)
+          setCurrFilename(() => metadata.filename)
+          if (metadata.isChat && !chatModels.includes(model)) {
+            setModel(() => chatModels[0])
+          } else if (!metadata.isChat && !completionModels.includes(model)) {
+            setModel(() => completionModels[0])
+          }
           break
 
         case 'execFileOutput':
@@ -225,11 +240,16 @@ function MyComponent() {
 
   const textColor = isError ? '#F44747' : '#007ACC'
 
+  const modelSelection = isChat ? chatModels : completionModels
+
   return (
     <VSCodePanels>
       <VSCodePanelTab id="tab1">Test</VSCodePanelTab>
       <VSCodePanelTab id="tab2">History</VSCodePanelTab>
-      <VSCodePanelView style={{ flexDirection: 'column' }}>
+      <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
+        <div style={{ paddingBottom: '14px' }}>
+          <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8' }}>{currFilename}</span>
+        </div>
         <div style={{ paddingBottom: '8px' }}>
           <div style={{ paddingBottom: '4px' }}>Model</div>
           <VSCodeDropdown
@@ -239,7 +259,7 @@ function MyComponent() {
               setModel(value)
             }}
           >
-            {allModels.map(m => (
+            {modelSelection.map(m => (
               <VSCodeOption
                 key={m}
                 value={m}

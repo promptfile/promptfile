@@ -5,5 +5,5 @@ export function isGlassFile(document: vscode.TextDocument) {
 }
 
 export function getDocumentFilename(document: vscode.TextDocument) {
-  return document.fileName.split('/').pop()
+  return document.fileName.split('/').pop()!
 }

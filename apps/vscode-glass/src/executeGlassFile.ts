@@ -1,13 +1,14 @@
-import { getGlassExportName, transpileGlass } from '@glass-lang/glassc'
+import { constructGlassOutputFile, getGlassExportName, transpileGlassFile } from '@glass-lang/glassc'
 import * as esbuild from 'esbuild'
 import fs from 'fs'
 import path from 'path'
 import { TextDecoder } from 'util'
 import vm from 'vm'
 import * as vscode from 'vscode'
+import { getDocumentFilename } from './util/isGlassFile'
 
 export async function executeGlassFile(document: vscode.TextDocument, interpolationArgs: any) {
-  const fileName = document.fileName
+  const fileName = getDocumentFilename(document)
 
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)!
   const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
@@ -15,7 +16,14 @@ export async function executeGlassFile(document: vscode.TextDocument, interpolat
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
 
-  const transpiledCode = transpileGlass(workspacePath, document.uri.fsPath, 'typescript', outDir)
+  const transpiledFunction = transpileGlassFile(document.getText(), {
+    workspaceFolder: workspacePath,
+    folderPath: document.uri.fsPath.split('/').slice(0, -1).join('/'),
+    fileName,
+    language: 'typescript',
+    outputDirectory: outDir,
+  })
+  const transpiledCode = constructGlassOutputFile([transpiledFunction])
 
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir)

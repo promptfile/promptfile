@@ -1,10 +1,10 @@
-import { transpileGlass } from '@glass-lang/glassc'
+import { parseGlassMetadata, transpileGlass } from '@glass-lang/glassc'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
-import { LeftPanelWebview, getInteroplationVariables } from './LeftWebviewProvider'
-import { isGlassFile } from './util/isGlassFile'
+import { LeftPanelWebview } from './LeftWebviewProvider'
+import { getDocumentFilename, isGlassFile } from './util/isGlassFile'
 
 let client: LanguageClient | null = null
 
@@ -43,12 +43,15 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor(editor => {
       if (editor && isGlassFile(editor.document)) {
         const text = editor.document.getText()
-        const vars = getInteroplationVariables(text)
+        const metadata = parseGlassMetadata(text)
 
         if (leftPanelWebViewProvider._view.webview) {
           leftPanelWebViewProvider._view.webview.postMessage({
-            action: 'updateInterpolationVariables',
-            data: vars,
+            action: 'updateDocumentMetadata',
+            data: {
+              ...metadata,
+              filename: getDocumentFilename(editor.document),
+            },
           })
         }
       }
@@ -68,11 +71,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
       if (leftPanelWebViewProvider._view.webview) {
         const text = event.document.getText()
-        const vars = getInteroplationVariables(text)
+        const metadata = parseGlassMetadata(text)
 
         leftPanelWebViewProvider._view.webview.postMessage({
-          action: 'updateInterpolationVariables',
-          data: vars,
+          action: 'updateDocumentMetadata',
+          data: {
+            ...metadata,
+            filename: getDocumentFilename(event.document),
+          },
         })
       } else {
         console.log('webview not ready')

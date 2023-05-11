@@ -1,3 +1,4 @@
+import { parseGlassMetadata } from '@glass-lang/glassc'
 import * as vscode from 'vscode'
 import { EventEmitter, Uri, Webview, WebviewView, WebviewViewProvider, window } from 'vscode'
 import { executeGlassFile } from './executeGlassFile'
@@ -10,13 +11,6 @@ function getNonce() {
     text += possible.charAt(Math.floor(Math.random() * possible.length))
   }
   return text
-}
-
-// TODO: move to glassc
-export function getInteroplationVariables(text: string) {
-  const interpolationVariables = text.match(/{([A-Za-z0-9]*)}/g)
-  const interpolationVariableNames = interpolationVariables?.map(variable => variable.replace(/[{}]/g, '')) || []
-  return interpolationVariableNames
 }
 
 export class LeftPanelWebview implements WebviewViewProvider {
@@ -47,10 +41,13 @@ export class LeftPanelWebview implements WebviewViewProvider {
       return
     }
 
-    const vars = getInteroplationVariables(currentEditor.document.getText())
+    const metadata = parseGlassMetadata(currentEditor.document.getText())
     webviewView.webview.postMessage({
-      action: 'updateInterpolationVariables',
-      data: vars,
+      action: 'updateDocumentMetadata',
+      data: {
+        ...metadata,
+        filename: getDocumentFilename(currentEditor.document),
+      },
     })
   }
 
