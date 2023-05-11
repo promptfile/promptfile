@@ -245,7 +245,7 @@ function MyComponent() {
   return (
     <VSCodePanels>
       <VSCodePanelTab id="tab1">Test</VSCodePanelTab>
-      <VSCodePanelTab id="tab2">History</VSCodePanelTab>
+      <VSCodePanelTab id="tab2">Logs</VSCodePanelTab>
       <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
         <div style={{ paddingBottom: '14px' }}>
           <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8' }}>{currFilename}</span>
