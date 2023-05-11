@@ -23,7 +23,7 @@
     "gpt",
     "llm"
   ],
-  "icon": "assets/glass.png",
+  "icon": "assets/icon.png",
   "activationEvents": [
     "onView:left-panel-webview",
     "onCommand:react-webview.start",
@@ -67,7 +67,7 @@
         {
           "id": "webview",
           "title": "Glass",
-          "icon": "./assets/glass.png"
+          "icon": "./assets/icon.svg"
         }
       ]
     },
@@ -77,7 +77,7 @@
           "type": "webview",
           "id": "left-panel-webview",
           "name": "playground",
-          "icon": "src/assets/glass.png"
+          "icon": "src/assets/icon.svg"
         }
       ]
     },
