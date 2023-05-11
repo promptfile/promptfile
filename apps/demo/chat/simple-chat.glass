@@ -1,5 +1,16 @@
+// hello
+// this is a great prompt
+
 <System>
-this is a system prompt
+You are a highly-intelligent AI.
+
+Please respond in valid JSON with the following format:
+```js
+{
+    "response": string,
+    "confidence": number // 1 (least confident) to 10 (most confident)
+}
+```
 </System>
 
 <User>

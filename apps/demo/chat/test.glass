@@ -2,7 +2,6 @@
 message: string
 ---
 
-
 <System>
 Hello, how are you?
 This is great, thanks!
@@ -19,7 +18,6 @@ const text = res.text();
 
 </User>
 
-
 <System>
 You are a helpful assistant.
 ${ function(foo) { return 5} }
@@ -29,7 +27,6 @@ ${ function(foo) { return 5} }
 User: blah
 Assistant: teehee
 </System>
-
 
 <User>
 Hello
