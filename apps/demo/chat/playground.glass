@@ -5,30 +5,29 @@ const res = await fetch("https://elliottburris.com");
 return res.text();
 </Code>
 
+// qwefpioj
+
 <User>
 Hi there!
-</User>
 
+this is great!
+</User>
 
 <System>
 Hello, how are you?
 </System>
 
-// this should have an error
-// blarg
-// this is very cool!
-// <User name="ellington">
-// Awesome, 
-// ###
-// ```python
-// import requests
-// def go():
-//     r = requests.get("hello")
-//     return "hello"
-// ```
-// ###
-// </User>
-
+<User>
+Awesome, 
+###
+```python
+import requests
+def go():
+    r = requests.get("hello")
+    return "hello"
+```
+###
+</User>
 
 <Assistant name="teehee">
 ${hello}
@@ -38,13 +37,10 @@ ${hello}
 tell me more!
 </Assistant>
 
-
 <User>
 This is great, thanks!
 </User>
 
-
 <User>
 awesome
 </User>
-

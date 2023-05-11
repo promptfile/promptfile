@@ -4,18 +4,21 @@ import {
   Diagnostic,
   DiagnosticSeverity,
   DidChangeConfigurationNotification,
+  DocumentFormattingParams,
   InitializeParams,
   InitializeResult,
   ProposedFeatures,
+  Range,
   TextDocumentPositionParams,
   TextDocumentSyncKind,
   TextDocuments,
   createConnection,
 } from 'vscode-languageserver/node'
 
-import { TextDocument } from 'vscode-languageserver-textdocument'
+import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
 import { findInvalidAttributes, findInvalidLines, findUnmatchedTags, findUnsupportedTags } from './diagnostics'
 import { findFoldableTagPairs } from './folding'
+import { formatDocument } from './formatting'
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -49,6 +52,7 @@ connection.onInitialize((params: InitializeParams) => {
         triggerCharacters: ['<'],
       },
       foldingRangeProvider: true,
+      documentFormattingProvider: true,
     },
   }
   if (hasWorkspaceFolderCapability) {
@@ -353,6 +357,31 @@ connection.onFoldingRanges(params => {
     startLine: textDocument.positionAt(tagPair.start).line,
     endLine: textDocument.positionAt(tagPair.closingStart).line,
   }))
+})
+
+connection.onDocumentFormatting(async (params: DocumentFormattingParams): Promise<TextEdit[]> => {
+  const { textDocument } = params
+  const document = documents.get(textDocument.uri)
+
+  if (!document) {
+    return []
+  }
+
+  // Call your custom formatting function here
+  const formattedText = formatDocument(document.getText())
+
+  // Compute the range of the entire document
+  const start = document.positionAt(0)
+  const end = document.positionAt(document.getText().length)
+  const range = Range.create(start, end)
+
+  // Create a TextEdit with the formatted text
+  const textEdit: TextEdit = {
+    range,
+    newText: formattedText,
+  }
+
+  return [textEdit]
 })
 
 // Make the text document manager listen on the connection
