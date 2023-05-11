@@ -225,7 +225,7 @@
             }
           },
           {
-            "scope": "source.glass.transcript.row.speaker",
+            "scope": "source.glass.highlight",
             "settings": {
               "foreground": "#569CD6"
             }

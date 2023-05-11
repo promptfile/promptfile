@@ -1,7 +1,11 @@
-<Prompt>
-Hello! Your job is to respond in as few words as possible?
+<System>
+foo
+</System>
 
-Human: how are you doing today?
-AI: Good.
-Human: ${query}
-</Prompt>
+
+// hello
+
+
+<User>
+bar
+</User>
