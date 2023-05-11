@@ -10,14 +10,6 @@ Showings are available weekdays 10am-11:30am.  There are no other showings avail
 If the prospective renter need to speak to someone, tell them to call the office at 213-555-1234.
 </System>
 
-<System>
-Hello, how are you?
-</System>
-
-<User>
-hello, this is great :)
-</User>
-
 <User>
 ${query}
 </User>
