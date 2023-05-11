@@ -1,61 +1,57 @@
-import { transpileGlass } from '@glass-lang/glassc'
+import { getGlassExportName, transpileGlass } from '@glass-lang/glassc'
 import * as esbuild from 'esbuild'
 import fs from 'fs'
 import path from 'path'
 import { TextDecoder } from 'util'
 import vm from 'vm'
+import * as vscode from 'vscode'
 
-// this is just a test, for now...
-export async function executeGlassFile() {
-  const transpiled2 = transpileGlass(
-    '/Users/rothfels/glass/apps/demo/chat',
-    '/Users/rothfels/glass/apps/demo/chat/test.glass',
-    'typescript',
-    '/Users/rothfels/glass/apps/demo/chat'
+export async function executeGlassFile(document: vscode.TextDocument, interpolationArgs: any) {
+  const fileName = document.fileName
+
+  const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)!
+  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+
+  const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
+  const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
+
+  const transpiledCode = transpileGlass(workspacePath, document.uri.fsPath, 'typescript', outDir)
+
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir)
+  }
+  const tmpFilePath = path.join(outDir, 'glass-tmp.ts')
+
+  fs.writeFileSync(
+    tmpFilePath,
+    `${transpiledCode}
+context.response = ${getGlassExportName(fileName)}(${JSON.stringify(interpolationArgs)})`,
+    {
+      encoding: 'utf-8',
+    }
   )
 
-  const outPath = path.join('/Users/rothfels/glass/apps/demo/chat', 'glass-tmp.ts')
-
-  const functionName = 'getTestPrompt'
-
-  const outfile = `${transpiled2}
-
-c.response = ${functionName}(${JSON.stringify({})});
-`
-
-  fs.writeFileSync(outPath, outfile, {
-    encoding: 'utf-8',
-  })
-
-  console.log('about to esbuild')
+  // bundle the code so that it can be executed in a vm with resolved imports
   const result = await esbuild.build({
-    entryPoints: [outPath],
+    entryPoints: [tmpFilePath],
     bundle: true,
     platform: 'node',
     write: false,
     format: 'cjs',
     target: 'es2020',
   })
-  console.log('did the esbuild')
 
-  const code = new TextDecoder().decode(result.outputFiles[0].contents)
-  console.log('esbuild code is', code)
+  const bundledCode = new TextDecoder().decode(result.outputFiles[0].contents)
 
-  fs.unlinkSync(outPath)
+  fs.unlinkSync(tmpFilePath)
 
-  const c: any = {}
+  const script = new vm.Script(bundledCode, { filename: 'outputFile.js' })
 
-  // new Function("context", code)(c);
-  // eval(code);
-
-  // vm.run(code);
-
-  const script = new vm.Script(code, {
-    filename: 'outputFile.js',
-  })
+  const context: any = {}
 
   const ctx = {
-    c,
+    console,
+    context,
     global,
     process,
     module: { exports: {} },
@@ -65,5 +61,6 @@ c.response = ${functionName}(${JSON.stringify({})});
   vm.createContext(ctx)
   script.runInContext(ctx)
 
-  console.log('ctx response is after execution', c.response)
+  console.log('ctx response is after execution', context.response)
+  return context.response
 }

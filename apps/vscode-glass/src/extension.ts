@@ -3,7 +3,8 @@ import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
-import { LeftPanelWebview, getInteroplationVariables, isFileWithDesiredExtension } from './LeftWebviewProvider'
+import { LeftPanelWebview, getInteroplationVariables } from './LeftWebviewProvider'
+import { isGlassFile } from './util/isGlassFile'
 
 let client: LanguageClient | null = null
 
@@ -46,7 +47,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor(editor => {
-      if (editor && isFileWithDesiredExtension(editor.document)) {
+      if (editor && isGlassFile(editor.document)) {
         const text = editor.document.getText()
         const vars = getInteroplationVariables(text)
 

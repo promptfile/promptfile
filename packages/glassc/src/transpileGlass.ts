@@ -45,6 +45,7 @@ export function transpileGlassFile(
   // remove all block comments before any processing happens
   doc = removeGlassComments(doc)
   const functionName = camelcase(fileName)
+  const exportName = getGlassExportName(fileName)
   const isChat = isChatTemplate(doc)
 
   const mdxSettings = {
@@ -119,15 +120,13 @@ export function transpileGlassFile(
         frontmatterArgsUsed.add(interpolationVar)
       } else if (!frontmatterArgsUsed.has(interpolationVar)) {
         // throw new error? interpolation variable exists that's not declared by frontmatter
-        throw new Error(`Variable ${interpolationVar} is not declared by frontmatter in ${functionName}.glass`)
+        throw new Error(`Variable ${interpolationVar} is not declared by frontmatter in ${fileName}.glass`)
         // return null
       }
     }
 
     if (frontmatterArgsRemaining.size !== 0) {
-      console.log(
-        `Frontmatter args ${Array.from(frontmatterArgsRemaining).join(', ')} are unused in ${functionName}.glass`
-      )
+      console.log(`Frontmatter args ${Array.from(frontmatterArgsRemaining).join(', ')} are unused in ${fileName}.glass`)
     }
   }
 
@@ -195,11 +194,6 @@ export function transpileGlassFile(
 
   // after interpolating everything, we can unescape `\{ \}` sequences
   // codeSanitizedDoc = unescapeGlass(codeSanitizedDoc)
-
-  const prefixGet = !(functionName.startsWith('get') && functionName[3] === functionName[3].toUpperCase())
-  const exportName = `${
-    prefixGet ? `get${functionName.slice(0, 1).toUpperCase() + functionName.slice(1)}` : functionName
-  }Prompt`
 
   const code = `${imports.join('\n')}
 
@@ -528,4 +522,16 @@ function parseAst(
       break
   }
   return isAsync
+}
+
+export function getGlassExportName(filePath: string) {
+  let fileName = filePath.split('/').pop() || ''
+  if (fileName.endsWith('.glass')) {
+    fileName = fileName.slice(0, -6)
+  }
+
+  const functionName = camelcase(fileName)
+
+  const prefixGet = !(functionName.startsWith('get') && functionName[3] === functionName[3].toUpperCase())
+  return `${prefixGet ? `get${functionName.slice(0, 1).toUpperCase() + functionName.slice(1)}` : functionName}Prompt`
 }

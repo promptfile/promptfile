@@ -1,11 +1,6 @@
-import { transpileGlass, transpileGlassFile } from '@glass-lang/glassc'
-import * as esbuild from 'esbuild'
-import fs from 'fs'
-import path from 'path'
-import { TextDecoder } from 'util'
-import vm from 'vm'
 import * as vscode from 'vscode'
 import { EventEmitter, Uri, Webview, WebviewView, WebviewViewProvider, window } from 'vscode'
+import { executeGlassFile } from './executeGlassFile'
 
 function getNonce() {
   let text = ''
@@ -14,11 +9,6 @@ function getNonce() {
     text += possible.charAt(Math.floor(Math.random() * possible.length))
   }
   return text
-}
-
-export function isFileWithDesiredExtension(document: vscode.TextDocument) {
-  const desiredExtension = '.glass'
-  return document.fileName.endsWith(desiredExtension)
 }
 
 // TODO: move to glassc
@@ -93,85 +83,11 @@ export class LeftPanelWebview implements WebviewViewProvider {
             return
           }
 
-          const content = document.getText()
-
-          const transpiled = transpileGlassFile(content, {
-            workspaceFolder: '/Users/me/glassc',
-            folderPath: '/Users/me/glassc',
-            fileName: path.basename(fileName),
-            language: 'javascript',
-            outputDirectory: '/Users/me/glassc/src',
-          })
-
-          const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(currentEditor.document.uri)!
-
-          const outputDirectory: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
-          const folderPath = activeEditorWorkspaceFolder.uri.fsPath
-          /* eslint no-template-curly-in-string: "off" */
-          const outDir = outputDirectory.replace('${workspaceFolder}', folderPath)
-
-          const transpiled2 = transpileGlass(folderPath, currentEditor.document.uri.fsPath, 'typescript', outDir)
-
-          // console.log('transpiled 2 is', transpiled2)
-          // console.log({
-          //   folderPath,
-          //   activePath: currentEditor.document.uri.fsPath,
-          //   outDir
-          // })
-
-          if (!fs.existsSync(outDir)) {
-            fs.mkdirSync(outDir)
-          }
-
-          const outPath = path.join(outDir, 'glass-tmp.ts')
-
-          const functionName = 'getSimplePrompt'
-
-          const outfile = `${transpiled2}
-
-context.response = ${functionName}(${JSON.stringify(message.data)});
-`
-
-          fs.writeFileSync(outPath, outfile, {
-            encoding: 'utf-8',
-          })
-
-          const result = await esbuild.build({
-            entryPoints: [outPath],
-            bundle: true,
-            platform: 'node',
-            write: false,
-            format: 'cjs',
-            target: 'es2020',
-            // packages: 'external',
-            // outfile: '/Users/rothfels/foundation/lambda/src/prompts/out.cjs',
-          })
-
-          const code = new TextDecoder().decode(result.outputFiles[0].contents)
-
-          fs.unlinkSync(outPath)
-
-          const script = new vm.Script(code, { filename: 'outputFile.js' })
-
-          const context: any = {}
-
-          const ctx = {
-            console,
-            context,
-            global,
-            process,
-            module: { exports: {} },
-            require: require,
-          }
-
-          vm.createContext(ctx)
-          script.runInContext(ctx)
-
-          console.log('ctx response is after execution', context.response)
+          const output = await executeGlassFile(document, message.data)
 
           this._view.webview.postMessage({
             command: 'messageFromExtension',
-            data: context.response,
+            data: output,
           })
 
           break
