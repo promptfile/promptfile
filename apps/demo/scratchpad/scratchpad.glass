@@ -1,8 +1,22 @@
 // nice
 
-<Prompt>
-Hello
-</Prompt>
+// <Prompt>
+// Hello
+// </Prompt>
+
+<System>
+Hello, how are you?
+</System>
+
+<User>
+yes please, this is fantastic! Let's imagine a great example of what we want.
+
+This contains the logic for what we wish to accomplish.
+</User>
+
+<User>
+${query}
+</User>
 
 // <User>
 // Nice

@@ -22,6 +22,7 @@ import {
   findInvalidAttributes,
   findInvalidLines,
   findInvalidPromptBlocks,
+  findMisalignedTags,
   findMultiplePromptBlocks,
   findUnmatchedTags,
   findUnsupportedTags,
@@ -195,6 +196,25 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         severity: DiagnosticSeverity.Error,
         range,
         message: `Invalid attribute "${attribute}" for <${tag}> tag.`,
+        source: 'glass',
+      }
+
+      return diagnostic
+    })
+  )
+
+  const misalignedTags = findMisalignedTags(text)
+  diagnostics.push(
+    ...misalignedTags.map(({ start, end }) => {
+      const range = {
+        start: textDocument.positionAt(start),
+        end: textDocument.positionAt(end),
+      }
+
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `Tags must be on their own lines.`,
         source: 'glass',
       }
 
