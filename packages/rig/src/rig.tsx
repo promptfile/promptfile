@@ -294,7 +294,7 @@ function MyComponent() {
     <div style={{ flexDirection: 'column' }}>
       <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', paddingBottom: '4px' }}>
         <svg
-          style={{ opacity: 0.5 }}
+          style={{ opacity: 0.3 }}
           width="24"
           height="24"
           viewBox="0 0 120 120"
@@ -304,20 +304,20 @@ function MyComponent() {
           <mask id="path-1-inside-1_2_11" fill="white">
             <rect width="120" height="120" rx="3" />
           </mask>
-          <rect width="120" height="120" rx="3" stroke="gray" stroke-width="24" mask="url(#path-1-inside-1_2_11)" />
-          <line x1="94.2565" y1="83.8838" x2="72.694" y2="106.384" stroke="gray" stroke-width="4" />
-          <line x1="116.796" y1="47.2793" x2="98.9831" y2="66.9668" stroke="gray" stroke-width="4" />
-          <line x1="23.0065" y1="67.0088" x2="1.44398" y2="89.5088" stroke="gray" stroke-width="4" />
-          <line x1="78.319" y1="44.5088" x2="56.7565" y2="67.0088" stroke="gray" stroke-width="4" />
-          <line x1="39.8815" y1="89.5088" x2="18.319" y2="112.009" stroke="gray" stroke-width="4" />
-          <line x1="56.7991" y1="10.7129" x2="39.9241" y2="29.4629" stroke="gray" stroke-width="4" />
+          <rect width="120" height="120" rx="3" stroke="white" stroke-width="24" mask="url(#path-1-inside-1_2_11)" />
+          <line x1="94.2565" y1="83.8838" x2="72.694" y2="106.384" stroke="white" stroke-width="4" />
+          <line x1="116.796" y1="47.2793" x2="98.9831" y2="66.9668" stroke="white" stroke-width="4" />
+          <line x1="23.0065" y1="67.0088" x2="1.44398" y2="89.5088" stroke="white" stroke-width="4" />
+          <line x1="78.319" y1="44.5088" x2="56.7565" y2="67.0088" stroke="white" stroke-width="4" />
+          <line x1="39.8815" y1="89.5088" x2="18.319" y2="112.009" stroke="white" stroke-width="4" />
+          <line x1="56.7991" y1="10.7129" x2="39.9241" y2="29.4629" stroke="white" stroke-width="4" />
         </svg>
         <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>
           {currFilename.split('.glass')[0]}
-          <span style={{ opacity: 0.3, fontStyle: 'italic' }}>.glass</span>
+          <span style={{ opacity: 0.3, color: 'white', fontStyle: 'italic' }}>.glass</span>
         </span>
       </div>
-      {openaiKey.trim().length === 0 ? (
+      {!openaiKeyIsFromConfig ? (
         <div style={{ paddingTop: '16px' }}>
           <div style={{ paddingBottom: '16px' }}>
             The Glass playground requires an OpenAI API key to function. Please enter one below.
