@@ -5,5 +5,5 @@
     "glass.outputDirectory": "${workspaceFolder}/src",
     "editor.wordWrap": "on"
   },
-  "folders": [{ "path": "chat" }, { "path": "gpt3" }]
+  "folders": [{ "path": "chat" }, { "path": "gpt3" }, { "path": "scratchpad" }]
 }
