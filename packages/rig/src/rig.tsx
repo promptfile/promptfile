@@ -7,6 +7,7 @@ import {
   VSCodePanelView,
   VSCodePanels,
   VSCodeTextArea,
+  VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { render } from 'react-dom'
@@ -43,6 +44,7 @@ function MyComponent() {
   const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [openaiKey, setOpenaiKey] = useState('')
+  const [openaiKeyIsFromConfig, setOpenaiKeyIsFromConfig] = useState(false)
 
   const initialState = vscode.getState() || {
     currFilename: '',
@@ -217,7 +219,10 @@ function MyComponent() {
       switch (message.action) {
         case 'setOpenaiKey':
           const key = message.data
-          setOpenaiKey(() => key)
+          setOpenaiKey(key)
+          if (key) {
+            setOpenaiKeyIsFromConfig(true)
+          }
           break
 
         case 'updateDocumentMetadata':
@@ -290,6 +295,25 @@ function MyComponent() {
       <VSCodePanelTab id="tab1">Test</VSCodePanelTab>
       <VSCodePanelTab id="tab2">Logs</VSCodePanelTab>
       <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
+        {!openaiKeyIsFromConfig && (
+          <Fragment>
+            <div style={{ paddingBottom: '16px' }}>
+              <div style={{ paddingBottom: '4px' }}>OpenAI Key</div>
+              <div style={{ paddingBottom: '8px', opacity: '0.5', fontSize: '10px' }}>
+                You may also set this with the <span style={{ fontFamily: 'monospace' }}>glass.openaiKey</span> setting
+              </div>
+              <VSCodeTextField
+                style={{ width: '100%' }}
+                value={openaiKey}
+                onInput={e => {
+                  const value = (e.target as any).value
+                  setOpenaiKey(value)
+                }}
+              />
+            </div>
+            <VSCodeDivider />
+          </Fragment>
+        )}
         <div style={{ paddingBottom: '14px' }}>
           <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8', fontStyle: 'italic' }}>
             {currFilename}
