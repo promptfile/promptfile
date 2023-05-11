@@ -1,5 +1,6 @@
 import {
   VSCodeButton,
+  VSCodeDivider,
   VSCodeDropdown,
   VSCodeOption,
   VSCodePanelTab,
@@ -7,7 +8,7 @@ import {
   VSCodePanels,
   VSCodeTextArea,
 } from '@vscode/webview-ui-toolkit/react'
-import { useCallback, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { render } from 'react-dom'
 
 interface State {
@@ -17,13 +18,16 @@ interface State {
   result: string
   currVariables: string[]
   model: string
-  logs: {
-    file: string
-    args: Record<string, string>
-    model: string
-    prompt: string | { role: string; content: string }[]
-    result: string
-  }[]
+  logs: Log[]
+}
+
+interface Log {
+  file: string
+  args: Record<string, string>
+  model: string
+  prompt: string | { role: string; content: string }[]
+  isChat: boolean
+  result?: string
 }
 
 const vscode = acquireVsCodeApi<State>()
@@ -56,7 +60,7 @@ function MyComponent() {
   const [currVariableValues, setCurrVariableValues] = useState(initialState.currVariableValues || {})
   const [result, setResult] = useState(initialState.result || '')
   const [model, setModel] = useState(initialState.model || chatModels[0])
-  const [logs, setLogs] = useState(initialState.logs || [])
+  const [logs, setLogs] = useState([] as any)
 
   // when React state changes, persist to vscode state
   useEffect(() => {
@@ -70,107 +74,143 @@ function MyComponent() {
     })
   }, [])
 
-  // when new chat streaming data comes in, update the result with the content delta
-  const processCompletionStream = useCallback(
-    (eventData: { choices: { text: string }[] }) => {
-      if (eventData.choices[0].text) {
-        setResult(res => res + eventData.choices[0].text)
-      }
-    },
-    [result]
-  )
-  const processChatStream = useCallback(
-    (eventData: { choices: { delta: { content: string } }[] }) => {
-      if (eventData.choices[0].delta.content) {
-        setResult(res => res + eventData.choices[0].delta.content)
-      }
-    },
-    [result]
-  )
-
-  async function handleStreamResponse(r: Response, processCb: (eventData: any) => void) {
-    if (!r.ok) {
-      throw new Error(`HTTP error: ${r.status}`)
-    }
-
-    if (r.headers.get('content-type') !== 'text/event-stream') {
-      throw new Error(`Expected "text/event-stream" content type, but received "${r.headers.get('content-type')}"`)
-    }
-
-    const reader = r.body!.getReader()
-    const decoder = new TextDecoder()
-
-    const readStream = async () => {
-      const { done, value } = await reader.read()
-
-      if (done) {
-        console.log('Stream has been closed by the server.')
-        return
-      }
-
-      const chunk = decoder.decode(value, { stream: true })
-      const lines = chunk.split('\n')
-
-      for (const line of lines) {
-        if (line.startsWith('data:')) {
-          const content = line.slice('data:'.length).trim()
-          if (content === '[DONE]') {
-            break
-          }
-          const eventData = JSON.parse(content)
-          processCb(eventData)
-        }
-      }
-
-      // Continue reading the stream
-      await readStream()
-    }
-
-    // Start reading the stream
-    try {
-      await readStream()
-    } catch (e: any) {
-      setIsError(true)
-      setResult(() => e.message)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  async function fetchCompletion(prompt: string, args: any, file: string) {
-    const r = await fetch('https://api.openai.com/v1/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${openaiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt,
-        model,
-        stream: true,
-      }),
-    })
-    await handleStreamResponse(r, processCompletionStream)
-  }
-
-  async function fetchChatCompletion(messages: any, args: any, file: string) {
-    const r = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${openaiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messages,
-        model,
-        stream: true,
-      }),
-    })
-    await handleStreamResponse(r, processChatStream)
-  }
-
   // register a callback for when the extension sends a message
   useEffect(() => {
+    // when new chat streaming data comes in, update the result with the content delta
+    function processCompletionStream(currResult: string, eventData: { choices: { text: string }[] }) {
+      if (eventData.choices[0].text) {
+        const newResult = currResult + eventData.choices[0].text
+        setResult(newResult)
+        return newResult
+      }
+      return currResult
+    }
+
+    function processChatStream(currResult: string, eventData: { choices: { delta: { content: string } }[] }) {
+      if (eventData.choices[0].delta.content) {
+        const newResult = currResult + eventData.choices[0].delta.content
+        setResult(newResult)
+        return newResult
+      }
+      return currResult
+    }
+
+    async function handleStreamResponse(r: Response, processCb: (currResult: string, eventData: any) => string) {
+      if (!r.ok) {
+        throw new Error(`HTTP error: ${r.status}`)
+      }
+
+      if (r.headers.get('content-type') !== 'text/event-stream') {
+        throw new Error(`Expected "text/event-stream" content type, but received "${r.headers.get('content-type')}"`)
+      }
+
+      const reader = r.body!.getReader()
+      const decoder = new TextDecoder()
+
+      let fullResult = ''
+
+      const readStream = async () => {
+        const { done, value } = await reader.read()
+
+        if (done) {
+          console.log('Stream has been closed by the server.')
+          return
+        }
+
+        const chunk = decoder.decode(value, { stream: true })
+        const lines = chunk.split('\n')
+
+        for (const line of lines) {
+          if (line.startsWith('data:')) {
+            const content = line.slice('data:'.length).trim()
+            if (content === '[DONE]') {
+              break
+            }
+            const eventData = JSON.parse(content)
+            fullResult = processCb(fullResult, eventData)
+          }
+        }
+
+        // Continue reading the stream
+        await readStream()
+      }
+
+      // Start reading the stream
+      try {
+        await readStream()
+        return fullResult
+      } catch (e: any) {
+        setIsError(true)
+        setResult(e.message)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    async function fetchCompletion(prompt: string, args: any, file: string) {
+      const logIndex = logs.length
+      const log: Log = {
+        isChat: false,
+        file,
+        args,
+        model,
+        prompt,
+      }
+
+      const initLogs = [...logs, log]
+      setLogs(initLogs)
+
+      const r = await fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${openaiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt,
+          model,
+          stream: true,
+        }),
+      })
+      const response = await handleStreamResponse(r, processCompletionStream)
+
+      const newLogs = [...initLogs]
+      newLogs[logIndex].result = response
+      setLogs(newLogs)
+    }
+
+    async function fetchChatCompletion(messages: any, args: any, file: string) {
+      const logIndex = logs.length
+      const log: Log = {
+        isChat: true,
+        file,
+        args,
+        model,
+        prompt: messages,
+      }
+
+      const initLogs = [...logs, log]
+      setLogs(initLogs)
+
+      const r = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${openaiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages,
+          model,
+          stream: true,
+        }),
+      })
+      const response = await handleStreamResponse(r, processChatStream)
+
+      const newLogs = [...initLogs]
+      newLogs[logIndex].result = response
+      setLogs(newLogs)
+    }
+
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
 
@@ -197,7 +237,7 @@ function MyComponent() {
 
           setIsError(false)
           setIsLoading(true)
-          setResult(() => '')
+          setResult('')
 
           if (prompt instanceof Array) {
             await fetchChatCompletion(prompt, args, file)
@@ -212,7 +252,7 @@ function MyComponent() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [openaiKey, model, processCompletionStream, processChatStream])
+  }, [chatModels, completionModels, logs, model, openaiKey, result])
 
   const exec = () => {
     if (openaiKey === '') {
@@ -225,15 +265,20 @@ function MyComponent() {
       })
       return
     }
+
+    const interpolationVars: any = {}
+    for (const variable of currVariables) {
+      interpolationVars[variable] = currVariableValues[variable]
+    }
     vscode.postMessage({
       action: 'execCurrentFile',
-      data: currVariableValues,
+      data: interpolationVars,
     })
   }
 
   const reset = () => {
     setCurrVariableValues({})
-    setResult(() => '')
+    setResult('')
   }
 
   const textColor = isError ? '#F44747' : '#007ACC'
@@ -246,7 +291,9 @@ function MyComponent() {
       <VSCodePanelTab id="tab2">Logs</VSCodePanelTab>
       <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
         <div style={{ paddingBottom: '14px' }}>
-          <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8' }}>{currFilename}</span>
+          <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8', fontStyle: 'italic' }}>
+            {currFilename}
+          </span>
         </div>
         <div style={{ paddingBottom: '8px' }}>
           <div style={{ paddingBottom: '4px' }}>Model</div>
@@ -304,7 +351,78 @@ function MyComponent() {
           {isLoading && <span style={{ backgroundColor: '#007ACC' }}>A</span>}
         </span>
       </VSCodePanelView>
-      <VSCodePanelView>Coming soon</VSCodePanelView>
+
+      {/* Logs */}
+      <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
+        {logs.length === 0 && <span>No requests</span>}
+        {logs
+          .map((log, i) => (
+            <Fragment key={i}>
+              <div>
+                <div style={{ paddingBottom: '14px' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 'bold', opacity: '0.8', fontStyle: 'italic' }}>
+                    {log.file}
+                  </span>
+                </div>
+                <div style={{ paddingBottom: '8px' }}>
+                  <div style={{ paddingBottom: '4px' }}>Model</div>
+                  <VSCodeDropdown disabled={true}>
+                    <VSCodeOption value={log.model} selected={true}>
+                      {log.model}
+                    </VSCodeOption>
+                  </VSCodeDropdown>
+                </div>
+                {Object.keys(log.args).map((v, k) => (
+                  <div key={k} style={{ paddingBottom: '8px' }}>
+                    <div style={{ paddingBottom: '4px' }}>{v}</div>
+                    <VSCodeTextArea style={{ width: '100%' }} value={log.args[v] || ''} readOnly={true} />
+                  </div>
+                ))}
+                <div style={{ paddingBottom: '8px', paddingTop: '8px' }}>
+                  <div style={{ fontWeight: 'bold' }}>Prompt</div>
+                  <VSCodePanels>
+                    <VSCodePanelTab id={`logprompt${i}`}>glass</VSCodePanelTab>
+                    <VSCodePanelTab id={`lograw${i}`}>json</VSCodePanelTab>
+                    <VSCodePanelView>
+                      <VSCodeTextArea
+                        resize={'vertical'}
+                        rows={10}
+                        style={{ width: '100%' }}
+                        value={
+                          log.isChat
+                            ? (log.prompt as any)
+                                .map((block: { role: string; content: string }) => {
+                                  const tagName = block.role[0].toUpperCase() + block.role.slice(1)
+                                  return `<${tagName}>\n${block.content}\n</${tagName}>`
+                                })
+                                .join('\n\n')
+                            : `<Prompt>\n${log.prompt}\n</Prompt>`
+                        }
+                        readOnly={true}
+                      />
+                    </VSCodePanelView>
+                    <VSCodePanelView>
+                      <VSCodeTextArea
+                        resize={'vertical'}
+                        rows={10}
+                        style={{ width: '100%', fontFamily: 'monospace' }}
+                        value={JSON.stringify(log.prompt, null, 2)}
+                        readOnly={true}
+                      />
+                    </VSCodePanelView>
+                  </VSCodePanels>
+                </div>
+                {log.result != null && (
+                  <div style={{ paddingBottom: '8px' }}>
+                    <span style={{ color: textColor, paddingTop: '16px', whiteSpace: 'pre-wrap' }}>{log.result}</span>
+                  </div>
+                )}
+              </div>
+              <VSCodeDivider />
+            </Fragment>
+          ))
+          .reverse()}
+      </VSCodePanelView>
     </VSCodePanels>
   )
 }
