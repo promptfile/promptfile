@@ -17,7 +17,7 @@ interface State {
   result: string
   currVariables: string[]
   model: string
-  history: {
+  logs: {
     file: string
     args: Record<string, string>
     model: string
@@ -47,7 +47,7 @@ function MyComponent() {
     result: '',
     currVariables: [],
     model: chatModels[0],
-    history: [],
+    logs: [],
   }
 
   const [currFilename, setCurrFilename] = useState(initialState.currFilename || '')
@@ -56,12 +56,12 @@ function MyComponent() {
   const [currVariableValues, setCurrVariableValues] = useState(initialState.currVariableValues || {})
   const [result, setResult] = useState(initialState.result || '')
   const [model, setModel] = useState(initialState.model || chatModels[0])
-  const [history, setHistory] = useState(initialState.history || [])
+  const [logs, setLogs] = useState(initialState.logs || [])
 
   // when React state changes, persist to vscode state
   useEffect(() => {
-    vscode.setState({ currFilename, isChat, currVariableValues, result, currVariables, model, history })
-  }, [currFilename, isChat, currVariableValues, result, model, currVariables, history])
+    vscode.setState({ currFilename, isChat, currVariableValues, result, currVariables, model, logs })
+  }, [currFilename, isChat, currVariableValues, result, model, currVariables, logs])
 
   // when the webview loads, send a message to the extension to get the openai key
   useEffect(() => {
@@ -73,7 +73,6 @@ function MyComponent() {
   // when new chat streaming data comes in, update the result with the content delta
   const processCompletionStream = useCallback(
     (eventData: { choices: { text: string }[] }) => {
-      console.log(eventData)
       if (eventData.choices[0].text) {
         setResult(res => res + eventData.choices[0].text)
       }
@@ -115,7 +114,6 @@ function MyComponent() {
       for (const line of lines) {
         if (line.startsWith('data:')) {
           const content = line.slice('data:'.length).trim()
-          console.log('content is', content)
           if (content === '[DONE]') {
             break
           }
@@ -281,7 +279,6 @@ function MyComponent() {
               value={currVariableValues[v] || ''}
               onInput={e => {
                 const value = (e.target as any).value
-                console.log('input the value!!!', value)
                 setCurrVariableValues(curr => ({ ...curr, [v]: value }))
               }}
               onKeyDown={e => {
