@@ -185,3 +185,34 @@ export function findMultiplePromptBlocks(text: string): { start: number; end: nu
   // If there are multiple Prompt blocks, return all but the first one.
   return promptBlocks.slice(1)
 }
+
+export function findInvalidPromptBlocks(text: string): { start: number; end: number }[] {
+  const promptBlocks: { start: number; end: number }[] = []
+  const userSystemAssistantBlocks: { start: number; end: number }[] = []
+
+  const promptBlockRegex = /<(Prompt)(\s+[^>]*)?>[\s\S]*?<\/\1>/g
+  const userSystemAssistantBlockRegex = /<(User|System|Assistant)(\s+[^>]*)?>[\s\S]*?<\/\1>/g
+
+  let blockMatch
+  while ((blockMatch = promptBlockRegex.exec(text))) {
+    const blockStart = blockMatch.index
+    const blockEnd = blockMatch.index + blockMatch[0].length
+
+    promptBlocks.push({ start: blockStart, end: blockEnd })
+  }
+
+  while ((blockMatch = userSystemAssistantBlockRegex.exec(text))) {
+    const blockStart = blockMatch.index
+    const blockEnd = blockMatch.index + blockMatch[0].length
+
+    userSystemAssistantBlocks.push({ start: blockStart, end: blockEnd })
+  }
+
+  // If there are Prompt blocks and User/System/Assistant blocks, return the Prompt blocks as invalid
+  if (promptBlocks.length > 0 && userSystemAssistantBlocks.length > 0) {
+    return promptBlocks
+  }
+
+  // If there are no Prompt blocks or no User/System/Assistant blocks, return an empty array
+  return []
+}

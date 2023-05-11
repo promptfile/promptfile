@@ -17,8 +17,10 @@ import {
 
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
 import {
+  findEmptyBlocks,
   findInvalidAttributes,
   findInvalidLines,
+  findInvalidPromptBlocks,
   findMultiplePromptBlocks,
   findUnmatchedTags,
   findUnsupportedTags,
@@ -229,6 +231,24 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         severity: DiagnosticSeverity.Error,
         range,
         message: `Only one <Prompt> block allowed per file.`,
+        source: 'glass',
+      }
+
+      return diagnostic
+    })
+  )
+
+  const invalidPromptBlocks = findInvalidPromptBlocks(text)
+  diagnostics.push(
+    ...invalidPromptBlocks.map(({ start, end }) => {
+      const range = {
+        start: textDocument.positionAt(start),
+        end: textDocument.positionAt(end),
+      }
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `<Prompt> blocks can't be mixed with <User>, <Assistant>, and <System> blocks.`,
         source: 'glass',
       }
 
