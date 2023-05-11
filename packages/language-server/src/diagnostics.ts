@@ -148,3 +148,19 @@ export function findInvalidLines(text: string): { line: number; start: number; e
 
   return invalidLines
 }
+
+export function findEmptyBlocks(text: string): { tag: string; start: number; end: number }[] {
+  const emptyBlocks: { tag: string; start: number; end: number }[] = []
+
+  const blockRegex = /<(User|Assistant|System|Prompt|Code)(\s+[^>]*)?>\s*<\/\1>/g
+  let blockMatch
+  while ((blockMatch = blockRegex.exec(text))) {
+    const blockStart = blockMatch.index
+    const blockEnd = blockMatch.index + blockMatch[0].length
+    const tag = blockMatch[1]
+
+    emptyBlocks.push({ tag, start: blockStart, end: blockEnd })
+  }
+
+  return emptyBlocks
+}

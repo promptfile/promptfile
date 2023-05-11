@@ -16,7 +16,13 @@ import {
 } from 'vscode-languageserver/node'
 
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
-import { findInvalidAttributes, findInvalidLines, findUnmatchedTags, findUnsupportedTags } from './diagnostics'
+import {
+  findEmptyBlocks,
+  findInvalidAttributes,
+  findInvalidLines,
+  findUnmatchedTags,
+  findUnsupportedTags,
+} from './diagnostics'
 import { findFoldableTagPairs } from './folding'
 import { formatDocument } from './formatting'
 
@@ -205,6 +211,25 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
         severity: DiagnosticSeverity.Error,
         range,
         message: `Invalid content outside of <User>, <Assistant>, <System>, <Prompt>, or <Code> elements.`,
+        source: 'glass',
+      }
+
+      return diagnostic
+    })
+  )
+
+  const emptyBlocks = findEmptyBlocks(text)
+  diagnostics.push(
+    ...emptyBlocks.map(({ tag, start, end }) => {
+      const range = {
+        start: textDocument.positionAt(start),
+        end: textDocument.positionAt(end),
+      }
+
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Warning,
+        range,
+        message: `Empty <${tag}> block.`,
         source: 'glass',
       }
 
