@@ -208,9 +208,9 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
       }
 
       const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
+        severity: DiagnosticSeverity.Warning,
         range,
-        message: `Invalid content outside of <User>, <Assistant>, <System>, <Prompt>, or <Code> elements.`,
+        message: `Content not contained in a block — will be ignored by compiler.`,
         source: 'glass',
       }
 

@@ -1,18 +1,8 @@
-// hello
-// this is a great prompt
-
 <System>
-You are a highly-intelligent AI.
+qwefpoijqwefpoijqwefpoij
+qwefpoijqwefpoijqwefpoij
+qwefpoijqwefpoijqwefpoij
+qwefpoijqwefpoijqwefpoij
 
-Please respond in valid JSON with the following format:
-```js
-{
-    "response": string,
-    "confidence": number // 1 (least confident) to 10 (most confident)
-}
-```
+qwefoijqwefoij
 </System>
-
-<User>
-${query}
-</User>
