@@ -31,7 +31,15 @@
             "0": {
               "name": "source.glass.transcript.row.speaker"
             }
-          }
+          },
+          "patterns": [
+            {
+              "include": "#extension-mdx-expression-flow"
+            },
+            {
+              "include": "#extension-mdx-jsx-flow"
+            }
+          ]
         }
       ]
     },
