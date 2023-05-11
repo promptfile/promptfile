@@ -8,7 +8,7 @@ import {
   VSCodePanels,
   VSCodeTextArea,
 } from '@vscode/webview-ui-toolkit/react'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { render } from 'react-dom'
 
 interface State {
@@ -37,8 +37,8 @@ const container = document.getElementById('root')
 render(<MyComponent />, container)
 
 function MyComponent() {
-  const chatModels = ['gpt-3.5-turbo', 'gpt-4']
-  const completionModels = ['text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001']
+  const chatModels = useMemo(() => ['gpt-3.5-turbo', 'gpt-4'], [])
+  const completionModels = useMemo(() => ['text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001'], [])
 
   const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -60,7 +60,7 @@ function MyComponent() {
   const [currVariableValues, setCurrVariableValues] = useState(initialState.currVariableValues || {})
   const [result, setResult] = useState(initialState.result || '')
   const [model, setModel] = useState(initialState.model || chatModels[0])
-  const [logs, setLogs] = useState([] as any)
+  const [logs, setLogs] = useState(initialState.logs || [])
 
   // when React state changes, persist to vscode state
   useEffect(() => {
