@@ -4,9 +4,14 @@ return res.text();
 </Code>
 
 
+import {blah} from './hello'
+
+<Assistant name="teehee">
+${blah}
+</Assistant>
+
 
 <User name="teeuee">
-
 Awesome, hello!
 
 --blah----
@@ -17,11 +22,14 @@ import requests
 
 def go():
     r = requests.get("hello")
+    return "hello"
 ```
-1. yes
-2. no
-3. maybe?
+###
 </User>
+
+<Assistant name="teehee">
+${hello}
+</Assistant>
 
 <Assistant name="hi">
 tell me more!

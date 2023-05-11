@@ -226,7 +226,8 @@
           {
             "scope": "source.glass.comment",
             "settings": {
-              "foreground": "#569CD6"
+              "foreground": "#575757",
+              "fontStyle": "italic"
             }
           },
           {
