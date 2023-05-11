@@ -53,7 +53,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
         if (leftPanelWebViewProvider._view.webview) {
           leftPanelWebViewProvider._view.webview.postMessage({
-            command: 'updateInterpolationVariables',
+            action: 'updateInterpolationVariables',
             data: vars,
           })
         }
@@ -63,7 +63,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument(event => {
-      if (!event.document.fileName.endsWith('.glass')) {
+      if (!isGlassFile(event.document)) {
         return
       }
       const activeEditor = vscode.window.activeTextEditor
@@ -77,7 +77,7 @@ export async function activate(context: vscode.ExtensionContext) {
         const vars = getInteroplationVariables(text)
 
         leftPanelWebViewProvider._view.webview.postMessage({
-          command: 'updateInterpolationVariables',
+          action: 'updateInterpolationVariables',
           data: vars,
         })
       } else {

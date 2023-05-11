@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import { EventEmitter, Uri, Webview, WebviewView, WebviewViewProvider, window } from 'vscode'
 import { executeGlassFile } from './executeGlassFile'
+import { getDocumentFilename, isGlassFile } from './util/isGlassFile'
 
 function getNonce() {
   let text = ''
@@ -82,19 +83,20 @@ export class LeftPanelWebview implements WebviewViewProvider {
             return
           }
 
-          const document = currentEditor.document
-
-          const fileName = document.fileName
-          if (!fileName.endsWith('.glass')) {
+          if (!isGlassFile(currentEditor.document)) {
             window.showErrorMessage('Current file is not a .glass file')
             return
           }
 
-          const output = await executeGlassFile(document, message.data)
+          const output = await executeGlassFile(currentEditor.document, message.data)
 
           this._view.webview.postMessage({
             action: 'execFileOutput',
-            data: output,
+            data: {
+              prompt: output,
+              args: message.data,
+              file: getDocumentFilename(currentEditor.document),
+            },
           })
 
           break

@@ -62,8 +62,17 @@ function MyComponent() {
     })
   }, [])
 
-  // when new streaming data comes in, update the result with the content delta
-  const processStream = useCallback(
+  // when new chat streaming data comes in, update the result with the content delta
+  const processCompletionStream = useCallback(
+    (eventData: { choices: { text: string }[] }) => {
+      console.log(eventData)
+      if (eventData.choices[0].text) {
+        setResult(res => res + eventData.choices[0].text)
+      }
+    },
+    [result]
+  )
+  const processChatStream = useCallback(
     (eventData: { choices: { delta: { content: string } }[] }) => {
       if (eventData.choices[0].delta.content) {
         setResult(res => res + eventData.choices[0].delta.content)
@@ -72,9 +81,91 @@ function MyComponent() {
     [result]
   )
 
+  async function handleStreamResponse(r: Response, processCb: (eventData: any) => void) {
+    if (!r.ok) {
+      throw new Error(`HTTP error: ${r.status}`)
+    }
+
+    if (r.headers.get('content-type') !== 'text/event-stream') {
+      throw new Error(`Expected "text/event-stream" content type, but received "${r.headers.get('content-type')}"`)
+    }
+
+    const reader = r.body!.getReader()
+    const decoder = new TextDecoder()
+
+    const readStream = async () => {
+      const { done, value } = await reader.read()
+
+      if (done) {
+        console.log('Stream has been closed by the server.')
+        return
+      }
+
+      const chunk = decoder.decode(value, { stream: true })
+      const lines = chunk.split('\n')
+
+      for (const line of lines) {
+        if (line.startsWith('data:')) {
+          const content = line.slice('data:'.length).trim()
+          console.log('content is', content)
+          if (content === '[DONE]') {
+            break
+          }
+          const eventData = JSON.parse(content)
+          processCb(eventData)
+        }
+      }
+
+      // Continue reading the stream
+      await readStream()
+    }
+
+    // Start reading the stream
+    try {
+      await readStream()
+    } catch (e: any) {
+      setIsError(true)
+      setResult(() => e.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function fetchCompletion(prompt: string, args: any, file: string) {
+    const r = await fetch('https://api.openai.com/v1/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${openaiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt,
+        model: 'text-davinci-003',
+        stream: true,
+      }),
+    })
+    await handleStreamResponse(r, processCompletionStream)
+  }
+
+  async function fetchChatCompletion(messages: any, args: any, file: string) {
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${openaiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages,
+        model,
+        stream: true,
+      }),
+    })
+    await handleStreamResponse(r, processChatStream)
+  }
+
   // register a callback for when the extension sends a message
   useEffect(() => {
-    const cb = (event: any) => {
+    const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
 
       switch (message.action) {
@@ -89,82 +180,17 @@ function MyComponent() {
           break
 
         case 'execFileOutput':
-          if (openaiKey === '') {
-            vscode.postMessage({
-              action: 'showMessage',
-              data: {
-                level: 'error',
-                text: 'Please set `glass.openaiKey` in your extension settings.',
-              },
-            })
-            break
-          }
+          const { prompt, args, file } = message.data
+
           setIsError(false)
           setIsLoading(true)
           setResult(() => '')
-          fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${openaiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              messages: message.data,
-              model,
-              stream: true,
-            }),
-          })
-            .then(r => {
-              if (!r.ok) {
-                throw new Error(`HTTP error: ${r.status}`)
-              }
 
-              if (r.headers.get('content-type') !== 'text/event-stream') {
-                throw new Error(
-                  `Expected "text/event-stream" content type, but received "${r.headers.get('content-type')}"`
-                )
-              }
-
-              const reader = r.body!.getReader()
-              const decoder = new TextDecoder()
-
-              const readStream = async () => {
-                const { done, value } = await reader.read()
-
-                if (done) {
-                  console.log('Stream has been closed by the server.')
-                  return
-                }
-
-                const chunk = decoder.decode(value, { stream: true })
-                const lines = chunk.split('\n')
-
-                for (const line of lines) {
-                  if (line.startsWith('data:')) {
-                    const content = line.slice('data:'.length).trim()
-                    if (content === '[DONE]') {
-                      break
-                    }
-                    const eventData = JSON.parse(content)
-                    processStream(eventData)
-                  }
-                }
-
-                // Continue reading the stream
-                await readStream()
-              }
-
-              // Start reading the stream
-              return readStream()
-            })
-            .catch((e: any) => {
-              setIsError(true)
-              setResult(() => e.message)
-            })
-            .finally(() => {
-              setIsLoading(false)
-            })
-
+          if (prompt instanceof Array) {
+            await fetchChatCompletion(prompt, args, file)
+          } else {
+            await fetchCompletion(prompt, args, file)
+          }
           break
       }
     }
@@ -173,9 +199,19 @@ function MyComponent() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [openaiKey, model, processStream])
+  }, [openaiKey, model, processCompletionStream, processChatStream])
 
   const exec = () => {
+    if (openaiKey === '') {
+      vscode.postMessage({
+        action: 'showMessage',
+        data: {
+          level: 'error',
+          text: 'Please set `glass.openaiKey` in your extension settings.',
+        },
+      })
+      return
+    }
     vscode.postMessage({
       action: 'execCurrentFile',
       data: currVariableValues,
