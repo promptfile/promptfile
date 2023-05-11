@@ -46,7 +46,7 @@ export function findInvalidAttributes(text: string) {
 }
 
 export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
-  const tagPattern = /<\/?([\w-]+).*?>/g
+  const tagPattern = /^<\/?([\w-]+).*?>/g
   const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt'])
   const unsupportedTags: { tag: string; start: number }[] = []
 
@@ -106,8 +106,8 @@ function isInvalidLine(line: string): boolean {
   }
 
   // Check if the line is inside a valid element or contains a valid element with attributes
-  const openTagCount = (line.match(/<(User|Assistant|System|Prompt|Code)(\s+[^>]*)?>/g) || []).length
-  const closeTagCount = (line.match(/<\/(User|Assistant|System|Prompt|Code)>/g) || []).length
+  const openTagCount = (line.match(/^<(User|Assistant|System|Prompt|Code)(\s+[^>]*)?>/g) || []).length
+  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code)>/g) || []).length
 
   return openTagCount === 0 && closeTagCount === 0
 }
@@ -119,24 +119,24 @@ export function findInvalidLines(text: string): { line: number; start: number; e
   let insideValidElement = 0
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
+    const line = lines[i].trim()
 
     if (
-      line.includes('<User') ||
-      line.includes('<Assistant') ||
-      line.includes('<System') ||
-      line.includes('<Prompt') ||
-      line.includes('<Code')
+      line.startsWith('<User') ||
+      line.startsWith('<Assistant') ||
+      line.startsWith('<System') ||
+      line.startsWith('<Prompt') ||
+      line.startsWith('<Code')
     ) {
       insideValidElement++
     }
 
     if (
-      line.includes('</User>') ||
-      line.includes('</Assistant>') ||
-      line.includes('</System>') ||
-      line.includes('</Prompt>') ||
-      line.includes('</Code>')
+      line.startsWith('</User>') ||
+      line.startsWith('</Assistant>') ||
+      line.startsWith('</System>') ||
+      line.startsWith('</Prompt>') ||
+      line.startsWith('</Code>')
     ) {
       insideValidElement--
     }
