@@ -43,8 +43,9 @@ function MyComponent() {
 
   const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [initializing, setInitializing] = useState(true)
   const [openaiKey, setOpenaiKey] = useState('')
-  const [openaiKeyIsFromConfig, setOpenaiKeyIsFromConfig] = useState(false)
+  const [inputKey, setInputKey] = useState('')
 
   const initialState = vscode.getState() || {
     currFilename: '',
@@ -220,9 +221,7 @@ function MyComponent() {
         case 'setOpenaiKey':
           const key = message.data
           setOpenaiKey(key)
-          if (key) {
-            setOpenaiKeyIsFromConfig(true)
-          }
+          setInitializing(false)
           break
 
         case 'updateDocumentMetadata':
@@ -290,45 +289,61 @@ function MyComponent() {
 
   const modelSelection = isChat ? chatModels : completionModels
 
+  if (initializing) {
+    return <div />
+  }
+
   return (
     <div style={{ flexDirection: 'column' }}>
       <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', paddingBottom: '4px' }}>
-        <svg
-          style={{ opacity: 0.3 }}
-          width="24"
-          height="24"
-          viewBox="0 0 120 120"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask id="path-1-inside-1_2_11" fill="white">
-            <rect width="120" height="120" rx="3" />
-          </mask>
-          <rect width="120" height="120" rx="3" stroke="white" stroke-width="24" mask="url(#path-1-inside-1_2_11)" />
-          <line x1="94.2565" y1="83.8838" x2="72.694" y2="106.384" stroke="white" stroke-width="4" />
-          <line x1="116.796" y1="47.2793" x2="98.9831" y2="66.9668" stroke="white" stroke-width="4" />
-          <line x1="23.0065" y1="67.0088" x2="1.44398" y2="89.5088" stroke="white" stroke-width="4" />
-          <line x1="78.319" y1="44.5088" x2="56.7565" y2="67.0088" stroke="white" stroke-width="4" />
-          <line x1="39.8815" y1="89.5088" x2="18.319" y2="112.009" stroke="white" stroke-width="4" />
-          <line x1="56.7991" y1="10.7129" x2="39.9241" y2="29.4629" stroke="white" stroke-width="4" />
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0,0,256,254.125">
+          <g transform="translate(28.0292,27.82391) scale(0.78102,0.78102)">
+            <g
+              fill="none"
+              fill-rule="nonzero"
+              stroke="#147c72"
+              stroke-width="none"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              stroke-miterlimit="10"
+              stroke-dasharray=""
+              stroke-dashoffset="0"
+              font-family="none"
+              font-weight="none"
+              font-size="none"
+              text-anchor="none"
+            >
+              <g transform="translate(0.93431,7.47126) scale(1.86861,1.86861)">
+                <g>
+                  <rect x="4" y="0" width="128" height="128" rx="3" ry="0" stroke-width="24"></rect>
+                  <path d="M104.888,96.7676l-23,24.0004" stroke-width="8"></path>
+                  <path d="M129.966,51.6837l-19,21" stroke-width="8"></path>
+                  <path d="M29.888,60.7676l-23.00005,24" stroke-width="8"></path>
+                  <path d="M88.888,48.7676l-23,24" stroke-width="8"></path>
+                  <path d="M47.888,96.7676l-23,24.0004" stroke-width="8"></path>
+                  <path d="M61.888,10.7676l-16.6054,17.328" stroke-width="8"></path>
+                </g>
+              </g>
+            </g>
+          </g>
         </svg>
-        <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>
+        <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '6px' }}>
           {currFilename.split('.glass')[0]}
           <span style={{ opacity: 0.3, color: 'white', fontStyle: 'italic' }}>.glass</span>
         </span>
       </div>
-      {!openaiKeyIsFromConfig ? (
+      {openaiKey.trim().length === 0 ? (
         <div style={{ paddingTop: '16px' }}>
           <div style={{ paddingBottom: '16px' }}>
             The Glass playground requires an OpenAI API key to function. Please enter one below.
           </div>
           <VSCodeTextField
             style={{ width: '100%', paddingBottom: '8px' }}
-            value={openaiKey}
+            value={inputKey}
             placeholder="sk-..."
             onInput={e => {
               const value = (e.target as any).value
-              setOpenaiKey(value)
+              setInputKey(value)
             }}
           />
 
@@ -342,8 +357,8 @@ function MyComponent() {
         <VSCodePanels>
           <VSCodePanelTab id="tab1">Playground</VSCodePanelTab>
           <VSCodePanelTab id="tab2">Logs</VSCodePanelTab>
-          <VSCodePanelTab id="tab3">Config</VSCodePanelTab>
-          <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
+          <VSCodePanelTab id="tab3">Env</VSCodePanelTab>
+          <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px', paddingTop: '16px' }}>
             <div style={{ paddingBottom: '8px' }}>
               <div style={{ paddingBottom: '4px' }}>Model</div>
               <VSCodeDropdown

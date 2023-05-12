@@ -62,6 +62,18 @@
     "vscode-languageclient": "^8.1.0"
   },
   "contributes": {
+    "menus": {
+      "view/title": [
+        {
+          "command": "glass.openSettings",
+          "name": "Glass settings"
+        },
+        {
+          "command": "glass.openDocs",
+          "name": "Documentation"
+        }
+      ]
+    },
     "iconThemes": [
       {
         "id": "glass-icon-theme",
@@ -124,12 +136,20 @@
     ],
     "commands": [
       {
+        "command": "glass.openSettings",
+        "title": "Glass: settings"
+      },
+      {
+        "command": "glass.openDocs",
+        "title": "Glass: documentation"
+      },
+      {
         "command": "glass.transpileCurrentFile",
-        "title": "Glass: Transpile current file"
+        "title": "Glass: transpile current file"
       },
       {
         "command": "glass.transpileAll",
-        "title": "Glass: Transpile all"
+        "title": "Glass: transpile all"
       }
     ],
     "configuration": [

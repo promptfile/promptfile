@@ -161,6 +161,14 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(
+    vscode.commands.registerCommand('glass.openSettings', async () => {
+      await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
+    }),
+    vscode.commands.registerCommand('glass.openDocs', async () => {
+      await vscode.env.openExternal(vscode.Uri.parse('https://language.glass'))
+
+      await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
+    }),
     vscode.commands.registerCommand('glass.transpileAll', async () => {
       const workspaceFolders = vscode.workspace.workspaceFolders
       if (workspaceFolders) {
