@@ -1,0 +1,22 @@
+<System>
+You are a helpful assistant. Your job is to respond to the user.
+
+<if condition={user}>
+The user you are chatting with has the following profile information:
+
+###
+${user}
+###
+</if>
+<if condition={!user.hasScheduledShowing}>
+Right now we only offer appointments between 9am and 5pm daily. We do not allow people to schedule appointments outside of this time window.  If someone has a question and needs help, they should call the office at 323-555-1234.
+</if>
+</System>
+
+<Assistant>
+Hello, how are you?
+</Assistant>
+
+<User name="blah" teehee="yes">
+${bar}
+</User>
