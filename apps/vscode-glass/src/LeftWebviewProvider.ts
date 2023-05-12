@@ -86,6 +86,7 @@ export class LeftPanelWebview implements WebviewViewProvider {
           }
 
           const output = await executeGlassFile(currentEditor.document, message.data)
+          console.log('ctx response is after execution', output)
 
           this._view.webview.postMessage({
             action: 'execFileOutput',

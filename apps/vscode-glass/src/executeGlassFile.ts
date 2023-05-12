@@ -1,6 +1,7 @@
 import { constructGlassOutputFile, getGlassExportName, transpileGlassFile } from '@glass-lang/glassc'
 import * as esbuild from 'esbuild'
 import fs from 'fs'
+import fetch from 'node-fetch'
 import path from 'path'
 import { TextDecoder } from 'util'
 import vm from 'vm'
@@ -50,6 +51,10 @@ context.response = ${getGlassExportName(fileName)}(${JSON.stringify(interpolatio
   })
 
   const bundledCode = new TextDecoder().decode(result.outputFiles[0].contents)
+  console.log('bundled code is', bundledCode)
+  fs.writeFileSync(path.join(outDir, 'bundle-tmp.ts'), bundledCode, {
+    encoding: 'utf-8',
+  })
 
   fs.unlinkSync(tmpFilePath)
 
@@ -64,11 +69,16 @@ context.response = ${getGlassExportName(fileName)}(${JSON.stringify(interpolatio
     process,
     module: { exports: {} },
     require: require,
+    __filename: 'outputFile.js',
+    setTimeout,
+    clearTimeout,
+    setInterval,
+    clearInterval,
+    fetch,
   }
 
   vm.createContext(ctx)
   script.runInContext(ctx)
 
-  console.log('ctx response is after execution', context.response)
   return context.response
 }

@@ -40,12 +40,13 @@ import {hello} from './world'
 </User>
 
 <Code>
-\${ignoreMe}
+const a = await fetch(url)
+const text = await a.text()
 </Code>
 
 <Assistant>
 \${foo}
 </Assistant>`)
-    ).to.deep.equal({ interpolationVariables: ['foo', 'bar'], isChat: true })
+    ).to.deep.equal({ interpolationVariables: ['foo', 'bar', 'url'], isChat: true })
   })
 })
