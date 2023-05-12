@@ -54,13 +54,21 @@ export class LeftPanelWebview implements WebviewViewProvider {
   private activateMessageListener() {
     this._view.webview.onDidReceiveMessage(async (message: any) => {
       switch (message.action) {
+        case 'saveOpenaiKey':
+          const newKey = message.data.key
+          const config = vscode.workspace.getConfiguration('glass')
+          await config.update('openaiKey', newKey, vscode.ConfigurationTarget.Global)
+          this._view.webview.postMessage({
+            action: 'setOpenaiKey',
+            data: newKey,
+          })
+          break
         case 'getOpenaiKey':
           this._view.webview.postMessage({
             action: 'setOpenaiKey',
             data: vscode.workspace.getConfiguration().get('glass.openaiKey'),
           })
           break
-
         case 'showMessage':
           const level = message.data.level
           const text = message.data.text

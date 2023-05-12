@@ -289,6 +289,26 @@ function MyComponent() {
 
   const modelSelection = isChat ? chatModels : completionModels
 
+  const saveKey = () => {
+    const trimmedKey = inputKey.trim()
+    if (!trimmedKey.startsWith('sk-')) {
+      vscode.postMessage({
+        action: 'showMessage',
+        data: {
+          level: 'error',
+          text: '',
+        },
+      })
+      return
+    }
+    vscode.postMessage({
+      action: 'saveOpenaiKey',
+      data: {
+        key: trimmedKey,
+      },
+    })
+  }
+
   if (initializing) {
     return <div />
   }
@@ -347,7 +367,9 @@ function MyComponent() {
             }}
           />
 
-          <VSCodeButton style={{ width: '100%' }}>Save API key</VSCodeButton>
+          <VSCodeButton style={{ width: '100%' }} onClick={() => saveKey()}>
+            Save API key
+          </VSCodeButton>
           <div style={{ opacity: 0.5, paddingTop: '32px' }}>
             Note: Glass does not store or access this key remotely — it exists only in your VSCode settings as{' '}
             <span style={{ fontFamily: 'monospace' }}>glass.openaiKey</span>.
