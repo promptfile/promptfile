@@ -13,13 +13,11 @@
     "listFiles": false,
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
-    "pretty": true,
     "resolveJsonModule": true,
     "sourceMap": true,
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "traceResolution": false,
     "types": ["node", "mocha"]
   },
   "compileOnSave": false,

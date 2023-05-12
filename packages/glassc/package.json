@@ -38,6 +38,7 @@
     "mdast-util-mdx": "^2.0.1",
     "micromark-extension-frontmatter": "^1.1.0",
     "micromark-extension-mdxjs": "^1.0.0",
+    "@glass-lang/interpolator": "*",
     "prettier": "^2.8.8",
     "typescript": "^5.0.4"
   },

@@ -51,10 +51,6 @@ context.response = ${getGlassExportName(fileName)}(${JSON.stringify(interpolatio
   })
 
   const bundledCode = new TextDecoder().decode(result.outputFiles[0].contents)
-  console.log('bundled code is', bundledCode)
-  fs.writeFileSync(path.join(outDir, 'bundle-tmp.ts'), bundledCode, {
-    encoding: 'utf-8',
-  })
 
   fs.unlinkSync(tmpFilePath)
 
@@ -70,10 +66,6 @@ context.response = ${getGlassExportName(fileName)}(${JSON.stringify(interpolatio
     module: { exports: {} },
     require: require,
     __filename: 'outputFile.js',
-    setTimeout,
-    clearTimeout,
-    setInterval,
-    clearInterval,
     fetch,
   }
 

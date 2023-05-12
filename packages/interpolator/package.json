@@ -1,0 +1,37 @@
+{
+  "name": "@glass-lang/interpolator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "test": "mocha --exit",
+    "test:watch": "mocha --watch",
+    "build": "tsup src/index.ts",
+    "dev": "npm run build -- --watch",
+    "prepare": "npm run build",
+    "lint": "eslint src --ext ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.7",
+    "eslint-config-custom": "*",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.5.0",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.4"
+  },
+  "tsup": {
+    "sourcemap": true,
+    "format": [
+      "cjs"
+    ],
+    "clean": true,
+    "dts": true
+  }
+}

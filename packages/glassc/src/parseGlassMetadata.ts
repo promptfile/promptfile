@@ -1,5 +1,5 @@
+import { parseGlassBlocks } from '@glass-lang/interpolator'
 import { parseCodeBlock } from './parseCodeBlock'
-import { parseGlassBlocks } from './parseGlassBlocks'
 import { parseGlassASTImports } from './util/parseGlassAST'
 
 const contentBlocks = new Set(['System', 'User', 'Assistant', 'Prompt'])

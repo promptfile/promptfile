@@ -14,6 +14,7 @@
     { "directory": "apps/vscode-glass", "changeProcessCWD": true },
     { "directory": "apps/docs", "changeProcessCWD": true },
     { "directory": "packages/glassc", "changeProcessCWD": true },
+    { "directory": "packages/interpolator", "changeProcessCWD": true },
     { "directory": "packages/language-server", "changeProcessCWD": true },
     { "directory": "packages/rig", "changeProcessCWD": true }
   ],

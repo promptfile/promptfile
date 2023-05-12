@@ -1,6 +1,6 @@
-import { parseGlassBlocks } from './parseGlassBlocks.js'
-import { removeGlassComments } from './removeGlassComments.js'
-import { interpolate } from './util/interpolate.js'
+import { interpolate } from './interpolate'
+import { parseGlassBlocks } from './parseGlassBlocks'
+import { removeGlassComments } from './removeGlassComments'
 
 /**
  * Takes a glass template string and interpolation variables and outputs a string you can use to prompt GPT-3 (e.g. text-davinci-003).

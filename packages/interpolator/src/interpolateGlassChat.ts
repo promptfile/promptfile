@@ -1,7 +1,6 @@
-import { parseGlassBlocks } from './parseGlassBlocks.js'
-import { removeGlassComments } from './removeGlassComments.js'
-import { checkOk } from './util/checkOk.js'
-import { interpolate } from './util/interpolate.js'
+import { interpolate } from './interpolate'
+import { parseGlassBlocks } from './parseGlassBlocks'
+import { removeGlassComments } from './removeGlassComments'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
@@ -27,11 +26,12 @@ export function interpolateGlassChat(
   let lastKshotSequence = ''
 
   function drainKshotSequence(blocks: ChatCompletionRequestMessage[], kshotVarName: string, kshots: any) {
-    checkOk(kshots, `missing kshot variables in ${fileName}.glass: {${kshotVarName}}`)
-    checkOk(
-      kshots instanceof Array,
-      `kshot variables for glass template ${fileName}.glass @ ${kshotVarName} is not an array`
-    )
+    if (!kshots) {
+      throw new Error(`missing kshot variables in ${fileName}.glass: {${kshotVarName}}`)
+    }
+    if (!(kshots instanceof Array)) {
+      throw new Error(`kshot variables for glass template ${fileName}.glass @ ${kshotVarName} is not an array`)
+    }
 
     const kshotsToAdd = kshots.flatMap((kshotVars: any) => {
       return blocks.map(b => {

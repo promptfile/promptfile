@@ -1,3 +1,4 @@
+import { removeGlassComments } from '@glass-lang/interpolator'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
 import { fromMarkdown } from 'mdast-util-from-markdown'
@@ -10,7 +11,6 @@ import { mdxMd } from 'micromark-extension-mdx-md'
 import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
 import { combineExtensions } from 'micromark-util-combine-extensions'
 import * as path from 'node:path'
-import { removeGlassComments } from '../removeGlassComments'
 import { removeGlassFrontmatter } from '../removeGlassFrontmatter'
 
 export function parseGlassAST(
