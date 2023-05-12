@@ -1,21 +1,12 @@
-import { Parser } from 'acorn'
-import acornJsx from 'acorn-jsx'
 import camelcase from 'camelcase'
-import { fromMarkdown } from 'mdast-util-from-markdown'
-import { frontmatterFromMarkdown } from 'mdast-util-frontmatter'
-import { mdxFromMarkdown } from 'mdast-util-mdx'
-import { frontmatter } from 'micromark-extension-frontmatter'
-import { mdxExpression } from 'micromark-extension-mdx-expression'
-import { mdxJsx } from 'micromark-extension-mdx-jsx'
-import { mdxMd } from 'micromark-extension-mdx-md'
-import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
-import { combineExtensions } from 'micromark-util-combine-extensions'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
+import { parseCodeBlock } from './parseCodeBlock.js'
 import { parseGlassBlocks } from './parseGlassBlocks.js'
 import { removeGlassComments } from './removeGlassComments.js'
 import { removeGlassFrontmatter } from './removeGlassFrontmatter.js'
+import { parseGlassAST } from './util/parseGlassAST.js'
 
 const extension = 'glass'
 
@@ -34,6 +25,10 @@ export function transpileGlassFile(
     language,
   }: { workspaceFolder: string; folderPath: string; outputDirectory: string; fileName: string; language: string }
 ) {
+  if (language !== 'typescript' && language !== 'javascript') {
+    throw new Error(`${language} not supported yet`)
+  }
+
   // first, parse the document blocks to make sure the document is valid
   // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output
   const blocks = parseGlassBlocks(doc)
@@ -48,53 +43,15 @@ export function transpileGlassFile(
   const exportName = getGlassExportName(fileName)
   const isChat = isChatTemplate(doc)
 
-  const mdxSettings = {
-    acorn: Parser.extend(acornJsx()),
-    acornOptions: { ecmaVersion: 2020, sourceType: 'module' },
-    addResult: true,
-  }
-
-  const mdxExtension = combineExtensions([
-    mdxjsEsm(mdxSettings as any),
-    mdxExpression(),
-    mdxJsx(mdxSettings as any),
-    mdxMd,
-  ])
-
-  const tree = fromMarkdown(doc, {
-    // extensions: [mdxjs(), frontmatter(['yaml', 'toml'])],
-    extensions: [mdxExtension, frontmatter(['yaml', 'toml'])],
-    mdastExtensions: [mdxFromMarkdown(), frontmatterFromMarkdown(['yaml', 'toml'])],
+  const { imports, frontmatterArgs, interpolationArgs, jsxExpressions, isAsync } = parseGlassAST(doc, {
+    workspaceFolder,
+    folderPath,
+    outputDirectory,
+    fileName,
   })
 
   // remove frontmatter after parsing the AST
   doc = removeGlassFrontmatter(doc)
-
-  const parts: string[] = []
-  const imports: string[] = []
-  const frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[] = []
-  const interpolationArgs: Record<string, boolean> = {}
-  const jsxExpressions: string[] = []
-  let isAsync = false
-
-  for (const node of tree.children) {
-    const async = parseAst(
-      { workspaceFolder, folderPath, fileName, outputDirectory },
-      node,
-      parts,
-      imports,
-      frontmatterArgs,
-      interpolationArgs,
-      jsxExpressions
-    )
-    if (async) {
-      isAsync = true
-    }
-  }
-
-  if (language !== 'typescript' && language !== 'javascript') {
-    throw new Error(`${language} not supported yet`)
-  }
 
   // all variables inside {} are interpolation variables, including ones like {foo.bar}
   const allInterpolationVars = Object.keys(interpolationArgs)
@@ -145,22 +102,42 @@ export function transpileGlassFile(
     kshotMap[kshotName].push(kshotArgName)
   }
 
-  const allInterpolationNames = Array.from(new Set(interpolationVarNames.concat(Object.keys(kshotMap))))
+  const parsedCodeBlocks = codeBlocks.map(block => parseCodeBlock(`${imports.join('\n')}\n${block.content}`))
+  const hasAsyncCodeBlocks = parsedCodeBlocks.filter(block => block.isAsync).length > 0
+
+  const interpolationVarSet = new Set(interpolationVarNames.concat(Object.keys(kshotMap)))
+  for (const block of parsedCodeBlocks) {
+    for (const symbol of block.symbolsAddedToScope) {
+      interpolationVarSet.delete(symbol)
+    }
+    for (const symbol of block.importedSymbols) {
+      interpolationVarSet.delete(symbol)
+    }
+    for (const symbol of block.undeclaredValuesNeededInScope) {
+      interpolationVarSet.add(symbol)
+    }
+  }
+
+  const allInterpolationNames = Array.from(interpolationVarSet)
 
   // TODO: fix this ugly
   if (frontmatterArgs.length === 0 && interpolationVarNames.length > 0) {
-    argsString = interpolationVarNames
+    argsString = allInterpolationNames
       .map(arg => arg + ': string')
-      .concat(
-        // add the kshots to the arguments
-        Object.keys(kshotMap).map(kshotVariable => {
-          return `${kshotVariable}: { ${kshotMap[kshotVariable]
-            .map((kshotArg: any) => kshotArg + ': string')
-            .join(', ')} }[]`
-        })
-      )
+      // .concat(
+      //   // add the kshots to the arguments
+      //   Object.keys(kshotMap).map(kshotVariable => {
+      //     return `${kshotVariable}: { ${kshotMap[kshotVariable]
+      //       .map((kshotArg: any) => kshotArg + ': string')
+      //       .join(', ')} }[]`
+      //   })
+      // )
       .join(', ')
-    fullArgString = language === 'typescript' ? `args: { ${argsString} }` : 'args'
+    if (allInterpolationNames.length > 0) {
+      fullArgString = language === 'typescript' ? `args: { ${argsString} }` : 'args'
+    } else {
+      fullArgString = ''
+    }
   }
 
   let codeSanitizedDoc = doc
@@ -197,7 +174,7 @@ export function transpileGlassFile(
 
   const code = `${imports.join('\n')}
 
-export ${isAsync ? 'async' : ''} function ${exportName}(${fullArgString}) {
+export ${isAsync || hasAsyncCodeBlocks ? 'async' : ''} function ${exportName}(${fullArgString}) {
   ${argsString ? `const {${allInterpolationNames.join(',')}} = args` : ''}
   ${codeBlocks.map(b => b.content).join('\n')}
   const interpolations = {
@@ -333,195 +310,6 @@ function recursiveCodegen(workspaceFolder: string, folderPath: string, language:
     functions.push(...transpileGlassHelper(workspaceFolder, filePath, language, outputDirectory))
   }
   return functions
-}
-
-function parseAst(
-  folders: { workspaceFolder: string; folderPath: string; fileName: string; outputDirectory: string },
-  node: any,
-  parts: string[],
-  imports: string[],
-  frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[],
-  interpolationArgs: Record<string, boolean>,
-  jsxExpressions: string[]
-) {
-  let isAsync = false
-
-  switch (node.type) {
-    case 'paragraph': {
-      const paraParts: string[] = []
-      for (const child of node.children) {
-        const async = parseAst(folders, child, paraParts, imports, frontmatterArgs, interpolationArgs, jsxExpressions)
-        if (async) {
-          isAsync = true
-        }
-      }
-
-      for (let i = 0; i < paraParts.length; i++) {
-        const paraPart = paraParts[i]
-        parts.push(paraPart)
-        if (i === paraParts.length - 1) {
-          parts.push(JSON.stringify('\n'))
-        }
-      }
-
-      parts.push(JSON.stringify('\n'))
-
-      break
-    }
-
-    case 'text': {
-      parts.push(JSON.stringify(node.value))
-
-      break
-    }
-
-    case 'mdxTextExpression': {
-      if (node.value.startsWith('/*') && node.value.endsWith('*/')) {
-        return // just a comment
-      }
-
-      jsxExpressions.push(node.value)
-
-      // see if it's a valid interpolation arg (it is alphanumeric with optional _ and .)
-      const interpolationArgMatch = node.value.trim().match(/^[a-zA-Z0-9_.]+$/)
-      if (interpolationArgMatch) {
-        interpolationArgs[interpolationArgMatch[0]] = true
-      }
-
-      const async = node.value.trim().startsWith('await')
-      if (async) {
-        isAsync = true
-      }
-      parts.push(node.value)
-
-      break
-    }
-
-    case 'mdxFlowExpression': {
-      const nodeText = node.value.trim()
-      // If nodeText looks like a javascript comment block (e.g. /* */) ignore it
-      if (nodeText.startsWith('/*') && nodeText.endsWith('*/')) {
-        return
-      }
-
-      jsxExpressions.push(node.value)
-
-      // see if it's a valid interpolation arg (it is alphanumeric with optional _ and .)
-      const interpolationArgMatch = node.value.trim().match(/^[a-zA-Z0-9_.]+$/)
-      if (interpolationArgMatch) {
-        interpolationArgs[interpolationArgMatch[0]] = true
-      }
-
-      const lines = nodeText.split('\n')
-      if (lines.length === 1) {
-        parts.push(nodeText)
-      } else if (lines.length > 1) {
-        const async = nodeText.trim().startsWith('async')
-        if (async) {
-          isAsync = true
-        }
-        parts.push(`${nodeText.startsWith('async') ? 'await ' : ''}(${nodeText})()`)
-      }
-
-      parts.push('\n')
-
-      break
-    }
-
-    case 'mdxjsEsm': {
-      const { workspaceFolder, folderPath } = folders
-      const importLine = node.value
-
-      // find the import groups, importLine will match `import (.+) from '(.+)'`
-      const match = /import (.+) from ['"](.+)['"]/gms.exec(importLine)
-      if (!match) {
-        return
-      }
-      const [, importName, importPath] = match
-
-      // importPath is the path to the file being imported
-
-      let resolvedPath = importPath
-
-      if (importPath.startsWith('.')) {
-        const targetDirectory = folders.outputDirectory
-        const outDir = targetDirectory.replace('${workspaceFolder}', workspaceFolder)
-
-        // current path to imort
-        const currentFilePath = path.join(folderPath, importPath)
-
-        // importPath is relative to currentFilePath; we need to make it relative to the output directory (outDir)
-        let relativeImportPath = path.relative(outDir, currentFilePath)
-        if (!relativeImportPath.startsWith('.')) {
-          relativeImportPath = `./${relativeImportPath}`
-        }
-
-        resolvedPath = relativeImportPath
-      }
-
-      // imports.push(node.value)
-      imports.push(`import ${importName} from '${resolvedPath}'`)
-
-      break
-    }
-
-    case 'yaml': {
-      // Do nothing, for now
-      const lines = node.value.split('\n')
-      for (const line of lines) {
-        if (line.trim() === '') {
-          continue
-        }
-        const [name, rest] = line.split(/:\s+/)
-        const [type, description] = rest.split(/\s+/)
-        const optional = type.endsWith('?')
-        const normType = optional ? type.slice(0, -1) : type
-        frontmatterArgs.push({ name, type: normType, description, optional })
-      }
-
-      break
-    }
-
-    case 'toml': {
-      // Do nothing, for now
-      const lines = node.value.split('\n')
-      for (const line of lines) {
-        if (line.trim() === '') {
-          continue
-        }
-        const [name, rest] = line.split(/:\s+/)
-        const [type, description] = rest.split(/\s+/)
-        const optional = type.endsWith('?')
-        const normType = optional ? type.slice(0, -1) : type
-        frontmatterArgs.push({ name, type: normType, description, optional })
-      }
-
-      break
-    }
-
-    default:
-      const paraParts: any[] = []
-      if (node.children instanceof Array) {
-        for (const child of node.children) {
-          const async = parseAst(folders, child, paraParts, imports, frontmatterArgs, interpolationArgs, jsxExpressions)
-          if (async) {
-            isAsync = true
-          }
-        }
-
-        for (let i = 0; i < paraParts.length; i++) {
-          const paraPart = paraParts[i]
-          parts.push(paraPart)
-          if (i === paraParts.length - 1) {
-            parts.push(JSON.stringify('\n'))
-          }
-        }
-
-        parts.push(JSON.stringify('\n'))
-      }
-      break
-  }
-  return isAsync
 }
 
 export function getGlassExportName(filePath: string) {

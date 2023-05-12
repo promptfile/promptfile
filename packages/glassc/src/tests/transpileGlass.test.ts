@@ -207,7 +207,7 @@ bar: string
   it('should transpile with code block', () => {
     const transpiled = transpileGlassFile(
       `<Code>
-console.log(a)
+const a = "3"
 </Code>
 <Prompt>
 \${a}
@@ -221,13 +221,47 @@ console.log(a)
       }
     )
 
-    expect(transpiled.code).to.equal(`export function getFooPrompt(args: { a: string }) {
-  const { a } = args
-  console.log(a)
+    expect(transpiled.code).to.equal(`export function getFooPrompt() {
+  const a = '3'
   const interpolations = {
     0: a,
   }
-  const TEMPLATE = '<Code>\\nconsole.log(a)\\n</Code>\\n<Prompt>\\n\${0}\\n</Prompt>'
+  const TEMPLATE = '<Code>\\nconst a = "3"\\n</Code>\\n<Prompt>\\n\${0}\\n</Prompt>'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
+}`)
+  })
+
+  it('should transpile with complex code block', () => {
+    const transpiled = transpileGlassFile(
+      `import c from "c"
+
+<Code>
+const a = "3"
+</Code>
+<Prompt>
+\${a} \${b} \${c}
+</Prompt>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
+
+    expect(transpiled.code).to.equal(`import c from 'c'
+
+export function getFooPrompt(args: { b: string }) {
+  const { b } = args
+  const a = '3'
+  const interpolations = {
+    0: a,
+    1: b,
+    2: c,
+  }
+  const TEMPLATE =
+    'import c from "c"\\n\\n<Code>\\nconst a = "3"\\n</Code>\\n<Prompt>\\n\${0} \${1} \${2}\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
