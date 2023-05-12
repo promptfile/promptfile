@@ -1,27 +1,24 @@
+// first, we must load in the website HTML and the previous messages in the conversation
 <Code>
 const res = await fetch(url)
-const websiteHtml = await res.text()
+const response = await res.text()
 </Code>
 
 
-
-
+// start with the system prompt 
 <System>
-Your job is to answer questions about this website content:
-
-${url}
-Content:
-
+Use the data below from the API to answer the user's request:
 ###
-${websiteHtml}
+${response}
 ###
-
-Answer the user's question based on the content above:
 </System>
 
 
+// add in the last 20 messsages of the transcript
+<for each={messages} fragment={item => <Block role={item.role} content={item.content} />} />
 
 
+// add the user's most recent message
 <User>
 ${question}
 </User>

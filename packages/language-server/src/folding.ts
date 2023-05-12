@@ -1,7 +1,7 @@
 export function findFoldableTagPairs(
   text: string
 ): { tag: string; start: number; end: number; closingStart: number }[] {
-  const tagPattern = /<(\/?)(Code|User|System|Assistant|Prompt).*?>/g
+  const tagPattern = /<(\/?)(Code|User|System|Assistant|Prompt|for).*?>/g
   const tagStack: { tag: string; start: number }[] = []
   const tagPairs: { tag: string; start: number; end: number; closingStart: number }[] = []
 

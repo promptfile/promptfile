@@ -226,7 +226,7 @@
             }
           },
           {
-            "scope": "source.glass.if.name",
+            "scope": "source.glass.for.name",
             "settings": {
               "foreground": "#E5C75E",
               "fontStyle": "italic"

@@ -365,6 +365,18 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
       detail: 'executable typescript code block',
       data: 5,
     },
+    {
+      label: '<for>',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'for each={$1} fragment={item => <Block role={item.role} content={item.content} />} />',
+      insertTextFormat: InsertTextFormat.Snippet,
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a for loop',
+      },
+      detail: 'loop over elements in an array',
+      data: 5,
+    },
   ]
   const document = documents.get(textDocumentPosition.textDocument.uri)
   if (!document) {
@@ -376,19 +388,58 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     end: textDocumentPosition.position,
   })
 
-  const attributeNameCompletion: CompletionItem[] = [
-    {
-      label: 'name',
-      kind: CompletionItemKind.Property,
-      insertText: 'name=""',
-      documentation: {
-        kind: 'markdown',
-        value: 'The `name` attribute allows you to assign a name to a User or Assistant.',
+  const validAttributes: Record<string, CompletionItem[]> = {
+    User: [
+      {
+        label: 'name',
+        kind: CompletionItemKind.Property,
+        insertText: 'name=""',
+        documentation: {
+          kind: 'markdown',
+          value: 'The `name` attribute allows you to assign a name to a User block.',
+        },
+        detail: 'User name attribute',
+        data: 7,
       },
-      detail: 'User or Assistant name attribute',
-      data: 7,
-    },
-  ]
+    ],
+    Assistant: [
+      {
+        label: 'name',
+        kind: CompletionItemKind.Property,
+        insertText: 'name=""',
+        documentation: {
+          kind: 'markdown',
+          value: 'The `name` attribute allows you to assign a name to an Assistant block.',
+        },
+        detail: 'User or Assistant name attribute',
+        data: 7,
+      },
+    ],
+    Block: [
+      {
+        label: 'role',
+        kind: CompletionItemKind.Property,
+        insertText: 'role=""',
+        documentation: {
+          kind: 'markdown',
+          value: 'The `role` attribute allows you to assign a role to a chat block.',
+        },
+        detail: 'system, user, or assistant',
+        data: 7,
+      },
+      {
+        label: 'content',
+        kind: CompletionItemKind.Property,
+        insertText: 'content=""',
+        documentation: {
+          kind: 'markdown',
+          value: 'The `content` attribute allows you to assign string content to a chat block.',
+        },
+        detail: 'content of the chat block',
+        data: 7,
+      },
+    ],
+  }
 
   if (linePrefix.endsWith('<')) {
     // Find the unclosed tags
@@ -417,9 +468,9 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
   } else {
     const text = document.getText()
     const positionOffset = document.offsetAt(textDocumentPosition.position)
-    const openingTagRegex = /<(User|Assistant)(\s+[^>]*)?$/i
+    const openingTagRegex = /<(User)(\s+[^>]*)?$/i
 
-    // Check if the user is typing inside a <User> or <Assistant> opening tag
+    // Check if the user is typing inside a <User>
     const openingTagMatch = text.slice(0, positionOffset).match(openingTagRegex)
 
     if (openingTagMatch) {

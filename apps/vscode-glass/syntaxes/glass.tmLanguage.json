@@ -21,8 +21,8 @@
     }
   ],
   "repository": {
-    "if-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(if)(?=[\\s\\/\\>\\{])",
+    "for-element": {
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(for)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -31,7 +31,7 @@
           "name": "punctuation.definition.tag.closing.jsx"
         },
         "3": {
-          "name": "source.glass.if.name"
+          "name": "source.glass.for.name"
         }
       },
       "patterns": [
@@ -361,7 +361,7 @@
           "include": "#system-element"
         },
         {
-          "include": "#if-element"
+          "include": "#for-element"
         },
         {
           "include": "#extension-mdx-expression-flow"
