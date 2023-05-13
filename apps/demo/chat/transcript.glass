@@ -1,0 +1,11 @@
+<Code>
+    const conversation = await db.converation.findUniqueOrThrow({where: {id: conversationId}})
+    const messages = await db.message.findMany({where: {conversationId: conversation.id}})
+</Code>
+
+<Transcript messages={messages} role={m => {
+    if (m.userId == null) {
+        return 'assistant'
+    }
+    return 'user'
+}} content={m => m.text} />

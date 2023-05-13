@@ -3,7 +3,7 @@ import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
-import { parseCodeBlock } from './parseCodeBlock.js'
+import { parseCodeBlock, transformArrowFunctionExpressionWithJsx } from './parseCodeBlock.js'
 import { removeGlassFrontmatter } from './removeGlassFrontmatter.js'
 import { parseGlassAST } from './util/parseGlassAST.js'
 
@@ -42,31 +42,19 @@ export function transpileGlassFile(
   const exportName = getGlassExportName(fileName)
   const isChat = isChatTemplate(doc)
 
-  const { imports, frontmatterArgs, interpolationArgs, jsxExpressions, isAsync } = parseGlassAST(doc, {
+  const { imports, frontmatterArgs, interpolationArgs, jsxExpressions, jsxNodes, isAsync } = parseGlassAST(doc, {
     workspaceFolder,
     folderPath,
     outputDirectory,
     fileName,
   })
 
-  // remove frontmatter after parsing the AST
-  doc = removeGlassFrontmatter(doc)
-
   // all variables inside {} are interpolation variables, including ones like {foo.bar}
   const allInterpolationVars = Object.keys(interpolationArgs)
 
-  const kshotArguments = allInterpolationVars.filter(arg => {
-    const [kshotName] = arg.split('.')
-    return arg.indexOf('.') !== -1 && doc.indexOf(`-- [${kshotName}].`) !== -1
-  })
+  const interpolationVarNames = Array.from(new Set<string>(allInterpolationVars.map(arg => arg.split('.')[0])))
 
-  const nonKshotInterpolationVariables = allInterpolationVars.filter(arg => !kshotArguments.includes(arg))
-
-  const interpolationVarNames = Array.from(
-    new Set<string>(nonKshotInterpolationVariables.map(arg => arg.split('.')[0]))
-  )
-
-  if (frontmatterArgs.length > 0 && nonKshotInterpolationVariables.length > 0) {
+  if (frontmatterArgs.length > 0 && allInterpolationVars.length > 0) {
     const frontmatterArgsRemaining = new Set<string>(frontmatterArgs.map(a => a.name))
     const frontmatterArgsUsed = new Set<string>([])
     // verify that all frontmatter args are used
@@ -91,20 +79,10 @@ export function transpileGlassFile(
     .join(', ')
   let fullArgString = frontmatterArgs.length ? (language === 'typescript' ? `args: { ${argsString} }` : 'args') : ''
 
-  // TODO: handle adding kshot variables
-  const kshotMap: any = {}
-  for (const kshotArg of kshotArguments) {
-    const [kshotName, kshotArgName] = kshotArg.split('.')
-    if (!kshotMap[kshotName]) {
-      kshotMap[kshotName] = []
-    }
-    kshotMap[kshotName].push(kshotArgName)
-  }
-
   const parsedCodeBlocks = codeBlocks.map(block => parseCodeBlock(`${imports.join('\n')}\n${block.content}`))
   const hasAsyncCodeBlocks = parsedCodeBlocks.filter(block => block.isAsync).length > 0
 
-  const interpolationVarSet = new Set(interpolationVarNames.concat(Object.keys(kshotMap)))
+  const interpolationVarSet = new Set(interpolationVarNames)
   for (const block of parsedCodeBlocks) {
     for (const symbol of block.symbolsAddedToScope) {
       interpolationVarSet.delete(symbol)
@@ -114,6 +92,38 @@ export function transpileGlassFile(
     }
     for (const symbol of block.undeclaredValuesNeededInScope) {
       interpolationVarSet.add(symbol)
+    }
+  }
+
+  const jsxInterpolations: any = {}
+
+  let currOffset = 0
+  let lastEndOffset = 0
+
+  for (let i = 0; i < jsxNodes.length; i++) {
+    const node = jsxNodes[i]
+
+    if (node.tagName === 'for') {
+      const eachAttr = node.attrs.find(attr => attr.name === 'each')!
+      const fragment = node.attrs.find(attr => attr.name === 'fragment')!
+
+      const startOffset = node.position.start.offset
+      const endOffset = node.position.end.offset
+
+      jsxInterpolations['jsx-' + i] = `${eachAttr.stringValue!}.map(${transformArrowFunctionExpressionWithJsx(
+        fragment.expressionValue!
+      )})`
+
+      const oldSequenceLength = endOffset - startOffset
+      const newSequenceLength = `{jsx-${i}}`.length
+
+      doc =
+        doc.substring(lastEndOffset + currOffset, startOffset + currOffset) +
+        `{jsx-${i}}` +
+        doc.substring(endOffset + currOffset)
+
+      currOffset += newSequenceLength - oldSequenceLength
+      lastEndOffset = endOffset
     }
   }
 
@@ -139,6 +149,9 @@ export function transpileGlassFile(
     }
   }
 
+  // remove frontmatter after parsing the AST
+  doc = removeGlassFrontmatter(doc)
+
   let codeSanitizedDoc = doc
   const codeInterpolationMap: any = {}
 
@@ -146,12 +159,6 @@ export function transpileGlassFile(
 
   for (let j = 0; j < jsxExpressions.length; j++) {
     const expr = jsxExpressions[j]
-
-    const isKshotArgument = kshotArguments.includes(expr.trim())
-    if (isKshotArgument) {
-      // kshot arguments are not interpolated directly
-      continue
-    }
 
     const codeInterpolation = '${' + expr + '}'
     const indexOfInterpolation = codeSanitizedDoc.indexOf(codeInterpolation)

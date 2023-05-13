@@ -12,6 +12,16 @@ import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
 import { combineExtensions } from 'micromark-util-combine-extensions'
 import * as path from 'node:path'
 import { removeGlassFrontmatter } from '../removeGlassFrontmatter'
+import { checkOk } from './checkOk'
+
+export interface JSXNode {
+  tagName: string
+  attrs: { name: string; stringValue?: string; expressionValue?: string }[]
+  position: {
+    start: { line: number; column: number; offset: number }
+    end: { line: number; column: number; offset: number }
+  }
+}
 
 export function parseGlassAST(
   doc: string,
@@ -47,16 +57,26 @@ export function parseGlassAST(
   const frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[] = []
   const interpolationArgs: Record<string, boolean> = {}
   const jsxExpressions: string[] = []
+  const jsxNodes: JSXNode[] = []
   let isAsync = false
 
   for (const node of tree.children) {
-    const async = parseAstHelper(folders, node, parts, imports, frontmatterArgs, interpolationArgs, jsxExpressions)
+    const async = parseAstHelper(
+      folders,
+      node,
+      parts,
+      imports,
+      frontmatterArgs,
+      interpolationArgs,
+      jsxExpressions,
+      jsxNodes
+    )
     if (async) {
       isAsync = true
     }
   }
 
-  return { parts, imports, frontmatterArgs, interpolationArgs, jsxExpressions, isAsync }
+  return { parts, imports, frontmatterArgs, interpolationArgs, jsxExpressions, jsxNodes, isAsync }
 }
 
 function parseAstHelper(
@@ -66,7 +86,8 @@ function parseAstHelper(
   imports: string[],
   frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[],
   interpolationArgs: Record<string, boolean>,
-  jsxExpressions: string[]
+  jsxExpressions: string[],
+  jsxNodes: JSXNode[]
 ) {
   let isAsync = false
 
@@ -81,7 +102,8 @@ function parseAstHelper(
           imports,
           frontmatterArgs,
           interpolationArgs,
-          jsxExpressions
+          jsxExpressions,
+          jsxNodes
         )
         if (async) {
           isAsync = true
@@ -233,6 +255,11 @@ function parseAstHelper(
 
     default:
       const paraParts: any[] = []
+
+      if (node.type === 'mdxJsxFlowElement') {
+        jsxNodes.push(parseJSXNode(node))
+      }
+
       if (node.children instanceof Array) {
         for (const child of node.children) {
           const async = parseAstHelper(
@@ -242,7 +269,8 @@ function parseAstHelper(
             imports,
             frontmatterArgs,
             interpolationArgs,
-            jsxExpressions
+            jsxExpressions,
+            jsxNodes
           )
           if (async) {
             isAsync = true
@@ -322,4 +350,83 @@ function parseImportsHelper(node: any, imports: string[]) {
       }
       break
   }
+}
+
+export function parseGlassASTJSX(doc: string) {
+  // preprocessing: remove all comments
+  doc = removeGlassComments(doc)
+
+  const mdxSettings = {
+    acorn: Parser.extend(acornJsx()),
+    acornOptions: { ecmaVersion: 2020, sourceType: 'module' },
+    addResult: true,
+  }
+
+  const mdxExtension = combineExtensions([
+    mdxjsEsm(mdxSettings as any),
+    mdxExpression(), // to make the expression JavaScript agnostic
+    mdxJsx(mdxSettings as any),
+    mdxMd,
+  ])
+
+  const tree = fromMarkdown(doc, {
+    // extensions: [mdxjs(), frontmatter(['yaml', 'toml'])],
+    extensions: [mdxExtension, frontmatter(['yaml', 'toml'])],
+    mdastExtensions: [mdxFromMarkdown(), frontmatterFromMarkdown(['yaml', 'toml'])],
+  })
+
+  // remove frontmatter after parsing the AST
+  doc = removeGlassFrontmatter(doc)
+
+  const jsx: JSXNode[] = []
+
+  for (const node of tree.children) {
+    parseJSXHelper(node, jsx)
+  }
+
+  return jsx
+}
+
+function parseJSXHelper(node: any, jsx: JSXNode[]) {
+  switch (node.type) {
+    case 'paragraph': {
+      for (const child of node.children) {
+        parseJSXHelper(child, jsx)
+      }
+
+      break
+    }
+
+    case 'mdxJsxFlowElement': {
+      jsx.push(parseJSXNode(node))
+      break
+    }
+
+    default:
+      if (node.children instanceof Array) {
+        for (const child of node.children) {
+          parseJSXHelper(child, jsx)
+        }
+      }
+      break
+  }
+}
+
+function parseJSXNode(node: any) {
+  const tagName = node.name
+  const position = node.position
+  const attrs = node.attributes.map((attr: any) => {
+    checkOk(attr.type === 'mdxJsxAttribute', `Expected attribute node type 'mdxJsxAttribute', got '${attr.type}'`)
+    const attrName: string = attr.name
+    if (typeof attr.value === 'string') {
+      return { name: attrName, stringValue: attr.value }
+    }
+    checkOk(
+      attr.value.type === 'mdxJsxAttributeValueExpression',
+      `Expected attribute value node type 'mdxJsxAttributeValueExpression', got '${attr.value.type}'`
+    )
+    const attrValue: string = attr.value.value
+    return { name: attrName, expressionValue: attrValue }
+  })
+  return { tagName, attrs, position }
 }

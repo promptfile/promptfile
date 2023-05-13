@@ -69,6 +69,33 @@ foo
 }`)
   })
 
+  it('should transpile including interstitial text', () => {
+    const transpiled = transpileGlassFile(
+      `ignore me
+<Prompt>
+\${foo}
+</Prompt>
+and me`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
+
+    expect(transpiled.code).to.equal(`export function getFooPrompt(args: { foo: string }) {
+  const { foo } = args
+
+  const interpolations = {
+    0: foo,
+  }
+  const TEMPLATE = 'ignore me\\n<Prompt>\\n\${0}\\n</Prompt>\\nand me'
+  return interpolateGlass('foo', TEMPLATE, interpolations)
+}`)
+  })
+
   it('should transpile into javascript', () => {
     const transpiled = transpileGlassFile(
       `<Prompt>
