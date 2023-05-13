@@ -6,19 +6,18 @@ const response = await res.text()
 
 
 
-// start with the system prompt 
+// start with the system prompt
 <System>
 Use the data below from the API to answer the user's request:
 ###
-${blarg}
+${response}
 ###
 </System>
 
 
 
-
 // add in the last 20 messsages of the transcript
-<for each={messages} fragment={item => <block role={item.role} content={item.content} />}  />
+<for each={messages} fragment={item => <Block role={item.role} content={item.content} />}  />
 
 
 

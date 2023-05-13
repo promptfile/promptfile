@@ -112,7 +112,7 @@ function isInvalidLine(line: string): boolean {
     trimmedLine.startsWith('import') ||
     trimmedLine.startsWith('export') ||
     trimmedLine.startsWith('<for ') ||
-    trimmedLine.startsWith('<block ')
+    trimmedLine.startsWith('<Block ')
   ) {
     return false
   }

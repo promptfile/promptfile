@@ -455,7 +455,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
       {
         label: 'fragment',
         kind: CompletionItemKind.Property,
-        insertText: 'fragment={item => <block role={item.role} content={item.content} />}',
+        insertText: 'fragment={item => <Block role={item.role} content={item.content} />}',
         documentation: {
           kind: 'markdown',
           value: 'The fragment attribute defines a function that returns a block for each element in the array.',
@@ -493,7 +493,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
   } else {
     const text = document.getText()
     const positionOffset = document.offsetAt(textDocumentPosition.position)
-    const openingTagRegex = /<(User|Assistant|System|Prompt|block|for|Code)(\s+[^>]*)?$/i
+    const openingTagRegex = /<(User|Assistant|System|Prompt|Block|for|Code)(\s+[^>]*)?$/i
 
     // Check if the user is typing inside a <User>
     const openingTagMatch = text.slice(0, positionOffset).match(openingTagRegex)
