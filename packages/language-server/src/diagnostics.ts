@@ -57,7 +57,7 @@ export function findInvalidAttributes(text: string) {
 
 export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
   const tagPattern = /^<\/?([\w-]+).*?>/gm
-  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt', 'for', 'block'])
+  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt', 'for', 'Block'])
   const unsupportedTags: { tag: string; start: number }[] = []
 
   let match
