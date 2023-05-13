@@ -13,10 +13,13 @@ ${response}
 ###
 </System>
 
+// <SSmarg>
+// </Smartg>
+
+// <blarg />
 
 // add in the last 20 messsages of the transcript
-<for each={messages} fragment={item => <Block role={item.role} content={item.content} />} />
-
+<for each={messages} fragment={item => <block role={item.role} content={item.content} />} />
 
 // add the user's most recent message
 <User>

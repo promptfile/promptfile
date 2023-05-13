@@ -16,6 +16,16 @@ export function findInvalidAttributes(text: string) {
         let isInvalidAttribute = false
 
         switch (tagName) {
+          case 'block':
+            if (attributeName !== 'role' && attributeName !== 'content') {
+              isInvalidAttribute = true
+            }
+            break
+          case 'for':
+            if (attributeName !== 'each' && attributeName !== 'fragment') {
+              isInvalidAttribute = true
+            }
+            break
           case 'User':
           case 'Assistant':
             if (attributeName !== 'name') {
@@ -46,8 +56,8 @@ export function findInvalidAttributes(text: string) {
 }
 
 export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
-  const tagPattern = /^<\/?([\w-]+).*?>/g
-  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt'])
+  const tagPattern = /^<\/?([\w-]+).*?>/gm
+  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt', 'for', 'block'])
   const unsupportedTags: { tag: string; start: number }[] = []
 
   let match
@@ -100,7 +110,9 @@ function isInvalidLine(line: string): boolean {
     trimmedLine.length === 0 ||
     trimmedLine.startsWith('//') ||
     trimmedLine.startsWith('import') ||
-    trimmedLine.startsWith('export')
+    trimmedLine.startsWith('export') ||
+    trimmedLine.startsWith('<for ') ||
+    trimmedLine.startsWith('<block ')
   ) {
     return false
   }

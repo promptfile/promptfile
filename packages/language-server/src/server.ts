@@ -19,10 +19,12 @@ import {
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
 import {
   findEmptyBlocks,
+  findInvalidLines,
   findInvalidPromptBlocks,
   findMisalignedTags,
   findMultiplePromptBlocks,
   findUnmatchedTags,
+  findUnsupportedTags,
 } from './diagnostics'
 import { findFoldableTagPairs } from './folding'
 import { formatDocument } from './formatting'
@@ -162,24 +164,24 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     })
   )
 
-  // const unsupportedTags = findUnsupportedTags(text)
-  // diagnostics.push(
-  //   ...unsupportedTags.map(({ tag, start }) => {
-  //     const range = {
-  //       start: textDocument.positionAt(start + 1),
-  //       end: textDocument.positionAt(start + tag.length + 1),
-  //     }
+  const unsupportedTags = findUnsupportedTags(text)
+  diagnostics.push(
+    ...unsupportedTags.map(({ tag, start }) => {
+      const range = {
+        start: textDocument.positionAt(start + 1),
+        end: textDocument.positionAt(start + tag.length + 1),
+      }
 
-  //     const diagnostic: Diagnostic = {
-  //       severity: DiagnosticSeverity.Error,
-  //       range,
-  //       message: `Unsupported ${tag} tag.`,
-  //       source: 'glass',
-  //     }
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `Unsupported tag: ${tag}`,
+        source: 'glass',
+      }
 
-  //     return diagnostic
-  //   })
-  // )
+      return diagnostic
+    })
+  )
 
   // const invalidAttributes = findInvalidAttributes(text)
   // diagnostics.push(
@@ -219,24 +221,24 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     })
   )
 
-  // const invalidLines = findInvalidLines(text)
-  // diagnostics.push(
-  //   ...invalidLines.map(({ line, start, end }) => {
-  //     const range = {
-  //       start: textDocument.positionAt(textDocument.offsetAt({ line, character: start })),
-  //       end: textDocument.positionAt(textDocument.offsetAt({ line, character: end })),
-  //     }
+  const invalidLines = findInvalidLines(text)
+  diagnostics.push(
+    ...invalidLines.map(({ line, start, end }) => {
+      const range = {
+        start: textDocument.positionAt(textDocument.offsetAt({ line, character: start })),
+        end: textDocument.positionAt(textDocument.offsetAt({ line, character: end })),
+      }
 
-  //     const diagnostic: Diagnostic = {
-  //       severity: DiagnosticSeverity.Warning,
-  //       range,
-  //       message: `Content not contained in a block — will be ignored by compiler.`,
-  //       source: 'glass',
-  //     }
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Warning,
+        range,
+        message: `Content not contained in a block — will be ignored by compiler.`,
+        source: 'glass',
+      }
 
-  //     return diagnostic
-  //   })
-  // )
+      return diagnostic
+    })
+  )
 
   const multiplePromptBlocks = findMultiplePromptBlocks(text)
   diagnostics.push(
@@ -424,7 +426,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
           kind: 'markdown',
           value: 'The `role` attribute allows you to assign a role to a chat block.',
         },
-        detail: 'system, user, or assistant',
+        detail: '"system, user, or assistant',
         data: 7,
       },
       {
