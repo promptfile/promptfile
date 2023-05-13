@@ -19,7 +19,6 @@ import {
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
 import {
   findEmptyBlocks,
-  findInvalidLines,
   findInvalidPromptBlocks,
   findMisalignedTags,
   findMultiplePromptBlocks,
@@ -175,7 +174,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
       const diagnostic: Diagnostic = {
         severity: DiagnosticSeverity.Error,
         range,
-        message: `Unsupported tag: ${tag}`,
+        message: `Unsupported ${tag} tag.`,
         source: 'glass',
       }
 
@@ -221,24 +220,24 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     })
   )
 
-  const invalidLines = findInvalidLines(text)
-  diagnostics.push(
-    ...invalidLines.map(({ line, start, end }) => {
-      const range = {
-        start: textDocument.positionAt(textDocument.offsetAt({ line, character: start })),
-        end: textDocument.positionAt(textDocument.offsetAt({ line, character: end })),
-      }
+  // const invalidLines = findInvalidLines(text)
+  // diagnostics.push(
+  //   ...invalidLines.map(({ line, start, end }) => {
+  //     const range = {
+  //       start: textDocument.positionAt(textDocument.offsetAt({ line, character: start })),
+  //       end: textDocument.positionAt(textDocument.offsetAt({ line, character: end })),
+  //     }
 
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Warning,
-        range,
-        message: `Content not contained in a block — will be ignored by compiler.`,
-        source: 'glass',
-      }
+  //     const diagnostic: Diagnostic = {
+  //       severity: DiagnosticSeverity.Warning,
+  //       range,
+  //       message: `Content not contained in a block — will be ignored by compiler.`,
+  //       source: 'glass',
+  //     }
 
-      return diagnostic
-    })
-  )
+  //     return diagnostic
+  //   })
+  // )
 
   const multiplePromptBlocks = findMultiplePromptBlocks(text)
   diagnostics.push(
@@ -417,7 +416,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
         data: 7,
       },
     ],
-    Block: [
+    block: [
       {
         label: 'role',
         kind: CompletionItemKind.Property,
@@ -438,6 +437,30 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
           value: 'The `content` attribute allows you to assign string content to a chat block.',
         },
         detail: 'content of the chat block',
+        data: 7,
+      },
+    ],
+    for: [
+      {
+        label: 'each',
+        kind: CompletionItemKind.Property,
+        insertText: 'each={}',
+        documentation: {
+          kind: 'markdown',
+          value: 'The `each` attribute defines the array you want to iterate over.',
+        },
+        detail: 'array to iterate over',
+        data: 7,
+      },
+      {
+        label: 'fragment',
+        kind: CompletionItemKind.Property,
+        insertText: 'fragment={item => <block role={item.role} content={item.content} />}',
+        documentation: {
+          kind: 'markdown',
+          value: 'The fragment attribute defines a function that returns a block for each element in the array.',
+        },
+        detail: 'how to construct blocks for this array',
         data: 7,
       },
     ],
@@ -470,14 +493,14 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
   } else {
     const text = document.getText()
     const positionOffset = document.offsetAt(textDocumentPosition.position)
-    const openingTagRegex = /<(User)(\s+[^>]*)?$/i
+    const openingTagRegex = /<(User|Assistant|System|Prompt|block|for|Code)(\s+[^>]*)?$/i
 
     // Check if the user is typing inside a <User>
     const openingTagMatch = text.slice(0, positionOffset).match(openingTagRegex)
 
     if (openingTagMatch) {
-      // Return attribute completions
-      return attributeNameCompletion
+      const matchedTag = openingTagMatch[1]
+      return validAttributes[matchedTag] || []
     }
   }
   return []
