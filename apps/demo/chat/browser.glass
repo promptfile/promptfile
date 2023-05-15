@@ -5,7 +5,6 @@ const response = await res.text()
 </Code>
 
 
-
 // start with the system prompt
 <System>
 Use the data below from the API to answer the user's request:
@@ -13,13 +12,6 @@ Use the data below from the API to answer the user's request:
 ${response}
 ###
 </System>
-
-
-
-// add in the last 20 messsages of the transcript
-<for each={messages} fragment={item => <Block role={item.role} content={item.content} />}  />
-
-
 
 // add the user's most recent message
 <User>

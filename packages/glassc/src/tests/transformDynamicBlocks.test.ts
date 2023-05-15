@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { transformDynamicBlocks } from '../transformDynamicBlocks'
 
-describe.only('transformDynamicBlocks', () => {
+describe('transformDynamicBlocks', () => {
   it('should ignore document without dynamic blocks', () => {
     const glass = `Hello world this is a document.
 

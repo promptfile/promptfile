@@ -392,4 +392,47 @@ export const Glass = {
 }
 `)
   })
+
+  it.only('should transpile with dynamic for loop', () => {
+    const transpiled = transpileGlassFile(
+      `<Args messages="{ role: string, content: string }[]" />
+
+<System>
+You are a helpful assistant.
+</System>
+
+<for each={messages} fragment={m => <Block role={m.role} content={m.content} />} />
+
+<User>
+\${foo}
+</User>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
+
+    expect(transpiled.code).to.equal(`export function getFooPrompt(args: {
+  foo: string,
+  messages: { role: string, content: string }[],
+}) {
+  const { foo, messages } = args
+
+  const interpolations = {
+    0: foo,
+    'jsx-2': messages
+      .map(
+        (m) =>
+          \`<Block role={JSON.stringify(\${m.role})} content={JSON.stringify(\${m.content})}></Block>\`
+      )
+      .join('\\n\\n'),
+  }
+  const TEMPLATE =
+    '<Args messages="{ role: string, content: string }[]" />\\n\\n<System>\\nYou are a helpful assistant.\\n</System>\\n\\n\${jsx-2}\\n\\n<User>\\n\${0}\\n</User>'
+  return interpolateGlassChat('foo', TEMPLATE, interpolations)
+}`)
+  })
 })

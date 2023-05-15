@@ -1,11 +1,19 @@
-export function interpolate(template: string, variables: Record<string, string>, prefix?: string) {
+export function interpolate(template: string, variables: Record<string, string>) {
   let interpolatedBlock = template
-  for (const key of Object.keys(variables)) {
-    const isInt = !isNaN(parseInt(key))
+
+  const jsxInterpolations = Object.keys(variables).filter(key => key.startsWith('jsx-'))
+  const nonJsxInterpolations = Object.keys(variables).filter(key => !key.startsWith('jsx-'))
+
+  // first interpolate the jsx interpolations
+  for (const key of jsxInterpolations) {
     const value = variables[key]
-    const regex = isInt
-      ? new RegExp(`\\$\\{${key}\\}`, 'g')
-      : new RegExp(`\\$\\{${prefix ? prefix + '.' : ''}${key}\\}`, 'g')
+    const regex = new RegExp(`\\$\\{${key}\\}`, 'g')
+    interpolatedBlock = interpolatedBlock.replace(regex, value)
+  }
+
+  for (const key of nonJsxInterpolations) {
+    const value = variables[key]
+    const regex = new RegExp(`\\$\\{${key}\\}`, 'g')
     interpolatedBlock = interpolatedBlock.replace(regex, value)
   }
   return interpolatedBlock

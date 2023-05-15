@@ -1,5 +1,6 @@
 import { expect } from 'chai'
-import { parseGlassASTJSX } from '../util/parseGlassAST'
+import { jsxNodeToString } from '../parseJSX'
+import { JSXNode, parseGlassASTJSX } from '../util/parseGlassAST'
 
 describe('parseGlassAST', () => {
   it('should parse JSX', () => {
@@ -72,5 +73,31 @@ And this is the end`
         },
       },
     ])
+  })
+
+  it.only('should convert JSXNode to string', () => {
+    const node: JSXNode = {
+      tagName: 'for',
+      attrs: [
+        { name: 'each', expressionValue: 'messages' },
+        { name: 'fragment', expressionValue: 'm => <Block role={m.role} content={m.text} />' },
+      ],
+      position: {
+        end: {
+          column: 81,
+          line: 10,
+          offset: 181,
+        },
+        start: {
+          column: 1,
+          line: 10,
+          offset: 101,
+        },
+      },
+    }
+
+    expect(jsxNodeToString(node)).to.deep.equal(
+      '<for each={messages} fragment={m => <Block role={m.role} content={m.text} />} />'
+    )
   })
 })

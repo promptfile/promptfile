@@ -3,9 +3,4 @@
     const messages = await db.message.findMany({where: {conversationId: conversation.id}})
 </Code>
 
-<Transcript messages={messages} role={m => {
-    if (m.userId == null) {
-        return 'assistant'
-    }
-    return 'user'
-}} content={m => m.text} />
+<for each={messages} fragment={item => <Block role={item.role} content={item.content} />}  />

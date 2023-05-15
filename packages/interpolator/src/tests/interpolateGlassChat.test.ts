@@ -139,4 +139,69 @@ Goodbye \${foo}, \${bar}
       )
     ).throws('un-interpolated variables in test.glass: ${bar}')
   })
+
+  it('should interpolate dynamic blocks', () => {
+    expect(
+      interpolateGlassChat(
+        'test',
+        `<System>
+You are a helpful assistant.
+</System>
+
+\${jsx-0}
+
+<Assistant>
+goodbye world
+</Assistant>`,
+        { 'jsx-0': '<User>\nhello world\n</User>' }
+      )
+    ).to.deep.equal([
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'hello world' },
+      { role: 'assistant', content: 'goodbye world' },
+    ])
+  })
+
+  it('should interpolate dynamic blocks with expressions', () => {
+    expect(
+      interpolateGlassChat(
+        'test',
+        `<System>
+You are a helpful assistant.
+</System>
+
+\${jsx-0}
+
+<Assistant>
+goodbye world
+</Assistant>`,
+        { 'jsx-0': '<User name={"username"}>\nhello world\n</User>' }
+      )
+    ).to.deep.equal([
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'hello world' },
+      { role: 'assistant', content: 'goodbye world' },
+    ])
+  })
+
+  it.skip('should interpolate dynamic blocks with if condition', () => {
+    expect(
+      interpolateGlassChat(
+        'test',
+        `<System>
+You are a helpful assistant.
+</System>
+
+\${jsx-0}
+
+<Assistant>
+goodbye world
+</Assistant>`,
+        { 'jsx-0': '<User if={false}>\nhello world\n</User>' }
+      )
+    ).to.deep.equal([
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'assistant', content: 'goodbye world' },
+    ])
+  })
 })

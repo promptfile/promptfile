@@ -16,7 +16,13 @@ export function interpolateGlassChat(
   content: string,
   variables: any = {}
 ): ChatCompletionRequestMessage[] {
-  const doc = removeGlassComments(content)
+  let doc = removeGlassComments(content)
+
+  // first interpolate the jsx interpolations
+  doc = doc.replace(/\${jsx-([0-9]+)}/g, (match, key) => {
+    const value = variables[`jsx-${key}`]
+    return value
+  })
 
   const blocks = parseGlassBlocks(doc)
 

@@ -3,11 +3,15 @@ import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
-import { parseCodeBlock, transformArrowFunctionExpressionWithJsx } from './parseCodeBlock.js'
+import { parseCodeBlock } from './parseCodeBlock.js'
+import { jsxNodeToString, parseJSXAttributes, parseJSXExpression } from './parseJSX.js'
 import { removeGlassFrontmatter } from './removeGlassFrontmatter.js'
+import { transformDynamicBlocks } from './transformDynamicBlocks.js'
 import { parseGlassAST } from './util/parseGlassAST.js'
 
 const extension = 'glass'
+
+const builtinTags = new Set(['Code', 'Args', 'Prompt', 'System', 'User', 'Assistant'])
 
 /**
  * Takes a .glass document and returns a code file.
@@ -34,6 +38,7 @@ export function transpileGlassFile(
   if (blocks.length === 0) {
     throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
   }
+
   const codeBlocks = blocks.filter(b => b.tag === 'Code')
 
   // remove all block comments before any processing happens
@@ -74,15 +79,35 @@ export function transpileGlassFile(
     }
   }
 
-  let argsString = frontmatterArgs
-    .map(a => `${a.name}${language === 'javascript' ? '' : `${a.optional ? '?' : ''}: ${a.type}`}`)
-    .join(', ')
-  let fullArgString = frontmatterArgs.length ? (language === 'typescript' ? `args: { ${argsString} }` : 'args') : ''
-
-  const parsedCodeBlocks = codeBlocks.map(block => parseCodeBlock(`${imports.join('\n')}\n${block.content}`))
-  const hasAsyncCodeBlocks = parsedCodeBlocks.filter(block => block.isAsync).length > 0
+  // let argsString = frontmatterArgs
+  //   .map(a => `${a.name}${language === 'javascript' ? '' : `${a.optional ? '?' : ''}: ${a.type}`}`)
+  //   .join(', ')
+  // let fullArgString = frontmatterArgs.length ? (language === 'typescript' ? `args: { ${argsString} }` : 'args') : ''
 
   const interpolationVarSet = new Set(interpolationVarNames)
+
+  let argsNode = ''
+
+  // find all the interpolation variables from dynamic code blocks
+  for (const jsxNode of jsxNodes) {
+    if (jsxNode.tagName === 'Args') {
+      argsNode = jsxNodeToString(jsxNode)
+    }
+    if (builtinTags.has(jsxNode.tagName)) {
+      continue
+    }
+    const jsxString = jsxNodeToString(jsxNode)
+    const parsedJsx = parseJSXExpression(jsxString)
+
+    for (const s of parsedJsx.undeclaredVariables) {
+      interpolationVarSet.add(s)
+    }
+  }
+
+  const parsedCodeBlocks = codeBlocks.map(block => parseCodeBlock(`${imports.join('\n')}\n${block.content}`))
+  console.log('parsed code blocks', JSON.stringify(parsedCodeBlocks, null, 2))
+  const hasAsyncCodeBlocks = parsedCodeBlocks.filter(block => block.isAsync).length > 0
+
   for (const block of parsedCodeBlocks) {
     for (const symbol of block.symbolsAddedToScope) {
       interpolationVarSet.delete(symbol)
@@ -95,65 +120,26 @@ export function transpileGlassFile(
     }
   }
 
-  const jsxInterpolations: any = {}
+  const argsOverride = argsNode ? parseJSXAttributes(argsNode) : {}
 
-  let currOffset = 0
-  let lastEndOffset = 0
-
-  for (let i = 0; i < jsxNodes.length; i++) {
-    const node = jsxNodes[i]
-
-    if (node.tagName === 'for') {
-      const eachAttr = node.attrs.find(attr => attr.name === 'each')!
-      const fragment = node.attrs.find(attr => attr.name === 'fragment')!
-
-      const startOffset = node.position.start.offset
-      const endOffset = node.position.end.offset
-
-      jsxInterpolations['jsx-' + i] = `${eachAttr.stringValue!}.map(${transformArrowFunctionExpressionWithJsx(
-        fragment.expressionValue!
-      )})`
-
-      const oldSequenceLength = endOffset - startOffset
-      const newSequenceLength = `{jsx-${i}}`.length
-
-      doc =
-        doc.substring(lastEndOffset + currOffset, startOffset + currOffset) +
-        `{jsx-${i}}` +
-        doc.substring(endOffset + currOffset)
-
-      currOffset += newSequenceLength - oldSequenceLength
-      lastEndOffset = endOffset
-    }
-  }
+  const dynamicTransform = transformDynamicBlocks(doc)
+  doc = dynamicTransform.doc
 
   const allInterpolationNames = Array.from(interpolationVarSet)
 
-  // TODO: fix this ugly
-  if (frontmatterArgs.length === 0 && interpolationVarNames.length > 0) {
-    argsString = allInterpolationNames
-      .map(arg => arg + ': string')
-      // .concat(
-      //   // add the kshots to the arguments
-      //   Object.keys(kshotMap).map(kshotVariable => {
-      //     return `${kshotVariable}: { ${kshotMap[kshotVariable]
-      //       .map((kshotArg: any) => kshotArg + ': string')
-      //       .join(', ')} }[]`
-      //   })
-      // )
-      .join(', ')
-    if (allInterpolationNames.length > 0) {
-      fullArgString = language === 'typescript' ? `args: { ${argsString} }` : 'args'
-    } else {
-      fullArgString = ''
-    }
+  // if (frontmatterArgs.length === 0 && interpolationVarNames.length > 0) {
+  const argsString = allInterpolationNames.map(arg => arg + `: ${argsOverride[arg] || 'string'}`).join(', ')
+  let fullArgString = ''
+  if (allInterpolationNames.length > 0) {
+    fullArgString = language === 'typescript' ? `args: { ${argsString} }` : 'args'
   }
+  // }
 
   // remove frontmatter after parsing the AST
   doc = removeGlassFrontmatter(doc)
 
   let codeSanitizedDoc = doc
-  const codeInterpolationMap: any = {}
+  const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }
 
   // iterate over all the jsxExpressions (values inside `{ }`) and replace them with a number if they're supposed to be treated like code (values inside `${ }`)
 

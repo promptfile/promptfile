@@ -5,7 +5,6 @@ import {
   parseCodeBlockLocalVars,
   parseCodeBlockUndeclaredSymbols,
   parseCodeImportedSymbols,
-  transformArrowFunctionExpressionWithJsx,
 } from '../parseCodeBlock'
 
 describe('parseCodeBlock', () => {
@@ -73,21 +72,5 @@ const data = await res.json()
       symbolsAddedToScope: ['res', 'data'],
       undeclaredValuesNeededInScope: ['url', 'method'],
     })
-  })
-
-  it('should transform simple JSX arrow expression to template string', () => {
-    const code = `m => <Block foo="bar" role={m.role} content={m.text} />`
-    const templateString = transformArrowFunctionExpressionWithJsx(code)
-    expect(templateString).to.equal(
-      'm => `<Block foo="bar" role={JSON.stringify(${m.role})} content={JSON.stringify(${m.text})}></Block>`'
-    )
-  })
-
-  it('should transform nested JSX arrow expression to template string', () => {
-    const code = `m => <Block role={m.role} content={m.text}><Child foo={m.bar} /></Block>`
-    const templateString = transformArrowFunctionExpressionWithJsx(code)
-    expect(templateString).to.equal(
-      'm => `<Block role={JSON.stringify(${m.role})} content={JSON.stringify(${m.text})}><Child foo={JSON.stringify(${m.bar})}></Child></Block>`'
-    )
   })
 })

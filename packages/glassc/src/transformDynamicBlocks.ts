@@ -1,4 +1,4 @@
-import { transformArrowFunctionExpressionWithJsx } from './parseCodeBlock'
+import { transformArrowFunctionExpressionWithJsx } from './parseJSX'
 import { parseGlassASTJSX } from './util/parseGlassAST'
 
 export function transformDynamicBlocks(doc: string) {
