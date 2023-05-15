@@ -1,4 +1,4 @@
-<for each={[
+<For each={[
     { role: 'user', content: 'name an ice cream' },
     { role: "assistant", content: 'Vanilla' },
     { role: 'user', content: 'name a color' }
