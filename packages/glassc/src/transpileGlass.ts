@@ -35,9 +35,9 @@ export function transpileGlassFile(
   // first, parse the document blocks to make sure the document is valid
   // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output
   const blocks = parseGlassBlocks(doc)
-  if (blocks.length === 0) {
-    throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
-  }
+  // if (blocks.length === 0) {
+  //   throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
+  // }
 
   const codeBlocks = blocks.filter(b => b.tag === 'Code')
 
@@ -193,7 +193,8 @@ export ${isAsync || hasAsyncCodeBlocks ? 'async' : ''} function ${exportName}(${
 }
 
 function isChatTemplate(doc: string) {
-  return doc.indexOf('<System>') !== -1 || doc.indexOf('<User>') !== -1 || doc.indexOf('<Assistant>') !== -1
+  return doc.indexOf('<Prompt>') === -1
+  // return doc.indexOf('<System>') !== -1 || doc.indexOf('<User>') !== -1 || doc.indexOf('<Assistant>') !== -1
 }
 
 /**

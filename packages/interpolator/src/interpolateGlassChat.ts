@@ -29,15 +29,23 @@ export function interpolateGlassChat(
   const res: ChatCompletionRequestMessage[] = []
 
   for (const block of blocks) {
-    const role = block.tag.toLowerCase()
-    if (role !== 'system' && role !== 'user' && role !== 'assistant') {
+    let role = block.tag.toLowerCase()
+    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
       continue // ignore
     }
-    // return { role: role as any, content: doc }
-    if (role === 'system' || role === 'user' || role === 'assistant') {
-      const interpolatedBlock = interpolateBlock(fileName, block.content, variables)
-      res.push({ role: role as any, content: interpolatedBlock })
+    if (role === 'block') {
+      const attrs = block.attrs || {}
+      if (attrs.role == null) {
+        throw new Error('<Block> tag must have role attribute')
+      }
+      role = attrs.role.toLowerCase() // handle "System" or "system"
+      if (attrs.content != null) {
+        block.content = attrs.content // TODO: don't modify existing value. don't interpolate content if string literal?
+      }
     }
+    // return { role: role as any, content: doc }
+    const interpolatedBlock = interpolateBlock(fileName, block.content, variables)
+    res.push({ role: role as any, content: interpolatedBlock })
   }
 
   return res

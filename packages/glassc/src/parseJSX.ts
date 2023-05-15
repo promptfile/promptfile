@@ -22,13 +22,14 @@ export function parseJSXExpression(code: string) {
       ts.forEachChild(node, visit)
       scopes.pop()
     } else if (ts.isIdentifier(node)) {
-      // Check if the parent node is a JSX attribute, a JSX opening/closing element, or a PropertyAccessExpression, if so, skip it
+      // Check if the parent node is a JSX attribute, a JSX opening/closing element, or a PropertyAccessExpression, or a PropertyAssignment, if so, skip it
       if (
         ts.isJsxAttribute(node.parent) ||
         ts.isJsxOpeningElement(node.parent) ||
         ts.isJsxSelfClosingElement(node.parent) ||
         ts.isJsxClosingElement(node.parent) ||
-        ts.isPropertyAccessExpression(node.parent)
+        ts.isPropertyAccessExpression(node.parent) ||
+        ts.isPropertyAssignment(node.parent)
       ) {
         return
       }
@@ -110,7 +111,7 @@ function transformJsxExpressionToTemplate(node: ts.Node): string {
           if (initializer && ts.isJsxExpression(initializer)) {
             const expression = initializer.expression
             if (expression) {
-              return `${attrName}={JSON.stringify(\${${expression.getText()}})}`
+              return `${attrName}={\${JSON.stringify(${expression.getText()})}}`
             }
           } else if (initializer && ts.isStringLiteral(initializer)) {
             return `${attrName}=${initializer.getText()}`
@@ -122,7 +123,7 @@ function transformJsxExpressionToTemplate(node: ts.Node): string {
 
     const children = ts.isJsxElement(node) ? node.children.map(transformJsxExpressionToTemplate).join('') : ''
 
-    return `<${tagName}${attributes ? ' ' + attributes : ''}>${children}</${tagName}>`
+    return `<${tagName}${attributes ? ' ' + attributes : ''}>${children ? '\n' + children + '\n' : '\n'}</${tagName}>`
   } else if (ts.isJsxText(node)) {
     return node.text
   } else {

@@ -11,7 +11,7 @@ export function transformDynamicBlocks(doc: string) {
   for (let i = 0; i < jsxNodes.length; i++) {
     const node = jsxNodes[i]
 
-    if (node.tagName === 'for') {
+    if (node.tagName === 'For') {
       const eachAttr = node.attrs.find(attr => attr.name === 'each')!
       const fragment = node.attrs.find(attr => attr.name === 'fragment')!
 

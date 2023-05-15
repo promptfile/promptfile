@@ -40,6 +40,6 @@ export function parseGlassMetadata(document: string) {
 
   return {
     interpolationVariables: Array.from(finalVars),
-    isChat: relevantBlocks.some(block => block.tag === 'System' || block.tag === 'User' || block.tag === 'Assistant'),
+    isChat: !relevantBlocks.some(block => block.tag === 'Prompt'),
   }
 }

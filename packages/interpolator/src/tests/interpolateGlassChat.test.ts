@@ -37,6 +37,24 @@ Goodbye world
     ])
   })
 
+  it('should interpolate a document with <Block>', () => {
+    expect(
+      interpolateGlassChat(
+        'test',
+        `<Block role="System">
+Hello world
+</Block>
+
+<Block role="user" content={"Goodbye world"}>
+</Block>`,
+        {}
+      )
+    ).to.deep.equal([
+      { role: 'system', content: 'Hello world' },
+      { role: 'user', content: 'Goodbye world' },
+    ])
+  })
+
   it('should interpolate a document with system and user block and variables', () => {
     expect(
       interpolateGlassChat(

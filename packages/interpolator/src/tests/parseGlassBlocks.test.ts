@@ -78,9 +78,9 @@ Goodbye world
     ])
   })
 
-  it('should parse tags', () => {
+  it('should parse string attributes', () => {
     expect(
-      parseGlassBlocks(`<User name="foo" bar="baz">
+      parseGlassBlocks(`<User name="foo" bar={"baz"}>
 Goodbye world
 </User>`)
     ).to.deep.equal([
@@ -93,6 +93,46 @@ Goodbye world
         },
       },
     ])
+  })
+
+  it('should ignore unknown tags', () => {
+    expect(
+      parseGlassBlocks(`<User>
+Hello world
+</User>
+
+<IgnoreMe>
+ignore
+</IgnoreMe>`)
+    ).to.deep.equal([
+      {
+        tag: 'User',
+        content: 'Hello world',
+      },
+    ])
+  })
+
+  it('should allow self-closing tags', () => {
+    expect(
+      parseGlassBlocks(`<User>
+Hello world
+</User>
+
+<For each="" fragment=""  />`)
+    ).to.deep.equal([
+      {
+        tag: 'User',
+        content: 'Hello world',
+      },
+    ])
+  })
+
+  it('should allow single-line <For> document', () => {
+    expect(
+      parseGlassBlocks(
+        `<For each={[{role: 'user', content: 'who was gandhi?'}]} fragment={item => <Block role={item.role} content={item.content} />}  />`
+      )
+    ).to.deep.equal([])
   })
 
   it('should throw exception on unbalanced closing tag', () => {

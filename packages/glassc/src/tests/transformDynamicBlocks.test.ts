@@ -25,7 +25,7 @@ And this is the end`
     expect(transformDynamicBlocks(glass)).to.deep.equal({
       jsxInterpolations: {
         'jsx-0':
-          "messages.map(m => `<Block role={JSON.stringify(${m.role})} content={JSON.stringify(${m.text})}></Block>`).join('\\n\\n')",
+          "messages.map(m => `<Block role={${JSON.stringify(m.role)}} content={${JSON.stringify(m.text)}}>\n</Block>`).join('\\n\\n')",
       },
       doc: 'Hello world this is a document.\n\n${jsx-0}\n\nAnd this is the end',
     })
@@ -43,9 +43,9 @@ And this is the end`
     expect(transformDynamicBlocks(glass)).to.deep.equal({
       jsxInterpolations: {
         'jsx-0':
-          "messages.map(m => `<Block role={JSON.stringify(${m.role})} content={JSON.stringify(${m.text})}></Block>`).join('\\n\\n')",
+          "messages.map(m => `<Block role={${JSON.stringify(m.role)}} content={${JSON.stringify(m.text)}}>\n</Block>`).join('\\n\\n')",
         'jsx-1':
-          "messages2.map(m => `<Block role={JSON.stringify(${m.role})} content={JSON.stringify(${m.text})}></Block>`).join('\\n\\n')",
+          "messages2.map(m => `<Block role={${JSON.stringify(m.role)}} content={${JSON.stringify(m.text)}}>\n</Block>`).join('\\n\\n')",
       },
       doc: 'Hello world this is a document.\n\n${jsx-0}\n\nThis is the middle\n${jsx-1}\nAnd this is the end',
     })

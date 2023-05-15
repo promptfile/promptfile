@@ -423,13 +423,41 @@ You are a helpful assistant.
     0: foo,
     'jsx-2': messages
       .map(
-        (m) =>
-          \`<Block role={JSON.stringify(\${m.role})} content={JSON.stringify(\${m.content})}></Block>\`
+        (m) => \`<Block role={\${JSON.stringify(
+          m.role
+        )}} content={\${JSON.stringify(m.content)}}>\n</Block>\`
       )
       .join('\\n\\n'),
   }
   const TEMPLATE =
     '<Args messages="{ role: string, content: string }[]" />\\n\\n<System>\\nYou are a helpful assistant.\\n</System>\\n\\n\${jsx-2}\\n\\n<User>\\n\${0}\\n</User>'
+  return interpolateGlassChat('foo', TEMPLATE, interpolations)
+}`)
+  })
+
+  it('should transpile with single <For> loop', () => {
+    const transpiled = transpileGlassFile(
+      `<For each={[{role: 'user', content: 'who was gandhi?'}]} fragment={item => <Block role={item.role} content={item.content} />}  />`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
+
+    expect(transpiled.code).to.equal(`export function getFooPrompt() {
+  const interpolations = {
+    'jsx-0': [{ role: 'user', content: 'who was gandhi?' }]
+      .map(
+        (item) => \`<Block role={\${JSON.stringify(
+          item.role
+        )}} content={\${JSON.stringify(item.content)}}>\n</Block>\`
+      )
+      .join('\\n\\n'),
+  }
+  const TEMPLATE = '\${jsx-0}'
   return interpolateGlassChat('foo', TEMPLATE, interpolations)
 }`)
   })
