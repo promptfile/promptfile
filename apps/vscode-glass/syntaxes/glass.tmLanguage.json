@@ -22,7 +22,7 @@
   ],
   "repository": {
     "for-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(for)(?=[\\s\\/\\>\\{])",
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(For)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"

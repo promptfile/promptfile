@@ -14,11 +14,3 @@ asdfa
 ${hello}
 asdfasdf
 </User>
-
-
-
-// ${messages.map(m =>
-// <fragment>
-
-// </fragment>
-// )}
