@@ -1,6 +1,3 @@
-import {ProfileInfo} from './profile.glass'
-
-
 <System>
 You are a helpful assistant. Your job is to respond to the user.
 </System>
@@ -8,6 +5,8 @@ You are a helpful assistant. Your job is to respond to the user.
 <Block role={message.role}>
 ${message.content}
 </Block>
+
+<for each={examples} fragment={item => <MySpecialKshot item={item} />} />
 
 <User>
 ${bar}

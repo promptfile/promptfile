@@ -57,7 +57,7 @@ export function findInvalidAttributes(text: string) {
 
 export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
   const tagPattern = /^<\/?([\w-]+).*?>/gm
-  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt', 'for', 'Block'])
+  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt', 'for', 'Block', 'Args'])
   const unsupportedTags: { tag: string; start: number }[] = []
 
   let match
@@ -112,6 +112,7 @@ function isInvalidLine(line: string): boolean {
     trimmedLine.startsWith('import') ||
     trimmedLine.startsWith('export') ||
     trimmedLine.startsWith('<for ') ||
+    trimmedLine.startsWith('<Args ') ||
     trimmedLine.startsWith('<Block ')
   ) {
     return false

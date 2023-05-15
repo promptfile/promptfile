@@ -1,4 +1,4 @@
-// first, we must load in the website HTML and the previous messages in the conversation
+// first, we must load in the website HTML
 <Code>
 const res = await fetch(url)
 const response = await res.text()

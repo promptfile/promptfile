@@ -3,90 +3,25 @@ const conversation = await db.converation.findUniqueOrThrow({where: {id: convers
 const messages = await db.message.findMany({where: {conversationId: conversation.id}})
 </Code>
 
+
 <System>
 You are a helpful assistant.
 </System>
 
 <Block role="system" content="but you ouldnt want to do this would you" />
 
+<for each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
+
 <Block role="System">
 asdfa
-${affadf}
+${hello}
 asdfasdf
 </Block>
 
-<for each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
+
 
 // ${messages.map(m =>
 // <fragment>
 
 // </fragment>
 // )}
-
-// example with body
-
-<for each={messages} item="m">
-<Assistant if={m.userId == null}>
-${messageText}
-</Assistant>
-
-// this is interstitial space
-
-<User if={m.userId != null}>
-This is instructions for what to do:
-
-<text if={true}>
-// no more blocks inside of here, it's only about text
-asdfasdfk
-${foo}
-</text>
-
-${messageText}
-</User>
-</for>
-
-
-
-<ForEach
-    items={messages}
-    fragment={m => <Shreyas isAssistant={m.userId == null} messageText={m.text} />}
-/>
-
-// example with fragment defined in the file
-
-<ForEach
-    items={messages}
-    fragment={m => <Shreyas isAssistant={m.userId == null} messageText={m.text} />}
-/>
-
-/// fragments
-
-<fragment.Shreyas>
-<Assistant if={isAssistant}>
-${messageText}
-</Assistant>
-
-
-<User if={!isAssistant}>
-This is instructions for what to do:
-
-<text if={true}>
-// no more blocks inside of here, it's only about text
-</text>
-
-${messageText}
-</User>
-</fragment.Shreyas>
-
-
-
-
-
-
-
-
-// example with import, for later
-
-import {Transcript} from './transcript.glass'
-
-<Transcript conversationId="conversationId" />
