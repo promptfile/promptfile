@@ -50,4 +50,17 @@ And this is the end`
       doc: 'Hello world this is a document.\n\n${jsx-0}\n\nThis is the middle\n${jsx-1}\nAnd this is the end',
     })
   })
+
+  it('should transform document with if condition', () => {
+    const glass = `Hello world this is a document.
+
+<User if={user.isAdmin} />`
+
+    expect(transformDynamicBlocks(glass)).to.deep.equal({
+      jsxInterpolations: {
+        'jsx-0': "user.isAdmin ? `<User if={user.isAdmin} />` : ''",
+      },
+      doc: 'Hello world this is a document.\n\n${jsx-0}',
+    })
+  })
 })

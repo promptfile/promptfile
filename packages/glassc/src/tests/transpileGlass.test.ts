@@ -461,4 +461,70 @@ You are a helpful assistant.
   return interpolateGlassChat('foo', TEMPLATE, interpolations)
 }`)
   })
+
+  it('should transpile with single if condition', () => {
+    const transpiled = transpileGlassFile(
+      `<System>
+Hello world
+</System>
+
+<User if={true}>
+Goodbye world
+</User>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
+
+    expect(transpiled.code).to.equal(`export function getFooPrompt() {
+  const interpolations = {
+    'jsx-1': true
+      ? \`<User if={true}>
+Goodbye world
+</User>\`
+      : '',
+  }
+  const TEMPLATE = '<System>\\nHello world\\n</System>\\n\\n\${jsx-1}'
+  return interpolateGlassChat('foo', TEMPLATE, interpolations)
+}`)
+  })
+
+  it('should transpile with single if condition, string value', () => {
+    const transpiled = transpileGlassFile(
+      `<System>
+Hello world
+</System>
+
+<User if="false">
+Goodbye world
+\${subject}
+</User>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
+
+    expect(transpiled.code).to.equal(`export function getFooPrompt(args: { subject: string }) {
+  const { subject } = args
+
+  const interpolations = {
+    'jsx-1': false
+      ? \`<User if="false">
+Goodbye world
+\${subject}
+</User>\`
+      : '',
+  }
+  const TEMPLATE = '<System>\\nHello world\\n</System>\\n\\n\${jsx-1}'
+  return interpolateGlassChat('foo', TEMPLATE, interpolations)
+}`)
+  })
 })

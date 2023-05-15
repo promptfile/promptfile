@@ -54,7 +54,7 @@ And this is the end`
         },
       },
       {
-        tagName: 'for',
+        tagName: 'For',
         attrs: [
           { name: 'each', expressionValue: 'messages' },
           { name: 'fragment', expressionValue: 'm => <Block role={m.role} content={m.text} />' },
@@ -77,7 +77,7 @@ And this is the end`
 
   it('should convert JSXNode to string', () => {
     const node: JSXNode = {
-      tagName: 'for',
+      tagName: 'For',
       attrs: [
         { name: 'each', expressionValue: 'messages' },
         { name: 'fragment', expressionValue: 'm => <Block role={m.role} content={m.text} />' },

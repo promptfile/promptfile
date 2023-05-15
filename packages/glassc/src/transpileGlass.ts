@@ -11,8 +11,6 @@ import { parseGlassAST } from './util/parseGlassAST.js'
 
 const extension = 'glass'
 
-const builtinTags = new Set(['Code', 'Args', 'Prompt', 'System', 'User', 'Assistant'])
-
 /**
  * Takes a .glass document and returns a code file.
  * The directory / folder information is necessary so we can correctly re-write import paths.
@@ -93,9 +91,9 @@ export function transpileGlassFile(
     if (jsxNode.tagName === 'Args') {
       argsNode = jsxNodeToString(jsxNode)
     }
-    if (builtinTags.has(jsxNode.tagName)) {
-      continue
-    }
+    // if (builtinTags.has(jsxNode.tagName)) {
+    //   continue
+    // }
     const jsxString = jsxNodeToString(jsxNode)
     const parsedJsx = parseJSXExpression(jsxString)
 

@@ -29,15 +29,37 @@ describe('parseJSX', () => {
   it('should parse JSX', () => {
     const code = `<For each={messages} />`
     expect(parseJSXExpression(code)).to.deep.equal({
-      tagNames: ['for'],
+      tagNames: ['For'],
       undeclaredVariables: ['messages'],
     })
   })
 
-  it('should parse nested JSX', () => {
-    const code = `<For each={messages} fragment={m => <Block foo="bar" role={role} content={m.text} />}></for>`
+  it('should parse JSX', () => {
+    const code = `<System>
+You are a helpful assistant.
+</System>
+
+<User if={false}>
+Who was gandhi?
+</User>
+
+<User if={message}>
+Who was Curie?
+</User>
+
+<User if="false">
+Who was gandhi?
+</User>`
     expect(parseJSXExpression(code)).to.deep.equal({
-      tagNames: ['for', 'Block'],
+      tagNames: ['System', 'User'],
+      undeclaredVariables: ['message'],
+    })
+  })
+
+  it('should parse nested JSX', () => {
+    const code = `<For each={messages} fragment={m => <Block foo="bar" role={role} content={m.text} />}></For>`
+    expect(parseJSXExpression(code)).to.deep.equal({
+      tagNames: ['For', 'Block'],
       undeclaredVariables: ['messages', 'role'],
     })
   })
@@ -46,17 +68,17 @@ describe('parseJSX', () => {
     const code = `<For each={messages} fragment={m => <Block foo="bar" role={() => {
       const a = b
       return a
-    }} content={m.text} />}></for>`
+    }} content={m.text} />}></For>`
     expect(parseJSXExpression(code)).to.deep.equal({
-      tagNames: ['for', 'Block'],
+      tagNames: ['For', 'Block'],
       undeclaredVariables: ['messages', 'b'],
     })
   })
 
-  it('should parse single for statement', () => {
-    const code = `<for each={[{role: 'user', content: 'who was gandhi?'}]} fragment={item => <Block role={item.role} content={item.content} />}  />`
+  it('should parse single For statement', () => {
+    const code = `<For each={[{role: 'user', content: 'who was gandhi?'}]} fragment={item => <Block role={item.role} content={item.content} />}  />`
     expect(parseJSXExpression(code)).to.deep.equal({
-      tagNames: ['for', 'Block'],
+      tagNames: ['For', 'Block'],
       undeclaredVariables: [],
     })
   })

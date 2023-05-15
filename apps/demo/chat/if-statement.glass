@@ -1,0 +1,19 @@
+<Code>
+const useMe = true
+</Code>
+
+<System>
+You are a helpful assistant.
+</System>
+
+<User if={false}>
+Who was gandhi?
+</User>
+
+<User if={useMe}>
+Who was ${subject}?
+</User>
+
+<User if="false">
+Who was gandhi?
+</User>
