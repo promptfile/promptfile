@@ -1,3 +1,6 @@
+** Brief Description**
+This Glass file fetches information about a word from an API and then designs a fill-in-the-blank question for the user along with 4 options to select from. This demonstrates how Glass easily allows you to write code in your prompt, provide examples with the appropriate role and have variables interpolated.
+
 <Code>
 const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
 const res = await fetch(url)
@@ -25,7 +28,7 @@ Information about Word:
 
 
 <Assistant>
-Example Sentence: Although he remained quite skinny, Jeff's ---- proved to be extremely unhealthy given the large amount of sugar he consumed. 
+Example Sentence: Although he remained quite skinny, Jeff's ---- proved to be extremely unhealthy given the large amount of sugar he consumed.
 Option A: frugality
 Option B: grandiloquence
 Option C: wan
@@ -38,7 +41,7 @@ Information about Word:
 ```json
 [{"word":"sedition","phonetic":"/sɛˈdɪ.ʃən/","phonetics":[{"text":"/sɛˈdɪ.ʃən/","audio":"https://api.dictionaryapi.dev/media/pronunciations/en/sedition-au.mp3","sourceUrl":"https://commons.wikimedia.org/w/index.php?curid=75857792","license":{"name":"BY-SA 4.0","url":"https://creativecommons.org/licenses/by-sa/4.0"}}],"meanings":[{"partOfSpeech":"noun","definitions":[{"definition":"Organized incitement of rebellion or civil disorder against authority or the state, usually by speech or writing.","synonyms":[],"antonyms":[]},{"definition":"Insurrection or rebellion.","synonyms":[],"antonyms":[]}],"synonyms":[],"antonyms":[]}],"license":{"name":"CC BY-SA 3.0","url":"https://creativecommons.org/licenses/by-sa/3.0"},"sourceUrls":["https://en.wiktionary.org/wiki/sedition"]}]
 ```
-### 
+###
 </User>
 
 <Assistant>
