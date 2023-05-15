@@ -27,7 +27,7 @@ describe('parseJSX', () => {
   })
 
   it('should parse JSX', () => {
-    const code = `<for each={messages} />`
+    const code = `<For each={messages} />`
     expect(parseJSXExpression(code)).to.deep.equal({
       tagNames: ['for'],
       undeclaredVariables: ['messages'],
@@ -35,7 +35,7 @@ describe('parseJSX', () => {
   })
 
   it('should parse nested JSX', () => {
-    const code = `<for each={messages} fragment={m => <Block foo="bar" role={role} content={m.text} />}></for>`
+    const code = `<For each={messages} fragment={m => <Block foo="bar" role={role} content={m.text} />}></for>`
     expect(parseJSXExpression(code)).to.deep.equal({
       tagNames: ['for', 'Block'],
       undeclaredVariables: ['messages', 'role'],
@@ -43,7 +43,7 @@ describe('parseJSX', () => {
   })
 
   it('should parse nested JSX with complicated innards', () => {
-    const code = `<for each={messages} fragment={m => <Block foo="bar" role={() => {
+    const code = `<For each={messages} fragment={m => <Block foo="bar" role={() => {
       const a = b
       return a
     }} content={m.text} />}></for>`

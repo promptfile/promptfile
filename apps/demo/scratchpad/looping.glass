@@ -3,20 +3,17 @@ const conversation = await db.converation.findUniqueOrThrow({where: {id: convers
 const messages = await db.message.findMany({where: {conversationId: conversation.id}})
 </Code>
 
-
 <System>
 You are a helpful assistant.
 </System>
 
-<Block role="system" content="but you ouldnt want to do this would you" />
+<For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
 
-<for each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
-
-<Block role="System">
+<User>
 asdfa
 ${hello}
 asdfasdf
-</Block>
+</User>
 
 
 

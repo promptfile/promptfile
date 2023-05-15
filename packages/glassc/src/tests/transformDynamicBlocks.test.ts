@@ -18,7 +18,7 @@ And this is the end`
   it('should transform document with dynamic for block', () => {
     const glass = `Hello world this is a document.
 
-<for each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
+<For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
 
 And this is the end`
 
@@ -34,10 +34,10 @@ And this is the end`
   it('should transform document with multiple dynamic for block', () => {
     const glass = `Hello world this is a document.
 
-<for each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
+<For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
 
 This is the middle
-<for each={messages2} fragment={m => <Block role={m.role} content={m.text} />} />
+<For each={messages2} fragment={m => <Block role={m.role} content={m.text} />} />
 And this is the end`
 
     expect(transformDynamicBlocks(glass)).to.deep.equal({

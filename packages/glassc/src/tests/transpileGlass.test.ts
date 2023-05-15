@@ -399,7 +399,7 @@ export const Glass = {
 You are a helpful assistant.
 </System>
 
-<for each={messages} fragment={m => <Block role={m.role} content={m.content} />} />
+<For each={messages} fragment={m => <Block role={m.role} content={m.content} />} />
 
 <User>
 \${foo}

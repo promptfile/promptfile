@@ -5,4 +5,4 @@ const conversation = await db.conversation.findUniqueOrThrow({where: {id: conver
 const messages = await db.message.findMany({where: {conversationId: conversation.id}})
 </Code>
 
-<for each={messages} fragment={item => <Block role={item.role} content={item.content} />}  />
+<For each={messages} fragment={item => <Block role={item.role} content={item.content} />}  />

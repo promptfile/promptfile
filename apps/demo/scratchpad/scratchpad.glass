@@ -6,7 +6,7 @@ You are a helpful assistant. Your job is to respond to the user.
 ${message.content}
 </Block>
 
-<for each={examples} fragment={item => <MySpecialKshot item={item} />} />
+<For each={examples} fragment={item => <MySpecialKshot item={item} />} />
 
 <User>
 ${bar}

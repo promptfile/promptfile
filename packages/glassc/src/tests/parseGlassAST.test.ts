@@ -13,7 +13,7 @@ interstitial
 <Bar x={(m) => "hello"}>
 </Bar>
 
-<for each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
+<For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
 
 And this is the end`
 
@@ -97,7 +97,7 @@ And this is the end`
     }
 
     expect(jsxNodeToString(node)).to.deep.equal(
-      '<for each={messages} fragment={m => <Block role={m.role} content={m.text} />} />'
+      '<For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />'
     )
   })
 })

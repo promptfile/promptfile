@@ -16,12 +16,12 @@ export function findInvalidAttributes(text: string) {
         let isInvalidAttribute = false
 
         switch (tagName) {
-          case 'block':
+          case 'Block':
             if (attributeName !== 'role' && attributeName !== 'content') {
               isInvalidAttribute = true
             }
             break
-          case 'for':
+          case 'For':
             if (attributeName !== 'each' && attributeName !== 'fragment') {
               isInvalidAttribute = true
             }
@@ -57,7 +57,7 @@ export function findInvalidAttributes(text: string) {
 
 export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
   const tagPattern = /^<\/?([\w-]+).*?>/gm
-  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt', 'for', 'Block', 'Args'])
+  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt', 'For', 'Block', 'Args'])
   const unsupportedTags: { tag: string; start: number }[] = []
 
   let match

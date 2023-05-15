@@ -367,9 +367,9 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
       data: 5,
     },
     {
-      label: '<for>',
+      label: '<For>',
       kind: CompletionItemKind.Snippet,
-      insertText: 'for each={$1} fragment={item => <Block role={item.role} content={item.content} />} />',
+      insertText: 'For each={$1} fragment={item => <Block role={item.role} content={item.content} />} />',
       insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
