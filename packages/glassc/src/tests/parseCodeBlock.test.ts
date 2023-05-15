@@ -45,7 +45,6 @@ import baz from 'baz'
     const code = `
 const res = await fetch(url)
 `
-
     expect(codeBlockContainsAwait(code)).to.equal(true)
   })
 
@@ -71,6 +70,19 @@ const data = await res.json()
       importedSymbols: ['foo', 'bar', 'something', 'baz'],
       symbolsAddedToScope: ['res', 'data'],
       undeclaredValuesNeededInScope: ['url', 'method'],
+    })
+  })
+
+  it('should parse block with missing imports', () => {
+    const code = `
+const conversation = await db.converation.findUniqueOrThrow({where: {id: conversationId}})
+const messages = await db.message.findMany({where: {conversationId: conversation.id}})
+`
+    expect(parseCodeBlock(code)).to.deep.equal({
+      isAsync: true,
+      importedSymbols: [],
+      symbolsAddedToScope: ['conversation', 'messages'],
+      undeclaredValuesNeededInScope: ['db', 'conversationId'],
     })
   })
 })

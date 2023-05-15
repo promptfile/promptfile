@@ -201,12 +201,9 @@ and me`,
 }`)
   })
 
-  it('should transpile with frontmatter', () => {
+  it('should transpile with Args block', () => {
     const transpiled = transpileGlassFile(
-      `---
-foo: number
-bar: string
----
+      `<Args foo="number" bar="string" />
 <Prompt>
 \${foo} \${bar}
 </Prompt>`,
@@ -226,7 +223,8 @@ bar: string
     0: foo,
     1: bar,
   }
-  const TEMPLATE = '<Prompt>\\n\${0} \${1}\\n</Prompt>'
+  const TEMPLATE =
+    '<Args foo="number" bar="string" />\\n<Prompt>\\n\${0} \${1}\\n</Prompt>'
   return interpolateGlass('foo', TEMPLATE, interpolations)
 }`)
   })
@@ -393,7 +391,7 @@ export const Glass = {
 `)
   })
 
-  it.only('should transpile with dynamic for loop', () => {
+  it('should transpile with dynamic for loop', () => {
     const transpiled = transpileGlassFile(
       `<Args messages="{ role: string, content: string }[]" />
 

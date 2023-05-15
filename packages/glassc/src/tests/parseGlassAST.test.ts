@@ -75,7 +75,7 @@ And this is the end`
     ])
   })
 
-  it.only('should convert JSXNode to string', () => {
+  it('should convert JSXNode to string', () => {
     const node: JSXNode = {
       tagName: 'for',
       attrs: [

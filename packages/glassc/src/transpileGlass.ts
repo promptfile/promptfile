@@ -105,7 +105,6 @@ export function transpileGlassFile(
   }
 
   const parsedCodeBlocks = codeBlocks.map(block => parseCodeBlock(`${imports.join('\n')}\n${block.content}`))
-  console.log('parsed code blocks', JSON.stringify(parsedCodeBlocks, null, 2))
   const hasAsyncCodeBlocks = parsedCodeBlocks.filter(block => block.isAsync).length > 0
 
   for (const block of parsedCodeBlocks) {

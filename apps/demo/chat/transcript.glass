@@ -1,6 +1,8 @@
+import {db} from './db'
+
 <Code>
-    const conversation = await db.converation.findUniqueOrThrow({where: {id: conversationId}})
-    const messages = await db.message.findMany({where: {conversationId: conversation.id}})
+const conversation = await db.conversation.findUniqueOrThrow({where: {id: conversationId}})
+const messages = await db.message.findMany({where: {conversationId: conversation.id}})
 </Code>
 
 <for each={messages} fragment={item => <Block role={item.role} content={item.content} />}  />

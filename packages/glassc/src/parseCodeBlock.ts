@@ -41,29 +41,32 @@ export function parseCodeBlockUndeclaredSymbols(code: string) {
   const undeclaredValues = new Set<string>()
 
   function visit(node: ts.Node) {
-    if (
-      ts.isIdentifier(node) &&
-      !ts.isPropertyAccessExpression(node.parent) &&
-      !(ts.isPropertyAssignment(node.parent) && node.parent.name === node)
-    ) {
-      const symbol = checker.getSymbolAtLocation(node)
-      const declarations = symbol?.getDeclarations() || []
+    if (ts.isIdentifier(node)) {
+      if (
+        (!ts.isPropertyAccessExpression(node.parent) || node.parent.expression === node) &&
+        !(ts.isPropertyAccessExpression(node.parent) && node.parent.name === node) &&
+        !(ts.isPropertyAssignment(node.parent) && node.parent.name === node) &&
+        !(ts.isPropertySignature(node.parent) && node.parent.name === node)
+      ) {
+        const symbol = checker.getSymbolAtLocation(node)
+        const declarations = symbol?.getDeclarations() || []
 
-      let isDeclared = false
-      for (const declaration of declarations) {
-        if (
-          ts.isVariableDeclaration(declaration) ||
-          ts.isFunctionDeclaration(declaration) ||
-          ts.isImportSpecifier(declaration) ||
-          ts.isImportClause(declaration)
-        ) {
-          isDeclared = true
-          break
+        let isDeclared = false
+        for (const declaration of declarations) {
+          if (
+            ts.isVariableDeclaration(declaration) ||
+            ts.isFunctionDeclaration(declaration) ||
+            ts.isImportSpecifier(declaration) ||
+            ts.isImportClause(declaration)
+          ) {
+            isDeclared = true
+            break
+          }
         }
-      }
 
-      if (!isDeclared) {
-        undeclaredValues.add(node.text)
+        if (!isDeclared) {
+          undeclaredValues.add(node.text)
+        }
       }
     }
     ts.forEachChild(node, visit)
