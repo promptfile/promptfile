@@ -259,7 +259,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
               setFile({ ...file, values: { ...file.values, [v]: value } })
             }}
             onKeyDown={e => {
-              if (e.key === 'Enter' && !e.metaKey) {
+              if (e.key === 'Enter') {
                 e.currentTarget.blur()
                 exec()
               }
