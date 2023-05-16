@@ -45,6 +45,9 @@ function RigView() {
     vscode.postMessage({
       action: 'getOpenaiKey',
     })
+    vscode.postMessage({
+      action: 'getActiveFile',
+    })
   }, [])
 
   // register a callback for when the extension sends a message
@@ -52,7 +55,7 @@ function RigView() {
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
       switch (message.action) {
-        case 'onOpenGlassFile':
+        case 'setActiveFile':
           setCurrFilename(() => message.data.filename)
           break
         case 'setOpenaiKey':

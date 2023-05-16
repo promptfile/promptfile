@@ -113,8 +113,8 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
         prompt,
       }
 
-      const initLogs = [...file.logs, log]
-      setFile({ ...file, logs: initLogs })
+      // const initLogs = [...file.logs, log]
+      // setFile({ ...file, logs: initLogs })
 
       const r = await fetch('https://api.openai.com/v1/completions', {
         method: 'POST',
@@ -130,9 +130,9 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
       })
       const response = await handleStreamResponse(r, processCompletionStream)
 
-      const newLogs = [...initLogs]
-      newLogs[logIndex].result = response
-      setFile({ ...file, logs: newLogs })
+      // const newLogs = [...initLogs]
+      // newLogs[logIndex].result = response
+      // setFile({ ...file, logs: newLogs })
     }
 
     async function fetchChatCompletion(messages: any, args: any) {
@@ -145,8 +145,8 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
         prompt: messages,
       }
 
-      const initLogs = [...file.logs, log]
-      setFile({ ...file, logs: initLogs })
+      // const initLogs = [...file.logs, log]
+      // setFile({ ...file, logs: initLogs })
 
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -162,9 +162,9 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
       })
       const response = await handleStreamResponse(r, processChatStream)
 
-      const newLogs = [...initLogs]
-      newLogs[logIndex].result = response
-      setFile({ ...file, logs: newLogs })
+      // const newLogs = [...initLogs]
+      // newLogs[logIndex].result = response
+      // setFile({ ...file, logs: newLogs })
     }
 
     const cb = async (event: any) => {
@@ -191,8 +191,6 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
           break
         case 'execFileOutput':
           const { prompt, args } = message.data
-          setFile({ ...file, result: '', error: null })
-          setIsLoading(true)
           if (prompt instanceof Array) {
             await fetchChatCompletion(prompt, args)
           } else {
@@ -206,13 +204,16 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [chatModels, completionModels, openaiKey, file])
+  }, [chatModels, completionModels, openaiKey, file, setFile])
 
   const exec = () => {
     if (openaiKey === '') {
       postMessage('showMessage', { level: 'error', text: 'Please set `glass.openaiKey` in your extension settings.' })
       return
     }
+
+    setIsLoading(true)
+    setFile({ ...file, result: '', error: null })
 
     const interpolationVars: any = {}
     for (const variable of file.variables) {

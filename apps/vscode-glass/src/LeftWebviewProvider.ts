@@ -63,6 +63,17 @@ export class LeftPanelWebview implements WebviewViewProvider {
             data: newKey,
           })
           break
+        case 'getActiveFile':
+          const activeEditor = window.activeTextEditor
+          if (activeEditor) {
+            this._view.webview.postMessage({
+              action: 'setActiveFile',
+              data: {
+                filename: getDocumentFilename(activeEditor.document),
+              },
+            })
+          }
+          break
         case 'getOpenaiKey':
           this._view.webview.postMessage({
             action: 'setOpenaiKey',

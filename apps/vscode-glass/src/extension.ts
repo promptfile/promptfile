@@ -49,7 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
         if (leftPanelWebViewProvider._view.webview) {
           console.log('sending to webview')
           leftPanelWebViewProvider._view.webview.postMessage({
-            action: 'onOpenGlassFile',
+            action: 'setActiveFile',
             data: {
               filename,
             },
