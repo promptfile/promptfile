@@ -19,7 +19,7 @@ export interface RigFile {
 }
 
 export interface RigLog {
-  file: string
+  filename: string
   args: Record<string, string>
   model: string
   prompt: string | { role: string; content: string }[]

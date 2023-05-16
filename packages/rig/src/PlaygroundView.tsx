@@ -107,14 +107,14 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
       const logIndex = file.logs.length
       const log: RigLog = {
         isChat: false,
-        file: file.filename,
+        filename: file.filename,
         args,
         model: file.model,
         prompt,
       }
 
-      // const initLogs = [...file.logs, log]
-      // setFile({ ...file, logs: initLogs })
+      const initLogs = [...file.logs, log]
+      setFile({ ...file, logs: initLogs })
 
       const r = await fetch('https://api.openai.com/v1/completions', {
         method: 'POST',
@@ -139,7 +139,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
       const logIndex = file.logs.length
       const log: RigLog = {
         isChat: true,
-        file: file.filename,
+        filename: file.filename,
         args,
         model: file.model,
         prompt: messages,

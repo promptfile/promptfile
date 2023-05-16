@@ -259,6 +259,12 @@
             }
           },
           {
+            "scope": "markup.list.table-delimiter.mdx",
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
             "scope": "source.glass.comment",
             "settings": {
               "foreground": "#575757",
