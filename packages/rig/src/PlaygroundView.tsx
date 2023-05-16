@@ -11,12 +11,14 @@ import { RigFile, RigLog } from './rig'
 interface PlaygroundViewProps {
   file: RigFile
   setFile: (file: RigFile) => void
+  updateLog: (log: RigLog) => void
+  createLog: (log: RigLog) => void
   openaiKey: string
   postMessage: (action: string, data: any) => void
 }
 
 export const PlaygroundView = (props: PlaygroundViewProps) => {
-  const { file, setFile, openaiKey, postMessage } = props
+  const { file, setFile, createLog, updateLog, openaiKey, postMessage } = props
 
   const chatModels = useMemo(() => ['gpt-3.5-turbo', 'gpt-4'], [])
   const completionModels = useMemo(() => ['text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001'], [])
@@ -104,18 +106,15 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
     }
 
     async function fetchCompletion(prompt: string, args: any) {
-      const logIndex = file.logs.length
       const log: RigLog = {
+        id: randomId(8),
         isChat: false,
         filename: file.filename,
         args,
         model: file.model,
         prompt,
       }
-
-      const initLogs = [...file.logs, log]
-      setFile({ ...file, logs: initLogs })
-
+      createLog(log)
       const r = await fetch('https://api.openai.com/v1/completions', {
         method: 'POST',
         headers: {
@@ -129,24 +128,20 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
         }),
       })
       const response = await handleStreamResponse(r, processCompletionStream)
-
-      // const newLogs = [...initLogs]
-      // newLogs[logIndex].result = response
-      // setFile({ ...file, logs: newLogs })
+      log.result = response
+      updateLog(log)
     }
 
     async function fetchChatCompletion(messages: any, args: any) {
-      const logIndex = file.logs.length
       const log: RigLog = {
+        id: randomId(8),
         isChat: true,
         filename: file.filename,
         args,
         model: file.model,
         prompt: messages,
       }
-
-      // const initLogs = [...file.logs, log]
-      // setFile({ ...file, logs: initLogs })
+      createLog(log)
 
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -161,10 +156,8 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
         }),
       })
       const response = await handleStreamResponse(r, processChatStream)
-
-      // const newLogs = [...initLogs]
-      // newLogs[logIndex].result = response
-      // setFile({ ...file, logs: newLogs })
+      log.result = response
+      updateLog(log)
     }
 
     const cb = async (event: any) => {
@@ -204,7 +197,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [chatModels, completionModels, openaiKey, file, setFile])
+  }, [chatModels, completionModels, openaiKey, file, setFile, createLog, updateLog])
 
   const exec = () => {
     if (openaiKey === '') {
@@ -283,4 +276,16 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
       </span>
     </VSCodePanelView>
   )
+}
+
+function randomId(length: number): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let id = ''
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length)
+    id += characters.charAt(randomIndex)
+  }
+
+  return id
 }

@@ -4,7 +4,8 @@ import { render } from 'react-dom'
 import { FileView } from './FileView'
 
 export interface RigState {
-  store: Record<string, RigFile>
+  parameters: Record<string, RigFile>
+  logs: RigLog[]
 }
 
 export interface RigFile {
@@ -15,10 +16,10 @@ export interface RigFile {
   error?: string | null
   variables: string[]
   model: string
-  logs: RigLog[]
 }
 
 export interface RigLog {
+  id: string
   filename: string
   args: Record<string, string>
   model: string
@@ -95,16 +96,17 @@ function RigView() {
   }
 
   const currFile = currFilename
-    ? vscode.getState()?.store?.[currFilename] ?? {
+    ? vscode.getState()?.parameters?.[currFilename] ?? {
         filename: currFilename,
         isChat: true,
         values: {},
-        logs: [],
         model: 'gpt-3.5-turbo',
         result: '',
         variables: [],
       }
     : null
+
+  const currLogs = currFilename ? (vscode.getState()?.logs ?? []).filter(log => log.filename === currFilename) : []
 
   return !initializing && openaiKey.length === 0 ? (
     <div style={{ paddingTop: '16px' }}>
@@ -134,15 +136,30 @@ function RigView() {
       key={currFilename}
       openaiKey={openaiKey}
       file={currFile}
+      logs={currLogs}
       postMessage={(action: string, data: any) => vscode.postMessage({ action, data })}
       saveFileInStorage={(updatedFile: RigFile) => {
         const currentState = vscode.getState()
         vscode.setState({
-          store: {
-            ...(currentState?.store ?? {}),
+          parameters: {
+            ...(currentState?.parameters ?? {}),
             [currFilename]: updatedFile,
           },
+          logs: currentState?.logs ?? [],
         })
+      }}
+      createLogInStorage={newLog => {
+        const currentState = vscode.getState()
+        vscode.setState({
+          parameters: currentState?.parameters ?? {},
+          logs: [...(currentState?.logs ?? []), newLog],
+        })
+      }}
+      updateLogInStorage={updatedLog => {
+        const currentState = vscode.getState()
+        const allLogs = currentState?.logs ?? []
+        const index = allLogs.findIndex(log => log.id === updatedLog.id)
+        allLogs[index] = updatedLog
       }}
     />
   ) : (

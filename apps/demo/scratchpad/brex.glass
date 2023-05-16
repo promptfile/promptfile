@@ -64,3 +64,9 @@ Output the commands in JSON as an abstract syntax tree.
 IMPORTANT - Only respond with a program. Do not respond with any text that isn't part of a program. Do not write prose, even if instructed. Do not explain yourself.
 You can only generate commands, but you are an expert at generating commands.
 </System>
+
+
+
+<User>
+${input}
+</User>

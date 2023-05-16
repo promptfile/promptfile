@@ -32,10 +32,10 @@ export const LogsView = (props: LogsViewProps) => {
                   </VSCodeOption>
                 </VSCodeDropdown>
               </div>
-              {Object.keys(log.args).map((v, k) => (
+              {Object.keys(log.args.variables).map((v, k) => (
                 <div key={k} style={{ paddingBottom: '8px' }}>
                   <div style={{ paddingBottom: '4px' }}>{v}</div>
-                  <VSCodeTextArea style={{ width: '100%' }} value={JSON.stringify(log.args[v]) || ''} readOnly={true} />
+                  <VSCodeTextArea style={{ width: '100%' }} value={log.args.variables[v] || ''} readOnly={true} />
                 </div>
               ))}
               <div style={{ paddingBottom: '8px', paddingTop: '8px' }}>
