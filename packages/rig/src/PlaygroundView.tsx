@@ -225,7 +225,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
   }
 
   return (
-    <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px', paddingTop: '16px' }}>
+    <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px' }}>
       <div style={{ paddingBottom: '8px' }}>
         <div style={{ paddingBottom: '4px' }}>Model</div>
         <VSCodeDropdown
