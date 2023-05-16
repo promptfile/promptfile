@@ -87,7 +87,7 @@
         {
           "id": "webview",
           "title": "Glass",
-          "icon": "./assets/bar-icon.svg"
+          "icon": "./assets/icon-bar.svg"
         }
       ]
     },
@@ -97,7 +97,7 @@
           "type": "webview",
           "id": "left-panel-webview",
           "name": "",
-          "icon": "src/assets/bar-icon.svg"
+          "icon": "src/assets/icon-bar.svg"
         }
       ]
     },
