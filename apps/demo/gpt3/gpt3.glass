@@ -1,3 +1,3 @@
 <Prompt>
-who was ${person}?
+who was ${hello}?
 </Prompt>

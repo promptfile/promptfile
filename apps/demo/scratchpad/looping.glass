@@ -10,6 +10,10 @@ You are a helpful assistant.
 <For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
 
 <User>
+Hi
+</User>
+
+<User>
 asdfa
 ${hello}
 asdfasdf

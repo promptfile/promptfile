@@ -42,7 +42,7 @@ export class LeftPanelWebview implements WebviewViewProvider {
     }
 
     const metadata = parseGlassMetadata(currentEditor.document.getText())
-    webviewView.webview.postMessage({
+    void webviewView.webview.postMessage({
       action: 'updateDocumentMetadata',
       data: {
         ...metadata,
@@ -84,16 +84,16 @@ export class LeftPanelWebview implements WebviewViewProvider {
         case 'execCurrentFile':
           const currentEditor = window.activeTextEditor
           if (!currentEditor) {
-            window.showErrorMessage('No active editor')
+            void window.showErrorMessage('No active editor')
             return
           }
 
           if (!isGlassFile(currentEditor.document)) {
-            window.showErrorMessage('Current file is not a .glass file')
+            void window.showErrorMessage('Current file is not a .glass file')
             return
           }
 
-          const output = await executeGlassFile(currentEditor.document, message.data)
+          const output = await executeGlassFile(currentEditor.document, message.data.variables)
           console.log('ctx response is after execution', output)
 
           this._view.webview.postMessage({

@@ -32,11 +32,11 @@ qwefoij
 </System>
 
 <Assistant name="teehee">
-${hello}
+${goodbye}
 </Assistant>
 
 <Assistant name="hi">
-tell me more!
+${hello}
 </Assistant>
 
 <User>

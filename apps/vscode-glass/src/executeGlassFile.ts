@@ -11,7 +11,10 @@ import { getDocumentFilename } from './util/isGlassFile'
 export async function executeGlassFile(document: vscode.TextDocument, interpolationArgs: any) {
   const fileName = getDocumentFilename(document)
 
-  const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)!
+  const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
+  if (!activeEditorWorkspaceFolder) {
+    throw new Error('Could not find active editor workspace folder')
+  }
   const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath

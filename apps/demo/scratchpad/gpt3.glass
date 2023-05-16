@@ -6,6 +6,6 @@ You are a helpful assistant. Your job is to respond to the user.
 Hello, how are you?
 </Assistant>
 
-<User name="blah" teehee="yes">
+<User >
 ${bar}
 </User>
