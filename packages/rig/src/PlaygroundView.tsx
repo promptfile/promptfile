@@ -164,6 +164,12 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
       const message = event.data // The JSON data our extension sent
 
       switch (message.action) {
+        case 'onRunPlayground':
+          if (message.data.filename !== file.filename) {
+            return
+          }
+          exec()
+          break
         case 'updateDocumentMetadata':
           const metadata = message.data
           if (message.data.filename !== file.filename) {

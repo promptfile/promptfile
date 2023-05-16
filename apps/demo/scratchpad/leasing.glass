@@ -2,6 +2,12 @@
 Your job is to rate how angry the user is on a scale of 1 to 10.
 </System>
 
+
 <User>
 ${message}
 </User>
+
+
+<System>
+Reply with your assessment on how angry the user is between 1 and 10. Don't reply with anything else or an explanation – just reply with a number. No punctuation
+</System>

@@ -17,7 +17,7 @@ export async function activate(context: vscode.ExtensionContext) {
   client = new LanguageClient(
     'Glass',
     // If the extension is launched in debug mode then the debug server options are used
-    // Otherwise the run options are used
+    // Otherwise the options are used
     {
       run: { module: languageServerModule, transport: TransportKind.ipc },
       debug: {
@@ -169,12 +169,25 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(
+    vscode.commands.registerCommand('glass.runPlayground', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (activeEditor && activeEditor.document.languageId === 'glass') {
+        const filename = getDocumentFilename(activeEditor.document)
+        leftPanelWebViewProvider._view.webview.postMessage({
+          action: 'onRunPlayground',
+          data: {
+            filename,
+          },
+        })
+      } else {
+        console.log('webview not ready')
+      }
+    }),
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),
     vscode.commands.registerCommand('glass.openDocs', async () => {
       await vscode.env.openExternal(vscode.Uri.parse('https://language.glass'))
-
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),
     vscode.commands.registerCommand('glass.transpileAll', async () => {

@@ -151,6 +151,18 @@
       {
         "command": "glass.transpileAll",
         "title": "Glass: transpile all"
+      },
+      {
+        "command": "glass.runPlayground",
+        "title": "Glass: run in playground"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "glass.runPlayground",
+        "key": "ctrl+enter",
+        "mac": "cmd+enter",
+        "when": "editorTextFocus && resourceLangId == glass"
       }
     ],
     "configuration": [
