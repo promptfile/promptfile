@@ -24,6 +24,7 @@ And this is the end`
           { name: 'x', expressionValue: '3' },
           { name: 'y', stringValue: '2' },
         ],
+        children: [],
         position: {
           end: {
             column: 20,
@@ -36,10 +37,12 @@ And this is the end`
             offset: 33,
           },
         },
+        type: 'mdxJsxFlowElement',
       },
       {
         tagName: 'Bar',
         attrs: [{ name: 'x', expressionValue: '(m) => "hello"' }],
+        children: [],
         position: {
           end: {
             column: 7,
@@ -52,6 +55,7 @@ And this is the end`
             offset: 68,
           },
         },
+        type: 'mdxJsxFlowElement',
       },
       {
         tagName: 'For',
@@ -59,6 +63,7 @@ And this is the end`
           { name: 'each', expressionValue: 'messages' },
           { name: 'fragment', expressionValue: 'm => <Block role={m.role} content={m.text} />' },
         ],
+        children: [],
         position: {
           end: {
             column: 81,
@@ -69,6 +74,36 @@ And this is the end`
             column: 1,
             line: 10,
             offset: 101,
+          },
+        },
+        type: 'mdxJsxFlowElement',
+      },
+    ])
+  })
+
+  it.skip('should parse nested JSX', () => {
+    const mdx = `<For each={messages}>
+Inner stuff
+<Text if="true">
+With nested if block \${withvar}
+</Text>
+and more
+</For>`
+
+    expect(parseGlassASTJSX(mdx)).to.deep.equal([
+      {
+        tagName: 'For',
+        attrs: [{ name: 'each', expressionValue: 'messages' }],
+        position: {
+          end: {
+            column: 7,
+            line: 7,
+            offset: 106,
+          },
+          start: {
+            column: 1,
+            line: 1,
+            offset: 0,
           },
         },
       },
@@ -82,6 +117,7 @@ And this is the end`
         { name: 'each', expressionValue: 'messages' },
         { name: 'fragment', expressionValue: 'm => <Block role={m.role} content={m.text} />' },
       ],
+      children: [],
       position: {
         end: {
           column: 81,

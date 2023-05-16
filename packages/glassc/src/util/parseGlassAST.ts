@@ -15,8 +15,11 @@ import { removeGlassFrontmatter } from '../removeGlassFrontmatter'
 import { checkOk } from './checkOk'
 
 export interface JSXNode {
-  tagName: string
+  tagName?: string
+  value?: string
+  type?: string
   attrs: { name: string; stringValue?: string; expressionValue?: string }[]
+  children: JSXNode[]
   position: {
     start: { line: number; column: number; offset: number }
     end: { line: number; column: number; offset: number }
@@ -415,7 +418,8 @@ function parseJSXHelper(node: any, jsx: JSXNode[]) {
 function parseJSXNode(node: any) {
   const tagName = node.name
   const position = node.position
-  const attrs = node.attributes.map((attr: any) => {
+  const value = node.value
+  const attrs = (node.attributes || []).map((attr: any) => {
     checkOk(attr.type === 'mdxJsxAttribute', `Expected attribute node type 'mdxJsxAttribute', got '${attr.type}'`)
     const attrName: string = attr.name
     if (typeof attr.value === 'string') {
@@ -428,5 +432,10 @@ function parseJSXNode(node: any) {
     const attrValue: string = attr.value.value
     return { name: attrName, expressionValue: attrValue }
   })
-  return { tagName, attrs, position }
+  const children = (node.children || []).map((child: any) => parseJSXNode(child))
+  const res: JSXNode = { tagName, attrs, position, children, type: node.type }
+  if (value != null) {
+    res['value'] = value
+  }
+  return res
 }

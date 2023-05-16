@@ -1,9 +1,9 @@
 // multiline regex matching "{ /* ... */ }", including single preceding newline
-const COMMENT_REGEX = /\n{\s*\/\*\s*(.|\n)*?\s*\*\/\s*}/gm
+const COMMENT_REGEX = /\n\${\s*\/\*\s*(.|\n)*?\s*\*\/\s*}/gm
 // multiline regex matching "{ /* ... */ }" starting in the middle of a line
-const INLINE_COMMENT_REGEX = /{\s*\/\*\s*(.|\n)*?\s*\*\/\s*}/gm
+const INLINE_COMMENT_REGEX = /\${\s*\/\*\s*(.|\n)*?\s*\*\/\s*}/gm
 // multiline regex matching "{ /* ... */ }" at the beginning of a document (no preceding newlines), including following newlines
-const START_COMMENT_REGEX = /{\s*\/\*\s*(.|\n)*?\s*\*\/\s*}\n/gm
+const START_COMMENT_REGEX = /\${\s*\/\*\s*(.|\n)*?\s*\*\/\s*}\n/gm
 
 /**
  * Takes a glass template string and removes all block comments.

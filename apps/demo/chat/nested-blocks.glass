@@ -1,0 +1,17 @@
+<Code>
+const useGandhi = true
+</Code>
+
+<System>
+You are a highly-intelligent AI.
+</System>
+
+<User>
+<Text if={useGandhi}>
+who was gandhi?
+</Text>
+
+<Text if={!useGandhi}>
+who was Einstein?
+</Text>
+</User>

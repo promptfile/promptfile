@@ -421,7 +421,7 @@ You are a helpful assistant.
 
   const interpolations = {
     0: foo,
-    'jsx-2': messages
+    'jsx-0': messages
       .map(
         (m) => \`<Block role={\${JSON.stringify(
           m.role
@@ -430,7 +430,7 @@ You are a helpful assistant.
       .join('\\n\\n'),
   }
   const TEMPLATE =
-    '<Args messages="{ role: string, content: string }[]" />\\n\\n<System>\\nYou are a helpful assistant.\\n</System>\\n\\n\${jsx-2}\\n\\n<User>\\n\${0}\\n</User>'
+    '<Args messages="{ role: string, content: string }[]" />\\n\\n<System>\\nYou are a helpful assistant.\\n</System>\\n\\n\${jsx-0}\\n\\n<User>\\n\${0}\\n</User>'
   return interpolateGlassChat('foo', TEMPLATE, interpolations)
 }`)
   })
@@ -482,13 +482,13 @@ Goodbye world
 
     expect(transpiled.code).to.equal(`export function getFooPrompt() {
   const interpolations = {
-    'jsx-1': true
+    'jsx-0': true
       ? \`<User if={true}>
 Goodbye world
 </User>\`
       : '',
   }
-  const TEMPLATE = '<System>\\nHello world\\n</System>\\n\\n\${jsx-1}'
+  const TEMPLATE = '<System>\\nHello world\\n</System>\\n\\n\${jsx-0}'
   return interpolateGlassChat('foo', TEMPLATE, interpolations)
 }`)
   })
@@ -516,14 +516,14 @@ Goodbye world
   const { subject } = args
 
   const interpolations = {
-    'jsx-1': false
+    'jsx-0': false
       ? \`<User if="false">
 Goodbye world
 \${subject}
 </User>\`
       : '',
   }
-  const TEMPLATE = '<System>\\nHello world\\n</System>\\n\\n\${jsx-1}'
+  const TEMPLATE = '<System>\\nHello world\\n</System>\\n\\n\${jsx-0}'
   return interpolateGlassChat('foo', TEMPLATE, interpolations)
 }`)
   })

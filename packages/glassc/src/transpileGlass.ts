@@ -94,7 +94,7 @@ export function transpileGlassFile(
     // if (builtinTags.has(jsxNode.tagName)) {
     //   continue
     // }
-    const jsxString = jsxNodeToString(jsxNode)
+    const jsxString = jsxNodeToString(jsxNode) // TODO: this should just be the section of the doc from start to end
     const parsedJsx = parseJSXExpression(jsxString)
 
     for (const s of parsedJsx.undeclaredVariables) {

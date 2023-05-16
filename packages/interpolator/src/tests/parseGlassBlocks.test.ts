@@ -153,4 +153,16 @@ Goodbye world
 </User>`)
     ).to.throw('Must complete tag <System> (line 1) before starting tag <User> (line 3)')
   })
+
+  it('should parse blocks with nested <Text> node', () => {
+    expect(
+      parseGlassBlocks(`
+<User>
+<Text>
+Hello world
+</Text>
+Goodbye world
+</User>`)
+    ).to.deep.equal([{ content: 'Hello world\nGoodbye world', tag: 'User' }])
+  })
 })

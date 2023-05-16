@@ -1,4 +1,4 @@
-import { interpolateBlock } from './interpolate'
+import { interpolateBlock, interpolateJSXExpressions } from './interpolate'
 import { parseGlassBlocks } from './parseGlassBlocks'
 import { removeGlassComments } from './removeGlassComments'
 
@@ -19,10 +19,7 @@ export function interpolateGlassChat(
   let doc = removeGlassComments(content)
 
   // first interpolate the jsx interpolations
-  doc = doc.replace(/\${jsx-([0-9]+)}/g, (match, key) => {
-    const value = variables[`jsx-${key}`]
-    return value
-  })
+  doc = interpolateJSXExpressions(doc, variables)
 
   const blocks = parseGlassBlocks(doc)
 

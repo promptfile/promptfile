@@ -30,7 +30,7 @@ export function parseGlassBlocks(template: string) {
   let currContent: string | null = null
   let currAttributes: Record<string, string> = {}
 
-  const tagRegex = /^<(Assistant|User|System|Prompt|Code|Block).*>$/
+  const tagRegex = /^<(Assistant|User|System|Prompt|Code|Block|Text).*>$/
   const startingTagRegex = /^<([A-Za-z0-9_]+).*$/
 
   for (let i = 0; i < lines.length; i++) {
@@ -40,6 +40,10 @@ export function parseGlassBlocks(template: string) {
     if (altTagMatch) {
       // keep track of the current tag, for ending
       currAltTag = altTagMatch[1]
+    }
+
+    if (line === '</Text>') {
+      continue // ignore closing </Text> tags
     }
 
     if (
@@ -80,11 +84,16 @@ export function parseGlassBlocks(template: string) {
     }
 
     if (match) {
+      if (match[1] === 'Text') {
+        continue // text just gets added to current block
+      }
+
       if (currTag) {
         throw new Error(
           `Must complete tag <${currTag}> (line ${currTagStartLine}) before starting tag <${match[1]}> (line ${i + 1})`
         )
       }
+
       currTag = match[1]
       currTagStartLine = i + 1
       currContent = null

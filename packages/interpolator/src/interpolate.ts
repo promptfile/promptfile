@@ -1,15 +1,7 @@
 export function interpolate(template: string, variables: Record<string, string>) {
-  let interpolatedBlock = template
+  let interpolatedBlock = interpolateJSXExpressions(template, variables)
 
-  const jsxInterpolations = Object.keys(variables).filter(key => key.startsWith('jsx-'))
   const nonJsxInterpolations = Object.keys(variables).filter(key => !key.startsWith('jsx-'))
-
-  // first interpolate the jsx interpolations
-  for (const key of jsxInterpolations) {
-    const value = variables[key]
-    const regex = new RegExp(`\\$\\{${key}\\}`, 'g')
-    interpolatedBlock = interpolatedBlock.replace(regex, value)
-  }
 
   for (const key of nonJsxInterpolations) {
     const value = variables[key]
@@ -17,6 +9,25 @@ export function interpolate(template: string, variables: Record<string, string>)
     interpolatedBlock = interpolatedBlock.replace(regex, value)
   }
   return interpolatedBlock
+}
+
+export function interpolateJSXExpressions(template: string, variables: Record<string, string>) {
+  let interpolated = template
+
+  // first interpolate the jsx interpolations
+  while (true) {
+    const match = interpolated.match(/(\${(jsx-[0-9]*)})/g)
+    if (match == null) {
+      break
+    }
+
+    for (const m of match) {
+      const value = variables[m.slice(2).slice(0, -1)]
+      interpolated = interpolated.replace(m, value)
+    }
+  }
+
+  return interpolated
 }
 
 export function interpolateBlock(fnName: string, template: string, variables: Record<string, string>) {

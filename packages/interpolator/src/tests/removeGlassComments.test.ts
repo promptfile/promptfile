@@ -4,7 +4,7 @@ import { removeGlassComments } from '../removeGlassComments'
 describe('removeGlassComments', () => {
   it('should remove line comments', () => {
     const mdx = `Hello
-{/* comment */}
+\${/* comment */}
 world`
 
     expect(removeGlassComments(mdx)).to.equal(`Hello\nworld`)
@@ -12,8 +12,8 @@ world`
 
   it('should remove multiple line comments', () => {
     const mdx = `Hello
-{/* comment */}
-{  /* comment2 */  }
+$\{/* comment */}
+$\{  /* comment2 */  }
 world`
 
     expect(removeGlassComments(mdx)).to.equal(`Hello\nworld`)
@@ -21,7 +21,7 @@ world`
 
   it('should remove a multi-line comment', () => {
     const mdx = `Hello
-{/*
+$\{/*
   comment
 */}
 world`
@@ -30,7 +30,7 @@ world`
   })
 
   it('should remove comment at start of document', () => {
-    const mdx = `{/* comment */}
+    const mdx = `\${/* comment */}
 Hello
 world`
 
@@ -40,36 +40,36 @@ world`
   it('should remove comment at end of document', () => {
     const mdx = `Hello
 world
-{/* comment */}`
+\${/* comment */}`
 
     expect(removeGlassComments(mdx)).to.equal(`Hello\nworld`)
   })
 
   it('should remove inline comment', () => {
-    const mdx = `Hello{/* comment */} world`
+    const mdx = `Hello\${/* comment */} world`
     expect(removeGlassComments(mdx)).to.equal(`Hello world`)
   })
 
   it('should remove multiple inline comments', () => {
-    const mdx = `Hello{/* comment */} world {/* comment2 */}`
+    const mdx = `Hello\${/* comment */} world \${/* comment2 */}`
     expect(removeGlassComments(mdx)).to.equal(`Hello world `)
   })
 
   it('should remove inline multi-line comments', () => {
-    const mdx = `Hello{/* comment
+    const mdx = `Hello\${/* comment
 more comment*/} world`
     expect(removeGlassComments(mdx)).to.equal(`Hello world`)
   })
 
   it('should preserve appropriate newlines', () => {
-    const mdx = `{/* comment */}
+    const mdx = `\${/* comment */}
 
 Hello
 
-{/* comment */}
+\${/* comment */}
 
 world
-{/* comment */}`
+\${/* comment */}`
     expect(removeGlassComments(mdx)).to.equal(`\nHello\n\n\nworld`)
   })
 })

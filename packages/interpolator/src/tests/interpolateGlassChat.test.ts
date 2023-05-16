@@ -81,7 +81,7 @@ Goodbye \${foo}, \${bar}
         `// this is a comment
 <System>
 Hello world
-{/* this is also a comment */}
+\${/* this is also a comment */}
 </System>
 
 ignore me
@@ -202,7 +202,7 @@ goodbye world
     ])
   })
 
-  it.skip('should interpolate dynamic blocks with if condition', () => {
+  it('should interpolate nested dynamic blocks', () => {
     expect(
       interpolateGlassChat(
         'test',
@@ -215,10 +215,11 @@ You are a helpful assistant.
 <Assistant>
 goodbye world
 </Assistant>`,
-        { 'jsx-0': '<User if={false}>\nhello world\n</User>' }
+        { 'jsx-0': '<User>\n${jsx-1}\n</User>', 'jsx-1': '<Text>\nhello world\n</Text>' }
       )
     ).to.deep.equal([
       { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'hello world' },
       { role: 'assistant', content: 'goodbye world' },
     ])
   })
