@@ -226,7 +226,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
   return (
     <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px', paddingTop: '16px' }}>
       <div style={{ paddingBottom: '8px' }}>
-        <div style={{ paddingBottom: '4px' }}>{file.isChat ? 'chat' : 'completion'}</div>
+        <div style={{ paddingBottom: '4px' }}>Model</div>
         <VSCodeDropdown
           id="model-dropdown"
           onChange={e => {
