@@ -2,8 +2,10 @@
 Your job is to rate how angry the user is on a scale of 1 to 10.
 </System>
 
-<Block role={""} content={""} />
-
 <User>
 ${message}
 </User>
+
+<System>
+Remember, just reply with a rating of how angry you think the user is on a scale of 1 to 10.
+</System>

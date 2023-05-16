@@ -138,23 +138,23 @@
     "commands": [
       {
         "command": "glass.openSettings",
-        "title": "Glass: settings"
+        "title": "Glass: Settings"
       },
       {
         "command": "glass.openDocs",
-        "title": "Glass: documentation"
+        "title": "Glass: Documentation"
       },
       {
         "command": "glass.transpileCurrentFile",
-        "title": "Glass: transpile current file"
+        "title": "Glass: Transpile current file"
       },
       {
         "command": "glass.transpileAll",
-        "title": "Glass: transpile all"
+        "title": "Glass: Transpile all"
       },
       {
         "command": "glass.runPlayground",
-        "title": "Glass: run in playground"
+        "title": "Glass: Run in playground"
       }
     ],
     "keybindings": [
