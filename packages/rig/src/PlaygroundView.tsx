@@ -180,7 +180,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
             model: metadata.isChat
               ? chatModels.includes(file.model)
                 ? file.model
-                : completionModels[0]
+                : chatModels[0]
               : completionModels.includes(file.model)
               ? file.model
               : completionModels[0],
