@@ -49,13 +49,6 @@ export async function activate(context: vscode.ExtensionContext) {
         if (leftPanelWebViewProvider._view.webview) {
           console.log('sending to webview')
           leftPanelWebViewProvider._view.webview.postMessage({
-            action: 'updateDocumentMetadata',
-            data: {
-              ...metadata,
-              filename,
-            },
-          })
-          leftPanelWebViewProvider._view.webview.postMessage({
             action: 'onOpenGlassFile',
             data: {
               filename,
@@ -82,7 +75,7 @@ export async function activate(context: vscode.ExtensionContext) {
         const metadata = parseGlassMetadata(text)
         const filename = getDocumentFilename(event.document)
         leftPanelWebViewProvider._view.webview.postMessage({
-          action: 'onOpenGlassFile',
+          action: 'onUpdateGlassFile',
           data: {
             filename,
           },

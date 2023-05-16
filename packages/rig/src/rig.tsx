@@ -51,7 +51,6 @@ function RigView() {
   useEffect(() => {
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
-
       switch (message.action) {
         case 'onOpenGlassFile':
           setCurrFilename(() => message.data.filename)

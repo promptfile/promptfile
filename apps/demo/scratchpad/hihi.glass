@@ -1,7 +1,7 @@
 <System>
-hi there!
+Here's the message from the user:
 
-${hello}
+User: ${hello}
 
-this is great!
+Please respond in the style of a ${style}
 </System>

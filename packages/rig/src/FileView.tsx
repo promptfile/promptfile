@@ -23,6 +23,10 @@ export const FileView = (props: FileViewProps) => {
     saveFileInStorage(file)
   }, [file])
 
+  useEffect(() => {
+    setFile(props.file)
+  }, [props.file])
+
   return (
     <div style={{ flexDirection: 'column' }}>
       <FileTopper file={file} />

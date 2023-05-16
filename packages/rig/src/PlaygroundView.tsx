@@ -173,6 +173,9 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
       switch (message.action) {
         case 'updateDocumentMetadata':
           const metadata = message.data
+          if (message.data.filename !== file.filename) {
+            return
+          }
           setFile({
             ...file,
             isChat: metadata.isChat,
@@ -223,7 +226,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
   return (
     <VSCodePanelView style={{ flexDirection: 'column', minHeight: '300px', paddingTop: '16px' }}>
       <div style={{ paddingBottom: '8px' }}>
-        <div style={{ paddingBottom: '4px' }}>Model</div>
+        <div style={{ paddingBottom: '4px' }}>{file.isChat ? 'chat' : 'completion'}</div>
         <VSCodeDropdown
           id="model-dropdown"
           onChange={e => {
