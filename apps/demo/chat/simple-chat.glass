@@ -1,14 +1,19 @@
 <System>
-You are a highly-intelligent AI.
+You are a highly-intelligent AI. 
+
+Your job is to respond to the User.
 
 Please respond in valid JSON with the following format:
 ```js
 {
     "response": string,
-    "confidence": number // 1 (least confident) to 10 (most confident)
+    "confidence": number
 }
 ```
+
+The `confidence` field should be a number between 1 (least confident) and 10 (most confident).
 </System>
+
 
 <User>
 ${query}
