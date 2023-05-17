@@ -26,7 +26,7 @@
     "gpt",
     "llm"
   ],
-  "icon": "assets/icon.png",
+  "icon": "assets/glass.png",
   "activationEvents": [
     "onView:left-panel-webview",
     "onCommand:react-webview.start",
