@@ -42,8 +42,6 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor(editor => {
       if (editor && isGlassFile(editor.document)) {
-        const text = editor.document.getText()
-        const metadata = parseGlassMetadata(text)
         const filename = getDocumentFilename(editor.document)
         console.log('opened filename: ' + filename)
         if (leftPanelWebViewProvider._view.webview) {
@@ -93,10 +91,6 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     })
   )
-
-  // end register rig
-
-  // await executeGlassFile()
 
   let activeEditor = vscode.window.activeTextEditor
 
@@ -162,8 +156,6 @@ export async function activate(context: vscode.ExtensionContext) {
       const range = new vscode.Range(contentStartPosition, contentEndPosition)
       highlights.push(range)
     }
-
-    // console.log('highlights are', highlights)
 
     activeEditor.setDecorations(codeDecorations, highlights)
   }
