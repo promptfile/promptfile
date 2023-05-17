@@ -187,7 +187,7 @@ export async function activate(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),
     vscode.commands.registerCommand('glass.openDocs', async () => {
-      await vscode.env.openExternal(vscode.Uri.parse('https://language.glass'))
+      await vscode.env.openExternal(vscode.Uri.parse('https://docs.glass'))
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),
     vscode.commands.registerCommand('glass.transpileAll', async () => {
