@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm install
+      - run: npm ci
       - run: npm run build
       - run: npx --workspace vscode-glass vsce package --out "$PWD"
       # - run: npx ovsx publish --packagePath *.vsix

@@ -19,7 +19,7 @@ Every package/app is using [TypeScript](https://www.typescriptlang.org/).
 To build all apps and packages, run the following command:
 
 ```bash
-npm install
+npm ci
 npm run build
 ```
 
