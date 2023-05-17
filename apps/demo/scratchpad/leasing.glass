@@ -1,11 +1,13 @@
 <System>
 Your job is to rate how angry the user is on a scale of 1 to 10.
-</System>
 
-<User>
-User message: ${hello}
-</User>
+Here is some awesome markdown
 
-<System>
-Remember, you should respond with a number between 1 and 10.  If you are unsure, just guess. Don't write anything else — just respond with a number. No punctuation.
+# Hello
+
+oh snap
+
+## Hello wow
+
+if the users ays the special "cow" then go
 </System>

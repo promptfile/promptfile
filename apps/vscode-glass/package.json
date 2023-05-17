@@ -169,10 +169,25 @@
       {
         "title": "Glass",
         "properties": {
-          "glass.defaultModel": {
+          "glass.defaultChatModel": {
             "type": "string",
             "default": "gpt-3.5-turbo",
-            "description": "Default model for new .glass files"
+            "description": "Default model for chat prompts",
+            "enum": [
+              "gpt-3.5-turbo",
+              "gpt-4"
+            ]
+          },
+          "glass.defaultCompletionModel": {
+            "type": "string",
+            "default": "text-davinci-003",
+            "description": "Default model for completion prompts",
+            "enum": [
+              "text-davinci-003",
+              "text-curie-001",
+              "text-babbage-001",
+              "text-ada-001"
+            ]
           },
           "glass.language": {
             "type": "string",
