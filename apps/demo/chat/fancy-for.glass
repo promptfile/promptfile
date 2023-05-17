@@ -3,7 +3,9 @@
     { role: "assistant", content: 'Vanilla' },
     { role: 'user', content: 'name a fruit' }
 ]} item="m">
+
 <Block role={m.role}>
 ${m.content}
 </Block>
+
 </For>

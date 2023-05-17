@@ -1,30 +1,44 @@
 # glass
 
-## What's inside?
+## Apps and Packages
 
-This repo includes the following packages/apps:
-
-### Apps and Packages
-
-- `vscode-glass`: a VS Code extension
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `glassc`: the Glass compiler library
-- `ui`: a stub React component library shared by web applications
+- `vscode-glass`: VS Code extension for Glass
+- `language-server`: LSP server providing Glass intellisense
+- `rig`: a React app for the VS Code Glass playground webview
+- `docs`: a Next.js app for [the Glass documentation](https://docs.glass/)
+- `glassc`: the Glass compiler
+- `glasslib`: Glass client library
+- `ui`: a React component library shared by web applications
 - `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+Every package/app is using [TypeScript](https://www.typescriptlang.org/).
 
-### Build
+## Build
 
 To build all apps and packages, run the following command:
 
-```
+```bash
+npm install
 npm run build
 ```
 
-### Develop
+## Develop
 
-To develop the extension, simply modify any files in the repo, then use `Run Extension` (shortcut: `F5`) to launch the debugger. It'll automatically build everything necessary to run the extension, don't worry about running watchers.
+You'll usually want to develop the extension.
+
+Modify any files in the repo then launch `Run Extension` from Run/Debug (shortcut: `F5`). It'll automatically build everything necessary to run the extension, don't worry about running watchers in any of the other packages. No need to `npm link` either, all of your changes should show up each time you re-run the extension.
 
 See individual package READMEs for further instructions.
+
+## Test
+
+```bash
+npm run test
+```
+
+Alternatively, you can run `npm run test:watch` in several of the packages (`glasslib`, `glassc`) to run a fast test loop over most of the language features and code-gen logic.
+
+## License
+
+MIT © [Foundation](https://foundation-ui.com)

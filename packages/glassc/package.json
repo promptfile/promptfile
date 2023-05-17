@@ -1,6 +1,6 @@
 {
   "name": "@glass-lang/glassc",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Glass language compiler",
   "type": "module",
   "module": "dist/index.js",
@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/foundation-ui/glassc.git"
+    "url": "https://github.com/foundation-ui/glass.git"
   },
   "files": [
     "dist",
     "LICENSE"
   ],
-  "homepage": "https://github.com/foundation-ui/glassc",
-  "bugs": "https://github.com/foundation-ui/glassc/issues",
+  "homepage": "https://github.com/foundation-ui/glass",
+  "bugs": "https://github.com/foundation-ui/glass/issues",
   "keywords": [],
   "authors": [
     "John Rothfels <john@foundation-ui.com>",
