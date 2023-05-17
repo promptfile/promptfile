@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.8.1
+
+### Patch Changes
+
+- [`bfb13d7`](https://github.com/foundation-ui/glass/commit/bfb13d78c5bde3dbd61f5018bf63c4599506a6aa) Thanks [@rothfels](https://github.com/rothfels)! - fix bundling esbuild with extension
+
 ## 0.8.0
 
 ### Minor Changes
