@@ -10,11 +10,13 @@ Please respond in valid JSON with the following format:
     "confidence": number
 }
 ```
-
-The `confidence` field should be a number between 1 (least confident) and 10 (most confident).
 </System>
 
 
 <User>
 ${query}
 </User>
+
+<System>
+The `confidence` field should be a number between 1 (least confident) and 10 (most confident).
+</System>

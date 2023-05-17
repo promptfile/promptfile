@@ -1,11 +1,27 @@
-<For each={[
-    { role: 'user', content: 'name an ice cream' },
+<Code>
+const messges = [{ role: 'user', content: 'name an ice cream' },
     { role: "assistant", content: 'Vanilla' },
-    { role: 'user', content: 'name a fruit' }
-]} item="m">
+    { role: 'user', content: 'name a fruit' }]
+</Code>
 
-<Block role={m.role}>
-${m.content}
-</Block>
+<Text>
+Hello, how are you?
+</Text>
 
-</For>
+// here we are loading in the messages 
+// including them as fewshot
+<For each={messages} fragment={item => <Block role={item.role} content={item.content} />} />
+
+// <User>
+// <Text>
+// Hello, how are you?
+// </Text>
+// </User>
+
+// <For each={messages} item="m">
+
+// <Block role={m.role}>
+// ${m.content}
+// </Block>
+
+// </For>

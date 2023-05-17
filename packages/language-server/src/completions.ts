@@ -65,6 +65,18 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
       data: 5,
     },
     {
+      label: '<Text>',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'Text>\n$1\n</Text>',
+      insertTextFormat: InsertTextFormat.Snippet,
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a Text tag with inner content',
+      },
+      detail: 'raw Glass text block',
+      data: 5,
+    },
+    {
       label: '<For>',
       kind: CompletionItemKind.Snippet,
       insertText: 'For each={$1} fragment={item => <Block role={item.role} content={item.content} />} />',

@@ -57,7 +57,7 @@ export function findInvalidAttributes(text: string) {
 
 export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
   const tagPattern = /^<\/?([\w-]+).*?>/gm
-  const supportedTags = new Set(['Code', 'User', 'System', 'Assistant', 'Prompt', 'For', 'Block', 'Args'])
+  const supportedTags = new Set(['Args', 'Assistant', 'Block', 'Code', 'For', 'Prompt', 'System', 'Text', 'User'])
   const unsupportedTags: { tag: string; start: number }[] = []
 
   let match
@@ -119,8 +119,8 @@ function isInvalidLine(line: string): boolean {
   }
 
   // Check if the line is inside a valid element or contains a valid element with attributes
-  const openTagCount = (line.match(/^<(User|Assistant|System|Prompt|Code)(\s+[^>]*)?>/g) || []).length
-  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code)>/g) || []).length
+  const openTagCount = (line.match(/^<(User|Assistant|System|Prompt|Code|Text)(\s+[^>]*)?>/g) || []).length
+  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code|Text)>/g) || []).length
 
   return openTagCount === 0 && closeTagCount === 0
 }
@@ -139,7 +139,8 @@ export function findInvalidLines(text: string): { line: number; start: number; e
       line.startsWith('<Assistant') ||
       line.startsWith('<System') ||
       line.startsWith('<Prompt') ||
-      line.startsWith('<Code')
+      line.startsWith('<Code') ||
+      line.startsWith('<Text')
     ) {
       insideValidElement++
     }
@@ -149,7 +150,8 @@ export function findInvalidLines(text: string): { line: number; start: number; e
       line.startsWith('</Assistant>') ||
       line.startsWith('</System>') ||
       line.startsWith('</Prompt>') ||
-      line.startsWith('</Code>')
+      line.startsWith('</Code>') ||
+      line.startsWith('</Text>')
     ) {
       insideValidElement--
     }
@@ -165,7 +167,7 @@ export function findInvalidLines(text: string): { line: number; start: number; e
 export function findEmptyBlocks(text: string): { tag: string; start: number; end: number }[] {
   const emptyBlocks: { tag: string; start: number; end: number }[] = []
 
-  const blockRegex = /<(User|Assistant|System|Prompt|Code)(\s+[^>]*)?>\s*<\/\1>/g
+  const blockRegex = /<(User|Assistant|System|Prompt|Code|Text)(\s+[^>]*)?>\s*<\/\1>/g
   let blockMatch
   while ((blockMatch = blockRegex.exec(text))) {
     const blockStart = blockMatch.index
