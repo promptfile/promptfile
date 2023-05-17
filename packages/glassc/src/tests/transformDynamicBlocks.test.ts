@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { transformJsxExpressionStringToTemplate, transformMdxDocumentToTemplateString } from '../parseJSX'
 import { transformDynamicBlocks } from '../transformDynamicBlocks'
 
 describe('transformDynamicBlocks', () => {
@@ -15,7 +16,7 @@ And this is the end`
     })
   })
 
-  it('should transform document with dynamic for block', () => {
+  it('should transform document with dynamic for block with fragment', () => {
     const glass = `Hello world this is a document.
 
 <For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
@@ -26,6 +27,29 @@ And this is the end`
       jsxInterpolations: {
         'jsx-0':
           "messages.map(m => `<Block role={${JSON.stringify(m.role)}} content={${JSON.stringify(m.text)}}>\n</Block>`).join('\\n\\n')",
+      },
+      doc: 'Hello world this is a document.\n\n${jsx-0}\n\nAnd this is the end',
+    })
+  })
+
+  it('should transform document with dynamic for block with body', () => {
+    const glass = `Hello world this is a document.
+
+<For each={messages} item="m">
+<User>
+\${m.foo}
+</User>
+
+<Assistant>
+bar
+</Assistant>
+</For>
+
+And this is the end`
+
+    expect(transformDynamicBlocks(glass)).to.deep.equal({
+      jsxInterpolations: {
+        'jsx-0': "messages.map(m => `<User>\n${m.foo}\n</User>\n\n<Assistant>\nbar\n</Assistant>`).join('\\n\\n')",
       },
       doc: 'Hello world this is a document.\n\n${jsx-0}\n\nAnd this is the end',
     })
@@ -189,5 +213,55 @@ who was Einstein?
         doc: '<Code>\nconst useGandhi = true\n</Code>\n\n<System>\nYou are a highly-intelligent AI.\n</System>\n\n<User>\n${jsx-0}\n\n${jsx-1}\n</User>\n\n<User>\n<Text if={useGandhi}>\nwho was gandhi?\n</Text>\n\n<Text if={!useGandhi}>\n<User>\n${jsx-2}\n\n${jsx-3}\n</User>',
       })
     })
+  })
+
+  it('transformMdxDocumentToTemplateString', () => {
+    expect(
+      transformJsxExpressionStringToTemplate(`<Block hello={m.world} foo="bar">
+block content \${whoa}
+</Block>`)
+    ).to.equal(`<Block hello={\${JSON.stringify(m.world)}} foo="bar">
+block content \${whoa}
+</Block>`)
+  })
+
+  it('transformMdxDocumentToTemplateString', () => {
+    expect(
+      transformJsxExpressionStringToTemplate(`<Block hello={m.world} foo="bar">
+block content \${whoa}
+
+<Text if={m.isAdmin}>
+whoa text
+</Text>
+</Block>`)
+    ).to.equal(`<Block hello={\${JSON.stringify(m.world)}} foo="bar">
+block content \${whoa}
+
+<Text if={\${JSON.stringify(m.isAdmin)}}>
+whoa text
+</Text>
+</Block>`)
+  })
+
+  it('transformMdxDocumentToTemplateString', () => {
+    const doc = `hello this is text \${fooby}
+
+<Block hello={m.world} foo="bar">
+block content \${whoa}
+
+<Text if={foo.isAdmin}>
+whoa text
+</Text>
+</Block>`
+
+    expect(transformMdxDocumentToTemplateString(doc)).to.equal(`hello this is text \${fooby}
+
+<Block hello={\${JSON.stringify(m.world)}} foo="bar">
+block content \${whoa}
+
+<Text if={\${JSON.stringify(foo.isAdmin)}}>
+whoa text
+</Text>
+</Block>`)
   })
 })

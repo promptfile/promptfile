@@ -435,6 +435,45 @@ You are a helpful assistant.
 }`)
   })
 
+  it('should transpile with dynamic for loop', () => {
+    const transpiled = transpileGlassFile(
+      `<For each={[
+    { role: 'user', content: 'name an ice cream' },
+    { role: "assistant", content: 'Vanilla' },
+    { role: 'user', content: 'name a fruit' }
+]} item="m">
+<Block role={m.role}>
+\${m.content}
+</Block>
+</For>`,
+      {
+        workspaceFolder: '/Users/me/glassc',
+        folderPath: '/Users/me/glassc',
+        fileName: 'foo',
+        language: 'typescript',
+        outputDirectory: '/Users/me/glassc/src',
+      }
+    )
+
+    expect(transpiled.code).to.equal(`export function getFooPrompt() {
+  const interpolations = {
+    'jsx-0': [
+      { role: 'user', content: 'name an ice cream' },
+      { role: 'assistant', content: 'Vanilla' },
+      { role: 'user', content: 'name a fruit' },
+    ]
+      .map(
+        (m) => \`<Block role={\${JSON.stringify(m.role)}}>
+\${m.content}
+</Block>\`
+      )
+      .join('\\n\\n'),
+  }
+  const TEMPLATE = '\${jsx-0}'
+  return interpolateGlassChat('foo', TEMPLATE, interpolations)
+}`)
+  })
+
   it('should transpile with single <For> loop', () => {
     const transpiled = transpileGlassFile(
       `<For each={[{role: 'user', content: 'who was gandhi?'}]} fragment={item => <Block role={item.role} content={item.content} />}  />`,

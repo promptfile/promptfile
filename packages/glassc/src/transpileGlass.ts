@@ -96,8 +96,18 @@ export function transpileGlassFile(
     // }
     const jsxString = jsxNodeToString(jsxNode) // TODO: this should just be the section of the doc from start to end
     const parsedJsx = parseJSXExpression(jsxString)
+    const attrs = parseJSXAttributes(jsxString)
+    const itemKey = attrs['item']
+
+    if (itemKey) {
+      interpolationVarSet.delete(itemKey) // sketchy removal, could cause problems if we have another variable defined with same name but fine for now
+    }
 
     for (const s of parsedJsx.undeclaredVariables) {
+      if (s === itemKey) {
+        // <For each={messages} item="m"> puts "m" in scope
+        continue
+      }
       interpolationVarSet.add(s)
     }
   }

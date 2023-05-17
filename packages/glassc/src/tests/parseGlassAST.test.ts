@@ -81,35 +81,6 @@ And this is the end`
     ])
   })
 
-  it.skip('should parse nested JSX', () => {
-    const mdx = `<For each={messages}>
-Inner stuff
-<Text if="true">
-With nested if block \${withvar}
-</Text>
-and more
-</For>`
-
-    expect(parseGlassASTJSX(mdx)).to.deep.equal([
-      {
-        tagName: 'For',
-        attrs: [{ name: 'each', expressionValue: 'messages' }],
-        position: {
-          end: {
-            column: 7,
-            line: 7,
-            offset: 106,
-          },
-          start: {
-            column: 1,
-            line: 1,
-            offset: 0,
-          },
-        },
-      },
-    ])
-  })
-
   it('should convert JSXNode to string', () => {
     const node: JSXNode = {
       tagName: 'For',

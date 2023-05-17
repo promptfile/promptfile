@@ -1,4 +1,4 @@
-import { transformArrowFunctionExpressionWithJsx } from './parseJSX'
+import { transformArrowFunctionExpressionWithJsx, transformMdxDocumentToTemplateString } from './parseJSX'
 import { checkOk } from './util/checkOk'
 import { JSXNode, parseGlassASTJSX } from './util/parseGlassAST'
 
@@ -20,6 +20,14 @@ export function transformDynamicBlocks(doc: string) {
 
     let docSection = origDoc.substring(nodeStartOffset, nodeEndOffset)
     // let docSection = doc.substring(nodeStartOffset + currOffset, nodeEndOffset + currOffset)
+
+    const nodeInsides =
+      node.children.length === 0
+        ? ''
+        : docSection.substring(
+            node.children[0].position.start.offset - nodeStartOffset,
+            node.children[node.children.length - 1].position.end.offset - nodeStartOffset
+          )
 
     const transformedNode = nestedTagHelper(Object.keys(jsxInterpolations).length, docSection, node)
     jsxInterpolations = { ...jsxInterpolations, ...transformedNode.jsxInterpolations }
@@ -48,16 +56,30 @@ export function transformDynamicBlocks(doc: string) {
     if (node.tagName === 'For') {
       const eachAttr = node.attrs.find(attr => attr.name === 'each')!
       const fragment = node.attrs.find(attr => attr.name === 'fragment')!
-      checkOk(eachAttr && fragment, '<For> loop requires both "each" and "fragment" attributes')
+      const item = node.attrs.find(attr => attr.name === 'item')!
+      checkOk(fragment || item, '<For> loop requires either "fragment" or "item" attribute')
+      checkOk(eachAttr, '<For> loop requires both "each" and "fragment" attributes')
 
-      if (ifAttr?.expressionValue != null) {
-        jsxInterpolations['jsx-' + currInterpolationIndex] = `${ifAttr.expressionValue} ? ${
-          eachAttr.stringValue || eachAttr.expressionValue
-        }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n') : ''`
+      if (fragment != null) {
+        if (ifAttr?.expressionValue != null) {
+          jsxInterpolations['jsx-' + currInterpolationIndex] = `${ifAttr.expressionValue} ? ${
+            eachAttr.stringValue || eachAttr.expressionValue
+          }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n') : ''`
+        } else {
+          jsxInterpolations['jsx-' + currInterpolationIndex] = `${
+            eachAttr.stringValue || eachAttr.expressionValue
+          }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n')`
+        }
       } else {
-        jsxInterpolations['jsx-' + currInterpolationIndex] = `${
-          eachAttr.stringValue || eachAttr.expressionValue
-        }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n')`
+        if (ifAttr?.expressionValue != null) {
+          jsxInterpolations['jsx-' + currInterpolationIndex] = `${ifAttr?.expressionValue} ? ${
+            eachAttr.stringValue || eachAttr.expressionValue
+          }.map(${item.stringValue} => \`${transformMdxDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n') : ''`
+        } else {
+          jsxInterpolations['jsx-' + currInterpolationIndex] = `${
+            eachAttr.stringValue || eachAttr.expressionValue
+          }.map(${item.stringValue} => \`${transformMdxDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n')`
+        }
       }
 
       doc =
@@ -184,16 +206,30 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: JSXNod
     if (node.tagName === 'For') {
       const eachAttr = node.attrs.find(attr => attr.name === 'each')!
       const fragment = node.attrs.find(attr => attr.name === 'fragment')!
-      checkOk(eachAttr && fragment, '<For> loop requires both "each" and "fragment" attributes')
+      const item = node.attrs.find(attr => attr.name === 'item')!
+      checkOk(fragment || item, '<For> loop requires either "fragment" or "item" attribute')
+      checkOk(eachAttr, '<For> loop requires both "each" and "fragment" attributes')
 
-      if (ifAttr?.expressionValue != null) {
-        jsxInterpolations['jsx-' + interpolationIndex] = `${ifAttr.expressionValue} ? ${
-          eachAttr.stringValue || eachAttr.expressionValue
-        }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n') : ''`
+      if (fragment != null) {
+        if (ifAttr?.expressionValue != null) {
+          jsxInterpolations['jsx-' + interpolationIndex] = `${ifAttr.expressionValue} ? ${
+            eachAttr.stringValue || eachAttr.expressionValue
+          }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n') : ''`
+        } else {
+          jsxInterpolations['jsx-' + interpolationIndex] = `${
+            eachAttr.stringValue || eachAttr.expressionValue
+          }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n')`
+        }
       } else {
-        jsxInterpolations['jsx-' + interpolationIndex] = `${
-          eachAttr.stringValue || eachAttr.expressionValue
-        }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n')`
+        if (ifAttr?.expressionValue != null) {
+          jsxInterpolations['jsx-' + interpolationIndex] = `${ifAttr?.expressionValue} ? ${
+            eachAttr.stringValue || eachAttr.expressionValue
+          }.map(${item.stringValue} => \`${transformMdxDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n') : ''`
+        } else {
+          jsxInterpolations['jsx-' + interpolationIndex] = `${eachAttr.stringValue || eachAttr.expressionValue}.map(${
+            item.stringValue
+          } => \`${transformMdxDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n')`
+        }
       }
 
       nodeInsides =
