@@ -24,7 +24,7 @@ import {
   findUnmatchedTags,
   findUnsupportedTags,
 } from './diagnostics'
-import { findFoldableTagPairs } from './folding'
+import { findFoldableTagPairs, findMarkdownFoldingRanges } from './folding'
 import { formatDocument } from './formatting'
 
 // Create a connection for the server, using Node's IPC as a transport.
@@ -319,12 +319,18 @@ connection.onFoldingRanges(params => {
   }
 
   const text = textDocument.getText()
-  const tagPairs = findFoldableTagPairs(text)
+  const foldableTagPairs = findFoldableTagPairs(text)
+  const foldingRanges = findMarkdownFoldingRanges(text)
 
-  return tagPairs.map(tagPair => ({
-    startLine: textDocument.positionAt(tagPair.start).line,
-    endLine: textDocument.positionAt(tagPair.closingStart).line,
-  }))
+  return [...foldableTagPairs, ...foldingRanges].map(pair => {
+    return {
+      startLine: textDocument.positionAt(pair.start).line,
+      endLine: textDocument.positionAt(pair.end).line,
+      startCharacter: textDocument.positionAt(pair.start).character,
+      endCharacter: textDocument.positionAt(pair.end).character,
+      kind: pair.tag === 'markdown' ? 'comment' : 'region',
+    }
+  })
 })
 
 connection.onDocumentFormatting(async (params: DocumentFormattingParams): Promise<TextEdit[]> => {

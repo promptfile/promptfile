@@ -140,11 +140,11 @@
     "commands": [
       {
         "command": "glass.openSettings",
-        "title": "Glass: Settings"
+        "title": "Glass: Open settings"
       },
       {
         "command": "glass.openDocs",
-        "title": "Glass: Documentation"
+        "title": "Glass: Open documentation"
       },
       {
         "command": "glass.transpileCurrentFile",
