@@ -1,6 +1,5 @@
 # Glass for VSCode
 
-[![GitHub Actions](https://github.com/foundation-ui/glass/workflows/main/badge.svg)](https://github.com/foundation-ui/glass/actions/workflows/main.yml)
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/foundation.vscode-glass)](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
 [![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/foundation.vscode-glass)](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
 
