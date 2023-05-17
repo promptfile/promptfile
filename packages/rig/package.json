@@ -5,8 +5,7 @@
   "main": "out/rig.js",
   "scripts": {
     "lint": "eslint src --ext ts --ext tsx",
-    "build": "esbuild rig=./src/rig.tsx --bundle --outdir=out",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "esbuild rig=./src/rig.tsx --bundle --outdir=out"
   },
   "author": "",
   "license": "ISC",

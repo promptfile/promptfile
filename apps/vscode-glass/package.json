@@ -1,5 +1,6 @@
 {
   "name": "vscode-glass",
+  "version": "0.7.3",
   "displayName": "Glass",
   "description": "Language support for Glass",
   "categories": [
@@ -12,7 +13,6 @@
   },
   "publisher": "foundation",
   "private": true,
-  "version": "0.0.1",
   "engines": {
     "vscode": "^1.78.0"
   },
@@ -40,8 +40,7 @@
     "compile": "tsc -p tsconfig.test.json",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./dist/test/runTest.js"
+    "lint": "eslint src --ext ts"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",

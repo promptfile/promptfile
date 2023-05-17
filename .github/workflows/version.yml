@@ -1,0 +1,32 @@
+name: Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install Dependencies
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 3
+          max_attempts: 3
+          command: npm ci
+      - uses: changesets/action@v1
+        with:
+          publish: git push --follow-tags
+          commit: 'chore: release vscode-glass'
+          title: 'chore: release vscode-glass'
+        env:
+          GITHUB_TOKEN: ${{secrets.DEPLOYMENT_TOKEN}}

@@ -5,8 +5,7 @@
   "main": "out/language-server.js",
   "scripts": {
     "lint": "eslint src --ext ts",
-    "build": "esbuild language-server=./src/server.ts --bundle --platform=node --target=node16 --external:vscode --outdir=out",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "esbuild language-server=./src/server.ts --bundle --platform=node --target=node16 --external:vscode --outdir=out"
   },
   "author": "",
   "license": "ISC",
