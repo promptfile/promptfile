@@ -7,6 +7,7 @@
   "scripts": {
     "lint": "eslint \"**/*.ts*\""
   },
+  "private": true,
   "devDependencies": {
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

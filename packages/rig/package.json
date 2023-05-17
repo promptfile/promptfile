@@ -9,6 +9,7 @@
   },
   "author": "",
   "license": "ISC",
+  "private": true,
   "dependencies": {
     "@vscode/webview-ui-toolkit": "^1.2.2",
     "react": "^18.2.0",

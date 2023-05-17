@@ -1,71 +1,180 @@
-# vscode-glass README
+# Glass for VSCode
 
-This is the README for your extension "vscode-glass". After writing up a brief description, we recommend including the following sections.
+[![GitHub Actions](https://github.com/foundation-ui/glass/workflows/main/badge.svg)](https://github.com/foundation-ui/glass/actions/workflows/main.yml)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/foundation.vscode-glass)](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
+[![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/foundation.vscode-glass)](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
 
-## Features
+This repository contains the code to provide language support for [Glass](https://www.glass-lang.com).
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## Warning: Glass is in alpha
 
-For example if there is an image subfolder under your extension project workspace:
+Minor version releases before 1.0.0 may contain breaking changes.
 
-\!\[feature X\]\(images/feature-x.png\)
+We’ll keep track of updates and migration instructions here.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## 0.7.1 -> 0.8.0
 
-## Requirements
+### New npm package
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- `npm install --save @glass-lang/glasslib` into your project, not `@glass-lang/glassc`
 
-## Extension Settings
+### New syntax
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- Interpolation variables now look like TypeScript template string interplations: `${}`.
+  The exception to this is When setting JSX attribute expressions, like in `<User name={variable} />`.
+  The upshot is that you no longer have to escape orginary mustaches; `{ whatever }` will be treated
+  as a regular string. This makes it easier to write things like JSON or TypeScript interfaces into your prompt.
+- Declaring interpolation arguments is is still optional, but you will no longer use Markdown frontmatter to specify them.
+  Instead, declare a `<Args myArg="anyTypeYouLike" />` at the top of your file.
+  otherwise be inferred
+- Glass blocks now support `if` statements, like the following:
 
-For example:
+```glass
+<System>
+You are a helpful assistant.
+</System>
 
-This extension contributes the following settings:
+<User if={someCondition}>
+conditional block
+</User>
+```
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- Use `if` statements on text with `<Text>` nodes, like this:
 
-## Known Issues
+```glass
+<System>
+You are a helpful assistant.
+</System>
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+<User>
+always included
+<Text if={someCondition}>
+conditionally included
+</Text>
+</User>
+```
 
-## Release Notes
+- New blocks: `<For>`, `<Code>`, and `<Block>`:
 
-Users appreciate release notes as you update your extension.
+```glass
+<Code>
+const messages = [
+  { role: 'user', content: 'name an ice cream' },
+  { role: "assistant", content: 'Vanilla' },
+  { role: 'user', content: 'name a fruit' }
+]
+</Code>
 
-### 1.0.0
+<For each={messages} item="m">
 
-Initial release of ...
+<Block role={m.role}>
+${m.content}
+</Block>
 
-### 1.0.1
+</For>
+```
 
-Fixed issue #.
+- If you do not want to use the Chat API / blocks, you must wrap your prompt with `<Prompt>`.
+  In the previous version, we allowed you to have files which declared no blocks at all, and the whole file was interpreted
+  to be the prompt. We plan to support this again soon.
 
-### 1.1.0
+### Extension updates
 
-Added features X, Y, and Z.
+- improved syntax highlighting
+- more completions & diagnostics for Glass files
+- code folding for blocks
+- webview Playground
 
----
+## 0.4.0 -> 0.7.1
 
-## Following extension guidelines
+### New npm package
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+- `npm install --save @glass-lang/glassc` into your project;
+  the transpiler output depends on it
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+### New output format
 
-## Working with Markdown
+- The `Glass: transpile all` command will now output to a single file,
+  called `glass.ts`/`glass.js`
+- Configure where code gets generated via the `glass.outputDirectory`
+  configuration option (default: `${workspaceFolder}/src`)
+- The `Glass: transpile current file` command will copy to the clipboard
+  instead of creating a file
+- The transpiler is now whitespace sensitive; your prompt should have exactly
+  the same whitespace you see in the Glass file
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+### New syntax
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+- Interpolation variables now use single mustache (`{}`) syntax, think of
+  them just like other code expressions. Before they used double mustache
+  (`{{}}`) syntax, which was needlessly different from other code expressions.
+  We are still playing with this, apologies in advance for whiplash.
+- Declaring interpolation arguments in frontmatter is optional; args will
+  otherwise be inferred
+- Glass documents may now include blocks, which look like this:
 
-## For more information
+```glass
+<System>
+You are a helpful assistant.
+</System>
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+all text in the interstitial space between blocks/tags is treated as a comment
+no // or {/* */} required
 
-**Enjoy!**
+<User>
+This is an example user input.
+
+{
+  // Using a code expression.
+  function () {
+    return "hello"
+  }
+}
+</User>
+
+<Assistant>
+Roger that.
+</Assistant>
+
+<User>
+{interpolationVariable}
+</User>
+```
+
+- Instead of a `(args) => string` function, documents with blocks produce a
+  `(args) => { role: 'system' | 'user' | 'assistant': content: string }[]`
+  function, which you may use for the `messages` field to the ChatGPT API
+- Code expressions (e.g. `{"hello".substring(0, 3)}` or
+  `{ function() { return "hello" } }`) work as before, except those declared
+  in the interstitial space between blocks will be ignored as comments
+- Imports work as before; relative paths will be re-written to work correctly
+  if you output to a different folder than the one containing your Glass
+  files
+- You may still have a Glass file which contains no blocks; if so, the
+  transpiled function will be `(args) => string` as before
+
+### Extension updates
+
+- improved syntax highlighting, with support for block syntax
+- completions & diagnostics for Glass files
+- code folding for blocks
+- comment entire blocks via select + `Cmd + /`
+
+### Removed features
+
+- OpenAI client generation
+- Test spec generation
+
+## License
+
+[MIT][] © [Foundation][glass]
+
+[`@glass-lang/monaco`]: https://github.com/foundation-ui/vscode-glass/tree/main/packages/monaco
+[`@glass-lang/language-server`]: https://github.com/foundation-ui/vscode-glass/tree/main/packages/language-server
+[`@glass-lang/language-service`]: https://github.com/foundation-ui/vscode-glass/tree/main/packages/language-service
+[`vscode-glass`]: https://github.com/foundation-ui/vscode-glass/tree/main/packages/vscode-glass
+[glass]: https://foundation-ui.com
+[language server protocol]: https://microsoft.github.io/language-server-protocol/
+[monaco editor]: https://microsoft.github.io/monaco-editor/
+[mit]: http://opensource.org/licenses/MIT
+[visual studio code]: https://code.visualstudio.com/
