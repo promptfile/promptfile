@@ -66,6 +66,9 @@ export class LeftPanelWebview implements WebviewViewProvider {
         case 'getActiveFile':
           const activeEditor = window.activeTextEditor
           if (activeEditor) {
+            if (!isGlassFile(activeEditor.document)) {
+              return
+            }
             this._view.webview.postMessage({
               action: 'setActiveFile',
               data: {
