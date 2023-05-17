@@ -3,8 +3,8 @@ You are a highly-intelligent AI.
 
 Your job is to respond to the User.
 
-Please respond in valid JSON with the following format:
-```js
+Please respond in valid JSON with the following shape:
+```ts
 {
     "response": string,
     "confidence": number

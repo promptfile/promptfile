@@ -7,7 +7,7 @@ const response = await res.text()
 
 // start with the system prompt
 <System>
-Use the data below from the API to answer the user's request:
+Use the website content below to answer the user's question:
 ###
 ${response}
 ###
