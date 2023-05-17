@@ -3,5 +3,9 @@ Your job is to rate how angry the user is on a scale of 1 to 10.
 </System>
 
 <User>
-${hello}
+User message: ${hello}
 </User>
+
+<System>
+Remember, you should respond with a number between 1 and 10.  If you are unsure, just guess. Don't write anything else — just respond with a number. No punctuation.
+</System>

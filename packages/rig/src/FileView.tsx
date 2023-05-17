@@ -1,6 +1,5 @@
 import { VSCodePanelTab, VSCodePanels } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useState } from 'react'
-import { ConfigView } from './ConfigView'
 import { FileTopper } from './FileTopper'
 import { LogsView } from './LogsView'
 import { PlaygroundView } from './PlaygroundView'
@@ -36,7 +35,7 @@ export const FileView = (props: FileViewProps) => {
       <VSCodePanels>
         <VSCodePanelTab id="tab1">Playground</VSCodePanelTab>
         <VSCodePanelTab id="tab2">Logs</VSCodePanelTab>
-        <VSCodePanelTab id="tab3">Env</VSCodePanelTab>
+        {/* <VSCodePanelTab id="tab3">Env</VSCodePanelTab> */}
         <PlaygroundView
           postMessage={postMessage}
           file={file}
@@ -46,7 +45,7 @@ export const FileView = (props: FileViewProps) => {
           updateLog={updateLogInStorage}
         />
         <LogsView logs={logs} />
-        <ConfigView file={file} />
+        {/* <ConfigView file={file} /> */}
       </VSCodePanels>
     </div>
   )
