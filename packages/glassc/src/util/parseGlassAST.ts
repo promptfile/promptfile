@@ -1,4 +1,4 @@
-import { removeGlassComments } from '@glass-lang/interpolator'
+import { removeGlassComments } from '@glass-lang/glasslib'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
 import { fromMarkdown } from 'mdast-util-from-markdown'

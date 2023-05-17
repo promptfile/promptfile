@@ -1,4 +1,4 @@
-import { parseGlassBlocks } from '@glass-lang/interpolator'
+import { parseGlassBlocks } from '@glass-lang/glasslib'
 import { parseCodeBlock } from './parseCodeBlock'
 import { parseGlassASTImports } from './util/parseGlassAST'
 
