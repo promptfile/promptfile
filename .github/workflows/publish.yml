@@ -32,8 +32,11 @@ jobs:
 
       - run: npx --workspace vscode-glass vsce package
 
-      - name: Install Yarn 3
-        run: npm install -g yarn@berry
+      ## required fpr the next step
+      - name: Install Yarn
+        run: |
+          npm install -g yarn
+          yarn set version stable
 
       - name: Bundle esbuild
         run: npm run patch:esbuild --workspace=vscode-glass
