@@ -1,0 +1,32 @@
+import {Onboarding} from './Onboarding.glass'
+
+<Code>
+const user = await db.user.findUnique({conversationId: conversation.id})
+</Code>
+
+<System>
+The company you work for is called Foundation (foundation-ui.com).  Your name is FoundationBot. You should always respond in a friendly fashion.
+
+<Onboarding />
+<Profile user={user} />
+
+Here's information about the user's website:
+###
+<Browser url={user.url} />
+###
+</System>
+
+
+<User generated>
+hqwecpoijqwef
+</User>
+
+<Assistant generated>
+qwecpoijqwefpoij
+</Assistant>
+
+<Chat model="gpt-4" onResponse={response => {
+    if (response.includes('UPDATE_USER_NAME')) {
+        return await db.user.update....
+    }    
+}} />

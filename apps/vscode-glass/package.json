@@ -28,8 +28,6 @@
   ],
   "icon": "assets/glass.png",
   "activationEvents": [
-    "onView:left-panel-webview",
-    "onCommand:react-webview.start",
     "onLanguage:javascript",
     "onLanguage:javascriptreact",
     "onLanguage:glass",
@@ -84,25 +82,6 @@
         "path": "./assets/glass-icon-theme.json"
       }
     ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "webview",
-          "title": "Glass",
-          "icon": "./assets/icon-bar.svg"
-        }
-      ]
-    },
-    "views": {
-      "webview": [
-        {
-          "type": "webview",
-          "id": "left-panel-webview",
-          "name": "",
-          "icon": "src/assets/icon-bar.svg"
-        }
-      ]
-    },
     "colors": [
       {
         "id": "glass.code.background",
@@ -139,6 +118,10 @@
     ],
     "commands": [
       {
+        "command": "glass.run",
+        "title": "Glass: run current file"
+      },
+      {
         "command": "glass.openSettings",
         "title": "Glass: Open settings"
       },
@@ -153,15 +136,11 @@
       {
         "command": "glass.transpileAll",
         "title": "Glass: Transpile all"
-      },
-      {
-        "command": "glass.runPlayground",
-        "title": "Glass: Run in playground"
       }
     ],
     "keybindings": [
       {
-        "command": "glass.runPlayground",
+        "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && resourceLangId == glass"

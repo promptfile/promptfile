@@ -1,11 +1,9 @@
-import { RigFile } from './rig'
-
 interface FileTopperProps {
-  file: RigFile
+  filename: string
 }
 
 export const FileTopper = (props: FileTopperProps) => {
-  const { file } = props
+  const { filename } = props
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '4px' }}>
@@ -31,7 +29,7 @@ export const FileTopper = (props: FileTopperProps) => {
           <path d="M46.9333 8.53333L31.791 23.9369" stroke="#5B8A72" stroke-width="10" stroke-linecap="round" />
         </svg>
         <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '6px' }}>
-          {file.filename.split('.glass')[0]}
+          {filename.split('.glass')[0]}
           <span style={{ opacity: 0.3, color: 'white', fontStyle: 'italic' }}>.glass</span>
         </span>
       </div>

@@ -4,18 +4,21 @@ import { FileView } from './FileView'
 import { KeyView } from './KeyView'
 
 export interface RigState {
-  parameters: Record<string, RigFile>
+  config: Record<string, RigConfig>
   logs: RigLog[]
 }
 
-export interface RigFile {
-  filename: string
-  isChat: boolean // whether the current file is a chat file
+export interface RigConfig {
   values: Record<string, string>
   result: string
   error?: string | null
-  variables: string[]
   model: string
+}
+
+export interface RigMetadata {
+  filename: string
+  isChat: boolean
+  variables: string[]
 }
 
 export interface RigLog {
@@ -74,14 +77,12 @@ function RigView() {
     }
   }, [openaiKey])
 
-  const currFile = currFilename
-    ? vscode.getState()?.parameters?.[currFilename] ?? {
-        filename: currFilename,
-        isChat: true,
-        values: {},
+  const currConfig: RigConfig | null = currFilename
+    ? vscode.getState()?.config?.[currFilename] ?? {
         model: 'gpt-3.5-turbo',
         result: '',
-        variables: [],
+        values: {},
+        error: null,
       }
     : null
 
@@ -89,36 +90,11 @@ function RigView() {
 
   return !initializing && openaiKey.length === 0 ? (
     <KeyView vscode={vscode} />
-  ) : currFile ? (
+  ) : currFilename && currConfig ? (
     <FileView
       key={currFilename}
-      openaiKey={openaiKey}
-      file={currFile}
-      logs={currLogs}
+      filename={currFilename}
       postMessage={(action: string, data: any) => vscode.postMessage({ action, data })}
-      saveFileInStorage={(updatedFile: RigFile) => {
-        const currentState = vscode.getState()
-        vscode.setState({
-          parameters: {
-            ...(currentState?.parameters ?? {}),
-            [currFilename]: updatedFile,
-          },
-          logs: currentState?.logs ?? [],
-        })
-      }}
-      createLogInStorage={newLog => {
-        const currentState = vscode.getState()
-        vscode.setState({
-          parameters: currentState?.parameters ?? {},
-          logs: [...(currentState?.logs ?? []), newLog],
-        })
-      }}
-      updateLogInStorage={updatedLog => {
-        const currentState = vscode.getState()
-        const allLogs = currentState?.logs ?? []
-        const index = allLogs.findIndex(log => log.id === updatedLog.id)
-        allLogs[index] = updatedLog
-      }}
     />
   ) : (
     <span>Open a Glass file to get started.</span>

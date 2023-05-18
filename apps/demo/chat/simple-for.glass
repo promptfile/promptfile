@@ -1,5 +1,7 @@
-<For each={[
-    { role: 'user', content: 'name an ice cream' },
-    { role: "assistant", content: 'Vanilla' },
-    { role: 'user', content: 'name a color' }
-]} fragment={item => <Block role={item.role} content={item.content} />}  />
+<System>
+You are a highly intelligent chatbot.
+</System>
+
+<User>
+Jqwepcoijqwef
+</User>
