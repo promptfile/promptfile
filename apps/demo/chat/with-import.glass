@@ -7,3 +7,7 @@ You are a helpful assistant.
 <User>
 ${sayHello({name: 'john'})}
 </User>
+
+<Assistant>
+Hello! How can I assist you today?
+</Assistant>

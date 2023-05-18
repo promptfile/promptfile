@@ -31,7 +31,3 @@ ${example.message}
 ${example.classification}
 </Assistant>
 </For>
-
-<User>
-${message}
-</User>
