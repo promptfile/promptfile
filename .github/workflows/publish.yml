@@ -30,14 +30,10 @@ jobs:
 
       - run: npm run build
 
-      - run: npx --workspace vscode-glass vsce package --out "$PWD"
+      - run: npx --workspace vscode-glass vsce package
 
       - name: Install Yarn 3
         run: npm install -g yarn@berry
-
-      - name: show bundle files
-        working-directory: ./apps/vscode-glass
-        run: du -h | sort -hr
 
       - name: Bundle esbuild
         run: npm run patch:esbuild --workspace=vscode-glass
@@ -45,7 +41,7 @@ jobs:
       # - run: npx ovsx publish --packagePath *.vsix
       #   env:
       #     OVSX_PAT: ${{secrets.OPEN_VSX_TOKEN}}
-      - run: npx vsce publish --packagePath *.vsix
+      - run: npx --workspace vscode-glass vsce publish --packagePath *.vsix
         env:
           VSCE_PAT: ${{secrets.VSCE_TOKEN}}
 
@@ -53,4 +49,4 @@ jobs:
         with:
           body_path: ${{github.workspace}}/apps/vscode-glass/CHANGELOG.md
           files: |
-            *.vsix
+            apps/vscode-glass/*.vsix

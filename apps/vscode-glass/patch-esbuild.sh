@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # esbuild must be marked `external` when bundling the extension, so we must install it as a dependency in the final .vsix archive
 
 DEPENDENCY=esbuild
