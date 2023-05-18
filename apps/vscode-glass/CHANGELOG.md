@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.8.2
+
+### Patch Changes
+
+- [`1bf83b4`](https://github.com/foundation-ui/glass/commit/1bf83b404147ad67b19be3e1eedf6c1006e24a68) Thanks [@rothfels](https://github.com/rothfels)! - bundle esbuild platform builds, fix broken webview
+
 ## 0.8.1
 
 ### Patch Changes
