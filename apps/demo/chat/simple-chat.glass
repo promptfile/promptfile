@@ -11,29 +11,67 @@ ${website}
 </System>
 
 <User>
-Tell me something funny :)
+hey, what's up?
 </User>
 
 <Assistant>
-Why don't scientists trust atoms? 
-
-Because they make up everything!
+Hello! How can I assist you today?
 </Assistant>
 
 <User>
-nice
+how are you feeling?
 </User>
 
 <Assistant>
-Glad you liked it! Do you have any questions about the website code?
+As an AI language model, I don't have feelings, but I'm here to help you with any questions you have.
 </Assistant>
 
 <User>
-nope, i'm good :)
+awesome!
 </User>
 
 <Assistant>
-Alright then! Feel free to ask me anything if you need assistance in the future. Have a great day!
+Great! What can I do for you today?
+</Assistant>
+
+<User>
+what's the meaning of life
+</User>
+
+<Assistant>
+As an AI language model, I don't have an opinion or belief about the meaning of life. The answer to this question often varies depending on a person's beliefs, culture, and individual experiences.
+</Assistant>
+
+<User>
+what is elliott's last name
+</User>
+
+<Assistant>
+Elliott's last name is Burris, it is mentioned in the title of the webpage and in the content of the page.
+</Assistant>
+
+<User>
+awesome,t hanks :)
+</User>
+
+<Assistant>
+You're welcome! Is there anything else I can help you with?
+</Assistant>
+
+<User>
+nope that's it
+</User>
+
+<Assistant>
+Okay, feel free to ask me anything else if you have more questions in the future. Have a great day!
+</Assistant>
+
+<User>
+you too 
+</User>
+
+<Assistant>
+Thank you!
 </Assistant>
 
 <User>

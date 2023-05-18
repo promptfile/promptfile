@@ -5,7 +5,7 @@ import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { LeftPanelWebview } from './LeftWebviewProvider'
-import { handleStreamResponse, processChatStream } from './api'
+import { handleStreamResponse } from './api'
 import { executeGlassFile } from './executeGlassFile'
 import { getDocumentFilename, isGlassFile } from './util/isGlassFile'
 
@@ -192,12 +192,36 @@ export async function activate(context: vscode.ExtensionContext) {
           stream: true,
         }),
       })
-      const response = await handleStreamResponse(r, processChatStream)
 
-      // Insert the response between the Assistant tags
-      await activeEditor.edit(editBuilder => {
-        const lastLine = activeEditor.document.lineCount
-        editBuilder.insert(new vscode.Position(lastLine - 2, 0), response)
+      await handleStreamResponse(r, (currResult: string, eventData: { choices: { delta: { content: string } }[] }) => {
+        if (eventData.choices[0].delta.content) {
+          const newResult = currResult + eventData.choices[0].delta.content
+
+          const lines = activeEditor.document.getText().split('\n')
+          // Find the last position of "<Assistant>"
+          for (let i = lines.length - 1; i >= 0; i--) {
+            const line = lines[i]
+            if (line.includes('<Assistant>')) {
+              const assistantLineIndex = i + 1
+              const assistantLine = lines[assistantLineIndex]
+              // Insert the new data into the document
+              void activeEditor.edit(editBuilder => {
+                // replace the entire assistantLine with the newResult string
+                editBuilder.replace(
+                  new vscode.Range(
+                    new vscode.Position(assistantLineIndex, 0),
+                    new vscode.Position(assistantLineIndex, assistantLine.length)
+                  ),
+                  newResult
+                )
+              })
+              break
+            }
+          }
+
+          return newResult
+        }
+        return currResult
       })
 
       // Add User tags to the end of the document
