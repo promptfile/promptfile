@@ -81,13 +81,13 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const panel = vscode.window.createWebviewPanel(
-        'glassNewTab', // viewType
-        'Glass Webview', // Title of the panel displayed to the user
-        vscode.ViewColumn.One, // Editor column to show the new webview panel in.
+        'glass.webView', // viewType
+        'Glass: run', // Title of the panel displayed to the user
+        vscode.ViewColumn.Beside, // Editor column to show the new webview panel in.
         {
           enableScripts: true,
           retainContextWhenHidden: true,
-        } // Webview options.
+        }
       )
       panel.webview.html = getHtmlForWebview(panel.webview, context)
       panel.webview.onDidReceiveMessage(async (message: any) => {

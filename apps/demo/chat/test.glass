@@ -1,7 +1,7 @@
 // This is a simple prompt that tells the LLM to respond like a pirate.
 // The prompt is structured for chat use via the `System`, `Assistant`, and `User` blocks.
 
-// we can actually execute Typescript as a Code block at the top of our Glass file.
+// we can actually execute Typescript as a Code block at the top of our Glass file. 
 // async works too — just be sure to await!
 <Code>
 const date = new Date()
