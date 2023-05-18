@@ -1,5 +1,5 @@
 import { VSCodeButton, VSCodeTextField } from '@vscode/webview-ui-toolkit/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { WebviewApi } from 'vscode-webview'
 import { RigState } from './rig'
 
@@ -24,11 +24,18 @@ export const ComposerView = (props: ComposerViewProps) => {
     })
   }
 
+  useEffect(() => {
+    setTimeout(() => {
+      document.getElementById('composer-input')?.focus()
+    }, 500)
+  }, [])
+
   return (
     <div style={{ width: '100%', height: 'full', display: 'flex', paddingBottom: '16px' }}>
       <VSCodeTextField
         style={{ width: '100%', paddingRight: '8px' }}
         value={text}
+        id={'composer-input'}
         placeholder="Write a message..."
         onInput={e => {
           const value = (e.target as any).value
