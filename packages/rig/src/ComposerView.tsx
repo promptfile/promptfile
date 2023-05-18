@@ -25,11 +25,11 @@ export const ComposerView = (props: ComposerViewProps) => {
   }
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', height: 'full', display: 'flex', paddingBottom: '16px' }}>
       <VSCodeTextField
-        style={{ width: '100%', paddingBottom: '8px' }}
+        style={{ width: '100%', paddingRight: '8px' }}
         value={text}
-        placeholder="sk-..."
+        placeholder="Write a message..."
         onInput={e => {
           const value = (e.target as any).value
           setText(value)
@@ -41,7 +41,7 @@ export const ComposerView = (props: ComposerViewProps) => {
           }
         }}
       />
-      <VSCodeButton style={{ width: '100%' }} onClick={() => run()}>
+      <VSCodeButton style={{ width: 'fit-content' }} onClick={() => run()}>
         Send
       </VSCodeButton>
     </div>

@@ -43,7 +43,16 @@ function RigView() {
   }, [])
 
   return (
-    <div style={{ height: '100%', width: '100%' }}>
+    <div
+      style={{
+        height: '100vh',
+        width: '100%',
+        overflow: 'hidden',
+        justifyContent: 'space-between',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <FileTopper filename={filename} />
       <ComposerView vscode={vscode} />
     </div>

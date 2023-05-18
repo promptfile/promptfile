@@ -6,7 +6,15 @@ export const FileTopper = (props: FileTopperProps) => {
   const { filename } = props
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '4px' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingBottom: '4px',
+        paddingTop: '16px',
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
         <svg width="20" height="20" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
           <mask id="path-1-inside-1_18_47" fill="white">

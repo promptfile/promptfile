@@ -1,13 +1,13 @@
 import { Uri, Webview } from 'vscode'
 import { getNonce } from './util/isGlassFile'
 
-export function getHtmlForWebview(webview: Webview, context: any) {
+export function getHtmlForWebview(webview: Webview, extensionPath: Uri) {
   // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
   // Script to handle user action
   // const scriptUri = webview.asWebviewUri(
   //   Uri.joinPath(this.extensionPath, 'script', 'left-webview-provider.js')
   // )
-  const scriptUri = webview.asWebviewUri(Uri.joinPath(context.extensionPath, 'out', 'rig.js'))
+  const scriptUri = webview.asWebviewUri(Uri.joinPath(extensionPath, 'out', 'rig.js'))
   // const constantUri = webview.asWebviewUri(
   //   Uri.joinPath(this.extensionPath, 'script', 'constant.js')
   // )

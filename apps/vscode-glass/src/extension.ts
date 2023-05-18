@@ -71,7 +71,7 @@ export async function activate(context: vscode.ExtensionContext) {
   )
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('glass.run', async context => {
+    vscode.commands.registerCommand('glass.run', async () => {
       const config = vscode.workspace.getConfiguration('glass')
       const openaiKey = config.get('openaiKey') as string | undefined
 
@@ -89,7 +89,7 @@ export async function activate(context: vscode.ExtensionContext) {
           retainContextWhenHidden: true,
         }
       )
-      panel.webview.html = getHtmlForWebview(panel.webview, context)
+      panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
       panel.webview.onDidReceiveMessage(async (message: any) => {
         // Handle messages from the webview
       })
