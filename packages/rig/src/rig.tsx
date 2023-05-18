@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
+import { ComposerView } from './ComposerView'
 import { FileTopper } from './FileTopper'
 
 export interface RigState {

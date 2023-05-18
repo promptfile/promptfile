@@ -3,10 +3,10 @@ import { useState } from 'react'
 import { WebviewApi } from 'vscode-webview'
 import { RigState } from './rig'
 
-interface KeyViewProps {
+interface ComposerViewProps {
   vscode: WebviewApi<RigState>
 }
-export const KeyView = (props: KeyViewProps) => {
+export const ComposerView = (props: ComposerViewProps) => {
   const { vscode } = props
   const [text, setText] = useState('')
 
@@ -17,7 +17,7 @@ export const KeyView = (props: KeyViewProps) => {
       return
     }
     vscode.postMessage({
-      action: 'saveOpenaiKey',
+      action: 'run',
       data: {
         text: trimmedText,
       },
