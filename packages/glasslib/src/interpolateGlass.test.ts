@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { interpolateGlass } from '../interpolateGlass'
+import { interpolateGlass } from './interpolateGlass'
 
 describe('interpolateGlass', () => {
   it('should interpolate an empty document', () => {

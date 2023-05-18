@@ -1,6 +1,6 @@
 import { parseGlassBlocks } from '@glass-lang/glasslib'
-import { parseCodeBlock } from './parseCodeBlock'
-import { parseGlassASTImports } from './util/parseGlassAST'
+import { parseGlassImports } from './parseGlassImports'
+import { parseCodeBlock } from './parseTypescript'
 
 const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block', 'Prompt'])
 
@@ -19,7 +19,7 @@ export function parseGlassMetadata(document: string) {
     return interpolationVariables
   })
 
-  const imports = parseGlassASTImports(document)
+  const imports = parseGlassImports(document)
 
   const codeBlocks = blocks.filter(block => block.tag === 'Code')
   const parsedCodeBlocks = codeBlocks.map(block => parseCodeBlock(`${imports.join('\n')}\n\n${block.content}`))

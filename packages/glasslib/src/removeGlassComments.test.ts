@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { removeGlassComments } from '../removeGlassComments'
+import { removeGlassComments } from './removeGlassComments'
 
 describe('removeGlassComments', () => {
   it('should remove line comments', () => {

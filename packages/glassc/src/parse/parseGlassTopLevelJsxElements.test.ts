@@ -1,9 +1,8 @@
 import { expect } from 'chai'
-import { jsxNodeToString } from '../parseJSX'
-import { JSXNode, parseGlassASTJSX } from '../util/parseGlassAST'
+import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 
-describe('parseGlassAST', () => {
-  it('should parse JSX', () => {
+describe('parseGlassTopLevelJsxElements', () => {
+  it('should parse glass document', () => {
     const mdx = `Hello world this is a document.
 
 <Foo x={3} y="2" />
@@ -17,7 +16,7 @@ interstitial
 
 And this is the end`
 
-    expect(parseGlassASTJSX(mdx)).to.deep.equal([
+    expect(parseGlassTopLevelJsxElements(mdx)).to.deep.equal([
       {
         tagName: 'Foo',
         attrs: [
@@ -79,32 +78,5 @@ And this is the end`
         type: 'mdxJsxFlowElement',
       },
     ])
-  })
-
-  it('should convert JSXNode to string', () => {
-    const node: JSXNode = {
-      tagName: 'For',
-      attrs: [
-        { name: 'each', expressionValue: 'messages' },
-        { name: 'fragment', expressionValue: 'm => <Block role={m.role} content={m.text} />' },
-      ],
-      children: [],
-      position: {
-        end: {
-          column: 81,
-          line: 10,
-          offset: 181,
-        },
-        start: {
-          column: 1,
-          line: 10,
-          offset: 101,
-        },
-      },
-    }
-
-    expect(jsxNodeToString(node)).to.deep.equal(
-      '<For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />'
-    )
   })
 })

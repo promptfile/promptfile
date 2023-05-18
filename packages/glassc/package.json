@@ -33,6 +33,7 @@
   "license": "MIT",
   "dependencies": {
     "@glass-lang/glasslib": "*",
+    "@glass-lang/util": "*",
     "camelcase": "^7.0.1",
     "mdast-util-from-markdown": "^1.3.0",
     "mdast-util-frontmatter": "^1.0.1",

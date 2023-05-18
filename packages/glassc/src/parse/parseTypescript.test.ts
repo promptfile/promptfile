@@ -5,9 +5,9 @@ import {
   parseCodeBlockLocalVars,
   parseCodeBlockUndeclaredSymbols,
   parseCodeImportedSymbols,
-} from '../parseCodeBlock'
+} from './parseTypescript'
 
-describe('parseCodeBlock', () => {
+describe('parseTypescript', () => {
   it('should parse local variables', () => {
     const code = `
 const res = await fetch('https://google.com')

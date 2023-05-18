@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { constructGlassOutputFile, transpileGlassFile } from '../transpileGlass'
+import { constructGlassOutputFile, transpileGlassFile } from './transpileGlass'
 
 describe('transpileGlass', () => {
   it('should transpile without interpolation variables', () => {

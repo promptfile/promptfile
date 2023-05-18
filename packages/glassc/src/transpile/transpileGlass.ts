@@ -3,11 +3,13 @@ import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
-import { parseCodeBlock } from './parseCodeBlock.js'
-import { jsxNodeToString, parseJSXAttributes, parseJSXExpression } from './parseJSX.js'
-import { removeGlassFrontmatter } from './removeGlassFrontmatter.js'
-import { transformDynamicBlocks } from './transformDynamicBlocks.js'
-import { parseGlassAST } from './util/parseGlassAST.js'
+import { parseGlassAST } from '../parse/parseGlassAST.js'
+import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
+import { parseJsxElement } from '../parse/parseJsxElement.js'
+import { parseCodeBlock } from '../parse/parseTypescript.js'
+import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter.js'
+import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
+import { jsxNodeToString } from '../transform/transformJsxExpressionToTemplateString.js'
 
 const extension = 'glass'
 
@@ -95,8 +97,8 @@ export function transpileGlassFile(
     //   continue
     // }
     const jsxString = jsxNodeToString(jsxNode) // TODO: this should just be the section of the doc from start to end
-    const parsedJsx = parseJSXExpression(jsxString)
-    const attrs = parseJSXAttributes(jsxString)
+    const parsedJsx = parseJsxElement(jsxString)
+    const attrs = parseJsxAttributes(jsxString)
     const itemKey = attrs['item']
 
     if (itemKey) {
@@ -127,7 +129,7 @@ export function transpileGlassFile(
     }
   }
 
-  const argsOverride = argsNode ? parseJSXAttributes(argsNode) : {}
+  const argsOverride = argsNode ? parseJsxAttributes(argsNode) : {}
 
   const dynamicTransform = transformDynamicBlocks(doc)
   doc = dynamicTransform.doc

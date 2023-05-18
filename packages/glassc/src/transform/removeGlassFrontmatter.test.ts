@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { removeGlassFrontmatter } from '../removeGlassFrontmatter'
+import { removeGlassFrontmatter } from './removeGlassFrontmatter'
 
 describe('removeGlassFrontmatter', () => {
   it('should remove frontmatter', () => {

@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { parseGlassMetadata } from '../parseGlassMetadata'
+import { parseGlassMetadata } from './parseGlassMetadata'
 
 describe('parseGlassMetadata', () => {
   it('should parse non-chat document with no vars', () => {

@@ -16,7 +16,8 @@
     { "directory": "packages/glassc", "changeProcessCWD": true },
     { "directory": "packages/glasslib", "changeProcessCWD": true },
     { "directory": "packages/language-server", "changeProcessCWD": true },
-    { "directory": "packages/rig", "changeProcessCWD": true }
+    { "directory": "packages/rig", "changeProcessCWD": true },
+    { "directory": "packages/util", "changeProcessCWD": true }
   ],
   "search.exclude": {
     "out": true, // set this to false to include "out" folder in search results

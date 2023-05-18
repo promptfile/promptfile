@@ -1,9 +1,11 @@
-import { transformArrowFunctionExpressionWithJsx, transformMdxDocumentToTemplateString } from './parseJSX'
-import { checkOk } from './util/checkOk'
-import { JSXNode, parseGlassASTJSX } from './util/parseGlassAST'
+import { checkOk } from '@glass-lang/util'
+import { JSXNode } from '../parse/parseGlassAST'
+import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements'
+import { transformGlassDocumentToTemplateString } from './transformGlassDocToTemplateString'
+import { transformJsxExpressionToTemplateString } from './transformJsxExpressionToTemplateString'
 
 export function transformDynamicBlocks(doc: string) {
-  const jsxNodes = parseGlassASTJSX(doc)
+  const jsxNodes = parseGlassTopLevelJsxElements(doc)
 
   let jsxInterpolations: any = {}
 
@@ -64,21 +66,21 @@ export function transformDynamicBlocks(doc: string) {
         if (ifAttr?.expressionValue != null) {
           jsxInterpolations['jsx-' + currInterpolationIndex] = `${ifAttr.expressionValue} ? ${
             eachAttr.stringValue || eachAttr.expressionValue
-          }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n') : ''`
+          }.map(${transformJsxExpressionToTemplateString(fragment.expressionValue!)}).join('\\n\\n') : ''`
         } else {
           jsxInterpolations['jsx-' + currInterpolationIndex] = `${
             eachAttr.stringValue || eachAttr.expressionValue
-          }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n')`
+          }.map(${transformJsxExpressionToTemplateString(fragment.expressionValue!)}).join('\\n\\n')`
         }
       } else {
         if (ifAttr?.expressionValue != null) {
           jsxInterpolations['jsx-' + currInterpolationIndex] = `${ifAttr?.expressionValue} ? ${
             eachAttr.stringValue || eachAttr.expressionValue
-          }.map(${item.stringValue} => \`${transformMdxDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n') : ''`
+          }.map(${item.stringValue} => \`${transformGlassDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n') : ''`
         } else {
           jsxInterpolations['jsx-' + currInterpolationIndex] = `${
             eachAttr.stringValue || eachAttr.expressionValue
-          }.map(${item.stringValue} => \`${transformMdxDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n')`
+          }.map(${item.stringValue} => \`${transformGlassDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n')`
         }
       }
 
@@ -137,11 +139,11 @@ export function transformDynamicBlocks(doc: string) {
 //       if (ifAttr?.expressionValue != null) {
 //         jsxInterpolations['jsx-' + i] = `${ifAttr.expressionValue} ? ${
 //           eachAttr.stringValue || eachAttr.expressionValue
-//         }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n') : ''`
+//         }.map(${transformJSXExpressionToTemplateString(fragment.expressionValue!)}).join('\\n\\n') : ''`
 //       } else {
 //         jsxInterpolations['jsx-' + i] = `${
 //           eachAttr.stringValue || eachAttr.expressionValue
-//         }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n')`
+//         }.map(${transformJSXExpressionToTemplateString(fragment.expressionValue!)}).join('\\n\\n')`
 //       }
 
 //       doc = doc.substring(0, startOffset + currOffset) + `\${jsx-${i}}` + doc.substring(endOffset + currOffset)
@@ -176,7 +178,7 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: JSXNod
     lastChild.position.end.offset - sectionStart
   )
 
-  const innerNodes = parseGlassASTJSX(nodeInsides)
+  const innerNodes = parseGlassTopLevelJsxElements(nodeInsides)
 
   for (let i = 0; i < innerNodes.length; i++) {
     const node = innerNodes[i]
@@ -214,21 +216,21 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: JSXNod
         if (ifAttr?.expressionValue != null) {
           jsxInterpolations['jsx-' + interpolationIndex] = `${ifAttr.expressionValue} ? ${
             eachAttr.stringValue || eachAttr.expressionValue
-          }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n') : ''`
+          }.map(${transformJsxExpressionToTemplateString(fragment.expressionValue!)}).join('\\n\\n') : ''`
         } else {
           jsxInterpolations['jsx-' + interpolationIndex] = `${
             eachAttr.stringValue || eachAttr.expressionValue
-          }.map(${transformArrowFunctionExpressionWithJsx(fragment.expressionValue!)}).join('\\n\\n')`
+          }.map(${transformJsxExpressionToTemplateString(fragment.expressionValue!)}).join('\\n\\n')`
         }
       } else {
         if (ifAttr?.expressionValue != null) {
           jsxInterpolations['jsx-' + interpolationIndex] = `${ifAttr?.expressionValue} ? ${
             eachAttr.stringValue || eachAttr.expressionValue
-          }.map(${item.stringValue} => \`${transformMdxDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n') : ''`
+          }.map(${item.stringValue} => \`${transformGlassDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n') : ''`
         } else {
           jsxInterpolations['jsx-' + interpolationIndex] = `${eachAttr.stringValue || eachAttr.expressionValue}.map(${
             item.stringValue
-          } => \`${transformMdxDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n')`
+          } => \`${transformGlassDocumentToTemplateString(nodeInsides)}\`).join('\\n\\n')`
         }
       }
 

@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { parseGlassBlocks } from '../parseGlassBlocks'
+import { parseGlassBlocks } from './parseGlassBlocks'
 
 describe('parseGlassBlocks', () => {
   it('should parse empty document', () => {

@@ -1,7 +1,7 @@
 {
-  "name": "@glass-lang/glasslib",
-  "version": "0.0.1",
-  "description": "Glass language tools",
+  "name": "@glass-lang/util",
+  "version": "1.0.0",
+  "description": "Glass language utils",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -13,6 +13,7 @@
     "prepare": "npm run build",
     "lint": "eslint src --ext ts"
   },
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/foundation-ui/glass.git"
@@ -29,9 +30,6 @@
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "@glass-lang/util": "*"
-  },
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",

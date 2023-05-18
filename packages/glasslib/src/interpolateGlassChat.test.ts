@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { interpolateGlassChat } from '../interpolateGlassChat'
+import { interpolateGlassChat } from './interpolateGlassChat'
 
 describe('interpolateGlassChat', () => {
   it('should interpolate an empty document', () => {

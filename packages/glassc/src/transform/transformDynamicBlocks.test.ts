@@ -1,6 +1,5 @@
 import { expect } from 'chai'
-import { transformJsxExpressionStringToTemplate, transformMdxDocumentToTemplateString } from '../parseJSX'
-import { transformDynamicBlocks } from '../transformDynamicBlocks'
+import { transformDynamicBlocks } from './transformDynamicBlocks'
 
 describe('transformDynamicBlocks', () => {
   it('should ignore document without dynamic blocks', () => {
@@ -213,55 +212,5 @@ who was Einstein?
         doc: '<Code>\nconst useGandhi = true\n</Code>\n\n<System>\nYou are a highly-intelligent AI.\n</System>\n\n<User>\n${jsx-0}\n\n${jsx-1}\n</User>\n\n<User>\n<Text if={useGandhi}>\nwho was gandhi?\n</Text>\n\n<Text if={!useGandhi}>\n<User>\n${jsx-2}\n\n${jsx-3}\n</User>',
       })
     })
-  })
-
-  it('transformMdxDocumentToTemplateString', () => {
-    expect(
-      transformJsxExpressionStringToTemplate(`<Block hello={m.world} foo="bar">
-block content \${whoa}
-</Block>`)
-    ).to.equal(`<Block hello={\${JSON.stringify(m.world)}} foo="bar">
-block content \${whoa}
-</Block>`)
-  })
-
-  it('transformMdxDocumentToTemplateString', () => {
-    expect(
-      transformJsxExpressionStringToTemplate(`<Block hello={m.world} foo="bar">
-block content \${whoa}
-
-<Text if={m.isAdmin}>
-whoa text
-</Text>
-</Block>`)
-    ).to.equal(`<Block hello={\${JSON.stringify(m.world)}} foo="bar">
-block content \${whoa}
-
-<Text if={\${JSON.stringify(m.isAdmin)}}>
-whoa text
-</Text>
-</Block>`)
-  })
-
-  it('transformMdxDocumentToTemplateString', () => {
-    const doc = `hello this is text \${fooby}
-
-<Block hello={m.world} foo="bar">
-block content \${whoa}
-
-<Text if={foo.isAdmin}>
-whoa text
-</Text>
-</Block>`
-
-    expect(transformMdxDocumentToTemplateString(doc)).to.equal(`hello this is text \${fooby}
-
-<Block hello={\${JSON.stringify(m.world)}} foo="bar">
-block content \${whoa}
-
-<Text if={\${JSON.stringify(foo.isAdmin)}}>
-whoa text
-</Text>
-</Block>`)
   })
 })

@@ -128,6 +128,9 @@ export function parseCodeImportedSymbols(code: string) {
   return importedSymbols
 }
 
+/**
+ * Returns true if the typescript code contains an `await` expression.
+ */
 export function codeBlockContainsAwait(code: string) {
   const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
   let hasAwait = false

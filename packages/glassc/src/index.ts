@@ -1,4 +1,9 @@
-export { parseGlassMetadata } from './parseGlassMetadata.js'
-export { removeGlassFrontmatter } from './removeGlassFrontmatter.js'
+export { parseGlassMetadata } from './parse/parseGlassMetadata.js'
+export { removeGlassFrontmatter } from './transform/removeGlassFrontmatter.js'
 // breaks CommonJS projects, since it imports ESM packages
-export { constructGlassOutputFile, getGlassExportName, transpileGlass, transpileGlassFile } from './transpileGlass.js'
+export {
+  constructGlassOutputFile,
+  getGlassExportName,
+  transpileGlass,
+  transpileGlassFile,
+} from './transpile/transpileGlass.js'
