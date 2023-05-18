@@ -119,7 +119,11 @@
     "commands": [
       {
         "command": "glass.run",
-        "title": "Glass: run current file"
+        "title": "Glass: run file"
+      },
+      {
+        "command": "glass.completion",
+        "title": "Glass: add completion"
       },
       {
         "command": "glass.openSettings",
@@ -140,9 +144,15 @@
     ],
     "keybindings": [
       {
-        "command": "glass.run",
+        "command": "glass.completion",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
+        "when": "editorTextFocus && resourceLangId == glass"
+      },
+      {
+        "command": "glass.run",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+enter",
         "when": "editorTextFocus && resourceLangId == glass"
       }
     ],
