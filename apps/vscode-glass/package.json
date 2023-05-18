@@ -148,7 +148,7 @@
       {
         "command": "glass.run",
         "key": "ctrl+shift+r",
-        "mac": "cmd+shift+enter",
+        "mac": "cmd+shift+r",
         "when": "editorTextFocus && resourceLangId == glass"
       }
     ],

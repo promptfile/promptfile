@@ -108,11 +108,17 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
 
+      // get the current cursor position
+      const cursorPosition = activeEditor.selection.active
+
       // Add Assistant tags to the end of the document
       await activeEditor.edit(editBuilder => {
         const lastLine = activeEditor.document.lineCount
         editBuilder.insert(new vscode.Position(lastLine, 0), '\n\n<Assistant>\n█\n</Assistant>')
       })
+
+      // restore the cursor back to its original position
+      activeEditor.selection = new vscode.Selection(cursorPosition, cursorPosition)
 
       const messages = await executeGlassFile(activeEditor.document, {})
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
