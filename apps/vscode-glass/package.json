@@ -36,7 +36,7 @@
   ],
   "scripts": {
     "vscode:prepublish": "npm run build",
-    "build": "esbuild extension=./src/extension.ts language-server=../../packages/language-server/src/server.ts --bundle --platform=node --target=node16 --external:vscode --external:esbuild --outdir=out && npm run build:rig",
+    "build": "esbuild extension=./src/extension.ts language-server=../../packages/language-server/src/server.ts --bundle --platform=node --target=node16 --external:vscode --external:esbuild --external:@glass-lang/glasslib --outdir=out && npm run build:rig",
     "build:rig": "esbuild rig=../../packages/rig/src/rig.tsx --bundle --outdir=out",
     "compile": "tsc -p tsconfig.test.json",
     "watch": "tsc -watch -p ./",

@@ -32,6 +32,9 @@ jobs:
 
       - run: npx --workspace vscode-glass vsce package --out "$PWD"
 
+      - name: Install Yarn 3
+        run: npm install -g yarn@berry
+
       - name: Bundle esbuild
         working-directory: ./apps/vscode-glass
         run: ./patch-esbuild.sh

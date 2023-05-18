@@ -51,6 +51,7 @@ context.response = ${getGlassExportName(fileName)}(${JSON.stringify(interpolatio
     write: false,
     format: 'cjs',
     target: 'es2020',
+    external: ['@glass-lang/glasslib'],
   })
 
   const bundledCode = new TextDecoder().decode(result.outputFiles[0].contents)
