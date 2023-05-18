@@ -6,24 +6,25 @@ import {
   VSCodeTextArea,
 } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useMemo, useState } from 'react'
-import { RigFile, RigLog } from './rig'
+import { RigConfig, RigLog } from './rig'
 
 interface PlaygroundViewProps {
-  file: RigFile
-  setFile: (file: RigFile) => void
-  updateLog: (log: RigLog) => void
-  createLog: (log: RigLog) => void
+  filename: string
+  initialConfig: RigConfig
   openaiKey: string
   postMessage: (action: string, data: any) => void
 }
 
 export const PlaygroundView = (props: PlaygroundViewProps) => {
-  const { file, setFile, createLog, updateLog, openaiKey, postMessage } = props
+  const { filename, initialConfig, openaiKey, postMessage } = props
 
   const chatModels = useMemo(() => ['gpt-3.5-turbo', 'gpt-4'], [])
   const completionModels = useMemo(() => ['text-davinci-003', 'text-curie-001', 'text-babbage-001', 'text-ada-001'], [])
 
   const [isLoading, setIsLoading] = useState(false)
+  const [model, setModel] = useState(initialConfig.model)
+  const [values, setValues] = useState(initialConfig.values)
+  const [variables, setVariables] = useState<string[]>([])
 
   const reset = () => {
     setFile({ ...file, values: {}, result: '', error: null })

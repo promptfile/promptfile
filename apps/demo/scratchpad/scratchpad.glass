@@ -2,12 +2,6 @@
 You are a helpful assistant. Your job is to respond to the user.
 </System>
 
-<Block role={message.role}>
-${message.content}
-</Block>
-
-<For each={examples} fragment={item => <MySpecialKshot item={item} />} />
-
 <User>
-${bar}
+Hello, how are you?
 </User>

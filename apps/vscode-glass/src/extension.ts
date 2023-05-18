@@ -1,9 +1,12 @@
 import { parseGlassMetadata, transpileGlass } from '@glass-lang/glassc'
 import fs from 'fs'
+import fetch from 'node-fetch'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { LeftPanelWebview } from './LeftWebviewProvider'
+import { handleStreamResponse, processChatStream } from './api'
+import { executeGlassFile } from './executeGlassFile'
 import { getDocumentFilename, isGlassFile } from './util/isGlassFile'
 
 let client: LanguageClient | null = null
@@ -161,6 +164,55 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(
+    vscode.commands.registerCommand('glass.run', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+        return
+      }
+
+      // Add Assistant tags to the end of the document
+      await activeEditor.edit(editBuilder => {
+        const lastLine = activeEditor.document.lineCount
+        editBuilder.insert(new vscode.Position(lastLine, 0), '\n\n<Assistant>\n\n</Assistant>')
+      })
+
+      const config = vscode.workspace.getConfiguration('glass')
+      const openaiKey = config.get('openaiKey') as string
+
+      const messages = await executeGlassFile(activeEditor.document, {})
+      const r = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${openaiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages,
+          model: 'gpt-3.5-turbo',
+          stream: true,
+        }),
+      })
+      const response = await handleStreamResponse(r, processChatStream)
+
+      // Insert the response between the Assistant tags
+      await activeEditor.edit(editBuilder => {
+        const lastLine = activeEditor.document.lineCount
+        editBuilder.insert(new vscode.Position(lastLine - 2, 0), response)
+      })
+
+      // Add User tags to the end of the document
+      await activeEditor.edit(editBuilder => {
+        const lastLine = activeEditor.document.lineCount
+        editBuilder.insert(new vscode.Position(lastLine, 0), '\n\n<User>\n\n</User>')
+      })
+
+      // Move the cursor to between the User tags
+      const lastLine = activeEditor.document.lineCount
+      activeEditor.selection = new vscode.Selection(
+        new vscode.Position(lastLine - 2, 0),
+        new vscode.Position(lastLine - 2, 0)
+      )
+    }),
     vscode.commands.registerCommand('glass.runPlayground', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && activeEditor.document.languageId === 'glass') {

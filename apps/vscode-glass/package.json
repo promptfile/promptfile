@@ -139,6 +139,10 @@
     ],
     "commands": [
       {
+        "command": "glass.run",
+        "title": "Glass: run"
+      },
+      {
         "command": "glass.openSettings",
         "title": "Glass: Open settings"
       },
@@ -161,7 +165,7 @@
     ],
     "keybindings": [
       {
-        "command": "glass.runPlayground",
+        "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && resourceLangId == glass"

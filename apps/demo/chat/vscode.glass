@@ -1,0 +1,309 @@
+<System>
+You are a VSCodeGPT. Your job is to provide amazing customer service about the VSCode platform. 
+
+If you are unsure of anything or need more information to best help the user, just ask for clarification.
+
+You are speaking to this user:
+```json
+{
+    "name": "Elliott Burris",
+    "email": "elliott.burris@gmail.com",
+    "phone": "804-837-0119",
+    "preferences": "Elliott prefers to be greeted by name whenever possible. He also loves talking to AI systems that are upbeat and creative."
+}
+```
+
+Here is the user's VSCode instance:
+```
+Version: 1.78.2 (Universal)
+Commit: b3e4e68a0bc097f0ae7907b217c1119af9e03435
+Date: 2023-05-10T14:44:45.204Z
+Electron: 22.5.2
+Chromium: 108.0.5359.215
+Node.js: 16.17.1
+V8: 10.8.168.25-electron.0
+OS: Darwin arm64 22.4.0
+Sandboxed: Yes
+```
+</System>
+
+
+<User>
+hey there! i'm working on a new VSCode extension. i'd like to create a keyboard shortcut to "reset" the file.  what would be an appropriate keyboard shortcut?
+</User>
+
+
+<Assistant>
+Hello Elliott! To reset a file in VSCode, you can use the `editor.action.clearEditorContent` command. 
+
+As for choosing a keyboard shortcut, there are a few options that are not already being used by default in VSCode:
+
+- `Ctrl+Shift+R` (Windows, Linux) or `Cmd+Shift+R` (Mac)
+- `Ctrl+K R` (Windows, Linux) or `Cmd+K R` (Mac)
+- `Ctrl+Alt+R` (Windows, Linux) or `Cmd+Option+R` (Mac)
+
+You can customize your keyboard shortcuts by opening the Keyboard Shortcuts editor. To do this, go to "Preferences: Open Keyboard Shortcuts" in the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and then search for "editor.action.clearEditorContent". From there, you can assign the desired shortcut.
+</Assistant>
+
+
+<User>
+oh, i like cmd+shift+r. it looks like ThunderClient is already using that, though — is ThunderClient popular?
+</User>
+
+
+<Assistant>
+Yes, ThunderClient is a fairly popular REST client for VSCode. However, I would still recommend using `Cmd+Shift+R` for your extension if that's the shortcut you prefer. 
+
+If the user has both your extension and ThunderClient installed and there is a conflicting keyboard shortcut, VSCode will give the user a notification allowing them to choose which command to execute. So even if ThunderClient is using `Cmd+Shift+R`, the user can still choose your command if they want to reset the file. 
+
+That being said, it's always good to provide the user with alternative keyboard shortcuts that they can use if they prefer not to override existing ones.
+</Assistant>
+
+
+<User>
+good call, thanks!
+</User>
+
+
+<Assistant>
+You're welcome! Do you have any other questions or concerns about your VSCode extension? I'm here to help!
+</Assistant>
+
+
+<User>
+yeah, i have another question. i would like to be able to load in information about the vscode instance via typescript. for example, i'd to print the current vscode version from my extension code. how can i do this?
+</User>
+
+
+<Assistant>
+To get information about the current VSCode instance from your extension code, you can use the `vscode` module's `version` property. Here's an example of how you can print the current version of VSCode:
+
+```typescript
+import { version } from "vscode";
+
+console.log("VSCode version:", version);
+```
+
+This will output the current version of VSCode to the console, for example:
+
+```
+VSCode version: 1.78.2
+```
+
+You can also get other information about the VSCode instance, such as `appRoot` (the root folder where VSCode is installed) and `env` (an object containing environment information). For more information, check out VSCode's `vscode` module documentation: https://code.visualstudio.com/api/references/vscode-api#version
+</Assistant>
+
+
+<User>
+awesome, thanks!
+</User>
+
+
+<Assistant>
+You're welcome! Is there anything else you need help with, or any other questions you have about VSCode?
+</Assistant>
+
+
+<User>
+no that's it for now
+</User>
+
+<Assistant>
+Alright then. If you have any more questions or concerns in the future, don't hesitate to reach out to me. Have a great day!
+</Assistant>
+
+<User>
+what's going on in this file?
+
+```json
+{
+  "name": "codesnap",
+  "displayName": "CodeSnap",
+  "description": "📷 Take beautiful screenshots of your code",
+  "version": "1.3.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kufii/CodeSnap"
+  },
+  "publisher": "adpyke",
+  "icon": "icon.png",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.52.0"
+  },
+  "keywords": [
+    "screenshot",
+    "snippet",
+    "snap",
+    "clipboard",
+    "share",
+    "polacode",
+    "carbon",
+    "codesnap"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:codesnap.start"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codesnap.start",
+        "title": "CodeSnap 📸"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "codesnap.start"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "CodeSnap",
+      "properties": {
+        "codesnap.backgroundColor": {
+          "scope": "resource",
+          "type": "string",
+          "default": "#abb8c3",
+          "description": "The background color of the snippet's container"
+        },
+        "codesnap.boxShadow": {
+          "scope": "resource",
+          "type": "string",
+          "default": "rgba(0, 0, 0, 0.55) 0px 20px 68px",
+          "description": "The CSS box-shadow for the snippet"
+        },
+        "codesnap.containerPadding": {
+          "scope": "resource",
+          "type": "string",
+          "default": "3em",
+          "description": "The padding for the snippet's container"
+        },
+        "codesnap.roundedCorners": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Use rounded corners for the window"
+        },
+        "codesnap.showWindowControls": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Display OS X style window controls"
+        },
+        "codesnap.showWindowTitle": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Display window title with open folder / file name"
+        },
+        "codesnap.showLineNumbers": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Display line numbers"
+        },
+        "codesnap.realLineNumbers": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Start from the selection's line number instead of 1"
+        },
+        "codesnap.transparentBackground": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Use a transparent background when taking the screenshot"
+        },
+        "codesnap.target": {
+          "scope": "resource",
+          "type": "string",
+          "enum": [
+            "container",
+            "window"
+          ],
+          "default": "container",
+          "description": "Take the shot with or without the container"
+        },
+        "codesnap.shutterAction": {
+          "scope": "resource",
+          "type": "string",
+          "enum": [
+            "save",
+            "copy"
+          ],
+          "default": "save",
+          "description": "The behavior of the shutter button"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{js,jsx,md,json,css,prettierrc,eslintrc,html}\"",
+    "check:format": "prettier --check \"**/*.{js,jsx,md,json,css,prettierrc,eslintrc,html}\"",
+    "check": "npm run lint && npm run check:format"
+  },
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "eslint-config-adpyke-es6": "^1.4.13",
+    "eslint-config-prettier": "^8.2.0",
+    "prettier": "^2.2.1",
+    "@types/vscode": "^1.52.0",
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^14.14.40",
+    "glob": "^7.1.6",
+    "mocha": "^8.3.2",
+    "typescript": "^4.2.4",
+    "vscode-test": "^1.5.2"
+  },
+  "dependencies": {
+    "dom-to-image-even-more": "^1.0.4"
+  }
+}
+```
+</User>
+
+<Assistant>
+This appears to be a `package.json` file for the "CodeSnap" VSCode extension. The `package.json` file contains metadata like the name, version, and description of the extension, as well as dependencies and scripts for the extension.
+
+Here is a breakdown of the different parts of this `package.json` file:
+
+- `"name": "codesnap"` - the name of the extension
+- `"displayName": "CodeSnap"` - the display name of the extension
+- `"description": "📷 Take beautiful screenshots of your code"` - a short description of the extension
+- `"version": "1.3.4"` - the version number of the extension
+- `"repository": {...}` - information about the Git repository for the extension
+- `"publisher": "adpyke"` - the publisher (i.e. author or organization) of the extension
+- `"icon": "icon.png"` - the file path for the extension's icon
+- `"license": "MIT"` - the license under which the extension is distributed
+- `"engines": {...}` - the version of VSCode that the extension is compatible with
+- `"keywords": [...]` - an array of keywords that describe the extension
+- `"categories": [...]` - an array of categories that the extension belongs to
+- `"activationEvents": [...]` - an array of events that activate the extension
+- `"main": "./src/extension.js"` - the entry point for the extension's code
+- `"contributes": {...}` - information about what the extension contributes to VSCode (e.g. commands, menus, configuration settings)
+- `"scripts": {...}` - an object containing scripts to execute when developing the extension
+- `"devDependencies": {...}` - a list of development dependencies for the extension
+- `"dependencies": {...}` - a list of additional dependencies for the extension
+
+It's worth noting that `"main": "./src/extension.js"` points to the entry point for the extension code, which is written in JavaScript. However, the extension also includes a `"devDependencies": {...}` section that includes TypeScript and related dependencies, suggesting that the code may be written in TypeScript and compiled to JavaScript during development.
+</Assistant>
+
+<User>
+super cool, thanks!
+</User>
+
+<Assistant>
+You're welcome! Let me know if you have any more questions or if there's anything else I can help you with.
+</Assistant>
+
+<User>
+
+</User>
