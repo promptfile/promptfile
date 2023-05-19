@@ -43,7 +43,7 @@ export function parseGlassTopLevelJsxElements(doc: string) {
   const mdxExtension = combineExtensions([
     mdxjsEsm(mdxSettings as any),
     mdxExpression(), // to make the expression JavaScript agnostic
-    mdxJsx(mdxSettings as any),
+    mdxJsx(),
     mdxMd,
   ])
 

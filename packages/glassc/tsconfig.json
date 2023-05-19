@@ -18,9 +18,10 @@
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "types": ["node", "mocha"]
+    "types": ["node", "mocha"],
+    "typeRoots": ["./types"]
   },
   "compileOnSave": false,
   "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "types/filbert.d.ts"]
 }

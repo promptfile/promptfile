@@ -15,6 +15,7 @@
     { "directory": "apps/docs", "changeProcessCWD": true },
     { "directory": "packages/glassc", "changeProcessCWD": true },
     { "directory": "packages/glasslib", "changeProcessCWD": true },
+    { "directory": "packages/pythonlib", "changeProcessCWD": true },
     { "directory": "packages/language-server", "changeProcessCWD": true },
     { "directory": "packages/rig", "changeProcessCWD": true },
     { "directory": "packages/util", "changeProcessCWD": true }

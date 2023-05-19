@@ -13,6 +13,19 @@ export function parseCodeBlock(code: string) {
   return { symbolsAddedToScope, undeclaredValuesNeededInScope, importedSymbols: Array.from(importedSymbols), isAsync }
 }
 
+/**
+ * Takes a TypeScript code block like:
+ *
+ * ```ts
+ * const foo = 1
+ * const {bar} = {bar: 2}
+ * function hello() {
+ *  return "world"
+ * }
+ * ```
+ *
+ * And returns all of the variables added to the scope, i.e. ['foo', 'bar', 'hello']
+ */
 export function parseCodeBlockLocalVars(code: string) {
   const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
   const variableNames: string[] = []
@@ -36,6 +49,19 @@ export function parseCodeBlockLocalVars(code: string) {
   return variableNames
 }
 
+/**
+ * Takes a TypeScript code block like:
+ *
+ * ```ts
+ * const foo = hello
+ * const bar = (m: any) => m.doSomething() + other
+ * }
+ * ```
+ *
+ * And returns all of the symbols that are used as but not declared as variables in scope.
+ *
+ * In the exmaple above: ['foo', 'bar', 'other']
+ */
 export function parseCodeBlockUndeclaredSymbols(code: string) {
   const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
   const undeclaredValues = new Set<string>()

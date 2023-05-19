@@ -27,7 +27,6 @@
     "dist",
     "LICENSE"
   ],
-  "author": "",
   "license": "MIT",
   "dependencies": {
     "@glass-lang/util": "*",

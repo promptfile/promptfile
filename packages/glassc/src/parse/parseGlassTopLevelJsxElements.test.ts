@@ -79,4 +79,146 @@ And this is the end`
       },
     ])
   })
+
+  it('should parse glass document with Python code', () => {
+    const mdx = `Hello world this is a document.
+
+<Code language="python">
+a = {"hello": "world"}
+b = list(map(lambda x: x + 1, [1, 2, 3]))
+</Code>
+
+<Block role="system" content={(lambda x: x + " world")("hello")} />
+`
+
+    expect(parseGlassTopLevelJsxElements(mdx)).to.deep.equal([
+      {
+        attrs: [
+          {
+            name: 'language',
+            stringValue: 'python',
+          },
+        ],
+        children: [
+          {
+            attrs: [],
+            children: [
+              {
+                attrs: [],
+                children: [],
+                position: {
+                  end: {
+                    column: 5,
+                    line: 4,
+                    offset: 62,
+                  },
+                  start: {
+                    column: 1,
+                    line: 4,
+                    offset: 58,
+                  },
+                },
+                tagName: undefined,
+                type: 'text',
+                value: 'a = ',
+              },
+              {
+                attrs: [],
+                children: [],
+                position: {
+                  end: {
+                    column: 23,
+                    line: 4,
+                    offset: 80,
+                  },
+                  start: {
+                    column: 5,
+                    line: 4,
+                    offset: 62,
+                  },
+                },
+                tagName: undefined,
+                type: 'mdxTextExpression',
+                value: '"hello": "world"',
+              },
+              {
+                attrs: [],
+                children: [],
+                position: {
+                  end: {
+                    column: 42,
+                    line: 5,
+                    offset: 122,
+                  },
+                  start: {
+                    column: 23,
+                    line: 4,
+                    offset: 80,
+                  },
+                },
+                tagName: undefined,
+                type: 'text',
+                value: '\nb = list(map(lambda x: x + 1, [1, 2, 3]))',
+              },
+            ],
+            position: {
+              end: {
+                column: 42,
+                line: 5,
+                offset: 122,
+              },
+              start: {
+                column: 1,
+                line: 4,
+                offset: 58,
+              },
+            },
+            tagName: undefined,
+            type: 'paragraph',
+          },
+        ],
+        position: {
+          end: {
+            column: 8,
+            line: 6,
+            offset: 130,
+          },
+          start: {
+            column: 1,
+            line: 3,
+            offset: 33,
+          },
+        },
+        tagName: 'Code',
+        type: 'mdxJsxFlowElement',
+      },
+      {
+        attrs: [
+          {
+            name: 'role',
+            stringValue: 'system',
+          },
+          {
+            expressionValue: '(lambda x: x + " world")("hello")',
+            name: 'content',
+          },
+        ],
+        children: [],
+        position: {
+          end: {
+            column: 68,
+            line: 8,
+            offset: 199,
+          },
+          start: {
+            column: 1,
+            line: 8,
+            offset: 132,
+          },
+        },
+        tagName: 'Block',
+        type: 'mdxJsxFlowElement',
+      },
+    ])
+  })
 })
