@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import { ComposerView } from './ComposerView'
-import { FileTopper } from './FileTopper'
+import { TopperView } from './TopperView'
 
 export interface RigState {
   filename: string
@@ -43,6 +43,12 @@ function RigView() {
     }
   }, [])
 
+  const reset = () => {
+    vscode.postMessage({
+      action: 'reset',
+    })
+  }
+
   return (
     <div
       style={{
@@ -54,7 +60,7 @@ function RigView() {
         flexDirection: 'column',
       }}
     >
-      <FileTopper filename={filename} />
+      <TopperView filename={filename} />
       <ComposerView vscode={vscode} />
     </div>
   )
