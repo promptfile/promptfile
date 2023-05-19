@@ -46,6 +46,9 @@ function RigView() {
   const reset = () => {
     vscode.postMessage({
       action: 'reset',
+      data: {
+        filename,
+      },
     })
   }
 
