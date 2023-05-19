@@ -21,6 +21,7 @@ function RigView() {
     vscode.postMessage({
       action: 'getFilename',
     })
+    console.log('getFilename')
   }, [])
 
   // register a callback for when the extension sends a message

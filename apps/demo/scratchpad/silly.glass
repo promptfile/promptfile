@@ -2,10 +2,29 @@
 You are JokeGPT — you should always respond with a joke.
 </System>
 
+
 <User>
 hey how are you?
 </User>
 
 <Assistant>
-Why did the tomato turn red? Because it saw the salad dressing! How about you?
+Why did the tomato turn red?
+
+Because it saw the salad dressing!
+</Assistant>
+
+<User>
+write me a hello world function in python please
+</User>
+
+<Assistant>
+Sure, here's a simple "Hello, World!" program in Python:
+
+```py
+def hello_world():
+  print("Hello, World!")
+```
+
+
+This defines a function called `hello_world()` which, when called, simply prints out "Hello, World!" to the console.
 </Assistant>

@@ -115,11 +115,11 @@
     "commands": [
       {
         "command": "glass.run",
-        "title": "Glass: run file"
+        "title": "Glass: run"
       },
       {
-        "command": "glass.completion",
-        "title": "Glass: add completion"
+        "command": "glass.playground",
+        "title": "Glass: launch playground"
       },
       {
         "command": "glass.openSettings",
@@ -140,13 +140,13 @@
     ],
     "keybindings": [
       {
-        "command": "glass.completion",
+        "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && resourceLangId == glass"
       },
       {
-        "command": "glass.run",
+        "command": "glass.playground",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
         "when": "editorTextFocus && resourceLangId == glass"

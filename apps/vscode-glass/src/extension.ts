@@ -7,6 +7,7 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { handleStreamResponse } from './api'
 import { executeGlassFile } from './executeGlassFile'
 import { updateDecorations } from './util/decorations'
+import { getDocumentFilename } from './util/isGlassFile'
 import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
@@ -71,7 +72,12 @@ export async function activate(context: vscode.ExtensionContext) {
   )
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('glass.run', async () => {
+    vscode.commands.registerCommand('glass.playground', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+        return
+      }
+      const filename = getDocumentFilename(activeEditor.document)
       const config = vscode.workspace.getConfiguration('glass')
       const openaiKey = config.get('openaiKey') as string | undefined
 
@@ -82,7 +88,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       const panel = vscode.window.createWebviewPanel(
         'glass.webView', // viewType
-        'Glass: run', // Title of the panel displayed to the user
+        `${filename} (playground)`, // Title of the panel displayed to the user
         vscode.ViewColumn.Beside, // Editor column to show the new webview panel in.
         {
           enableScripts: true,
@@ -91,10 +97,23 @@ export async function activate(context: vscode.ExtensionContext) {
       )
       panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
       panel.webview.onDidReceiveMessage(async (message: any) => {
-        // Handle messages from the webview
+        switch (message.action) {
+          case 'getFilename':
+            console.log('getFilename!!!!!')
+            console.log(filename)
+            await panel.webview.postMessage({
+              action: 'setFilename',
+              data: {
+                filename,
+              },
+            })
+            break
+          default:
+            break
+        }
       })
     }),
-    vscode.commands.registerCommand('glass.completion', async () => {
+    vscode.commands.registerCommand('glass.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || activeEditor.document.languageId !== 'glass') {
         return
@@ -102,6 +121,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       const config = vscode.workspace.getConfiguration('glass')
       const openaiKey = config.get('openaiKey') as string | undefined
+      const defaultChatModel = config.get('defaultChatModel') as string | undefined
 
       if (openaiKey == null || openaiKey === '') {
         await vscode.window.showErrorMessage('Set `glass.openaiKey` in your settings to run Glass files.')
@@ -129,7 +149,7 @@ export async function activate(context: vscode.ExtensionContext) {
         },
         body: JSON.stringify({
           messages,
-          model: 'gpt-3.5-turbo',
+          model: defaultChatModel ?? 'gpt-3.5-turbo',
           stream: true,
         }),
       })
