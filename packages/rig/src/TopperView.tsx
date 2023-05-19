@@ -10,7 +10,7 @@ export const TopperView = (props: TopperViewProps) => {
   const { filename, reset } = props
 
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ width: '100%', height: 'fit-content', flexDirection: 'column' }}>
       <div
         style={{
           display: 'flex',
@@ -18,6 +18,8 @@ export const TopperView = (props: TopperViewProps) => {
           alignItems: 'center',
           paddingTop: '16px',
           paddingBottom: '16px',
+          paddingLeft: '16px',
+          paddingRight: '16px',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'flex-start' }}>

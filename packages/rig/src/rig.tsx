@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
+import { BlocksView } from './BlocksView'
 import { ComposerView } from './ComposerView'
 import { TopperView } from './TopperView'
 
@@ -105,22 +106,9 @@ function RigView() {
         flexDirection: 'column',
       }}
     >
-      <TopperView filename={filename} reset={reset} />
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'auto', paddingTop: '16px' }}>
-        {blocks
-          .filter(block => block.role !== 'system')
-          .map((block, index) => (
-            <span
-              key={index}
-              style={{ display: 'flex', flexDirection: 'column', paddingBottom: '24px' }}
-              id={`message.${index}`}
-            >
-              <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '14px', paddingBottom: '2px' }}>
-                {block.role === 'user' ? 'User' : filename.replace('.glass', '')}
-              </span>
-              {block.content}
-            </span>
-          ))}
+      <div style={{ flexDirection: 'column', overflow: 'hidden', height: '100%' }}>
+        <TopperView filename={filename} reset={reset} />
+        <BlocksView blocks={blocks} />
       </div>
       <ComposerView send={send} />
     </div>

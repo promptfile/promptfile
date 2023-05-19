@@ -1,4 +1,4 @@
-import { VSCodeButton, VSCodeTextField } from '@vscode/webview-ui-toolkit/react'
+import { VSCodeButton, VSCodeDivider, VSCodeTextField } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useState } from 'react'
 
 interface ComposerViewProps {
@@ -25,25 +25,38 @@ export const ComposerView = (props: ComposerViewProps) => {
   }, [])
 
   return (
-    <div style={{ width: '100%', height: 'full', display: 'flex', paddingBottom: '16px' }}>
-      <VSCodeTextField
-        style={{ width: '100%', paddingRight: '8px' }}
-        value={text}
-        id={'composer-input'}
-        placeholder="Write a message..."
-        onInput={e => {
-          const value = (e.target as any).value
-          setText(value)
+    <div style={{ width: '100%', height: 'fit-content' }}>
+      <VSCodeDivider />
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingTop: '16px',
+          paddingBottom: '16px',
+          paddingLeft: '16px',
+          paddingRight: '16px',
         }}
-        onKeyDown={e => {
-          if (e.key === 'Enter') {
-            run()
-          }
-        }}
-      />
-      <VSCodeButton style={{ width: 'fit-content' }} onClick={() => run()}>
-        Send
-      </VSCodeButton>
+      >
+        <VSCodeTextField
+          style={{ paddingRight: '8px', width: '100%' }}
+          value={text}
+          id={'composer-input'}
+          placeholder="Write a message..."
+          onInput={e => {
+            const value = (e.target as any).value
+            setText(value)
+          }}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              run()
+            }
+          }}
+        />
+        <VSCodeButton style={{ width: 'fit-content', flexShrink: 0 }} onClick={() => run()}>
+          Send
+        </VSCodeButton>
+      </div>
     </div>
   )
 }

@@ -31,17 +31,3 @@ ${example.message}
 ${example.classification}
 </Assistant>
 </For>
-
-<User>
-i'm really angry! i need to talk to someone
-</User>
-
-<Assistant>
-NEEDS_ATTENTION 
-
-(Note: The comment seems like a complaint, but it contains inappropriate language. As the AI community moderator, it's important to ensure that the platform's rules of conduct are being followed. So, the appropriate action may be to flag the comment or hide it from the thread and inform the user of the violation.)
-</Assistant>
-
-<User>
-
-</User>
