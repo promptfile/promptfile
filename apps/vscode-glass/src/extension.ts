@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
-import { executeGlassFile, executeGlassFileNext } from './executeGlassFile'
+import { executeGlassFile } from './executeGlassFile'
 import { updateDecorations } from './util/decorations'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getHtmlForWebview } from './webview'
@@ -122,14 +122,14 @@ export async function activate(context: vscode.ExtensionContext) {
             })
             break
           case 'getBlocks':
-            const blocks = await executeGlassFile(activeEditor.document, {})
-            await panel.webview.postMessage({
-              action: 'setBlocks',
-              data: {
-                filename,
-                blocks,
-              },
-            })
+            // const blocks = await executeGlassFile(activeEditor.document, {})
+            // await panel.webview.postMessage({
+            //   action: 'setBlocks',
+            //   data: {
+            //     filename,
+            //     blocks,
+            //   },
+            // })
             break
           case 'createBlock':
             const text = message.data.text
@@ -167,31 +167,36 @@ export async function activate(context: vscode.ExtensionContext) {
       // restore the cursor back to its original position
       activeEditor.selection = new vscode.Selection(cursorPosition, cursorPosition)
       try {
-        const resp = await executeGlassFileNext(activeEditor.document, {}, ({ nextDoc, rawResponse }) => {
-          console.log('progress', { nextDoc, rawResponse })
-          const lines = activeEditor.document.getText().split('\n')
-          const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
-          const blockCharacterLine = lines[blockCharacterLineIndex]
-          // find the line of the <Assistant> tag that was before the blockCharacterLine
-          let startAssistantIndex = blockCharacterLineIndex
-          for (let i = blockCharacterLineIndex; i >= 0; i--) {
-            if (lines[i].includes('<Assistant>')) {
-              startAssistantIndex = i
-              break
+        const resp = await executeGlassFile(
+          activeEditor.document.getText(),
+          activeEditor.document,
+          {},
+          ({ nextDoc, rawResponse }) => {
+            console.log('progress', { nextDoc, rawResponse })
+            const lines = activeEditor.document.getText().split('\n')
+            const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
+            const blockCharacterLine = lines[blockCharacterLineIndex]
+            // find the line of the <Assistant> tag that was before the blockCharacterLine
+            let startAssistantIndex = blockCharacterLineIndex
+            for (let i = blockCharacterLineIndex; i >= 0; i--) {
+              if (lines[i].includes('<Assistant>')) {
+                startAssistantIndex = i
+                break
+              }
             }
-          }
 
-          // Replace the entire range between "<Assistant>" and "</Assistant>"
-          void activeEditor.edit(editBuilder => {
-            editBuilder.replace(
-              new vscode.Range(
-                new vscode.Position(startAssistantIndex + 1, 0),
-                new vscode.Position(blockCharacterLineIndex, blockCharacterLine.length)
-              ),
-              `${rawResponse}█`
-            )
-          })
-        })
+            // Replace the entire range between "<Assistant>" and "</Assistant>"
+            void activeEditor.edit(editBuilder => {
+              editBuilder.replace(
+                new vscode.Range(
+                  new vscode.Position(startAssistantIndex + 1, 0),
+                  new vscode.Position(blockCharacterLineIndex, blockCharacterLine.length)
+                ),
+                `${rawResponse}█`
+              )
+            })
+          }
+        )
         // Add User tags to the end of the document
         await activeEditor.edit(editBuilder => {
           const lastLine = activeEditor.document.lineCount

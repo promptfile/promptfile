@@ -23,26 +23,20 @@ export function getHtmlForWebview(webview: Webview, extensionPath: Uri) {
   return `<html>
               <head>
                   <meta charSet="utf-8"/>
-                  <meta http-equiv="Content-Security-Policy"
-                          content="default-src 'none';
-                          img-src vscode-resource: https:;
-                          font-src ${webview.cspSource};
-                          style-src ${webview.cspSource} 'unsafe-inline';
-                          connect-src https://api.openai.com;
-                          script-src 'nonce-${nonce}'
-
-            ;">
-
                   <meta name="viewport" content="width=device-width, initial-scale=1.0">
                   <style>
                     body, html {
                         margin: 0;
                         padding: 0;
-                        height: 100%;
+                        height: 100vh;
+                        overflow: hidden;
                     }
                     #root {
                         width: 100%;
                         height: 100%;
+                        margin: 0;
+                        padding: 0;
+                        overflow: hidden;
                     }
                 </style>
               </head>

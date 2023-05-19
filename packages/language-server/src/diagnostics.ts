@@ -13,33 +13,17 @@ export function findInvalidAttributes(text: string) {
       while ((attributeMatch = attributeRegex.exec(attributesStr))) {
         const attributeName = attributeMatch[1]
 
-        let isInvalidAttribute = false
-
-        switch (tagName) {
-          case 'Block':
-            if (attributeName !== 'role' && attributeName !== 'content') {
-              isInvalidAttribute = true
-            }
-            break
-          case 'For':
-            if (attributeName !== 'each' && attributeName !== 'fragment') {
-              isInvalidAttribute = true
-            }
-            break
-          case 'User':
-          case 'Assistant':
-            if (attributeName !== 'name') {
-              isInvalidAttribute = true
-            }
-            break
-          case 'Code':
-            if (attributeName !== 'language') {
-              isInvalidAttribute = true
-            }
-            break
-          default:
-            isInvalidAttribute = true
+        const lookup: Record<string, string[]> = {
+          Block: ['role', 'content'],
+          For: ['each', 'fragment'],
+          Chat: ['model'],
+          Completion: ['model'],
+          User: ['name'],
+          Assistant: ['name'],
+          Code: ['language'],
         }
+
+        const isInvalidAttribute = !lookup[tagName] || !lookup[tagName].includes(attributeName)
 
         if (isInvalidAttribute) {
           invalidAttributes.push({
@@ -57,7 +41,19 @@ export function findInvalidAttributes(text: string) {
 
 export function findUnsupportedTags(text: string): { tag: string; start: number }[] {
   const tagPattern = /^<\/?([\w-]+).*?>/gm
-  const supportedTags = new Set(['Args', 'Assistant', 'Block', 'Code', 'For', 'Prompt', 'System', 'Text', 'User'])
+  const supportedTags = new Set([
+    'Args',
+    'Assistant',
+    'Block',
+    'Chat',
+    'Completion',
+    'Code',
+    'For',
+    'Prompt',
+    'System',
+    'Text',
+    'User',
+  ])
   const unsupportedTags: { tag: string; start: number }[] = []
 
   let match
@@ -111,7 +107,9 @@ function isInvalidLine(line: string): boolean {
     trimmedLine.startsWith('//') ||
     trimmedLine.startsWith('import') ||
     trimmedLine.startsWith('export') ||
-    trimmedLine.startsWith('<for ') ||
+    trimmedLine.startsWith('<For ') ||
+    trimmedLine.startsWith('<Chat ') ||
+    trimmedLine.startsWith('<Completion ') ||
     trimmedLine.startsWith('<Args ') ||
     trimmedLine.startsWith('<Block ')
   ) {

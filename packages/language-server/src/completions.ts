@@ -77,7 +77,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
       data: 5,
     },
     {
-      label: '<For>',
+      label: '<For />',
       kind: CompletionItemKind.Snippet,
       insertText: 'For each={$1} fragment={item => <Block role={item.role} content={item.content} />} />',
       insertTextFormat: InsertTextFormat.Snippet,
@@ -86,6 +86,30 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
         value: 'Creates a for loop',
       },
       detail: 'loop over elements in an array',
+      data: 5,
+    },
+    {
+      label: '<Chat />',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'Chat model="$1" />',
+      insertTextFormat: InsertTextFormat.Snippet,
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a Chat model inference',
+      },
+      detail: 'inference a Chat model',
+      data: 5,
+    },
+    {
+      label: '<Completion />',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'Completion model="$1" />',
+      insertTextFormat: InsertTextFormat.Snippet,
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a Completion model inference',
+      },
+      detail: 'inference a Completion model',
       data: 5,
     },
     {
@@ -98,7 +122,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
         value: 'Creates a Block element for chat inference',
       },
       detail: 'block element for chat inference',
-      data: 5,
+      data: 6,
     },
   ]
 

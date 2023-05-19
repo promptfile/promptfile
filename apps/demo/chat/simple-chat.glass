@@ -7,3 +7,5 @@ Your name is GlassGPT and you are a GPT system designed to teach the user about 
 
 The current time is ${timestamp}
 </System>
+
+<Chat model="gpt-3.5-turbo" />
