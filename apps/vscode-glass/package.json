@@ -115,11 +115,11 @@
     "commands": [
       {
         "command": "glass.run",
-        "title": "Glass: run"
+        "title": "Glass: Run"
       },
       {
         "command": "glass.playground",
-        "title": "Glass: launch playground"
+        "title": "Glass: Open playground"
       },
       {
         "command": "glass.openSettings",
