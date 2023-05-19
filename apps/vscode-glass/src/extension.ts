@@ -82,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const openaiKey = config.get('openaiKey') as string | undefined
 
       if (openaiKey == null || openaiKey === '') {
-        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your settings to run Glass files.')
+        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your VSCode preferences to run Glass files.')
         return
       }
 
@@ -124,7 +124,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const defaultChatModel = config.get('defaultChatModel') as string | undefined
 
       if (openaiKey == null || openaiKey === '') {
-        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your settings to run Glass files.')
+        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your VSCode preferences to run Glass files.')
         return
       }
 
