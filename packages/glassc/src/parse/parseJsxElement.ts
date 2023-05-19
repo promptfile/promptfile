@@ -31,19 +31,23 @@ export function parseJsxElement(code: string) {
       result.tagNames.add(node.tagName.getText())
     } else if (ts.isVariableDeclaration(node)) {
       scopes[scopes.length - 1].add(node.name.getText())
-    } else if (ts.isArrowFunction(node)) {
-      const newScope = new Set(node.parameters.map(param => param.name.getText()))
+    } else if (ts.isArrowFunction(node) || ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node)) {
+      const newScope = new Set<string>()
+      if (node.name) {
+        newScope.add(node.name.getText())
+      }
+      if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
+        node.parameters.forEach(param => newScope.add(param.name.getText()))
+      }
       scopes.push(newScope)
       ts.forEachChild(node, visit)
       scopes.pop()
-    } else if (ts.isIdentifier(node)) {
-      // Check if the parent node is a JSX attribute, a JSX opening/closing element, or a PropertyAccessExpression, or a PropertyAssignment, if so, skip it
+    } else if (ts.isIdentifier(node) && !ts.isPropertyAccessExpression(node.parent)) {
       if (
         ts.isJsxAttribute(node.parent) ||
         ts.isJsxOpeningElement(node.parent) ||
         ts.isJsxSelfClosingElement(node.parent) ||
         ts.isJsxClosingElement(node.parent) ||
-        ts.isPropertyAccessExpression(node.parent) ||
         ts.isPropertyAssignment(node.parent)
       ) {
         return
@@ -52,13 +56,19 @@ export function parseJsxElement(code: string) {
       if (!inCurrentScope) {
         result.undeclaredVariables.add(node.text)
       }
+    } else if (ts.isPropertyAccessExpression(node)) {
+      const name = node.expression.getText()
+      const inCurrentScope = scopes.some(scope => scope.has(name))
+      if (!inCurrentScope) {
+        result.undeclaredVariables.add(name)
+      }
     }
 
     if (ts.isBlock(node) && !ts.isArrowFunction(node)) {
       scopes.push(new Set())
       ts.forEachChild(node, visit)
       scopes.pop()
-    } else if (!ts.isArrowFunction(node)) {
+    } else if (!ts.isArrowFunction(node) && !ts.isFunctionDeclaration(node) && !ts.isFunctionExpression(node)) {
       ts.forEachChild(node, visit)
     }
   }

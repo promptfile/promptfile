@@ -1,7 +1,7 @@
 // Place your settings in this file to overwrite default and user settings.
 {
   "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
+  "files.insertFinalNewline": false,
   "editor.codeActionsOnSave": {
     "source.addMissingImports": true,
     "source.organizeImports": true,

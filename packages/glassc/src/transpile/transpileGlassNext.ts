@@ -19,7 +19,7 @@ const extension = 'glass'
  * The directory / folder information is necessary so we can correctly re-write import paths.
  * The language is necessary so we can correctly format the output. Currently only supports 'typescript'.
  */
-export function transpileGlassFile(
+export function transpileGlassFileNext(
   doc: string,
   {
     workspaceFolder,
@@ -35,6 +35,8 @@ export function transpileGlassFile(
 
   const originalDoc = doc
 
+  const toplevelNodes = parseGlassTopLevelJsxElements(originalDoc)
+
   // first, parse the document blocks to make sure the document is valid
   // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output
   const blocks = parseGlassBlocks(doc)
@@ -48,9 +50,11 @@ export function transpileGlassFile(
   doc = removeGlassComments(doc)
   const functionName = camelcase(fileName)
   const exportName = getGlassExportName(fileName)
-  const isChat = isChatTemplate(doc)
 
-  const { imports, frontmatterArgs, interpolationArgs, jsxExpressions, jsxNodes, isAsync } = parseGlassAST(doc, {
+  const hasPrompt = toplevelNodes.filter(node => node.tagName === 'Prompt').length > 0
+  const isChat = !hasPrompt
+
+  const { imports, interpolationArgs, jsxExpressions, isAsync } = parseGlassAST(doc, {
     workspaceFolder,
     folderPath,
     outputDirectory,
@@ -62,39 +66,28 @@ export function transpileGlassFile(
 
   const interpolationVarNames = Array.from(new Set<string>(allInterpolationVars.map(arg => arg.split('.')[0])))
 
-  if (frontmatterArgs.length > 0 && allInterpolationVars.length > 0) {
-    const frontmatterArgsRemaining = new Set<string>(frontmatterArgs.map(a => a.name))
-    const frontmatterArgsUsed = new Set<string>([])
-    // verify that all frontmatter args are used
-    for (const interpolationVar of interpolationVarNames) {
-      if (frontmatterArgsRemaining.has(interpolationVar)) {
-        frontmatterArgsRemaining.delete(interpolationVar)
-        frontmatterArgsUsed.add(interpolationVar)
-      } else if (!frontmatterArgsUsed.has(interpolationVar)) {
-        // throw new error? interpolation variable exists that's not declared by frontmatter
-        throw new Error(`Variable ${interpolationVar} is not declared by frontmatter in ${fileName}.glass`)
-        // return null
-      }
-    }
-
-    if (frontmatterArgsRemaining.size !== 0) {
-      console.log(`Frontmatter args ${Array.from(frontmatterArgsRemaining).join(', ')} are unused in ${fileName}.glass`)
-    }
-  }
-
-  // let argsString = frontmatterArgs
-  //   .map(a => `${a.name}${language === 'javascript' ? '' : `${a.optional ? '?' : ''}: ${a.type}`}`)
-  //   .join(', ')
-  // let fullArgString = frontmatterArgs.length ? (language === 'typescript' ? `args: { ${argsString} }` : 'args') : ''
-
   const interpolationVarSet = new Set(interpolationVarNames)
 
   let argsNode = ''
 
+  let model = isChat ? 'gpt-3.5-turbo' : 'text-davinci-003'
+
   // find all the interpolation variables from dynamic code blocks
-  for (const jsxNode of parseGlassTopLevelJsxElements(originalDoc)) {
+  for (const jsxNode of toplevelNodes) {
     if (jsxNode.tagName === 'Args') {
       argsNode = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
+    }
+    if (jsxNode.tagName === 'Code') {
+      // don't strip away codeblocks, yet
+      // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
+      continue // ignore all interpolation sequences / requirements in code blocks
+    }
+    if (jsxNode.tagName === 'Chat' || jsxNode.tagName === 'Completion') {
+      const modelAttr = jsxNode.attrs.find(a => a.name === 'model')
+      // value is either <Chat model="gpt-3.5-turbo" /> or <Chat model={"gpt-4"} />
+      // we don't currently support dynamic model values
+      model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : model
+      continue
     }
     // if (builtinTags.has(jsxNode.tagName)) {
     //   continue
@@ -142,7 +135,7 @@ export function transpileGlassFile(
 
   const argsOverride = argsNode ? parseJsxAttributes(argsNode) : {}
 
-  const dynamicTransform = transformDynamicBlocks(doc)
+  const dynamicTransform = transformDynamicBlocks(doc, true)
   doc = dynamicTransform.doc
 
   const allInterpolationNames = Array.from(interpolationVarSet)
@@ -171,32 +164,48 @@ export function transpileGlassFile(
     if (indexOfInterpolation === -1) {
       continue
     }
-    codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${${j}}`)
+    // codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${${j}}`)
     if (expr.trim().startsWith('async')) {
-      codeInterpolationMap['' + j] = `await (${expr.trim()})()`
+      codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${await (${expr.trim()})()}`)
+      // codeInterpolationMap['' + j] = `await (${expr.trim()})()`
     } else if (expr.trim().startsWith('function')) {
-      codeInterpolationMap['' + j] = `(${expr.trim()})()`
+      codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${(${expr.trim()})()}`)
+      // codeInterpolationMap['' + j] = `(${expr.trim()})()`
     } else {
-      codeInterpolationMap['' + j] = expr.trim()
+      codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${${expr.trim()}}`)
+      // codeInterpolationMap['' + j] = expr.trim()
     }
   }
 
   // after interpolating everything, we can unescape `\{ \}` sequences
   // codeSanitizedDoc = unescapeGlass(codeSanitizedDoc)
 
+  let options =
+    language === 'typescript'
+      ? 'options?: {  openaiKey?: string, progress?: (data: { nextDoc: string; rawResponse?: string }) => void } '
+      : 'options'
+  if (fullArgString) {
+    options = ', ' + options
+  }
+
+  // handle undefined options
+  const functionArgs =
+    language === 'javascript' ? 'opt' : `opt${fullArgString ? '' : '?'}: { ${fullArgString}${options} }`
+
   const code = `${imports.join('\n')}
 
-export ${isAsync || hasAsyncCodeBlocks ? 'async' : ''} function ${exportName}(${fullArgString}) {
-  ${argsString ? `const {${allInterpolationNames.join(',')}} = args` : ''}
+export async function ${exportName}(${functionArgs}) {${language === 'javascript' ? '\n  opt = opt || {}' : ''}
+  ${argsString ? `const {${allInterpolationNames.join(',')}} = opt.args` : ''}
   ${codeBlocks.map(b => b.content).join('\n')}
-  const interpolations = {
+  const GLASSVAR = {
     ${Object.keys(codeInterpolationMap)
       .map(k => `"${k}": ${codeInterpolationMap[k]}`)
       .join(',')}
   }
-  const TEMPLATE = ${JSON.stringify(codeSanitizedDoc)}
-  return interpolateGlass${isChat ? 'Chat' : ''}('${fileName}', TEMPLATE, interpolations)
+  const TEMPLATE = \`${codeSanitizedDoc.replaceAll('`', '\\`')}\`
+  return await runGlass('${fileName}', '${model}', TEMPLATE, opt${fullArgString ? '' : '?'}.options)
 }`
+
   const formattedCode = prettier.format(code, {
     parser: 'babel',
     semi: false,
@@ -205,7 +214,7 @@ export ${isAsync || hasAsyncCodeBlocks ? 'async' : ''} function ${exportName}(${
   })
   return {
     code: formattedCode.trim(),
-    args: frontmatterArgs,
+    args: [],
     imports,
     functionName,
     exportName,
@@ -213,15 +222,10 @@ export ${isAsync || hasAsyncCodeBlocks ? 'async' : ''} function ${exportName}(${
   }
 }
 
-function isChatTemplate(doc: string) {
-  return doc.indexOf('<Prompt>') === -1
-  // return doc.indexOf('<System>') !== -1 || doc.indexOf('<User>') !== -1 || doc.indexOf('<Assistant>') !== -1
-}
-
 /**
  * Takes a path, either to a file or a folder, and transpiles all glass files in that folder, or the file specified.
  */
-export function transpileGlass(
+export function transpileGlassNext(
   workspaceFolder: string,
   fileOrFolderPath: string,
   language: string,
@@ -298,7 +302,7 @@ function transpileGlassHelper(
     // const newFilePath = path.join(folderPath, newFileName)
 
     // Transpile the glass file to the target language.
-    const codegenedResult = transpileGlassFile(fileContent, {
+    const codegenedResult = transpileGlassFileNext(fileContent, {
       workspaceFolder,
       folderPath,
       fileName,

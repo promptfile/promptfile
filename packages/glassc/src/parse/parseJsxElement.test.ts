@@ -74,4 +74,62 @@ Who was gandhi?
       undeclaredVariables: [],
     })
   })
+
+  it('should parse JSX with children', () => {
+    const code = `<System arg={foo}>
+\${foo}
+</System>`
+    expect(parseJsxElement(code)).to.deep.equal({
+      tagNames: ['System'],
+      undeclaredVariables: ['foo'],
+    })
+  })
+
+  it('should parse JSX with complex children', () => {
+    const code = `<System arg={foo}>
+hello world
+\${foo}
+<Text if={bar}>
+\${barInside.field}
+</Text>
+</System>`
+    expect(parseJsxElement(code)).to.deep.equal({
+      tagNames: ['System', 'Text'],
+      undeclaredVariables: ['foo', 'bar', 'barInside'],
+    })
+  })
+
+  it('should parse JSX with complex For', () => {
+    const code = `<For each={[
+    { role: 'user', content: 'name an ice cream' },
+    { role: "assistant", content: 'Vanilla' },
+    { role: 'user', content: 'name a fruit' }
+]} item="m">
+<Block role={m.role}>
+\${m.content}
+</Block>
+</For>`
+    expect(parseJsxElement(code)).to.deep.equal({
+      tagNames: ['For', 'Block'],
+      undeclaredVariables: ['m'],
+    })
+  })
+
+  it('should parse JSX with function closure', () => {
+    const code = `<Test>
+\${
+  function generateCodeExamples() {
+    const examples = []
+    for (let i = 0; i < 10; i++) {
+      examples.push(Math.random())
+    }
+    return examples.join('\\n')
+  }
+}
+</Test>`
+    expect(parseJsxElement(code)).to.deep.equal({
+      tagNames: ['Test'],
+      undeclaredVariables: ['Math'],
+    })
+  })
 })

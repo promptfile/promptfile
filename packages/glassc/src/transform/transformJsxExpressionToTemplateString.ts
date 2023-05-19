@@ -1,5 +1,4 @@
 import ts from 'typescript'
-import { JSXNode } from '../parse/parseGlassAST'
 
 /**
  * Transforms a JSX expression to a TypeScript template string. For example:
@@ -73,12 +72,4 @@ function transformJsxElemToTemplateString(node: ts.Node): string {
   } else {
     return ''
   }
-}
-
-export function jsxNodeToString(node: JSXNode) {
-  const attrs = node.attrs.map(attr => {
-    return `${attr.name}=${attr.stringValue != null ? `"${attr.stringValue}"` : `{${attr.expressionValue}}`}`
-  })
-
-  return `<${node.tagName} ${attrs.join(' ')} />`
 }

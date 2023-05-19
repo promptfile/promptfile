@@ -1,0 +1,23 @@
+<Code>
+const a = "3"
+</Code>
+<Prompt>
+${a}
+</Prompt>
+---
+export async function getFooPrompt(opt?: {
+  options?: {
+    openaiKey?: string,
+    progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
+  },
+}) {
+  const a = '3'
+  const GLASSVAR = {}
+  const TEMPLATE = `<Code>
+const a = "3"
+</Code>
+<Prompt>
+${a}
+</Prompt>`
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt?.options)
+}

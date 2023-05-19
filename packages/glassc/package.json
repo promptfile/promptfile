@@ -72,7 +72,7 @@
         "./src"
       ],
       "inherit": true,
-      "extensions": "ts,glass"
+      "extensions": "ts,glass,fixture"
     }
   }
 }

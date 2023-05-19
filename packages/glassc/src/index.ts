@@ -7,3 +7,4 @@ export {
   transpileGlass,
   transpileGlassFile,
 } from './transpile/transpileGlass.js'
+export { transpileGlassFileNext, transpileGlassNext } from './transpile/transpileGlassNext.js'

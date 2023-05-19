@@ -1,4 +1,4 @@
-import { transpileGlass } from '@glass-lang/glassc'
+import { transpileGlass, transpileGlassNext } from '@glass-lang/glassc'
 import fs from 'fs'
 import fetch from 'node-fetch'
 import path from 'path'
@@ -255,6 +255,30 @@ export async function activate(context: vscode.ExtensionContext) {
         try {
           const file = filePath.split('/').slice(-1)[0]
           const code = transpileGlass(path.dirname(filePath), filePath, 'typescript', path.join(path.dirname(filePath)))
+
+          // Fs.writeFileSync(path.join(outputDirectory, 'glassPrompts.ts'), code)
+          // const code = processFile(filePath)
+          await vscode.env.clipboard.writeText(code)
+          await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      }
+    }),
+    vscode.commands.registerCommand('glass.transpileCurrentFileNext', async () => {
+      const editor = vscode.window.activeTextEditor
+      if (editor) {
+        const document = editor.document
+        const filePath = document.uri.fsPath
+        try {
+          const file = filePath.split('/').slice(-1)[0]
+          const code = transpileGlassNext(
+            path.dirname(filePath),
+            filePath,
+            'typescript',
+            path.join(path.dirname(filePath))
+          )
 
           // Fs.writeFileSync(path.join(outputDirectory, 'glassPrompts.ts'), code)
           // const code = processFile(filePath)

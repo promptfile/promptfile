@@ -1,0 +1,81 @@
+import {sayHello} from './say-hello'
+
+      ${sayHello({ name: 'chat' })}
+
+<System>
+Read a Transcript and determine how to respond about the property's ${sayHello({ name: 'chat' })}. Valid responses are:
+
+- `NO_RESPONSE`: use this if the transcript has nothing to do with ${agentName}
+- `HELP: <reason>`: use this if the information you have about the ${agentName} is insufficient to provide an answer and you require more information
+- `<your response>`: a useful response to the User given the property's ${agentName}
+
+${
+  function generateCodeExamples() {
+    const examples = []
+    for (let i = 0; i < 10; i++) {
+      examples.push(Math.random())
+    }
+    return examples.join('\n')
+  }
+}
+</System>
+
+<User>
+${agentName}
+###
+${instructions}
+###
+
+Transcript
+###
+${transcript}
+###
+</User>
+---
+import { sayHello } from '../say-hello'
+
+export async function getFooPrompt(opt: {
+  args: { agentName: string, instructions: string, transcript: string },
+  options?: {
+    openaiKey?: string,
+    progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
+  },
+}) {
+  const { agentName, instructions, transcript } = opt.args
+
+  const GLASSVAR = {}
+  const TEMPLATE = `import {sayHello} from './say-hello'
+
+      ${sayHello({ name: 'chat' })}
+
+<System>
+Read a Transcript and determine how to respond about the property's ${sayHello({
+    name: 'chat',
+  })}. Valid responses are:
+
+- \`NO_RESPONSE\`: use this if the transcript has nothing to do with ${agentName}
+- \`HELP: <reason>\`: use this if the information you have about the ${agentName} is insufficient to provide an answer and you require more information
+- \`<your response>\`: a useful response to the User given the property's ${agentName}
+
+${(function generateCodeExamples() {
+  const examples = []
+  for (let i = 0; i < 10; i++) {
+    examples.push(Math.random())
+  }
+  return examples.join('\n')
+})()}
+</System>
+
+<User>
+${agentName}
+###
+${instructions}
+###
+
+Transcript
+###
+${transcript}
+###
+</User>`
+  return await runGlass('foo', 'gpt-3.5-turbo', TEMPLATE, opt.options)
+}
