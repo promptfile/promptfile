@@ -1,27 +1,21 @@
 import { VSCodeButton, VSCodeTextField } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useState } from 'react'
-import { WebviewApi } from 'vscode-webview'
-import { RigState } from './rig'
 
 interface ComposerViewProps {
-  vscode: WebviewApi<RigState>
+  send: (text: string) => void
 }
 export const ComposerView = (props: ComposerViewProps) => {
-  const { vscode } = props
+  const { send } = props
   const [text, setText] = useState('')
 
+  const trimmedText = text.trim()
   const run = () => {
-    const trimmedText = text.trim()
     if (trimmedText.length === 0) {
       setText('')
       return
     }
-    vscode.postMessage({
-      action: 'run',
-      data: {
-        text: trimmedText,
-      },
-    })
+    send(trimmedText)
+    setText('')
   }
 
   useEffect(() => {

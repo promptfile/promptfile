@@ -49,6 +49,16 @@ function RigView() {
     })
   }
 
+  const send = (text: string) => {
+    vscode.postMessage({
+      action: 'send',
+      data: {
+        filename,
+        text,
+      },
+    })
+  }
+
   return (
     <div
       style={{
@@ -60,8 +70,8 @@ function RigView() {
         flexDirection: 'column',
       }}
     >
-      <TopperView filename={filename} />
-      <ComposerView vscode={vscode} />
+      <TopperView filename={filename} reset={reset} />
+      <ComposerView send={send} />
     </div>
   )
 }
