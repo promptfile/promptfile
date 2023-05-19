@@ -1,13 +1,14 @@
-import { parseGlassMetadata, transpileGlass } from '@glass-lang/glassc'
+import { transpileGlass } from '@glass-lang/glassc'
 import fs from 'fs'
 import fetch from 'node-fetch'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
-import { LeftPanelWebview } from './LeftWebviewProvider'
 import { handleStreamResponse } from './api'
 import { executeGlassFile } from './executeGlassFile'
-import { getDocumentFilename, isGlassFile } from './util/isGlassFile'
+import { updateDecorations } from './util/decorations'
+import { getDocumentFilename } from './util/isGlassFile'
+import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
 
@@ -36,74 +37,15 @@ export async function activate(context: vscode.ExtensionContext) {
   )
   await client.start()
 
-  // Register rig view
-
-  const leftPanelWebViewProvider = new LeftPanelWebview(context?.extensionUri, {})
-  const view = vscode.window.registerWebviewViewProvider('left-panel-webview', leftPanelWebViewProvider)
-  context.subscriptions.push(view)
-
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(editor => {
-      if (editor && isGlassFile(editor.document)) {
-        const filename = getDocumentFilename(editor.document)
-        console.log('opened filename: ' + filename)
-        if (leftPanelWebViewProvider._view.webview) {
-          console.log('sending to webview')
-          leftPanelWebViewProvider._view.webview.postMessage({
-            action: 'setActiveFile',
-            data: {
-              filename,
-            },
-          })
-        }
-      }
-    })
-  )
-
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument(event => {
-      if (!isGlassFile(event.document)) {
-        return
-      }
-      const activeEditor = vscode.window.activeTextEditor
-
-      if (!activeEditor || activeEditor.document !== event.document) {
-        return
-      }
-
-      if (leftPanelWebViewProvider._view.webview) {
-        const text = event.document.getText()
-        const metadata = parseGlassMetadata(text)
-        const filename = getDocumentFilename(event.document)
-        leftPanelWebViewProvider._view.webview.postMessage({
-          action: 'onUpdateGlassFile',
-          data: {
-            filename,
-          },
-        })
-
-        leftPanelWebViewProvider._view.webview.postMessage({
-          action: 'updateDocumentMetadata',
-          data: {
-            ...metadata,
-            filename,
-          },
-        })
-      } else {
-        console.log('webview not ready')
-      }
-    })
-  )
-
   let activeEditor = vscode.window.activeTextEditor
 
-  const codeDecorations = vscode.window.createTextEditorDecorationType({
+  const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
     backgroundColor: new vscode.ThemeColor('glass.code.background'),
     isWholeLine: true,
   })
 
   if (activeEditor) {
-    updateDecorations()
+    updateDecorations(activeEditor, codeDecorations)
   }
 
   context.subscriptions.push(
@@ -111,7 +53,7 @@ export async function activate(context: vscode.ExtensionContext) {
       editor => {
         activeEditor = editor
         if (editor) {
-          updateDecorations()
+          updateDecorations(editor, codeDecorations)
         }
       },
       null,
@@ -120,7 +62,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidChangeTextDocument(
       editor => {
         if (activeEditor && editor.document === activeEditor.document) {
-          updateDecorations()
+          updateDecorations(activeEditor, codeDecorations)
         }
       },
       null,
@@ -129,47 +71,13 @@ export async function activate(context: vscode.ExtensionContext) {
     // vscode.workspace.onDidCloseTextDocument(document => diagnosticCollection.delete(document.uri))
   )
 
-  function updateDecorations() {
-    if (!activeEditor) {
-      console.log('no active editor')
-      return
-    }
-
-    const regEx = /<(Code)>([\s\S]*?)<\/\1>/g
-    const text = activeEditor.document.getText()
-    const highlights = []
-
-    let match = null
-
-    while ((match = regEx.exec(text))) {
-      const startPos = activeEditor.document.positionAt(match.index)
-      const endPos = activeEditor.document.positionAt(match.index + match[0].length)
-
-      // Update the start position to the next line after the opening tag
-      const openingTagLine = startPos.line
-      const contentStartLine = openingTagLine + 1
-      const contentStartPosition = new vscode.Position(contentStartLine, 0)
-
-      // Update the end position to the previous line before the closing tag
-      const closingTagLine = endPos.line
-      const contentEndLine = closingTagLine - 1
-      const contentEndPosition = new vscode.Position(contentEndLine, Number.MAX_SAFE_INTEGER)
-
-      // Create a range for the content between the opening and closing tags
-      const range = new vscode.Range(contentStartPosition, contentEndPosition)
-      highlights.push(range)
-    }
-
-    activeEditor.setDecorations(codeDecorations, highlights)
-  }
-
   context.subscriptions.push(
-    vscode.commands.registerCommand('glass.run', async () => {
+    vscode.commands.registerCommand('glass.playground', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || activeEditor.document.languageId !== 'glass') {
         return
       }
-
+      const filename = getDocumentFilename(activeEditor.document)
       const config = vscode.workspace.getConfiguration('glass')
       const openaiKey = config.get('openaiKey') as string | undefined
 
@@ -178,11 +86,59 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
 
+      const panel = vscode.window.createWebviewPanel(
+        'glass.webView', // viewType
+        `${filename} (playground)`, // Title of the panel displayed to the user
+        vscode.ViewColumn.Beside, // Editor column to show the new webview panel in.
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+        }
+      )
+      panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
+      panel.webview.onDidReceiveMessage(async (message: any) => {
+        switch (message.action) {
+          case 'getFilename':
+            console.log('getFilename!!!!!')
+            console.log(filename)
+            await panel.webview.postMessage({
+              action: 'setFilename',
+              data: {
+                filename,
+              },
+            })
+            break
+          default:
+            break
+        }
+      })
+    }),
+    vscode.commands.registerCommand('glass.run', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+        return
+      }
+
+      const config = vscode.workspace.getConfiguration('glass')
+      const openaiKey = config.get('openaiKey') as string | undefined
+      const defaultChatModel = config.get('defaultChatModel') as string | undefined
+
+      if (openaiKey == null || openaiKey === '') {
+        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your settings to run Glass files.')
+        return
+      }
+
+      // get the current cursor position
+      const cursorPosition = activeEditor.selection.active
+
       // Add Assistant tags to the end of the document
       await activeEditor.edit(editBuilder => {
         const lastLine = activeEditor.document.lineCount
         editBuilder.insert(new vscode.Position(lastLine, 0), '\n\n<Assistant>\n█\n</Assistant>')
       })
+
+      // restore the cursor back to its original position
+      activeEditor.selection = new vscode.Selection(cursorPosition, cursorPosition)
 
       const messages = await executeGlassFile(activeEditor.document, {})
       const r = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -193,7 +149,7 @@ export async function activate(context: vscode.ExtensionContext) {
         },
         body: JSON.stringify({
           messages,
-          model: 'gpt-3.5-turbo',
+          model: defaultChatModel ?? 'gpt-3.5-turbo',
           stream: true,
         }),
       })
@@ -255,20 +211,6 @@ export async function activate(context: vscode.ExtensionContext) {
         new vscode.Position(lastLine - 2, 0),
         new vscode.Position(lastLine - 2, 0)
       )
-    }),
-    vscode.commands.registerCommand('glass.runPlayground', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (activeEditor && activeEditor.document.languageId === 'glass') {
-        const filename = getDocumentFilename(activeEditor.document)
-        leftPanelWebViewProvider._view.webview.postMessage({
-          action: 'onRunPlayground',
-          data: {
-            filename,
-          },
-        })
-      } else {
-        console.log('webview not ready')
-      }
     }),
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')

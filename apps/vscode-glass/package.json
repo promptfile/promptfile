@@ -22,18 +22,14 @@
   "main": "./out/extension.js",
   "keywords": [
     "glass",
-    "foundation",
+    "prompting",
     "gpt",
+    "prompt",
+    "gpt",
+    "openai",
     "llm"
   ],
   "icon": "assets/glass.png",
-  "activationEvents": [
-    "onLanguage:javascript",
-    "onLanguage:javascriptreact",
-    "onLanguage:glass",
-    "onLanguage:typescript",
-    "onLanguage:typescriptreact"
-  ],
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "esbuild extension=./src/extension.ts language-server=../../packages/language-server/src/server.ts --bundle --platform=node --target=node16 --external:vscode --external:esbuild --external:@glass-lang/glasslib --outdir=out && npm run build:rig",
@@ -120,7 +116,11 @@
     "commands": [
       {
         "command": "glass.run",
-        "title": "Glass: run current file"
+        "title": "Glass: Run"
+      },
+      {
+        "command": "glass.playground",
+        "title": "Glass: Open playground"
       },
       {
         "command": "glass.openSettings",
@@ -144,6 +144,12 @@
         "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
+        "when": "editorTextFocus && resourceLangId == glass"
+      },
+      {
+        "command": "glass.playground",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
         "when": "editorTextFocus && resourceLangId == glass"
       }
     ],

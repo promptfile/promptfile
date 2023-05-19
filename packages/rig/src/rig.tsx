@@ -1,35 +1,10 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
-import { FileView } from './FileView'
-import { KeyView } from './KeyView'
+import { ComposerView } from './ComposerView'
+import { TopperView } from './TopperView'
 
 export interface RigState {
-  config: Record<string, RigConfig>
-  logs: RigLog[]
-}
-
-export interface RigConfig {
-  values: Record<string, string>
-  result: string
-  error?: string | null
-  model: string
-}
-
-export interface RigMetadata {
   filename: string
-  isChat: boolean
-  variables: string[]
-}
-
-export interface RigLog {
-  id: string
-  filename: string
-  args: Record<string, string>
-  model: string
-  prompt: string | { role: string; content: string }[]
-  isChat: boolean
-  result?: string
-  error?: string
 }
 
 const vscode = acquireVsCodeApi<RigState>()
@@ -39,18 +14,14 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const [initializing, setInitializing] = useState(true)
-  const [currFilename, setCurrFilename] = useState('')
-  const [openaiKey, setOpenaiKey] = useState('')
+  const [filename, setFilename] = useState('')
 
   // when the webview loads, send a message to the extension to get the openai key
   useEffect(() => {
     vscode.postMessage({
-      action: 'getOpenaiKey',
+      action: 'getFilename',
     })
-    vscode.postMessage({
-      action: 'getActiveFile',
-    })
+    console.log('getFilename')
   }, [])
 
   // register a callback for when the extension sends a message
@@ -58,13 +29,8 @@ function RigView() {
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
       switch (message.action) {
-        case 'setActiveFile':
-          setCurrFilename(() => message.data.filename)
-          break
-        case 'setOpenaiKey':
-          const key = message.data
-          setOpenaiKey(key)
-          setInitializing(false)
+        case 'setFilename':
+          setFilename(() => message.data.filename)
           break
         default:
           break
@@ -75,28 +41,40 @@ function RigView() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [openaiKey])
+  }, [])
 
-  const currConfig: RigConfig | null = currFilename
-    ? vscode.getState()?.config?.[currFilename] ?? {
-        model: 'gpt-3.5-turbo',
-        result: '',
-        values: {},
-        error: null,
-      }
-    : null
+  const reset = () => {
+    vscode.postMessage({
+      action: 'reset',
+      data: {
+        filename,
+      },
+    })
+  }
 
-  const currLogs = currFilename ? (vscode.getState()?.logs ?? []).filter(log => log.filename === currFilename) : []
+  const send = (text: string) => {
+    vscode.postMessage({
+      action: 'send',
+      data: {
+        filename,
+        text,
+      },
+    })
+  }
 
-  return !initializing && openaiKey.length === 0 ? (
-    <KeyView vscode={vscode} />
-  ) : currFilename && currConfig ? (
-    <FileView
-      key={currFilename}
-      filename={currFilename}
-      postMessage={(action: string, data: any) => vscode.postMessage({ action, data })}
-    />
-  ) : (
-    <span>Open a Glass file to get started.</span>
+  return (
+    <div
+      style={{
+        height: '100vh',
+        width: '100%',
+        overflow: 'hidden',
+        justifyContent: 'space-between',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <TopperView filename={filename} reset={reset} />
+      <ComposerView send={send} />
+    </div>
   )
 }

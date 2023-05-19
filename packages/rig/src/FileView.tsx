@@ -1,5 +1,5 @@
 import { ChatView } from './ChatView'
-import { FileTopper } from './FileTopper'
+import { FileTopper } from './TopperView'
 
 interface FileViewProps {
   filename: string

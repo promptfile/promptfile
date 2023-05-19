@@ -33,5 +33,16 @@ ${example.classification}
 </For>
 
 <User>
-${message}
+i'm really angry! i need to talk to someone
+</User>
+
+
+<Assistant>
+NEEDS_ATTENTION
+
+Note: The comment contains a strong emotion and a request to speak with someone, so it requires immediate attention.
+</Assistant>
+
+<User>
+
 </User>
