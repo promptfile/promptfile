@@ -21,6 +21,7 @@ const examples = [
 
 <System>
 You are an AI community moderator. Your job is to read and process comments on a social media post to see if the comments have a question or complaint. If the comment has a question or complaint, return "NEEDS_ATTENTION". Otherwise, return "SKIP". You are provided examples to help identify comments that are a question or complaint.
+
 </System>
 
 <For each={examples} item="example">
@@ -34,15 +35,4 @@ ${example.classification}
 
 <User>
 i'm really angry! i need to talk to someone
-</User>
-
-
-<Assistant>
-NEEDS_ATTENTION
-
-Note: The comment contains a strong emotion and a request to speak with someone, so it requires immediate attention.
-</Assistant>
-
-<User>
-
 </User>
