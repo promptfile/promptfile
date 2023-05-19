@@ -66,7 +66,7 @@ function RigView() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [])
+  }, [filename])
 
   const reset = () => {
     vscode.postMessage({
@@ -89,10 +89,6 @@ function RigView() {
       },
     })
     setBlocks([...blocks, { content: text, role: 'user' }])
-  }
-
-  if (playgroundId.length === 0) {
-    return null
   }
 
   return (

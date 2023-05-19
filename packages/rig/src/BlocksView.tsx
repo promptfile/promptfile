@@ -54,7 +54,7 @@ export const BlocksView = (props: BlocksViewProps) => {
               paddingRight: '16px',
             }}
           >
-            <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '14px', paddingBottom: '2px' }}>
+            <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '2px' }}>
               {block.role === 'user' ? 'User' : 'Assistant'}
             </span>
             {block.content}

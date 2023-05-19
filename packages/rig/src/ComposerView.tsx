@@ -48,7 +48,7 @@ export const ComposerView = (props: ComposerViewProps) => {
             setText(value)
           }}
           onKeyDown={e => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
               run()
             }
