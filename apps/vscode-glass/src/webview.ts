@@ -39,12 +39,10 @@ export function getHtmlForWebview(webview: Webview, extensionPath: Uri) {
                         margin: 0;
                         padding: 0;
                         height: 100%;
-                        overflow: hidden;
                     }
                     #root {
                         width: 100%;
                         height: 100%;
-                        overflow: hidden;
                     }
                 </style>
               </head>

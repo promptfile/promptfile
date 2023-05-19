@@ -10,14 +10,20 @@ export const TopperView = (props: TopperViewProps) => {
   const { filename, reset } = props
 
   return (
-    <div style={{ width: '100%', height: 'fit-content', flexDirection: 'column' }}>
+    <div
+      style={{
+        width: '100%',
+        flexDirection: 'column',
+        flexShrink: 0,
+      }}
+    >
       <div
         style={{
+          paddingTop: '16px',
+          paddingBottom: '16px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          paddingTop: '16px',
-          paddingBottom: '16px',
           paddingLeft: '16px',
           paddingRight: '16px',
         }}
@@ -25,7 +31,7 @@ export const TopperView = (props: TopperViewProps) => {
         <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
           <LogoView dimension="24" />
           <span style={{ fontSize: '17px', fontWeight: 'bold', paddingLeft: '12px' }}>
-            {filename.split('.glass')[0]}
+            {filename.split('.glass')[0] ?? 'loading'}
             <span style={{ opacity: 0.3, color: 'white', fontStyle: 'italic' }}>.glass</span>
           </span>
         </div>
@@ -33,7 +39,7 @@ export const TopperView = (props: TopperViewProps) => {
           Reset
         </VSCodeButton>
       </div>
-      <VSCodeDivider />
+      <VSCodeDivider style={{ margin: 0, padding: 0 }} />
     </div>
   )
 }

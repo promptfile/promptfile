@@ -1,3 +1,6 @@
+---
+language: python
+---
 // This is a simple prompt that tells the LLM to respond like a pirate.
 // The prompt is structured for chat use via the `System`, `Assistant`, and `User` blocks.
 

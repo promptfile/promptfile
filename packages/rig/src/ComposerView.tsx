@@ -1,4 +1,4 @@
-import { VSCodeButton, VSCodeDivider, VSCodeTextField } from '@vscode/webview-ui-toolkit/react'
+import { VSCodeButton, VSCodeDivider, VSCodeTextArea } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useState } from 'react'
 
 interface ComposerViewProps {
@@ -25,8 +25,8 @@ export const ComposerView = (props: ComposerViewProps) => {
   }, [])
 
   return (
-    <div style={{ width: '100%', height: 'fit-content' }}>
-      <VSCodeDivider />
+    <div style={{ width: '100%', flexShrink: 0 }}>
+      <VSCodeDivider style={{ margin: 0, padding: 0 }} />
       <div
         style={{
           display: 'flex',
@@ -38,7 +38,7 @@ export const ComposerView = (props: ComposerViewProps) => {
           paddingRight: '16px',
         }}
       >
-        <VSCodeTextField
+        <VSCodeTextArea
           style={{ paddingRight: '8px', width: '100%' }}
           value={text}
           id={'composer-input'}
@@ -49,11 +49,12 @@ export const ComposerView = (props: ComposerViewProps) => {
           }}
           onKeyDown={e => {
             if (e.key === 'Enter') {
+              e.preventDefault()
               run()
             }
           }}
         />
-        <VSCodeButton style={{ width: 'fit-content', flexShrink: 0 }} onClick={() => run()}>
+        <VSCodeButton style={{ width: 'fit-content' }} onClick={() => run()}>
           Send
         </VSCodeButton>
       </div>

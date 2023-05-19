@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { BlocksView } from './BlocksView'
 import { ComposerView } from './ComposerView'
 import { TopperView } from './TopperView'
+import { getNonce } from './nonce'
 
 export interface GlassBlock {
   content: string
@@ -21,6 +22,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
+  const [playgroundId, setPlaygroundId] = useState(getNonce())
   const [filename, setFilename] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
 
@@ -73,6 +75,7 @@ function RigView() {
         filename,
       },
     })
+    setPlaygroundId(getNonce())
     setBlocks([])
     document.getElementById('composer-input')?.focus()
   }
@@ -88,28 +91,22 @@ function RigView() {
     setBlocks([...blocks, { content: text, role: 'user' }])
   }
 
-  useEffect(() => {
-    const element = document.getElementById(`message.${blocks.length - 1}`)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [blocks.length])
+  if (playgroundId.length === 0) {
+    return null
+  }
 
   return (
     <div
       style={{
-        height: '100vh',
+        flexDirection: 'column',
+        display: 'flex',
+        height: '100%',
         width: '100%',
         overflow: 'hidden',
-        justifyContent: 'space-between',
-        display: 'flex',
-        flexDirection: 'column',
       }}
     >
-      <div style={{ flexDirection: 'column', overflow: 'hidden', height: '100%' }}>
-        <TopperView filename={filename} reset={reset} />
-        <BlocksView blocks={blocks} />
-      </div>
+      <TopperView filename={filename} reset={reset} />
+      <BlocksView blocks={blocks} playgroundId={playgroundId} />
       <ComposerView send={send} />
     </div>
   )
