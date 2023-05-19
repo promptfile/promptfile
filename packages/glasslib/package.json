@@ -30,7 +30,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@glass-lang/util": "*"
+    "@glass-lang/util": "*",
+    "node-fetch": "^2.6.11"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",

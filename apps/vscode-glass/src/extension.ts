@@ -5,7 +5,7 @@ import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { handleStreamResponse } from './api'
-import { executeGlassFile } from './executeGlassFile'
+import { executeGlassFile, executeGlassFileNext } from './executeGlassFile'
 import { updateDecorations } from './util/decorations'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getHtmlForWebview } from './webview'
@@ -130,6 +130,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // get the current cursor position
       const cursorPosition = activeEditor.selection.active
+
+      const resp = await executeGlassFileNext(activeEditor.document, {}, ({ nextDoc, rawResponse }) => {
+        console.log('progress', { nextDoc, rawResponse })
+      })
+      console.log('execute glass file next returned', { resp })
 
       // Add Assistant tags to the end of the document
       await activeEditor.edit(editBuilder => {
