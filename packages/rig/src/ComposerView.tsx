@@ -37,7 +37,6 @@ export const ComposerView = (props: ComposerViewProps) => {
         }}
         onKeyDown={e => {
           if (e.key === 'Enter') {
-            e.currentTarget.blur()
             run()
           }
         }}

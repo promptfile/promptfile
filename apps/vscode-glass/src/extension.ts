@@ -99,14 +99,26 @@ export async function activate(context: vscode.ExtensionContext) {
       panel.webview.onDidReceiveMessage(async (message: any) => {
         switch (message.action) {
           case 'getFilename':
-            console.log('getFilename!!!!!')
-            console.log(filename)
             await panel.webview.postMessage({
               action: 'setFilename',
               data: {
                 filename,
               },
             })
+            break
+          case 'getBlocks':
+            const blocks = await executeGlassFile(activeEditor.document, {})
+            await panel.webview.postMessage({
+              action: 'setBlocks',
+              data: {
+                filename,
+                blocks,
+              },
+            })
+            break
+          case 'createBlock':
+            const text = message.data.text
+
             break
           default:
             break

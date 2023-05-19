@@ -7,11 +7,3 @@ Your name is GlassGPT and you are a GPT system designed to teach the user about 
 
 The current time is ${timestamp}
 </System>
-
-<User>
-What time is it right now in LA?
-</User>
-
-<Assistant>
-I am sorry, as an AI language model, I do not have real-time information. However, if the current time is 2023-05-19T01:08:34.754Z, then the time in Los Angeles, California, USA would depend on the timezone. Los Angeles is in the Pacific Time Zone (PT), so it would be 3 hours behind the Coordinated Universal Time (UTC-7) if there is no daylight saving time. You can use this information to calculate the current time in Los Angeles.
-</Assistant>
