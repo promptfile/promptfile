@@ -1,7 +1,6 @@
 import {
   CompletionItem,
   Diagnostic,
-  DiagnosticSeverity,
   DidChangeConfigurationNotification,
   DocumentFormattingParams,
   InitializeParams,
@@ -16,14 +15,14 @@ import {
 
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
 import { generateCompletions } from './completions'
-import {
-  findEmptyBlocks,
-  findInvalidPromptBlocks,
-  findMisalignedTags,
-  findMultiplePromptBlocks,
-  findUnmatchedTags,
-  findUnsupportedTags,
-} from './diagnostics'
+import { findEmptyBlocks } from './diagnostics/findEmptyBlocks'
+import { findInvalidAttributes } from './diagnostics/findInvalidAttributes'
+import { findInvalidLines } from './diagnostics/findInvalidLines'
+import { findInvalidPromptBlocks } from './diagnostics/findInvalidPromptBlocks'
+import { findMisalignedTags } from './diagnostics/findMisalignedTags'
+import { findMultiplePromptBlocks } from './diagnostics/findMultiplePromptBlocks'
+import { findUnmatchedTags } from './diagnostics/findUnmatchedTags'
+import { findUnsupportedTags } from './diagnostics/findUnsupportedTags'
 import { findFoldableTagPairs, findMarkdownFoldingRanges } from './folding'
 import { formatDocument } from './formatting'
 
@@ -141,157 +140,16 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   // const settings = await getDocumentSettings(textDocument.uri)
 
   const text = textDocument.getText()
-  const diagnostics: Diagnostic[] = []
-
-  const unmatchedTags = findUnmatchedTags(text)
-  diagnostics.push(
-    ...unmatchedTags.map(({ tag, start }) => {
-      const tagName = tag.startsWith('/') ? tag.slice(1) : tag
-      const range = {
-        start: textDocument.positionAt(start),
-        end: textDocument.positionAt(start + tagName.length + (tag.startsWith('/') ? 3 : 2)),
-      }
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range,
-        message: `<${tagName}> tag requires a closing </${tagName}> tag.`,
-        source: 'glass',
-      }
-
-      return diagnostic
-    })
-  )
-
-  const unsupportedTags = findUnsupportedTags(text)
-  diagnostics.push(
-    ...unsupportedTags.map(({ tag, start }) => {
-      const range = {
-        start: textDocument.positionAt(start + 1),
-        end: textDocument.positionAt(start + tag.length + 1),
-      }
-
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range,
-        message: `Unsupported ${tag} tag.`,
-        source: 'glass',
-      }
-
-      return diagnostic
-    })
-  )
-
-  // const invalidAttributes = findInvalidAttributes(text)
-  // diagnostics.push(
-  //   ...invalidAttributes.map(({ tag, attribute, start }) => {
-  //     const range = {
-  //       start: textDocument.positionAt(start),
-  //       end: textDocument.positionAt(start + attribute.length),
-  //     }
-
-  //     const diagnostic: Diagnostic = {
-  //       severity: DiagnosticSeverity.Error,
-  //       range,
-  //       message: `Invalid attribute "${attribute}" for <${tag}> tag.`,
-  //       source: 'glass',
-  //     }
-
-  //     return diagnostic
-  //   })
-  // )
-
-  const misalignedTags = findMisalignedTags(text)
-  diagnostics.push(
-    ...misalignedTags.map(({ start, end }) => {
-      const range = {
-        start: textDocument.positionAt(start),
-        end: textDocument.positionAt(end),
-      }
-
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range,
-        message: `Tags must be on their own lines.`,
-        source: 'glass',
-      }
-
-      return diagnostic
-    })
-  )
-
-  // const invalidLines = findInvalidLines(text)
-  // diagnostics.push(
-  //   ...invalidLines.map(({ line, start, end }) => {
-  //     const range = {
-  //       start: textDocument.positionAt(textDocument.offsetAt({ line, character: start })),
-  //       end: textDocument.positionAt(textDocument.offsetAt({ line, character: end })),
-  //     }
-
-  //     const diagnostic: Diagnostic = {
-  //       severity: DiagnosticSeverity.Warning,
-  //       range,
-  //       message: `Content not contained in a block — will be ignored by compiler.`,
-  //       source: 'glass',
-  //     }
-
-  //     return diagnostic
-  //   })
-  // )
-
-  const multiplePromptBlocks = findMultiplePromptBlocks(text)
-  diagnostics.push(
-    ...multiplePromptBlocks.map(({ start, end }) => {
-      const range = {
-        start: textDocument.positionAt(start),
-        end: textDocument.positionAt(end),
-      }
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range,
-        message: `Only one <Prompt> block allowed per file.`,
-        source: 'glass',
-      }
-
-      return diagnostic
-    })
-  )
-
-  const invalidPromptBlocks = findInvalidPromptBlocks(text)
-  diagnostics.push(
-    ...invalidPromptBlocks.map(({ start, end }) => {
-      const range = {
-        start: textDocument.positionAt(start),
-        end: textDocument.positionAt(end),
-      }
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range,
-        message: `<Prompt> blocks can't be mixed with <User>, <Assistant>, and <System> blocks.`,
-        source: 'glass',
-      }
-
-      return diagnostic
-    })
-  )
-
-  const emptyBlocks = findEmptyBlocks(text)
-  diagnostics.push(
-    ...emptyBlocks.map(({ tag, start, end }) => {
-      const range = {
-        start: textDocument.positionAt(start),
-        end: textDocument.positionAt(end),
-      }
-
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Warning,
-        range,
-        message: `Empty <${tag}> block.`,
-        source: 'glass',
-      }
-
-      return diagnostic
-    })
-  )
+  const diagnostics: Diagnostic[] = [
+    ...findUnmatchedTags(textDocument),
+    ...findUnsupportedTags(textDocument),
+    ...findInvalidAttributes(textDocument),
+    ...findMisalignedTags(textDocument),
+    ...findInvalidLines(textDocument),
+    ...findMultiplePromptBlocks(textDocument),
+    ...findInvalidPromptBlocks(textDocument),
+    ...findEmptyBlocks(textDocument),
+  ]
 
   // Send the computed diagnostics to VSCode.
   connection.console.log('Sending diagnostics: ' + diagnostics)
