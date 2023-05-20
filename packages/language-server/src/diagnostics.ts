@@ -108,7 +108,6 @@ function isInvalidLine(line: string): boolean {
     trimmedLine.startsWith('import') ||
     trimmedLine.startsWith('export') ||
     trimmedLine.startsWith('<For ') ||
-    trimmedLine.startsWith('<Chat ') ||
     trimmedLine.startsWith('<Completion ') ||
     trimmedLine.startsWith('<Args ') ||
     trimmedLine.startsWith('<Block ')
@@ -117,8 +116,8 @@ function isInvalidLine(line: string): boolean {
   }
 
   // Check if the line is inside a valid element or contains a valid element with attributes
-  const openTagCount = (line.match(/^<(User|Assistant|System|Prompt|Code|Text)(\s+[^>]*)?>/g) || []).length
-  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code|Text)>/g) || []).length
+  const openTagCount = (line.match(/^<(User|Assistant|System|Prompt|Code|Text|Chat)(\s+[^>]*)?>/g) || []).length
+  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code|Text|Chat)>/g) || []).length
 
   return openTagCount === 0 && closeTagCount === 0
 }
@@ -138,7 +137,8 @@ export function findInvalidLines(text: string): { line: number; start: number; e
       line.startsWith('<System') ||
       line.startsWith('<Prompt') ||
       line.startsWith('<Code') ||
-      line.startsWith('<Text')
+      line.startsWith('<Text') ||
+      line.startsWith('<Chat')
     ) {
       insideValidElement++
     }
@@ -149,7 +149,8 @@ export function findInvalidLines(text: string): { line: number; start: number; e
       line.startsWith('</System>') ||
       line.startsWith('</Prompt>') ||
       line.startsWith('</Code>') ||
-      line.startsWith('</Text>')
+      line.startsWith('</Text>') ||
+      line.startsWith('</Chat>')
     ) {
       insideValidElement--
     }
@@ -246,7 +247,7 @@ export function findMisalignedTags(text: string): { start: number; end: number }
     if (line.startsWith('//')) continue
 
     // Look for <User|Assistant|System|Prompt|Code> opening tags not at the start of a line
-    const openingTagMatch = line.match(/^(?!<)\s*<(User|Assistant|System|Prompt|Code)(\s+[^>]*)?>/)
+    const openingTagMatch = line.match(/^(?!<)\s*<(User|Assistant|System|Prompt|Code|Chat)(\s+[^>]*)?>/)
 
     if (openingTagMatch && openingTagMatch.index) {
       const start = lines.slice(0, i).join('\n').length + openingTagMatch.index
@@ -255,7 +256,7 @@ export function findMisalignedTags(text: string): { start: number; end: number }
     }
 
     // Look for </User|Assistant|System|Prompt|Code> closing tags not at the start of a line
-    const closingTagMatch = line.match(/^(?!<)\s*<\/(User|Assistant|System|Prompt|Code)>/)
+    const closingTagMatch = line.match(/^(?!<)\s*<\/(User|Assistant|System|Prompt|Code|Chat)>/)
 
     if (closingTagMatch && closingTagMatch.index) {
       const start = lines.slice(0, i).join('\n').length + closingTagMatch.index

@@ -2,12 +2,9 @@
 const timestamp = new Date().toISOString()
 </Code>
 
-// hello
 <System>
 You are TerseGPT.  Your job is to write terse, short responses.
 </System>
-
-
 
 <Chat model="gpt-3.5-turbo">
 

@@ -17,6 +17,7 @@ import {
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
 import { generateCompletions } from './completions'
 import {
+  findEmptyBlocks,
   findInvalidPromptBlocks,
   findMisalignedTags,
   findMultiplePromptBlocks,
@@ -273,24 +274,24 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     })
   )
 
-  // const emptyBlocks = findEmptyBlocks(text)
-  // diagnostics.push(
-  //   ...emptyBlocks.map(({ tag, start, end }) => {
-  //     const range = {
-  //       start: textDocument.positionAt(start),
-  //       end: textDocument.positionAt(end),
-  //     }
+  const emptyBlocks = findEmptyBlocks(text)
+  diagnostics.push(
+    ...emptyBlocks.map(({ tag, start, end }) => {
+      const range = {
+        start: textDocument.positionAt(start),
+        end: textDocument.positionAt(end),
+      }
 
-  //     const diagnostic: Diagnostic = {
-  //       severity: DiagnosticSeverity.Warning,
-  //       range,
-  //       message: `Empty <${tag}> block.`,
-  //       source: 'glass',
-  //     }
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Warning,
+        range,
+        message: `Empty <${tag}> block.`,
+        source: 'glass',
+      }
 
-  //     return diagnostic
-  //   })
-  // )
+      return diagnostic
+    })
+  )
 
   // Send the computed diagnostics to VSCode.
   connection.console.log('Sending diagnostics: ' + diagnostics)

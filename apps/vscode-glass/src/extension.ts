@@ -182,7 +182,6 @@ export async function activate(context: vscode.ExtensionContext) {
             return
           }
 
-          console.log('progress', { nextDoc, rawResponse })
           const lines = activeEditor.document.getText().split('\n')
           const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
           const blockCharacterLine = lines[blockCharacterLineIndex]
