@@ -153,6 +153,32 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
           },
         ],
       },
+      {
+        completionItem: {
+          label: 'temperature',
+          kind: CompletionItemKind.Property,
+          insertText: 'temperature={0.7}',
+          documentation: {
+            kind: 'markdown',
+            value: 'The `temperature` attribute allows you to set the temperature for the model inference.',
+          },
+          detail: 'Set model temperature',
+          data: 7,
+        },
+      },
+      {
+        completionItem: {
+          label: 'maxTokens',
+          kind: CompletionItemKind.Property,
+          insertText: 'maxTokens={256}',
+          documentation: {
+            kind: 'markdown',
+            value: 'The `maxTokens` attribute allows you to set the maximum tokens for the model inference.',
+          },
+          detail: 'Set maximum tokens',
+          data: 7,
+        },
+      },
     ],
     Completion: [
       {
