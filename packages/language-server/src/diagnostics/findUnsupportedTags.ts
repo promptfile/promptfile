@@ -1,5 +1,5 @@
-import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver";
-import { TextDocument } from "vscode-languageserver-textdocument";
+import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 
 export function findUnsupportedTags(textDocument: TextDocument): Diagnostic[] {
   const tagPattern = /^<\/?([\w-]+).*?>/gm
@@ -42,5 +42,4 @@ export function findUnsupportedTags(textDocument: TextDocument): Diagnostic[] {
 
     return diagnostic
   })
-)
 }
