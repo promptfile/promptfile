@@ -1,9 +1,10 @@
-import { transpileGlass, transpileGlassNext } from '@glass-lang/glassc'
+import { transpileGlass, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeGlassFile } from './executeGlassFile'
+import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getHtmlForWebview } from './webview'
@@ -305,6 +306,51 @@ export async function activate(context: vscode.ExtensionContext) {
           throw error
         }
       }
+    }),
+    vscode.commands.registerCommand('glass.transpilePython', async () => {
+      const editor = vscode.window.activeTextEditor
+      if (editor) {
+        const document = editor.document
+        const filePath = document.uri.fsPath
+        try {
+          const file = filePath.split('/').slice(-1)[0]
+          const code = transpileGlassPython(
+            path.dirname(filePath),
+            filePath,
+            'typescript',
+            path.join(path.dirname(filePath))
+          )
+
+          // Fs.writeFileSync(path.join(outputDirectory, 'glassPrompts.ts'), code)
+          // const code = processFile(filePath)
+          await vscode.env.clipboard.writeText(code)
+          await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
+        } catch (error) {
+          console.error(error)
+          throw error
+        }
+      }
+    }),
+    vscode.commands.registerCommand('glass.runPython', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+        return
+      }
+
+      const config = vscode.workspace.getConfiguration('glass')
+      const openaiKey = config.get('openaiKey') as string | undefined
+      const defaultChatModel = config.get('defaultChatModel') as string | undefined
+
+      if (openaiKey == null || openaiKey === '') {
+        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your settings to run Glass files.')
+        return
+      }
+
+      // get the current cursor position
+      const cursorPosition = activeEditor.selection.active
+
+      const resp = await executeGlassFilePython(activeEditor.document, {})
+      console.log('execute glass file python returned', { resp })
     })
   )
 }

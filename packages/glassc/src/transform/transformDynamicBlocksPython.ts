@@ -99,6 +99,20 @@ export function transformDynamicBlocksPython(doc: string) {
         `\${${interpKey}}` +
         doc.substring(nodeEndOffset + currOffset + updateToOffset)
       currOffset += newSequenceLength - oldSequenceLength + updateToOffset
+    } else {
+      // no dynamic block, but we still want to recursively evaluate the body
+      const transform = transformGlassDocumentToTemplateStringPython(docSection)
+      for (const s of transform.undeclaredSymbols) {
+        undeclaredSymbols.add(s)
+      }
+
+      jsxInterpolations[pruneInterpKey] = `${transform.newDocument}`
+
+      doc =
+        doc.substring(0, nodeStartOffset + currOffset) +
+        `\${${interpKey}}` +
+        doc.substring(nodeEndOffset + currOffset + updateToOffset)
+      currOffset += newSequenceLength - oldSequenceLength + updateToOffset
     }
   }
 
@@ -192,6 +206,19 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: JSXNod
       }
 
       jsxInterpolations[pruneInterpKey] = `${transform.newDocument} if ${ifAttr.expressionValue} else ''`
+
+      nodeInsides =
+        nodeInsides.substring(0, startOffset + currOffset) +
+        `\${${interpKey}}` +
+        nodeInsides.substring(endOffset + currOffset)
+      currOffset += newSequenceLength - oldSequenceLength
+    } else {
+      const transform = transformGlassDocumentToTemplateStringPython(docSection)
+      for (const s of transform.undeclaredSymbols) {
+        undeclaredSymbols.add(s)
+      }
+
+      jsxInterpolations[pruneInterpKey] = `${transform.newDocument}`
 
       nodeInsides =
         nodeInsides.substring(0, startOffset + currOffset) +

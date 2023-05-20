@@ -135,6 +135,14 @@
         "title": "Glass: Transpile current file (next)"
       },
       {
+        "command": "glass.transpilePython",
+        "title": "Glass: Transpile current file (python)"
+      },
+      {
+        "command": "glass.runPython",
+        "title": "Glass: Run (python)"
+      },
+      {
         "command": "glass.transpileCurrentFile",
         "title": "Glass: Transpile current file"
       },

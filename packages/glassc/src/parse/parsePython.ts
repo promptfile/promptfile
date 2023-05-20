@@ -57,7 +57,6 @@ export function parsePythonLocalVariables(code: string) {
  */
 export function parsePythonUndeclaredSymbols(code: string) {
   const ast = parse(code)
-  console.log(JSON.stringify(ast))
   const declaredNames: string[] = []
   const usedNames: string[] = []
 
@@ -73,10 +72,21 @@ export function parsePythonUndeclaredSymbols(code: string) {
       if (node.object.type === 'Identifier' && !node.object.name.startsWith('__filbertTmp')) {
         usedNames.push(node.object.name)
       }
+      if (
+        node.property &&
+        node.property.type === 'CallExpression' &&
+        node.property.callee.property.name === 'subscriptIndex'
+      ) {
+        node.property.arguments.forEach((arg: any) => {
+          if (arg.type === 'Identifier' && !arg.name.startsWith('__filbertTmp')) {
+            usedNames.push(arg.name)
+          }
+        })
+      }
     } else if (node.type === 'ReturnStatement' && node.argument && node.argument.type === 'Identifier') {
       usedNames.push(node.argument.name)
     } else if (node.type === 'ExpressionStatement' && node.expression.type === 'Identifier') {
-      usedNames.push(node.expression.name) // Handle ExpressionStatement with Identifier
+      usedNames.push(node.expression.name)
     }
 
     for (const key in node) {
@@ -95,7 +105,7 @@ export function parsePythonUndeclaredSymbols(code: string) {
   const undeclaredNames: string[] = usedNames.filter(
     name => !declaredNames.includes(name) && name !== '__pythonRuntime' && !name.startsWith('__filbert')
   )
-  return undeclaredNames
+  return Array.from(new Set(undeclaredNames))
 }
 // /**
 //  * Takes a Python code block like:

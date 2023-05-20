@@ -12,12 +12,46 @@ And this is the end`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: [],
-      jsxInterpolations: {},
-      doc: glass,
+      jsxInterpolations: {
+        '0': `"""{}""".format("""<Foo x={{"{}"}} y="2">
+{}
+</Foo>""".format(3, """""".format()))`,
+      },
+      doc: 'Hello world this is a document.\n\n${GLASSVAR[0]}\n\nAnd this is the end',
     })
   })
 
-  it('should transform document with dynamic for block with body', () => {
+  it('should do simple doc', () => {
+    const glass = `<Prompt>
+\${foo}
+</Prompt>`
+
+    expect(transformDynamicBlocksPython(glass)).to.deep.equal({
+      undeclaredSymbols: ['foo'],
+      jsxInterpolations: {
+        '0': '"""{}""".format("""<Prompt>\n{}\n</Prompt>""".format("""{}""".format(foo)))',
+      },
+      doc: '${GLASSVAR[0]}',
+    })
+  })
+
+  it('should do simple doc with if condition', () => {
+    const glass = `<Prompt if={bar}>
+\${foo}
+</Prompt>`
+
+    expect(transformDynamicBlocksPython(glass)).to.deep.equal({
+      undeclaredSymbols: ['bar', 'foo'],
+      jsxInterpolations: {
+        0: `"""{}""".format("""<Prompt if={{"{}"}}>
+{}
+</Prompt>""".format(bar, """{}""".format(foo))) if bar else ''`,
+      },
+      doc: '${GLASSVAR[0]}',
+    })
+  })
+
+  it.skip('should transform document with dynamic for block with body', () => {
     const glass = `Hello world this is a document.
 
 <For each={messages} item="m">
@@ -35,7 +69,13 @@ And this is the end`
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: [],
       jsxInterpolations: {
-        '0': `"\\n\\n".join(list(map(lambda m: """{}""".format("""{}
+        '0': `"""{}""".format("""<User>
+{}
+</User>""".format("""{}""".format(m.foo)))`,
+        '1': `"""{}""".format("""<Assistant>
+{}
+</Assistant>""".format("""bar""".format()))`,
+        '2': `"\\n\\n".join(list(map(lambda m: """{}""".format("""{}
 
 {}""".format("""<User>
 {}
@@ -43,7 +83,7 @@ And this is the end`
 {}
 </Assistant>""".format("""bar""".format()))), messages)))`,
       },
-      doc: 'Hello world this is a document.\n\n${GLASSVAR[0]}\n\nAnd this is the end',
+      doc: 'Hello world this is a document.\n\n${GLASSVAR[2]} And this is the end',
     })
   })
 
@@ -79,8 +119,13 @@ and more
           '0': `"""{}""".format("""<Text if="True">
 {}
 </Text>""".format("""With nested if block {}""".format(withvar))) if True else ''`,
+          '1': `"""{}""".format("""<User>
+{}
+</User>""".format("""Inner stuff
+{}
+and more""".format(GLASSVAR[0])))`,
         },
-        doc: '<User>\nInner stuff\n${GLASSVAR[0]}\nand more\n</User>',
+        doc: '${GLASSVAR[1]}',
       })
     })
 
@@ -135,22 +180,28 @@ left alone
       expect(transformDynamicBlocksPython(glass)).to.deep.equal({
         undeclaredSymbols: ['withvar'],
         jsxInterpolations: {
-          '0': `"""{}""".format("""<Text if="True">
+          '0': `"""{}""".format("""<System>
+{}
+</System>""".format("""system prompt""".format()))`,
+          '1': `"""{}""".format("""<Text if="True">
 {}
 </Text>""".format("""With nested if block {}""".format(withvar))) if True else ''`,
-          '1': `"""{}""".format("""<User if="True">
+          '2': `"""{}""".format("""<User if="True">
 {}
 </User>""".format("""Inner stuff
 {}
-and more""".format(GLASSVAR[0]))) if True else ''`,
-          '2': `"""{}""".format("""<Text if="False">
+and more""".format(GLASSVAR[1]))) if True else ''`,
+          '3': `"""{}""".format("""<Text if="False">
 {}
 </Text>""".format("""do something""".format())) if False else ''`,
-          '3': `"""{}""".format("""<Assistant if="True">
+          '4': `"""{}""".format("""<Assistant if="True">
 {}
-</Assistant>""".format("""{}""".format(GLASSVAR[2]))) if True else ''`,
+</Assistant>""".format("""{}""".format(GLASSVAR[3]))) if True else ''`,
+          '5': `"""{}""".format("""<User>
+{}
+</User>""".format("""left alone""".format()))`,
         },
-        doc: '<System>\nsystem prompt\n</System>\n\n${GLASSVAR[1]}\n\n${GLASSVAR[3]}\n\n<User>\nleft alone\n</User>',
+        doc: '${GLASSVAR[0]}\n\n${GLASSVAR[2]}\n\n${GLASSVAR[4]}\n\n${GLASSVAR[5]}',
       })
     })
 

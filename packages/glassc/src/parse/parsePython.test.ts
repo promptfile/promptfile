@@ -103,7 +103,7 @@ def hello():
     expect(parsePythonUndeclaredSymbols(code)).to.deep.equal(['a'])
   })
 
-  it.only('should parse undeclared symbols there is just one variable with property access', () => {
+  it('should parse undeclared symbols there is just one variable with property access', () => {
     const code = `a[foo]`
     expect(parsePythonUndeclaredSymbols(code)).to.deep.equal(['a', 'foo'])
   })

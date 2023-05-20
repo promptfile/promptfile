@@ -1,5 +1,6 @@
 import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements'
 import { parsePythonUndeclaredSymbols } from '../parse/parsePython'
+import { escapePythonTemplateSequences } from './escapePythonTemplateSequences'
 import { transformJsxElementToTemplateString } from './transformJsxElementToTemplateString'
 
 export function transformGlassDocumentToTemplateString(input: string): string {
@@ -96,7 +97,7 @@ export function transformGlassDocumentToTemplateStringPython(input: string) {
     finalDoc = finalDoc.replace(match[0], '{}')
   }
 
-  const newDocument = `"""${finalDoc}""".format(${formatArgs.join(', ')})`
+  const newDocument = `"""${escapePythonTemplateSequences(finalDoc)}""".format(${formatArgs.join(', ')})`
 
   return { newDocument, undeclaredSymbols: Array.from(undeclaredSymbols) }
 }
