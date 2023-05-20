@@ -21,12 +21,10 @@ export async function runGlass(
   initDoc: string
   finalDoc: string
 }> {
+  initDoc = initDoc.replace(`<Chat model="${model}">`, '<User>').replace('</Chat', '</User')
   if (options.progress) {
     const completionFragment = generateCompletionFragment('', true, model)
-    const containsChatTag = initDoc.includes(`<Chat model="${model}" />`)
-    const nextDoc = containsChatTag
-      ? initDoc.trim().replace(`<Chat model="${model}" />`, completionFragment)
-      : initDoc.trim() + `\n\n${completionFragment}`
+    const nextDoc = `${initDoc.trim()}\n\n${completionFragment}`
     options.progress({
       nextDoc: nextDoc,
       rawResponse: '█',
@@ -43,11 +41,9 @@ const generateCompletionFragment = (message: string, streaming: boolean, model: 
 ${message}${streaming ? '█' : ''}
 </Assistant>
 
-<User>
+<Chat model="${model}">
 
-</User>
-
-<Chat model="${model}" />`
+</Chat>`
 }
 
 /**
@@ -83,10 +79,7 @@ export async function runGlassChat(
 
   const response = await handleStream(r, handleChatChunk, next => {
     const fragment = generateCompletionFragment(next, options?.progress != null, model)
-    const containsChatTag = initDoc.includes(`<Chat model="${model}" />`)
-    const nextDoc = containsChatTag
-      ? initDoc.trim().replace(`<Chat model="${model}" />`, fragment)
-      : initDoc.trim() + `\n\n${fragment}`
+    const nextDoc = `${initDoc.trim()}\n\n${fragment}`
     if (options?.progress) {
       return options.progress({
         nextDoc: nextDoc,
@@ -96,12 +89,7 @@ export async function runGlassChat(
   })
 
   const fragment = generateCompletionFragment(response, false, model)
-  const containsChatTag = initDoc.includes(`<Chat model="${model}" />`)
-  const nextDoc = containsChatTag
-    ? initDoc.trim().replace(`<Chat model="${model}" />`, fragment)
-    : initDoc.trim() + `\n\n${fragment}`
-
-  console.log('NEXT_DOC', nextDoc)
+  const nextDoc = `${initDoc.trim()}\n\n${fragment}`
   return {
     initDoc,
     finalDoc: nextDoc,

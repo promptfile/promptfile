@@ -172,6 +172,11 @@ export async function activate(context: vscode.ExtensionContext) {
             await activeEditor.edit(editBuilder => {
               editBuilder.replace(maxRange, nextDoc)
             })
+            const lastLineIndex = activeEditor.document.lineCount
+            activeEditor.selection = new vscode.Selection(
+              new vscode.Position(lastLineIndex - 2, 0),
+              new vscode.Position(lastLineIndex - 2, 0)
+            )
             firstLoad = false
             return
           }
@@ -217,13 +222,6 @@ export async function activate(context: vscode.ExtensionContext) {
             )
           })
         }
-
-        // Move the cursor to between the User tags
-        const lastLineIndex = activeEditor.document.lineCount
-        activeEditor.selection = new vscode.Selection(
-          new vscode.Position(lastLineIndex - 4, 0),
-          new vscode.Position(lastLineIndex - 4, 0)
-        )
       } catch (error) {
         console.error(error)
         void vscode.window.showErrorMessage(`ERROR: ${error}`)

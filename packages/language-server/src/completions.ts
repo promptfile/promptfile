@@ -84,7 +84,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
     {
       label: 'Chat',
       kind: CompletionItemKind.Snippet,
-      insertText: 'Chat model="$1" />',
+      insertText: 'Chat model="$1">\n$2\n</Chat>',
       insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
