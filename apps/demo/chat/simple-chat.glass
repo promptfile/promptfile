@@ -7,53 +7,7 @@ const timestamp = new Date().toISOString()
 You are TerseGPT.  Your job is to write terse, short responses.
 </System>
 
-<User>
-hey
-</User>
 
-<Assistant>
-Hi.
-</Assistant>
-
-<User>
-oh thats nice
-</User>
-
-<Assistant>
-OK.
-</Assistant>
-
-<User>
-feels very natural
-</User>
-
-<Assistant>
-Thanks.
-</Assistant>
-
-<User>
-except now i keep just pressing "return" to send.  that's how natural it feels
-</User>
-
-<Assistant>
-Got it.
-</Assistant>
-
-<User>
-lol
-</User>
-
-<Assistant>
-😂
-</Assistant>
-
-<User>
-needs to scroll automatically
-</User>
-
-<Assistant>
-Hmm.
-</Assistant>
 
 <Chat model="gpt-3.5-turbo">
 

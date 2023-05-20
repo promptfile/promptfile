@@ -157,7 +157,6 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       // get the current cursor position
-      const cursorPosition = activeEditor.selection.active
       let firstLoad = true
       try {
         const resp = await executeGlassFile(activeEditor.document, {}, async ({ nextDoc, rawResponse }) => {
@@ -173,16 +172,16 @@ export async function activate(context: vscode.ExtensionContext) {
               editBuilder.replace(maxRange, nextDoc)
             })
             const lastLineIndex = activeEditor.document.lineCount
-            activeEditor.selection = new vscode.Selection(
-              new vscode.Position(lastLineIndex - 2, 0),
-              new vscode.Position(lastLineIndex - 2, 0)
-            )
+            const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
+            activeEditor.selection = new vscode.Selection(targetPosition, targetPosition)
+            activeEditor.revealRange(new vscode.Range(targetPosition, targetPosition))
             firstLoad = false
             return
           }
           if (!currentText.includes('█') && !firstLoad) {
             return
           }
+
           console.log('progress', { nextDoc, rawResponse })
           const lines = activeEditor.document.getText().split('\n')
           const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
@@ -206,6 +205,9 @@ export async function activate(context: vscode.ExtensionContext) {
               `${rawResponse}█`
             )
           })
+          const lastLineIndex = activeEditor.document.lineCount
+          const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
+          activeEditor.revealRange(new vscode.Range(targetPosition, targetPosition))
         })
 
         while (activeEditor.document.getText().includes('█')) {
@@ -222,6 +224,12 @@ export async function activate(context: vscode.ExtensionContext) {
             )
           })
         }
+
+        const lastLineIndex = activeEditor.document.lineCount
+        activeEditor.selection = new vscode.Selection(
+          new vscode.Position(lastLineIndex - 2, 0),
+          new vscode.Position(lastLineIndex - 2, 0)
+        )
       } catch (error) {
         console.error(error)
         void vscode.window.showErrorMessage(`ERROR: ${error}`)
