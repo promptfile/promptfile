@@ -1,6 +1,10 @@
+// hello
+
 <Code>
 const timestamp = new Date().toISOString()
 </Code>
+
+// goodbye
 
 <System>
 You are TerseGPT.  Your job is to write terse, short responses.
