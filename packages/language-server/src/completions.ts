@@ -1,6 +1,6 @@
 import { CompletionItem, CompletionItemKind, InsertTextFormat, TextDocumentPositionParams } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { findUnmatchedTags } from './diagnostics'
+import { extractUnmatchedTags } from './diagnostics/findUnmatchedTags'
 
 interface ValidAttribute {
   completionItem: CompletionItem
@@ -306,7 +306,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
   if (linePrefix.endsWith('<')) {
     // Find the unclosed tags
     const text = document.getText()
-    const openTags = findUnmatchedTags(text)
+    const openTags = extractUnmatchedTags(text)
 
     // If there are unclosed tags, suggest the latest unclosed tag as a closing tag
     let closingTagCompletion: CompletionItem | null = null
