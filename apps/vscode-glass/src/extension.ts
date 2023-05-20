@@ -157,63 +157,51 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // get the current cursor position
       const cursorPosition = activeEditor.selection.active
-
-      // Add Assistant tags to the end of the document
-      await activeEditor.edit(editBuilder => {
-        const lastLine = activeEditor.document.lineCount
-        editBuilder.insert(new vscode.Position(lastLine, 0), '\n\n<Assistant>\n█\n</Assistant>')
-      })
-
-      // restore the cursor back to its original position
-      activeEditor.selection = new vscode.Selection(cursorPosition, cursorPosition)
+      let firstLoad = true
       try {
-        const resp = await executeGlassFile(
-          activeEditor.document.getText(),
-          activeEditor.document,
-          {},
-          ({ nextDoc, rawResponse }) => {
-            console.log('progress', { nextDoc, rawResponse })
-            const lines = activeEditor.document.getText().split('\n')
-            const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
-            const blockCharacterLine = lines[blockCharacterLineIndex]
-            // find the line of the <Assistant> tag that was before the blockCharacterLine
-            let startAssistantIndex = blockCharacterLineIndex
-            for (let i = blockCharacterLineIndex; i >= 0; i--) {
-              if (lines[i].includes('<Assistant>')) {
-                startAssistantIndex = i
-                break
-              }
-            }
-
-            // Replace the entire range between "<Assistant>" and "</Assistant>"
-            void activeEditor.edit(editBuilder => {
-              editBuilder.replace(
-                new vscode.Range(
-                  new vscode.Position(startAssistantIndex + 1, 0),
-                  new vscode.Position(blockCharacterLineIndex, blockCharacterLine.length)
-                ),
-                `${rawResponse}█`
+        const resp = await executeGlassFile(activeEditor.document, {}, async ({ nextDoc, rawResponse }) => {
+          const currentText = activeEditor.document.getText()
+          if (firstLoad) {
+            const maxRange = activeEditor.document.validateRange(
+              new vscode.Range(
+                new vscode.Position(0, 0),
+                new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
               )
+            )
+            await activeEditor.edit(editBuilder => {
+              editBuilder.replace(maxRange, nextDoc)
             })
+            firstLoad = false
+            return
           }
-        )
-        // Add User tags to the end of the document
-        await activeEditor.edit(editBuilder => {
-          const lastLine = activeEditor.document.lineCount
-          editBuilder.insert(new vscode.Position(lastLine, 0), '\n\n<User>\n\n</User>')
+          if (!currentText.includes('█') && !firstLoad) {
+            return
+          }
+          console.log('progress', { nextDoc, rawResponse })
+          const lines = activeEditor.document.getText().split('\n')
+          const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
+          const blockCharacterLine = lines[blockCharacterLineIndex]
+          // find the line of the <Assistant> tag that was before the blockCharacterLine
+          let startAssistantIndex = blockCharacterLineIndex
+          for (let i = blockCharacterLineIndex; i >= 0; i--) {
+            if (lines[i].includes('<Assistant>')) {
+              startAssistantIndex = i
+              break
+            }
+          }
+
+          // Replace the entire range between "<Assistant>" and "</Assistant>"
+          void activeEditor.edit(editBuilder => {
+            editBuilder.replace(
+              new vscode.Range(
+                new vscode.Position(startAssistantIndex + 1, 0),
+                new vscode.Position(blockCharacterLineIndex, blockCharacterLine.length)
+              ),
+              `${rawResponse}█`
+            )
+          })
         })
 
-        // Move the cursor to between the User tags
-        const lastLine = activeEditor.document.lineCount
-        activeEditor.selection = new vscode.Selection(
-          new vscode.Position(lastLine - 2, 0),
-          new vscode.Position(lastLine - 2, 0)
-        )
-      } catch (error) {
-        console.error(error)
-        void vscode.window.showErrorMessage(`ERROR: ${error}`)
-      } finally {
-        // remove the block character
         while (activeEditor.document.getText().includes('█')) {
           await activeEditor.edit(editBuilder => {
             const lines = activeEditor.document.getText().split('\n')
@@ -228,6 +216,16 @@ export async function activate(context: vscode.ExtensionContext) {
             )
           })
         }
+
+        // Move the cursor to between the User tags
+        const lastLineIndex = activeEditor.document.lineCount
+        activeEditor.selection = new vscode.Selection(
+          new vscode.Position(lastLineIndex - 4, 0),
+          new vscode.Position(lastLineIndex - 4, 0)
+        )
+      } catch (error) {
+        console.error(error)
+        void vscode.window.showErrorMessage(`ERROR: ${error}`)
       }
     }),
     vscode.commands.registerCommand('glass.openSettings', async () => {

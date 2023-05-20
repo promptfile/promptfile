@@ -21,10 +21,33 @@ export async function runGlass(
   initDoc: string
   finalDoc: string
 }> {
+  if (options.progress) {
+    const completionFragment = generateCompletionFragment('', true, model)
+    const containsChatTag = initDoc.includes(`<Chat model="${model}" />`)
+    const nextDoc = containsChatTag
+      ? initDoc.trim().replace(`<Chat model="${model}" />`, completionFragment)
+      : initDoc.trim() + `\n\n${completionFragment}`
+    options.progress({
+      nextDoc: nextDoc,
+      rawResponse: '█',
+    })
+  }
   if (model === 'gpt-3.5-turbo' || model === 'gpt-4') {
     return await runGlassChat(fileName, model, initDoc, options)
   }
   return runGlassCompletion(fileName, model as any, initDoc, options)
+}
+
+const generateCompletionFragment = (message: string, streaming: boolean, model: string) => {
+  return `<Assistant>
+${message}${streaming ? '█' : ''}
+</Assistant>
+
+<User>
+
+</User>
+
+<Chat model="${model}" />`
 }
 
 /**
@@ -59,39 +82,29 @@ export async function runGlassChat(
   })
 
   const response = await handleStream(r, handleChatChunk, next => {
+    const fragment = generateCompletionFragment(next, options?.progress != null, model)
+    const containsChatTag = initDoc.includes(`<Chat model="${model}" />`)
+    const nextDoc = containsChatTag
+      ? initDoc.trim().replace(`<Chat model="${model}" />`, fragment)
+      : initDoc.trim() + `\n\n${fragment}`
     if (options?.progress) {
-      options.progress({
-        // going to be smart
-        nextDoc: `${initDoc}
-
-<Assistant>
-${next}
-</Assistant>
-
-<User>
-
-</User>
-
-<Chat model="${model}" />
-`,
+      return options.progress({
+        nextDoc: nextDoc,
         rawResponse: next,
       })
     }
   })
 
+  const fragment = generateCompletionFragment(response, false, model)
+  const containsChatTag = initDoc.includes(`<Chat model="${model}" />`)
+  const nextDoc = containsChatTag
+    ? initDoc.trim().replace(`<Chat model="${model}" />`, fragment)
+    : initDoc.trim() + `\n\n${fragment}`
+
+  console.log('NEXT_DOC', nextDoc)
   return {
     initDoc,
-    finalDoc: `${initDoc}
-
-<Assistant>
-${response}
-</Assistant>
-
-<User>
-
-</User>
-
-<Chat model="${model}" />`,
+    finalDoc: nextDoc,
   }
 }
 
@@ -157,7 +170,7 @@ async function handleStream(
   let fullResult = ''
   const decoder = new TextDecoder()
 
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     const readStream = new Readable().wrap(r.body as any)
 
     readStream.on('data', chunk => {
@@ -186,41 +199,7 @@ async function handleStream(
     })
   })
 
-  // const reader = r.body!.getReader()
-  // const decoder = new TextDecoder()
-
-  // let fullResult = ''
-
-  // const readStream = async () => {
-  //   const { done, value } = await reader.read()
-
-  //   if (done) {
-  //     console.log('Stream has been closed by the server.')
-  //     return
-  //   }
-
-  //   const chunk = decoder.decode(value, { stream: true })
-  //   const lines = chunk.split('\n')
-
-  //   for (const line of lines) {
-  //     if (line.startsWith('data:')) {
-  //       const content = line.slice('data:'.length).trim()
-  //       if (content === '[DONE]') {
-  //         break
-  //       }
-  //       const eventData = JSON.parse(content)
-  //       fullResult = processChunk(fullResult, eventData)
-  //       progress(fullResult)
-  //     }
-  //   }
-
-  //   // Continue reading the stream
-  //   await readStream()
-  // }
-
-  // // Start reading the stream
-  // await readStream()
-  // return fullResult
+  return fullResult
 }
 
 function handleChatChunk(currResult: string, eventData: { choices: { delta: { content: string } }[] }) {
