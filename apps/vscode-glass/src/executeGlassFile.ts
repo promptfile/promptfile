@@ -6,6 +6,7 @@ import path from 'path'
 import { TextDecoder } from 'util'
 import vm from 'vm'
 import * as vscode from 'vscode'
+import { getOpenaiKey } from './util/getOpenaiKey'
 import { getDocumentFilename } from './util/isGlassFile'
 
 export async function executeGlassFile(
@@ -20,7 +21,7 @@ export async function executeGlassFile(
     throw new Error('Could not find active editor workspace folder')
   }
   const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
-  const openaiKey: string = vscode.workspace.getConfiguration('glass').get('openaiKey') as any
+  const openaiKey = getOpenaiKey()
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)

@@ -6,6 +6,7 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeGlassFile } from './executeGlassFile'
 import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
+import { getOpenaiKey } from './util/getOpenaiKey'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getHtmlForWebview } from './webview'
 
@@ -94,8 +95,7 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
       const filename = getDocumentFilename(activeEditor.document)
-      const config = vscode.workspace.getConfiguration('glass')
-      const openaiKey = config.get('openaiKey') as string | undefined
+      const openaiKey = getOpenaiKey()
 
       if (openaiKey == null || openaiKey === '') {
         await vscode.window.showErrorMessage('Set `glass.openaiKey` in your VSCode preferences to run Glass files.')
@@ -147,8 +147,8 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
 
+      const openaiKey = getOpenaiKey()
       const config = vscode.workspace.getConfiguration('glass')
-      const openaiKey = config.get('openaiKey') as string | undefined
       const defaultChatModel = config.get('defaultChatModel') as string | undefined
 
       if (openaiKey == null || openaiKey === '') {
@@ -343,7 +343,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const config = vscode.workspace.getConfiguration('glass')
-      const openaiKey = config.get('openaiKey') as string | undefined
+      const openaiKey = getOpenaiKey()
       const defaultChatModel = config.get('defaultChatModel') as string | undefined
 
       if (openaiKey == null || openaiKey === '') {
