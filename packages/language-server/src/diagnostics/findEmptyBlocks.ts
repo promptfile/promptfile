@@ -1,32 +1,31 @@
+import { parseGlassTopLevelJsxElements } from '@glass-lang/glassc'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
 export function findEmptyBlocks(textDocument: TextDocument): Diagnostic[] {
-  const emptyBlocks: { tag: string; start: number; end: number }[] = []
+  try {
+    const parsed: any[] = parseGlassTopLevelJsxElements(textDocument.getText())
+    const tagsToCheck = new Set(['Assistant', 'Code', 'Prompt', 'System', 'Text', 'User'])
+    const emptyTags = parsed.filter(
+      tag =>
+        tagsToCheck.has(tag.tagName) &&
+        (tag.children.length === 0 || (tag.length === 1 && tag.children[0].length === 0))
+    )
+    console.log(emptyTags.map(tag => tag.children))
+    return emptyTags.map(tag => {
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Warning,
+        range: {
+          start: textDocument.positionAt(tag.position.start.offset),
+          end: textDocument.positionAt(tag.position.end.offset),
+        },
+        message: `Empty <${tag.tagName}> tag.`,
+        source: 'glass',
+      }
 
-  const blockRegex = /<(User|Assistant|System|Prompt|Code|Text)(\s+[^>]*)?>\s*<\/\1>/g
-  let blockMatch
-  while ((blockMatch = blockRegex.exec(textDocument.getText()))) {
-    const blockStart = blockMatch.index
-    const blockEnd = blockMatch.index + blockMatch[0].length
-    const tag = blockMatch[1]
-
-    emptyBlocks.push({ tag, start: blockStart, end: blockEnd })
+      return diagnostic
+    })
+  } catch {
+    return []
   }
-
-  return emptyBlocks.map(({ tag, start, end }) => {
-    const range = {
-      start: textDocument.positionAt(start),
-      end: textDocument.positionAt(end),
-    }
-
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range,
-      message: `Empty <${tag}> block.`,
-      source: 'glass',
-    }
-
-    return diagnostic
-  })
 }
