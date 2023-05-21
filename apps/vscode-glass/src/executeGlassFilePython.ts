@@ -55,9 +55,11 @@ print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))
   return output
 }
 
+const pythonExecutable = vscode.workspace.getConfiguration('glass').get('pythonPath') || 'python3'
+
 function executePythonScript(filePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    child_process.exec(`python3 ${filePath}`, (error, stdout, stderr) => {
+    child_process.exec(`${pythonExecutable} ${filePath}`, (error, stdout, stderr) => {
       if (error) {
         reject(`Error: ${error.message}`)
         return
