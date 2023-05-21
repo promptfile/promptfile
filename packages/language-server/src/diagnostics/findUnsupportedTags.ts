@@ -20,14 +20,12 @@ export function findUnsupportedTags(textDocument: TextDocument): Diagnostic[] {
     ])
     const unsupportedTags = parsed.filter(tag => !supportedTags.has(tag.tagName))
     return unsupportedTags.map(tag => {
-      const range = {
-        start: textDocument.positionAt(tag.position.start.offset),
-        end: textDocument.positionAt(tag.position.end.offset),
-      }
-
       const diagnostic: Diagnostic = {
         severity: DiagnosticSeverity.Error,
-        range,
+        range: {
+          start: textDocument.positionAt(tag.position.start.offset),
+          end: textDocument.positionAt(tag.position.end.offset),
+        },
         message: `Unsupported <${tag.tagName}> tag.`,
         source: 'glass',
       }

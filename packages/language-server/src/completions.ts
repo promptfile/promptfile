@@ -235,7 +235,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
             kind: 'markdown',
             value: 'The `role` attribute allows you to assign a role to a chat block.',
           },
-          detail: '"system, user, or assistant',
+          detail: 'system, user, or assistant',
           data: 7,
         },
         values: [

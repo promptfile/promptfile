@@ -90,6 +90,7 @@ documents.onDidChangeContent(change => {
 })
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
+  connection.console.log('validateTextDocument')
   const diagnostics: Diagnostic[] = [
     ...findUnmatchedTags(textDocument),
     ...findUnsupportedTags(textDocument),

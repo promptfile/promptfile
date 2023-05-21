@@ -1,15 +1,7 @@
-<Code>
-const timestamp = new Date().toISOString()
-</Code>
-
-<System>
-You are TerseGPT.  Your job is to write terse, short responses.
-</System>
-
-  <User>
-  hi
-  </User>
+<User>
+hi
+</User>
 
 <Chat model="gpt-3.5-turbo">
-Hey, how are you?
+Hello
 </Chat>
