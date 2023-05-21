@@ -33,7 +33,9 @@ export function transformDynamicBlocksPython(doc: string) {
           )
 
     const transformedNode = nestedTagHelper(Object.keys(jsxInterpolations).length, docSection, node)
-    jsxInterpolations = { ...jsxInterpolations, ...transformedNode.jsxInterpolations }
+    if (node.tagName !== 'For') {
+      jsxInterpolations = { ...jsxInterpolations, ...transformedNode.jsxInterpolations }
+    }
     for (const s of transformedNode.undeclaredSymbols) {
       undeclaredSymbols.add(s)
     }

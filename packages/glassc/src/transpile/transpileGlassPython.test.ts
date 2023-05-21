@@ -18,7 +18,7 @@ foo
       folders
     )
 
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt):
+    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
     GLASSVAR = {
         0: """{}""".format("""<Prompt>
 {}
@@ -41,7 +41,7 @@ foo
       }
     )
 
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt):
+    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
     GLASSVAR = {
         0: """{}""".format("""<Prompt>
 {}
@@ -58,7 +58,7 @@ foo
       folders
     )
 
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt):
+    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
     foo = opt["args"]["foo"]
     GLASSVAR = {
         0: """{}""".format("""<Prompt>
@@ -78,7 +78,7 @@ and me`,
       folders
     )
 
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt):
+    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
     foo = opt["args"]["foo"]
     GLASSVAR = {
         0: """{}""".format("""<Prompt>
@@ -98,7 +98,7 @@ and me""".format(GLASSVAR[0])`)
       folders
     )
 
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt):
+    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
     foo = opt["args"]["foo"]
     GLASSVAR = {
         0: """{}""".format("""<Prompt>
@@ -116,7 +116,7 @@ and me""".format(GLASSVAR[0])`)
       folders
     )
 
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt):
+    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
     foo = opt["args"]["foo"]
     bar = opt["args"]["bar"]
     GLASSVAR = {
@@ -136,7 +136,7 @@ and me""".format(GLASSVAR[0])`)
       folders
     )
 
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt):
+    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
     foo = opt["args"]["foo"]
     bar = opt["args"]["bar"]
     GLASSVAR = {

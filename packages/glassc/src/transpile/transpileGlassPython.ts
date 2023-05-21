@@ -4,6 +4,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { parseGlassAST } from '../parse/parseGlassAST.js'
 import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements.js'
+import { parsePythonLocalVariables, parsePythonUndeclaredSymbols } from '../parse/parsePython.js'
 import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter.js'
 import { transformDynamicBlocksPython } from '../transform/transformDynamicBlocksPython.js'
 import { getGlassExportName } from './transpileGlass.js'
@@ -136,16 +137,43 @@ export function transpileGlassFilePython(
   // after interpolating everything, we can unescape `\{ \}` sequences
   // codeSanitizedDoc = unescapeGlass(codeSanitizedDoc)
 
-  const undeclaredVars = dynamicTransform.undeclaredSymbols.map(s => `${s} = opt["args"]["${s}"]`).join('\n    ')
+  const undeclaredSymbols = new Set(dynamicTransform.undeclaredSymbols)
+  // parse the code blocks to remove undeclared symbols
+  for (const codeBlock of codeBlocks) {
+    const localVars = parsePythonLocalVariables(codeBlock.content)
+    for (const localVar of localVars) {
+      undeclaredSymbols.delete(localVar)
+    }
+    const undeclaredVars = parsePythonUndeclaredSymbols(codeBlock.content)
+    for (const undeclaredVar of undeclaredVars) {
+      undeclaredSymbols.add(undeclaredVar)
+    }
+  }
+
+  // if any imports match "import .+ from .+", translate them to "from .+ import .+"
+  for (let i = 0; i < imports.length; i++) {
+    const importLine = imports[i]
+    const match = importLine.match(/import (.+) from ['"](.+)['"]/)
+    if (match) {
+      undeclaredSymbols.delete(match[1])
+      if (match[2] === match[1]) {
+        imports[i] = `import ${match[1]}`
+      } else {
+        imports[i] = `from ${match[2]} import ${match[1]}`
+      }
+    }
+  }
+
+  const undeclaredVars = Array.from(undeclaredSymbols)
+    .map(s => `${s} = opt["args"]["${s}"]`)
+    .join('\n    ')
 
   let codeStart = ''
   if (undeclaredVars) {
-    codeStart = codeStart ? codeStart + undeclaredVars + '\n' : '\n    ' + undeclaredVars
+    codeStart = '\n    ' + undeclaredVars
   }
   if (codeBlocks.length) {
-    codeStart = codeStart
-      ? codeStart + codeBlocks.map(b => b.content).join('\n') + '\n'
-      : '\n    ' + codeBlocks.map(b => b.content).join('\n')
+    codeStart = codeStart + '\n    ' + codeBlocks.flatMap(b => b.content.split('\n').join('\n    '))
   }
 
   const glassvar =
@@ -159,7 +187,7 @@ export function transpileGlassFilePython(
 
   const code = `${imports.join('\n')}
 
-def ${exportName}(opt):${codeStart}
+def ${exportName}(opt = { "args": {} }):${codeStart}
     ${glassvar}
     return """${finalDoc}""".format(${formatArgs.join(', ')})`
 

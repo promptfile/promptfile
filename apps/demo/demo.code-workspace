@@ -2,8 +2,8 @@
   "settings": {
     "git.openRepositoryInParentFolders": "never",
     "glass.language": "typescript",
-    "glass.outputDirectory": "${workspaceFolder}/src",
+    "glass.outputDirectory": "${workspaceFolder}",
     "editor.wordWrap": "on"
   },
-  "folders": [{ "path": "chat" }, { "path": "gpt3" }, { "path": "scratchpad" }]
+  "folders": [{ "path": "chat" }, { "path": "gpt3" }, { "path": "scratchpad" }, { "path": "test" }]
 }

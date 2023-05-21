@@ -13,7 +13,7 @@ export async function runGlass(
   fileName: string,
   model: 'gpt-3.5-turbo' | 'gpt-4' | 'text-davinci-003' | 'curie' | 'babbage' | 'ada',
   initDoc: string,
-  options: {
+  options?: {
     openaiKey?: string
     progress?: (data: { nextDoc: string; rawResponse?: string }) => void
   }
@@ -22,7 +22,7 @@ export async function runGlass(
   finalDoc: string
 }> {
   initDoc = initDoc.replace(`<Chat model="${model}">`, '<User>').replace('</Chat', '</User')
-  if (options.progress) {
+  if (options?.progress) {
     const completionFragment = generateCompletionFragment('', true, model)
     const nextDoc = `${initDoc.trim()}\n\n${completionFragment}`
     options.progress({

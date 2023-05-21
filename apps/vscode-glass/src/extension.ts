@@ -4,6 +4,7 @@ import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeGlassFile } from './executeGlassFile'
+import { executeGlassFileOld } from './executeGlassFileOld'
 import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
 import { getOpenaiKey } from './util/getOpenaiKey'
@@ -336,6 +337,24 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       }
     }),
+    vscode.commands.registerCommand('glass.runOld', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+        return
+      }
+
+      const config = vscode.workspace.getConfiguration('glass')
+      const openaiKey = getOpenaiKey()
+      const defaultChatModel = config.get('defaultChatModel') as string | undefined
+
+      if (openaiKey == null || openaiKey === '') {
+        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your settings to run Glass files.')
+        return
+      }
+
+      const resp = await executeGlassFileOld(activeEditor.document, {})
+      console.log('execute glass file old returned', { resp })
+    }),
     vscode.commands.registerCommand('glass.runPython', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || activeEditor.document.languageId !== 'glass') {
@@ -355,7 +374,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const cursorPosition = activeEditor.selection.active
 
       const resp = await executeGlassFilePython(activeEditor.document, {})
-      console.log('execute glass file python returned', { resp })
+      console.log('execute glass file python returned', JSON.stringify({ resp }))
     })
   )
 }

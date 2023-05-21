@@ -1,0 +1,9 @@
+<Code>
+userText = "Tell me a story."
+</Code>
+
+<System>
+You are a helpful assistant. 
+
+${userText}
+</System>

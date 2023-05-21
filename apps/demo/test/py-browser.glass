@@ -1,0 +1,32 @@
+import requests from "requests"
+
+<Code>
+response = requests.get("https://elliottburris.com")
+</Code>
+
+<System>
+your job is to answer questions based on the following website code:
+###
+${response.content}
+###
+</System>
+
+<User>
+hey where did elliott go to grad school?
+</User>
+
+<Assistant>
+Elliott Burris went to graduate school at Cambridge, where he received an M.Phil.
+</Assistant>
+
+<User>
+what is elliott's favorite color?
+</User>
+
+<Assistant>
+Sorry, we cannot determine Elliott's favorite color from the provided website code.
+</Assistant>
+
+<User>
+what is elliott's last name?
+</User>

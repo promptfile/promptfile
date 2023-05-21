@@ -1,0 +1,17 @@
+<Code>
+messages = [
+    { "role": 'user', "content": 'name an ice cream', "show": True  },
+    { "role": "assistant", "content": 'Vanilla', "show": True },
+    { "role": 'user', "content": 'name a fruit', "show": True  }
+]
+</Code>
+
+<For each={messages} item="m">
+
+<Block role={m.get("role")}>
+<Text if={m.get("show")}>
+${m.get("content")}
+</Text>
+</Block>
+
+</For>

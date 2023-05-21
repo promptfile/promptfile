@@ -50,6 +50,8 @@ print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))
 
   const output = await executePythonScript(tmpFilePath)
 
+  fs.unlinkSync(tmpFilePath)
+
   return output
 }
 

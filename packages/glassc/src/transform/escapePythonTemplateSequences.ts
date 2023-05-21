@@ -53,6 +53,17 @@ export function escapePythonTemplateSequences(str: string) {
     }
   }
 
+  // if the string starts with or ends with a double quote, escape it
+  if (output.startsWith('"')) {
+    output = `\\"${output.slice(1)}`
+  }
+  if (output.endsWith('"')) {
+    output = `${output.slice(0, output.length - 1)}\\"`
+  }
+
+  // escape any tripe quotes """ sequence
+  output = output.replaceAll('"""', '\\"\\"\\"')
+
   return output
   // const stack: number[] = []
   // let output = ''
