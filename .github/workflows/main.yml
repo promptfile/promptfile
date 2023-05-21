@@ -11,11 +11,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Install Dependencies
-        uses: nick-invision/retry@v2
-        with:
-          timeout_minutes: 3
-          max_attempts: 3
-          command: npm ci
+      - run: npm ci
       - run: npm run build
       - run: npm run test

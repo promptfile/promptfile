@@ -10,7 +10,6 @@
     "test:watch": "mocha --watch",
     "build": "tsup src/index.ts",
     "dev": "npm run build -- --watch",
-    "prepare": "npm run build",
     "lint": "eslint src --ext ts"
   },
   "private": true,
