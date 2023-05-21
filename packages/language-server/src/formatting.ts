@@ -1,6 +1,6 @@
 export function formatDocument(text: string) {
   // Check if the document contains any of the required tags
-  const hasTags = /<(Prompt|User|System|Assistant|Code)/.test(text)
+  const hasTags = /<(Prompt|User|System|Assistant|Code|Chat)/.test(text)
 
   // If no tags are present, wrap the entire content in <Prompt> </Prompt> tags
   if (!hasTags) {
@@ -12,8 +12,8 @@ export function formatDocument(text: string) {
 
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index]
-    const isClosingTag = line.match(/^<\/(User|System|Assistant|Code|Prompt)/)
-    const isOpeningTag = line.match(/^<(User|System|Assistant|Code|Prompt)/)
+    const isClosingTag = line.match(/^<\/(User|System|Assistant|Code|Prompt|Chat)/)
+    const isOpeningTag = line.match(/^<(User|System|Assistant|Code|Prompt|Chat)/)
 
     if (isOpeningTag && insertEmptyLine) {
       if (formattedLines[formattedLines.length - 1].trim() !== '') {
@@ -35,5 +35,12 @@ export function formatDocument(text: string) {
     return !(line.trim() === '' && formattedLines[index - 1].trim() === '')
   })
 
-  return cleanedLines.join('\n').trim()
+  let finalText = cleanedLines.join('\n').trim()
+  const tags = ['User', 'Assistant', 'System', 'Code', 'Prompt', 'Chat', 'Text']
+  tags.forEach(tag => {
+    const regexOpen = new RegExp(`<\\s+${tag}`, 'g')
+    const regexClose = new RegExp(`${tag}\\s+>`, 'g')
+    finalText = finalText.replace(regexOpen, `<${tag}`).replace(regexClose, `${tag}>`)
+  })
+  return finalText
 }

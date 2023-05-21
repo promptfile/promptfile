@@ -1,7 +1,15 @@
-<User>
+<System>
+You are ChatGPT. Be polite and responsive.
+</System>
+
+<User name="hi">
 hi
 </User>
 
+<Assistant>
+Hello, how can I help you?
+</Assistant>
+
 <Chat model="gpt-3.5-turbo">
-Hello
+
 </Chat>
