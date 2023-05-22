@@ -100,7 +100,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     ...findEmptyBlocks(textDocument),
   ]
 
-  connection.console.log('Sending diagnostics: ' + diagnostics)
   void connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })
 }
 

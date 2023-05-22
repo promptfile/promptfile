@@ -8,9 +8,6 @@
       "include": "#markdown-frontmatter"
     },
     {
-      "include": "#code-blocks"
-    },
-    {
       "include": "#line-comments"
     },
     {
@@ -249,6 +246,9 @@
           },
           "patterns": [
             {
+              "include": "#code-element"
+            },
+            {
               "include": "#user-element"
             },
             {
@@ -274,37 +274,33 @@
       "name": "comment.line",
       "match": "^//.*$"
     },
-    "code-blocks": {
-      "begin": "^(<)(Code)(>)",
-      "end": "^(<\\/)(Code)(>)",
-      "name": "source.glass.code",
-      "captures": {
+    "user-element": {
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Code)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
         "1": {
-          "name": "punctuation.definition.tag.begin.tsx"
+          "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.code.name"
+          "name": "punctuation.definition.tag.closing.jsx"
         },
         "3": {
-          "name": "punctuation.definition.tag.end.tsx"
-        }
-      },
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.begin.tsx"
-        },
-        "2": {
           "name": "source.glass.code.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.tsx"
         }
       },
       "patterns": [
         {
           "include": "source.js"
         }
-      ]
+      ],
+      "end": "(?:(\\/)\\s*)?(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
     },
     "markdown-frontmatter": {
       "patterns": [
@@ -350,6 +346,9 @@
         },
         {
           "include": "#extension-mdx-esm"
+        },
+        {
+          "include": "#code-element"
         },
         {
           "include": "#user-element"
