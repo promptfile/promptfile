@@ -58,6 +58,18 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
       data: 5,
     },
     {
+      label: 'State',
+      kind: CompletionItemKind.Snippet,
+      insertText: 'State>\n$1\n</State>',
+      insertTextFormat: InsertTextFormat.Snippet,
+      documentation: {
+        kind: 'markdown',
+        value: 'Creates a State tag to hold document state',
+      },
+      detail: '(element) holds document state',
+      data: 5,
+    },
+    {
       label: 'Text',
       kind: CompletionItemKind.Snippet,
       insertText: 'Text>\n$1\n</Text>',

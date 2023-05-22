@@ -14,6 +14,7 @@ export function findUnsupportedTags(textDocument: TextDocument): Diagnostic[] {
       'Code',
       'For',
       'Prompt',
+      'State',
       'System',
       'Text',
       'User',

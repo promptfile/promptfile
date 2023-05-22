@@ -250,6 +250,12 @@
           {
             "scope": "source.glass.text.name",
             "settings": {
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.state.name",
+            "settings": {
               "foreground": "#7F848E",
               "fontStyle": "italic"
             }

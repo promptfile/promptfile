@@ -43,16 +43,7 @@ export const glassAttributes: Record<string, GlassAttribute[]> = {
       values: ['gpt-3.5-turbo', 'gpt-4'],
     },
   ],
-  Code: [
-    {
-      name: 'language',
-      detail: 'language of the code block',
-      documentation: 'The `language` attribute allows you to assign a language to a code block.',
-      type: 'string',
-      values: ['javascript', 'typescript', 'python'],
-      optional: true,
-    },
-  ],
+  Code: [],
   Completion: [
     {
       name: 'model',
@@ -87,6 +78,7 @@ export const glassAttributes: Record<string, GlassAttribute[]> = {
       optional: true,
     },
   ],
+  State: [],
   User: [
     {
       name: 'name',

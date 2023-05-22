@@ -190,6 +190,37 @@
         }
       }
     },
+    "state-element": {
+      "begin": "(<)(State)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.state.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.json"
+        }
+      ],
+      "end": "(<\\/)(State)(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.state.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
     "chat-element": {
       "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Chat)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
@@ -335,6 +366,9 @@
               "include": "#code-element"
             },
             {
+              "include": "#state-element"
+            },
+            {
               "include": "#chat-element"
             },
             {
@@ -348,9 +382,6 @@
             },
             {
               "include": "#system-element"
-            },
-            {
-              "include": "#if-element"
             },
             {
               "include": "#extension-mdx-expression-flow"
@@ -441,6 +472,9 @@
         },
         {
           "include": "#code-element"
+        },
+        {
+          "include": "#state-element"
         },
         {
           "include": "#chat-element"
@@ -2958,7 +2992,7 @@
           "name": "markup.code.json.mdx",
           "patterns": [
             {
-              "include": "source.json"
+              "include": "#commonmark-code-fenced-json"
             }
           ]
         },
