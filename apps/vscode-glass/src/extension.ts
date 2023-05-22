@@ -3,13 +3,12 @@ import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
+import { LeftPanelWebview } from './LeftPanelWebview'
 import { executeGlassFile } from './executeGlassFile'
 import { executeGlassFileOld } from './executeGlassFileOld'
 import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
 import { getOpenaiKey } from './util/getOpenaiKey'
-import { getDocumentFilename } from './util/isGlassFile'
-import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
 
@@ -38,6 +37,8 @@ export async function activate(context: vscode.ExtensionContext) {
   )
   await client.start()
 
+  const leftPanelWebViewProvider = new LeftPanelWebview(context?.extensionUri, {})
+
   let activeEditor = vscode.window.activeTextEditor
 
   const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
@@ -65,6 +66,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider('glass', leftPanelWebViewProvider),
     characterCount,
     vscode.window.onDidChangeActiveTextEditor(
       editor => {
@@ -89,58 +91,8 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    // vscode.workspace.onDidCloseTextDocument(document => diagnosticCollection.delete(document.uri))
-    vscode.commands.registerCommand('glass.playground', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
-        return
-      }
-      const filename = getDocumentFilename(activeEditor.document)
-      const openaiKey = getOpenaiKey()
-
-      if (openaiKey == null || openaiKey === '') {
-        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your VSCode preferences to run Glass files.')
-        return
-      }
-
-      const panel = vscode.window.createWebviewPanel(
-        'glass.webView', // viewType
-        `${filename} (playground)`, // Title of the panel displayed to the user
-        vscode.ViewColumn.Beside, // Editor column to show the new webview panel in.
-        {
-          enableScripts: true,
-          retainContextWhenHidden: true,
-        }
-      )
-      panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
-      panel.webview.onDidReceiveMessage(async (message: any) => {
-        switch (message.action) {
-          case 'getFilename':
-            await panel.webview.postMessage({
-              action: 'setFilename',
-              data: {
-                filename,
-              },
-            })
-            break
-          case 'getBlocks':
-            // const blocks = await executeGlassFile(activeEditor.document, {})
-            // await panel.webview.postMessage({
-            //   action: 'setBlocks',
-            //   data: {
-            //     filename,
-            //     blocks,
-            //   },
-            // })
-            break
-          case 'createBlock':
-            const text = message.data.text
-
-            break
-          default:
-            break
-        }
-      })
+    vscode.commands.registerCommand('glass.openSupportChat', async () => {
+      await vscode.commands.executeCommand('workbench.view.extension.glass')
     }),
     vscode.commands.registerCommand('glass.run', async () => {
       const activeEditor = vscode.window.activeTextEditor

@@ -29,7 +29,6 @@ export function findFoldableTagPairs(
 }
 
 export function findMarkdownFoldingRanges(text: string): { tag: string; start: number; end: number }[] {
-  const headerPattern = /^(#{1,6})[^#].*$/gm // Matches markdown headers
   const codeBlockPattern = /```[^`]*```/gms // Matches code blocks
 
   const ranges: { tag: string; start: number; end: number }[] = []

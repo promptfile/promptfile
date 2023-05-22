@@ -30,19 +30,7 @@ export const BlocksView = (props: BlocksViewProps) => {
           height: '100%',
         }}
       >
-        <div
-          style={{
-            opacity: 0.3,
-            fontSize: '12px',
-            fontStyle: 'italic',
-            width: '100%',
-            textAlign: 'center',
-            paddingTop: '16px',
-            paddingBottom: '16px',
-          }}
-        >
-          Playground: {playgroundId}
-        </div>
+        <div style={{ width: '100%', height: '16px' }} />
         {filteredBlocks.map((block, index) => (
           <span
             key={index}
@@ -54,8 +42,8 @@ export const BlocksView = (props: BlocksViewProps) => {
               paddingRight: '16px',
             }}
           >
-            <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '2px' }}>
-              {block.role === 'user' ? 'User' : 'Assistant'}
+            <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>
+              {block.role === 'user' ? 'User' : 'Glass'}
             </span>
             {block.content}
           </span>

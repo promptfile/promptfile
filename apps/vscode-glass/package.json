@@ -30,6 +30,9 @@
     "llm"
   ],
   "icon": "assets/glass.png",
+  "activationEvents": [
+    "onView:glass"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "esbuild extension=./src/extension.ts language-server=../../packages/language-server/src/server.ts --bundle --platform=node --target=node16 --external:vscode --external:esbuild --external:@glass-lang/glasslib --outdir=out && npm run build:rig",
@@ -79,6 +82,25 @@
         "path": "./assets/glass-icon-theme.json"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "webview",
+          "title": "Glass",
+          "icon": "./assets/icon-bar.svg"
+        }
+      ]
+    },
+    "views": {
+      "webview": [
+        {
+          "type": "webview",
+          "id": "glass",
+          "name": "",
+          "icon": "src/assets/icon-bar.svg"
+        }
+      ]
+    },
     "colors": [
       {
         "id": "glass.code.background",
@@ -119,8 +141,8 @@
         "title": "Glass: Run"
       },
       {
-        "command": "glass.playground",
-        "title": "Glass: Open playground"
+        "command": "glass.openSupportChat",
+        "title": "Glass: Open support chat"
       },
       {
         "command": "glass.openSettings",
@@ -137,10 +159,6 @@
       {
         "command": "glass.transpilePython",
         "title": "Glass: Transpile current file (python)"
-      },
-      {
-        "command": "glass.runOld",
-        "title": "Glass: Run (old)"
       },
       {
         "command": "glass.runPython",
@@ -160,12 +178,6 @@
         "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorTextFocus && resourceLangId == glass"
-      },
-      {
-        "command": "glass.playground",
-        "key": "ctrl+shift+r",
-        "mac": "cmd+shift+r",
         "when": "editorTextFocus && resourceLangId == glass"
       }
     ],
@@ -256,7 +268,7 @@
           {
             "scope": "source.glass.state.name",
             "settings": {
-              "foreground": "#7F848E",
+              "foreground": "#7a7a7a",
               "fontStyle": "italic"
             }
           },
