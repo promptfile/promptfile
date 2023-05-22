@@ -22,6 +22,7 @@ export function findInvalidLines(textDocument: TextDocument): Diagnostic[] {
         line.startsWith('<System') ||
         line.startsWith('<Prompt') ||
         line.startsWith('<Code') ||
+        line.startsWith('<Block') ||
         line.startsWith('<Text') ||
         line.startsWith('<Chat') ||
         line.startsWith('<State')
@@ -35,6 +36,7 @@ export function findInvalidLines(textDocument: TextDocument): Diagnostic[] {
         line.startsWith('</System>') ||
         line.startsWith('</Prompt>') ||
         line.startsWith('</Code>') ||
+        line.startsWith('</Block>') ||
         line.startsWith('</Text>') ||
         line.startsWith('</Chat>') ||
         line.startsWith('</State>')
