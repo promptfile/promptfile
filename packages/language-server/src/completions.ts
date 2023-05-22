@@ -60,7 +60,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
     {
       label: 'State',
       kind: CompletionItemKind.Snippet,
-      insertText: 'State>\n$1\n</State>',
+      insertText: 'State>\n{\n\t"$1": "$2"\n}\n</State>',
       insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
