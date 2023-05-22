@@ -5,7 +5,6 @@ import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { LeftPanelWebview } from './LeftPanelWebview'
 import { executeGlassFile } from './executeGlassFile'
-import { executeGlassFileOld } from './executeGlassFileOld'
 import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
 import { getOpenaiKey } from './util/getOpenaiKey'
@@ -105,7 +104,8 @@ export async function activate(context: vscode.ExtensionContext) {
       const defaultChatModel = config.get('defaultChatModel') as string | undefined
 
       if (openaiKey == null || openaiKey === '') {
-        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your VSCode preferences to run Glass files.')
+        await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
+        await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
         return
       }
 
@@ -186,7 +186,6 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('glass.openDocs', async () => {
       await vscode.env.openExternal(vscode.Uri.parse('https://docs.glass'))
-      await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),
     vscode.commands.registerCommand('glass.transpileAll', async () => {
       const workspaceFolders = vscode.workspace.workspaceFolders
@@ -282,24 +281,6 @@ export async function activate(context: vscode.ExtensionContext) {
           throw error
         }
       }
-    }),
-    vscode.commands.registerCommand('glass.runOld', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
-        return
-      }
-
-      const config = vscode.workspace.getConfiguration('glass')
-      const openaiKey = getOpenaiKey()
-      const defaultChatModel = config.get('defaultChatModel') as string | undefined
-
-      if (openaiKey == null || openaiKey === '') {
-        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your settings to run Glass files.')
-        return
-      }
-
-      const resp = await executeGlassFileOld(activeEditor.document, {})
-      console.log('execute glass file old returned', { resp })
     }),
     vscode.commands.registerCommand('glass.runPython', async () => {
       const activeEditor = vscode.window.activeTextEditor

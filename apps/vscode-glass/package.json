@@ -218,7 +218,7 @@
           "glass.openaiKey": {
             "type": "string",
             "default": "",
-            "description": "OpenAI secret API key"
+            "description": "OpenAI API key"
           },
           "glass.outputDirectory": {
             "type": "string",
