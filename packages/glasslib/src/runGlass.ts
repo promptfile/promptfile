@@ -69,8 +69,6 @@ export async function runGlass(
     await options.onResponse({ message: res.rawResponse })
     if (stateBlockRegex.test(res.finalDoc)) {
       res.finalDoc = res.finalDoc.replace(stateBlockRegex, stateBlock)
-    } else {
-      res.finalDoc = `${stateBlock}\n\n${res.finalDoc}`
     }
   }
 
