@@ -163,6 +163,30 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
             detail: 'OpenAI',
             data: 9,
           },
+          {
+            label: 'claude-v1',
+            kind: CompletionItemKind.Value,
+            detail: 'Anthropic',
+            data: 8,
+          },
+          {
+            label: 'claude-v1-100k',
+            kind: CompletionItemKind.Value,
+            detail: 'Anthropic',
+            data: 9,
+          },
+          {
+            label: 'claude-instant-v1',
+            kind: CompletionItemKind.Value,
+            detail: 'Anthropic',
+            data: 8,
+          },
+          {
+            label: 'claude-instant-v1-100k',
+            kind: CompletionItemKind.Value,
+            detail: 'Anthropic',
+            data: 9,
+          },
         ],
       },
       {

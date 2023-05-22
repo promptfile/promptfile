@@ -14,6 +14,7 @@ import {
   createConnection,
 } from 'vscode-languageserver/node'
 import { generateCompletions } from './completions'
+import { findAnthropicDiagnostics } from './diagnostics/findAnthropicDiagnostics'
 import { findEmptyBlocks } from './diagnostics/findEmptyBlocks'
 import { findInvalidAttributes } from './diagnostics/findInvalidAttributes'
 import { findInvalidLines } from './diagnostics/findInvalidLines'
@@ -98,6 +99,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     ...findMultiplePromptBlocks(textDocument),
     ...findInvalidPromptBlocks(textDocument),
     ...findEmptyBlocks(textDocument),
+    ...findAnthropicDiagnostics(textDocument),
   ]
 
   void connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })

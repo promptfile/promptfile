@@ -6,8 +6,8 @@ import path from 'path'
 import { TextDecoder } from 'util'
 import vm from 'vm'
 import * as vscode from 'vscode'
-import { getOpenaiKey } from './util/getOpenaiKey'
 import { getDocumentFilename } from './util/isGlassFile'
+import { getOpenaiKey } from './util/keys'
 
 export async function executeGlassFile(
   document: vscode.TextDocument,

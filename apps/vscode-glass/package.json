@@ -230,6 +230,11 @@
             "default": "",
             "description": "OpenAI API key"
           },
+          "glass.anthropicKey": {
+            "type": "string",
+            "default": "",
+            "description": "Anthropic API key"
+          },
           "glass.outputDirectory": {
             "type": "string",
             "default": "${workspaceFolder}",

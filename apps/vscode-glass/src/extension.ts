@@ -12,7 +12,7 @@ import { LeftPanelWebview } from './LeftPanelWebview'
 import { executeGlassFile } from './executeGlassFile'
 import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
-import { getOpenaiKey } from './util/getOpenaiKey'
+import { getOpenaiKey } from './util/keys'
 
 let client: LanguageClient | null = null
 

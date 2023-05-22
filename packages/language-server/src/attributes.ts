@@ -59,7 +59,16 @@ export const glassAttributes: Record<string, GlassAttribute[]> = {
       detail: 'chat model for inference',
       documentation: 'The `model` attribute determines which chat model to inference',
       type: 'string',
-      values: ['gpt-3.5-turbo', 'gpt-4'],
+      values: [
+        // openai
+        'gpt-3.5-turbo',
+        'gpt-4',
+        // anthropic
+        'claude-v1',
+        'claude-v1-100k',
+        'claude-instant-v1',
+        'claude-instant-v1-100k',
+      ],
     },
   ],
   Code: [],
