@@ -398,16 +398,16 @@
       "match": "^//.*$"
     },
     "code-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Code)(?=[\\s\\/\\>\\{])",
+      "begin": "(<)(Code)(>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
+          "name": "source.glass.code.name"
         },
         "3": {
-          "name": "source.glass.code.name"
+          "name": "punctuation.definition.tag.end.jsx"
         }
       },
       "patterns": [
@@ -415,12 +415,15 @@
           "include": "source.js"
         }
       ],
-      "end": "(?:(\\/)\\s*)?(>)",
+      "end": "(<\\/)(Code)(>)",
       "endCaptures": {
         "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
+          "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
+          "name": "source.glass.code.name"
+        },
+        "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }
