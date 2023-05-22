@@ -3,11 +3,10 @@ import { GlassBlock } from './rig'
 
 interface BlocksViewProps {
   blocks: GlassBlock[]
-  playgroundId: string
 }
 
 export const BlocksView = (props: BlocksViewProps) => {
-  const { blocks, playgroundId } = props
+  const { blocks } = props
 
   const filteredBlocks = blocks.filter(block => block.role !== 'system')
 
@@ -43,7 +42,7 @@ export const BlocksView = (props: BlocksViewProps) => {
             }}
           >
             <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>
-              {block.role === 'user' ? 'Me' : 'Glass'}
+              {block.role === 'user' ? 'Me' : 'Glass support'}
             </span>
             {block.content}
           </span>

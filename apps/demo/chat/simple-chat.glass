@@ -1,25 +1,10 @@
----
-language: python
----
-
-<State>
-{
-    "hello": "goodbye"
-}
-</State>
-
 <System>
 You are ChatGPT. Be polite and responsive.
+qwefpoijqwec
+
+qwefpoij
 </System>
 
-<User>
-Hello sir!
-</User>
+<Chat model="gpt-3.5-turbo">
 
-<Assistant>
-Hello there! How can I assist you today?
-</Assistant>
-
-<Chat model="gpt-3.5-turbo"> 
-What's the word, bird?
 </Chat>

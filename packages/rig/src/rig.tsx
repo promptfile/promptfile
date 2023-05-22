@@ -3,7 +3,6 @@ import { render } from 'react-dom'
 import { BlocksView } from './BlocksView'
 import { ComposerView } from './ComposerView'
 import { TopperView } from './TopperView'
-import { getNonce } from './nonce'
 
 export interface GlassBlock {
   content: string
@@ -27,7 +26,6 @@ function RigView() {
       content: 'Welcome to Glass support. How can I help you today?',
     },
   ]
-  const [playgroundId, setPlaygroundId] = useState(getNonce())
   const [blocks, setBlocks] = useState<GlassBlock[]>(initialBlocks)
 
   // register a callback for when the extension sends a message
@@ -49,7 +47,6 @@ function RigView() {
   }, [])
 
   const reset = () => {
-    setPlaygroundId(getNonce())
     setBlocks(initialBlocks)
     document.getElementById('composer-input')?.focus()
   }
@@ -69,7 +66,7 @@ function RigView() {
       }}
     >
       <TopperView reset={reset} />
-      <BlocksView blocks={blocks} playgroundId={playgroundId} />
+      <BlocksView blocks={blocks} />
       <ComposerView send={send} />
     </div>
   )

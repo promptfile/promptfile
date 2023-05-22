@@ -29,9 +29,7 @@ export const TopperView = (props: TopperViewProps) => {
       >
         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
           <LogoView dimension="20" />
-          <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>
-            Glass: <span style={{ opacity: 0.5 }}>support chat</span>
-          </span>
+          <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>Glass</span>
         </div>
         <VSCodeButton appearance="secondary" onClick={reset}>
           Reset
