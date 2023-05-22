@@ -25,11 +25,16 @@ foo
     progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
   },
 }) {
+  const GLASS_STATE = {}
+
   const GLASSVAR = {}
   const TEMPLATE = \`<Prompt>
 foo
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt?.options)
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt?.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }`)
   })
 
@@ -53,11 +58,16 @@ foo
     progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
   },
 }) {
+  const GLASS_STATE = {}
+
   const GLASSVAR = {}
   const TEMPLATE = \`<Prompt>
 foo
 </Prompt>\`
-  return await runGlass('get-foo', 'text-davinci-003', TEMPLATE, opt?.options)
+  return await runGlass('get-foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt?.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }`)
   })
 
@@ -76,13 +86,17 @@ foo
     progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
   },
 }) {
+  const GLASS_STATE = {}
   const { foo } = opt.args
 
   const GLASSVAR = {}
   const TEMPLATE = \`<Prompt>
 \${foo}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt.options)
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }`)
   })
 
@@ -103,6 +117,7 @@ and me`,
     progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
   },
 }) {
+  const GLASS_STATE = {}
   const { foo } = opt.args
 
   const GLASSVAR = {}
@@ -111,7 +126,10 @@ and me`,
 \${foo}
 </Prompt>
 and me\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt.options)
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }`)
   })
 
@@ -131,13 +149,17 @@ and me\`
 
     expect(transpiled.code).to.equal(`export async function getFooPrompt(opt) {
   opt = opt || {}
+  const GLASS_STATE = {}
   const { foo } = opt.args
 
   const GLASSVAR = {}
   const TEMPLATE = \`<Prompt>
 \${foo}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt.options)
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }`)
   })
 
@@ -156,13 +178,17 @@ and me\`
     progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
   },
 }) {
+  const GLASS_STATE = {}
   const { foo } = opt.args
 
   const GLASSVAR = {}
   const TEMPLATE = \`<Prompt>
 \${foo} and {foo}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt.options)
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }`)
   })
 
@@ -181,13 +207,17 @@ and me\`
     progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
   },
 }) {
+  const GLASS_STATE = {}
   const { foo, bar } = opt.args
 
   const GLASSVAR = {}
   const TEMPLATE = \`<Prompt>
 \${foo} \${bar}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt.options)
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }`)
   })
 
@@ -207,6 +237,7 @@ and me\`
     progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
   },
 }) {
+  const GLASS_STATE = {}
   const { foo, bar } = opt.args
 
   const GLASSVAR = {}
@@ -214,7 +245,10 @@ and me\`
 \${foo} \${bar} \${foo}
 \${bar}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt.options)
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }`)
   })
 
@@ -226,6 +260,13 @@ and me\`
 
   it('should transpile with code block', () => {
     const { input, output } = loadFixture('transpileGlassNext/codeBlock')
+    const transpiled = transpileGlassFileNext(input, folders)
+    expect(transpiled.code).to.equal(output)
+    const val = `${2 + 5} i'm in the string`
+  })
+
+  it('should transpile with code block containing state', () => {
+    const { input, output } = loadFixture('transpileGlassNext/codeBlockWithState')
     const transpiled = transpileGlassFileNext(input, folders)
     expect(transpiled.code).to.equal(output)
   })

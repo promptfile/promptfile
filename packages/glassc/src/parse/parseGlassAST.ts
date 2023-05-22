@@ -1,4 +1,4 @@
-import { removeGlassComments } from '@glass-lang/glasslib'
+import { JSXNode, removeGlassComments } from '@glass-lang/glasslib'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
 import { fromMarkdown } from 'mdast-util-from-markdown'
@@ -13,18 +13,6 @@ import { combineExtensions } from 'micromark-util-combine-extensions'
 import * as path from 'node:path'
 import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter'
 import { glassASTNodeToJSXNode } from './parseGlassTopLevelJsxElements'
-
-export interface JSXNode {
-  tagName?: string
-  value?: string
-  type?: string
-  attrs: { name: string; stringValue?: string; expressionValue?: string }[]
-  children: JSXNode[]
-  position: {
-    start: { line: number; column: number; offset: number }
-    end: { line: number; column: number; offset: number }
-  }
-}
 
 export function parseGlassAST(
   doc: string,

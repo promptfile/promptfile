@@ -16,8 +16,10 @@ export async function getFooPrompt(opt: {
     progress?: (data: { nextDoc: string, rawResponse?: string }) => void,
   },
 }) {
+  const GLASS_STATE = {}
   const { b } = opt.args
   const a = '3'
+
   const GLASSVAR = {}
   const TEMPLATE = `import c from "c"
 
@@ -27,5 +29,8 @@ const a = "3"
 <Prompt>
 ${a} ${b} ${c}
 </Prompt>`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, opt.options)
+  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
+    ...(opt.options || {}),
+    ...{ state: GLASS_STATE, onResponse: undefined },
+  })
 }

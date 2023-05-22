@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { getUseStatePairs, transformSetState, transformSetStateCalls } from './transformSetState'
 
-describe.only('transformSetState', () => {
+describe('transformSetState', () => {
   describe('javascript/typescript', () => {
     it('should transform simple block', () => {
       const code = `const initProfile = { firstName: '', lastName: '', hasChatted: false };
@@ -9,8 +9,8 @@ const [profile, setProfile] = useState(initProfile);
 const [moreState, setMoreState] = useState('');`
       const templateString = transformSetState(code)
       expect(templateString).to.equal(`const initProfile = { firstName: '', lastName: '', hasChatted: false };
-const [profile, setProfile] = useState(initProfile, GLASS_STATE);
-const [moreState, setMoreState] = useState('', GLASS_STATE);
+const [profile, setProfile] = useState(initProfile, GLASS_STATE, "profile");
+const [moreState, setMoreState] = useState('', GLASS_STATE, "moreState");
 `)
     })
 

@@ -13,16 +13,35 @@ export async function runGlass(
   fileName: string,
   model: 'gpt-3.5-turbo' | 'gpt-4' | 'text-davinci-003' | 'curie' | 'babbage' | 'ada',
   initDoc: string,
-  onResponse: (message: any) => void,
+
   options?: {
+    args?: any
     openaiKey?: string
+    onResponse?: (message: any) => void
+    state?: any
     progress?: (data: { nextDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
   initDoc: string
   finalDoc: string
 }> {
-  initDoc = initDoc.replace(`<Chat model="${model}">`, '<User generated={true}>').replace('</Chat', '</User')
+  // replace initDoc instances of
+  //
+  // ```
+  // <Chat.*>
+  // (content)
+  // </Chat>
+  // ```
+  //
+  // with
+  //
+  // ```
+  // <User>
+  // (content)
+  // </User>
+
+  initDoc = initDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
+
   if (options?.progress) {
     const completionFragment = generateCompletionFragment('', true, model)
     const nextDoc = `${initDoc.trim()}\n\n${completionFragment}`
@@ -31,10 +50,29 @@ export async function runGlass(
       rawResponse: '█',
     })
   }
-  if (model === 'gpt-3.5-turbo' || model === 'gpt-4') {
-    return await runGlassChat(fileName, model, initDoc, options)
+  const res =
+    model === 'gpt-3.5-turbo' || model === 'gpt-4'
+      ? await runGlassChat(fileName, model, initDoc, options)
+      : await runGlassCompletion(fileName, model as any, initDoc, options)
+
+  if (options?.onResponse) {
+    await options.onResponse({ message: res.rawResponse })
+
+    // write the new value of state onto the document
+    const state = options.state || {}
+
+    // update res.finalDoc to include the new state
+    // either replace the existing <State>...</State> with the new state, or add a state block to the beginning of the document
+    const stateBlock = `<State contentType="json">\n${JSON.stringify(state, null, 2)}\n</State>`
+    const stateBlockRegex = /<State.*?>.+<\/State>/gs
+    if (stateBlockRegex.test(res.finalDoc)) {
+      res.finalDoc = res.finalDoc.replace(stateBlockRegex, stateBlock)
+    } else {
+      res.finalDoc = `${stateBlock}\n\n${res.finalDoc}`
+    }
   }
-  return runGlassCompletion(fileName, model as any, initDoc, options)
+
+  return res
 }
 
 const generateCompletionFragment = (message: string, streaming: boolean, model: string) => {
@@ -55,12 +93,14 @@ export async function runGlassChat(
   model: 'gpt-3.5-turbo' | 'gpt-4',
   initDoc: string,
   options?: {
+    args?: any
     openaiKey?: string
     progress?: (data: { nextDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
   initDoc: string
   finalDoc: string
+  rawResponse: string
 }> {
   const messages = interpolateGlassChat(fileName, initDoc)
 
@@ -94,6 +134,7 @@ export async function runGlassChat(
   return {
     initDoc,
     finalDoc: nextDoc,
+    rawResponse: response,
   }
 }
 
@@ -105,12 +146,14 @@ export async function runGlassCompletion(
   model: 'text-davinci-003',
   initDoc: string,
   options?: {
+    args?: any
     openaiKey?: string
     progress?: (data: { nextDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
   initDoc: string
   finalDoc: string
+  rawResponse: string
 }> {
   const prompt = interpolateGlass(fileName, initDoc)
 
@@ -140,6 +183,7 @@ export async function runGlassCompletion(
   return {
     initDoc,
     finalDoc: `${initDoc}${response}<Completion model="${model}" />`,
+    rawResponse: response,
   }
 }
 

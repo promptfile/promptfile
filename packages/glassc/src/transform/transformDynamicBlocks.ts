@@ -1,5 +1,5 @@
+import { JSXNode } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
-import { JSXNode } from '../parse/parseGlassAST'
 import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements'
 import { transformGlassDocumentToTemplateString } from './transformGlassDocToTemplateString'
 import { transformJsxExpressionToTemplateString } from './transformJsxExpressionToTemplateString'

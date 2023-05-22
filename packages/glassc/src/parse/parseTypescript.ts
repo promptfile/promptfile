@@ -40,6 +40,12 @@ export function parseCodeBlockLocalVars(code: string) {
             variableNames.push(element.name.text)
           }
         }
+      } else if (ts.isArrayBindingPattern(node.name)) {
+        for (const element of node.name.elements) {
+          if (ts.isBindingElement(element) && ts.isIdentifier(element.name)) {
+            variableNames.push(element.name.text)
+          }
+        }
       }
     }
     ts.forEachChild(node, visit)
@@ -68,6 +74,15 @@ export function parseCodeBlockUndeclaredSymbols(code: string) {
 
   function visit(node: ts.Node) {
     if (ts.isIdentifier(node)) {
+      // If the identifier is part of a variable declaration on the left side,
+      // it should not be considered as an undeclared symbol.
+      if (
+        (ts.isVariableDeclaration(node.parent) && node.parent.initializer !== node) ||
+        (ts.isBindingElement(node.parent) && node.parent.initializer !== node)
+      ) {
+        return
+      }
+
       if (
         (!ts.isPropertyAccessExpression(node.parent) || node.parent.expression === node) &&
         !(ts.isPropertyAccessExpression(node.parent) && node.parent.name === node) &&

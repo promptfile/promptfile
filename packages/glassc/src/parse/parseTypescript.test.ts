@@ -16,6 +16,20 @@ let data = await res.text()
     expect(parseCodeBlockLocalVars(code)).to.deep.equal(['res', 'data'])
   })
 
+  it('should parse local variables with useState', () => {
+    const code = `
+const [res, setRes] = useState()
+`
+    expect(parseCodeBlockLocalVars(code)).to.deep.equal(['res', 'setRes'])
+  })
+
+  it('should parse undeclared variables with useState', () => {
+    const code = `
+const [res, setRes] = useState()
+`
+    expect(parseCodeBlockUndeclaredSymbols(code)).to.deep.equal(['useState'])
+  })
+
   it('should parse local variables with descructuring', () => {
     const code = `
 const a = { b: 1, c: 2 }
@@ -70,6 +84,20 @@ const data = await res.json()
       importedSymbols: ['foo', 'bar', 'something', 'baz'],
       symbolsAddedToScope: ['res', 'data'],
       undeclaredValuesNeededInScope: ['url', 'method'],
+    })
+  })
+
+  it('should parse block with state', () => {
+    const code = `
+const initProfile = { firstName: '', lastName: '', hasChatted: false }
+const [profile, setProfile] = useState(initProfile)
+const [moreState, setMoreState] = useState('')
+`
+    expect(parseCodeBlock(code)).to.deep.equal({
+      isAsync: false,
+      importedSymbols: [],
+      symbolsAddedToScope: ['initProfile', 'profile', 'setProfile', 'moreState', 'setMoreState'],
+      undeclaredValuesNeededInScope: ['useState'],
     })
   })
 

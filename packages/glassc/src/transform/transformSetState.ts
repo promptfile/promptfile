@@ -2,12 +2,32 @@ import ts from 'typescript'
 function transformSetStateHelper(context: ts.TransformationContext) {
   return (rootNode: ts.Node) => {
     function visitor(node: ts.Node): ts.Node {
-      if (ts.isCallExpression(node)) {
-        const expression = node.expression
-        if (ts.isIdentifier(expression) && expression.text === 'useState') {
+      if (ts.isVariableDeclaration(node)) {
+        const { initializer, name } = node
+        if (
+          initializer &&
+          ts.isCallExpression(initializer) &&
+          ts.isIdentifier(initializer.expression) &&
+          initializer.expression.text === 'useState' &&
+          ts.isArrayBindingPattern(name) &&
+          name.elements.length === 2
+        ) {
+          const variableName = (name.elements[0] as ts.BindingElement).name.getText()
           const glassState = ts.factory.createIdentifier('GLASS_STATE')
-          const newArguments = ts.factory.createNodeArray([...node.arguments, glassState])
-          return ts.factory.updateCallExpression(node, expression, node.typeArguments, newArguments)
+          const newName = ts.factory.createStringLiteral(variableName)
+          const newArguments = ts.factory.createNodeArray([...initializer.arguments, glassState, newName])
+          return ts.factory.updateVariableDeclaration(
+            node,
+            name,
+            undefined,
+            undefined,
+            ts.factory.updateCallExpression(
+              initializer,
+              initializer.expression,
+              initializer.typeArguments,
+              newArguments
+            )
+          )
         }
       }
       return ts.visitEachChild(node, visitor, context)

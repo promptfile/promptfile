@@ -1,4 +1,4 @@
-import { removeGlassComments } from '@glass-lang/glasslib'
+import { JSXNode, removeGlassComments } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
@@ -12,7 +12,6 @@ import { mdxMd } from 'micromark-extension-mdx-md'
 import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
 import { combineExtensions } from 'micromark-util-combine-extensions'
 import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter'
-import { JSXNode } from './parseGlassAST'
 
 /**
  * Takes a glass document and returns all the top-level JSX elements.
