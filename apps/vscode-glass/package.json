@@ -238,7 +238,7 @@
           "glass.pythonPath": {
             "type": "string",
             "default": "python3",
-            "description": "Path to python executable, e.g. a virtual environment or a global python installation"
+            "description": "Path to python executable"
           }
         }
       }

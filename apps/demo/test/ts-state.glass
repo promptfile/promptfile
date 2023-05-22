@@ -1,0 +1,28 @@
+<Code>
+const initProfile = { firstName: '', lastName: '', hasChatted: false }
+const [profile, setProfile] = useState(initProfile)
+const [moreState, setMoreState] = useState('')
+</Code>
+
+<State>
+```json
+{
+    "profile": {
+        "firstName": "",
+        "lastName": "",
+        "hasChatted": false
+    },
+    "moreState": ""
+}
+```
+</State>
+
+<Assistant>
+You are a helpful assistant.
+</Assistant>
+
+<Chat model="gpt-3.5" onResponse={({ message }) => {
+    setProfile({ hasChatted: true })
+}}>
+How are you?
+</Chat>

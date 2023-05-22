@@ -10,6 +10,7 @@ import { parseJsxElement } from '../parse/parseJsxElement.js'
 import { parseCodeBlock } from '../parse/parseTypescript.js'
 import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
+import { getUseStatePairs } from '../transform/transformSetState.js'
 import { getGlassExportName } from './transpileGlass.js'
 import { TYPESCRIPT_GLOBALS } from './typescriptGlobals.js'
 
@@ -45,6 +46,23 @@ export function transpileGlassFileNext(
   //   throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
   // }
 
+  const stateNode = toplevelNodes.find(node => node.tagName === 'State')
+  let state = {} as any
+  if (stateNode) {
+    const innerContents = stateNode.children.length
+      ? originalDoc.substring(
+          stateNode.children[0].position.start.offset,
+          stateNode.children[stateNode.children.length - 1].position.end.offset
+        )
+      : '{}'
+    if (innerContents.startsWith('```json') && innerContents.endsWith('```')) {
+      state = JSON.parse(innerContents.slice(7, -3).trim())
+    } else {
+      state = JSON.parse(innerContents)
+      //TODO: support other content types
+    }
+  }
+
   const codeBlocks = blocks.filter(b => b.tag === 'Code')
 
   // remove all block comments before any processing happens
@@ -73,6 +91,8 @@ export function transpileGlassFileNext(
 
   let model = isChat ? 'gpt-3.5-turbo' : 'text-davinci-003'
 
+  let onResponse = ''
+
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of toplevelNodes) {
     if (jsxNode.tagName === 'Args') {
@@ -83,11 +103,17 @@ export function transpileGlassFileNext(
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
     }
+    if (jsxNode.tagName === 'State') {
+      continue
+    }
     if (jsxNode.tagName === 'Chat' || jsxNode.tagName === 'Completion') {
       const modelAttr = jsxNode.attrs.find(a => a.name === 'model')
       // value is either <Chat model="gpt-3.5-turbo" /> or <Chat model={"gpt-4"} />
       // we don't currently support dynamic model values
       model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : model
+
+      const onResponseAttr = jsxNode.attrs.find(a => a.name === 'onResponse')
+      onResponse = onResponseAttr ? onResponseAttr.expressionValue! : ''
       continue
     }
     // if (builtinTags.has(jsxNode.tagName)) {
@@ -193,11 +219,25 @@ export function transpileGlassFileNext(
   const functionArgs =
     language === 'javascript' ? 'opt' : `opt${fullArgString ? '' : '?'}: { ${fullArgString}${options} }`
 
+  const codePairs = codeBlocks.map(b => getUseStatePairs(b.content))
+  // join them all together
+  const allPairs = codePairs.reduce((acc, val) => ({ ...acc, ...val }), {})
+  const context: any = {}
+  for (const [k, v] of Object.entries(allPairs)) {
+    context[v] = `(val) => GLASS_STATE[${k}] = val`
+  }
+
   const code = `${imports.join('\n')}
 
 export async function ${exportName}(${functionArgs}) {${language === 'javascript' ? '\n  opt = opt || {}' : ''}
+  const GLASS_STATE = ${JSON.stringify(state)}
   ${argsString ? `const {${allInterpolationNames.join(',')}} = opt.args` : ''}
   ${codeBlocks.map(b => b.content).join('\n')}
+  const GLASS_CONTEXT = {
+    ${Object.keys(context)
+      .map(k => `"${k}": ${context[k]}`)
+      .join(',')}
+  }
   const GLASSVAR = {
     ${Object.keys(codeInterpolationMap)
       .map(k => `"${k}": ${codeInterpolationMap[k]}`)

@@ -13,6 +13,7 @@ export async function runGlass(
   fileName: string,
   model: 'gpt-3.5-turbo' | 'gpt-4' | 'text-davinci-003' | 'curie' | 'babbage' | 'ada',
   initDoc: string,
+  onResponse: (message: any) => void,
   options?: {
     openaiKey?: string
     progress?: (data: { nextDoc: string; rawResponse?: string }) => void

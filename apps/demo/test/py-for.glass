@@ -8,9 +8,9 @@ messages = [
 
 <For each={messages} item="m">
 
-<Block role={m.get("role")}>
-<Text if={m.get("show")}>
-${m.get("content")}
+<Block role={m["role"]}>
+<Text if={m["show"]}>
+${m["content"]}
 </Text>
 </Block>
 
