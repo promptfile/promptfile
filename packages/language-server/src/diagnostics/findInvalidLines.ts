@@ -87,9 +87,10 @@ function isInvalidLine(line: string): boolean {
   }
 
   // Check if the line is inside a valid element or contains a valid element with attributes
-  const openTagCount = (line.match(/^<(User|Assistant|System|Prompt|Code|Text|Chat|For|State)(\s+[^>]*)?>/g) || [])
-    .length
-  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code|Text|Chat|For|State)>/g) || []).length
+  const openTagCount = (
+    line.match(/^<(User|Assistant|System|Prompt|Code|Text|Chat|For|State|Block)(\s+[^>]*)?>/g) || []
+  ).length
+  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code|Text|Chat|For|State|Block)>/g) || []).length
 
   return openTagCount === 0 && closeTagCount === 0
 }
