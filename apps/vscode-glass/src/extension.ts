@@ -49,19 +49,18 @@ export async function activate(context: vscode.ExtensionContext) {
     updateDecorations(activeEditor, codeDecorations)
   }
 
-  // Create a new status bar item.
   const characterCount = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000000)
   characterCount.command = undefined
-  characterCount.show()
+  // characterCount.show()
 
   function updateCharacterCount() {
-    const editor = vscode.window.activeTextEditor
-    if (editor) {
-      const document = editor.document
-      const text = document.getText()
-      characterCount.text = `${text.length} token${text.length === 1 ? '' : 's'}`
-      characterCount.show()
-    }
+    // const editor = vscode.window.activeTextEditor
+    // if (editor) {
+    //   const document = editor.document
+    //   const text = document.getText()
+    //   characterCount.text = `${text.length} token${text.length === 1 ? '' : 's'}`
+    //   characterCount.show()
+    // }
   }
 
   context.subscriptions.push(
