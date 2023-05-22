@@ -190,6 +190,92 @@
         }
       }
     },
+    "chat-element": {
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Chat)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.closing.jsx"
+        },
+        "3": {
+          "name": "source.glass.chat.name"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.tsx#jsx-tag-attribute-name"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attribute-assignment"
+        },
+        {
+          "include": "source.tsx#jsx-string-double-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-string-single-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-evaluated-code"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attributes-illegal"
+        }
+      ],
+      "end": "(?:(\\/)\\s*)?(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "text-element": {
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Text)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.closing.jsx"
+        },
+        "3": {
+          "name": "source.glass.text.name"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.tsx#jsx-tag-attribute-name"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attribute-assignment"
+        },
+        {
+          "include": "source.tsx#jsx-string-double-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-string-single-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-evaluated-code"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attributes-illegal"
+        }
+      ],
+      "end": "(?:(\\/)\\s*)?(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
     "user-element": {
       "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(User)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
@@ -249,6 +335,12 @@
               "include": "#code-element"
             },
             {
+              "include": "#chat-element"
+            },
+            {
+              "include": "#text-element"
+            },
+            {
               "include": "#user-element"
             },
             {
@@ -274,7 +366,7 @@
       "name": "comment.line",
       "match": "^//.*$"
     },
-    "user-element": {
+    "code-element": {
       "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Code)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
         "1": {
@@ -349,6 +441,12 @@
         },
         {
           "include": "#code-element"
+        },
+        {
+          "include": "#chat-element"
+        },
+        {
+          "include": "#text-element"
         },
         {
           "include": "#user-element"

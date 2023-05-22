@@ -234,16 +234,23 @@
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
-            "scope": "source.glass.content",
+            "scope": "source.glass.prompt.name",
             "settings": {
-              "foreground": "#575757",
+              "foreground": "#4EC9B0",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.prompt.name",
+            "scope": "source.glass.chat.name",
             "settings": {
-              "foreground": "#4EC9B0",
+              "foreground": "#3e69d1",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.text.name",
+            "settings": {
+              "foreground": "#7F848E",
               "fontStyle": "italic"
             }
           },

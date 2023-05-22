@@ -2,12 +2,12 @@
 You are ChatGPT. Be polite and responsive.
 </System>
 
-<User name="hi">
-hi
+<User>
+Hi, how are you?
 </User>
 
 <Assistant>
-Hello, how can I help you?
+Hello! As an AI language model, I don't have emotions or feelings, but I'm always here to help you if you have any questions! How can I assist you today?
 </Assistant>
 
 <Chat model="gpt-3.5-turbo">

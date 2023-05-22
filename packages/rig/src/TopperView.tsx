@@ -28,9 +28,9 @@ export const TopperView = (props: TopperViewProps) => {
           paddingRight: '16px',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-          <LogoView dimension="24" />
-          <span style={{ fontSize: '17px', fontWeight: 'bold', paddingLeft: '12px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+          <LogoView dimension="20" />
+          <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>
             {filename.split('.glass')[0] ?? 'loading'}
             <span style={{ opacity: 0.3, color: 'white', fontStyle: 'italic' }}>.glass</span>
           </span>
