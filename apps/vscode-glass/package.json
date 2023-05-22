@@ -276,14 +276,14 @@
             }
           },
           {
-            "scope": "source.glass.assistant.name",
+            "scope": "source.glass.user.name",
             "settings": {
               "foreground": "#5EC5E5",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.user.name",
+            "scope": "source.glass.assistant.name",
             "settings": {
               "foreground": "#4EC9B0",
               "fontStyle": "italic"

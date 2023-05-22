@@ -224,12 +224,6 @@ export async function activate(context: vscode.ExtensionContext) {
             )
           })
         }
-
-        const lastLineIndex = activeEditor.document.lineCount
-        activeEditor.selection = new vscode.Selection(
-          new vscode.Position(lastLineIndex - 2, 0),
-          new vscode.Position(lastLineIndex - 2, 0)
-        )
       } catch (error) {
         console.error(error)
         void vscode.window.showErrorMessage(`ERROR: ${error}`)
