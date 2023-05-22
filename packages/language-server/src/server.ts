@@ -1,3 +1,4 @@
+import { parseGlassTopLevelJsxElements } from '@glass-lang/glassc'
 import { TextDocument, TextEdit } from 'vscode-languageserver-textdocument'
 import {
   CompletionItem,
@@ -91,6 +92,8 @@ documents.onDidChangeContent(change => {
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   connection.console.log('validateTextDocument')
+  const parsed: any[] = parseGlassTopLevelJsxElements(textDocument.getText())
+  connection.console.log(parsed.map(tag => JSON.stringify(tag, null, 2)).join('\n'))
   const diagnostics: Diagnostic[] = [
     ...findUnmatchedTags(textDocument),
     ...findUnsupportedTags(textDocument),

@@ -19,7 +19,12 @@ export function findInvalidAttributes(textDocument: TextDocument): Diagnostic[] 
         ...missingRequiredAttributes.map(attribute => ({ tag, attribute: attribute.name, type: 'missing' }))
       )
       for (const attribute of existingAttributes) {
-        if (!validAttributes.some(validAttribute => validAttribute.name === attribute.name)) {
+        const validAttribute = validAttributes.find(validAttribute => validAttribute.name === attribute.name)
+        if (validAttribute) {
+          if (validAttribute.values && !validAttribute.values.includes(attribute.stringValue)) {
+            invalidAttributes.push({ tag, attribute: attribute.name, type: 'invalid' })
+          }
+        } else {
           invalidAttributes.push({ tag, attribute: attribute.name, type: 'unknown' })
         }
       }
@@ -32,7 +37,11 @@ export function findInvalidAttributes(textDocument: TextDocument): Diagnostic[] 
           end: textDocument.positionAt(item.tag.position.end.offset),
         },
         message:
-          item.type === 'unknown' ? `Unknown "${item.attribute}" attribute` : `Missing attribute: "${item.attribute}"`,
+          item.type === 'unknown'
+            ? `Unknown "${item.attribute}" attribute`
+            : item.type === 'invalid'
+            ? `Invalid value for attribute: "${item.attribute}"`
+            : `Missing attribute: "${item.attribute}"`,
         source: 'glass',
       }
       return diagnostic
