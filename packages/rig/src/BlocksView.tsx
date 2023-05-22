@@ -43,7 +43,7 @@ export const BlocksView = (props: BlocksViewProps) => {
             }}
           >
             <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>
-              {block.role === 'user' ? 'User' : 'Glass'}
+              {block.role === 'user' ? 'Me' : 'Glass'}
             </span>
             {block.content}
           </span>

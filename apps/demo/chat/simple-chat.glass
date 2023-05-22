@@ -17,6 +17,6 @@ Hello sir!
 Hello there! How can I assist you today?
 </Assistant>
 
-<Chat model="gpt-3.5-turbo">
+<Chat model="gpt-3.5-turbo"> 
 Hello
 </Chat>
