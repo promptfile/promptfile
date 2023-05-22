@@ -17,16 +17,16 @@ Here's information about the user's website:
 </System>
 
 
-<User generated>
+<User generated={true}>
 hqwecpoijqwef
 </User>
 
-<Assistant generated>
+<Assistant generated={true}>
 qwecpoijqwefpoij
 </Assistant>
 
 <Chat model="gpt-4" onResponse={response => {
     if (response.includes('UPDATE_USER_NAME')) {
         return await db.user.update....
-    }    
+    }
 }} />

@@ -11,7 +11,6 @@ export function findEmptyBlocks(textDocument: TextDocument): Diagnostic[] {
         tagsToCheck.has(tag.tagName) &&
         (tag.children.length === 0 || (tag.length === 1 && tag.children[0].length === 0))
     )
-    console.log(emptyTags.map(tag => tag.children))
     return emptyTags.map(tag => {
       const diagnostic: Diagnostic = {
         severity: DiagnosticSeverity.Warning,

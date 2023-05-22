@@ -1,4 +1,9 @@
-import { transpileGlass, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
+import {
+  parseGlassTopLevelJsxElements,
+  transpileGlass,
+  transpileGlassNext,
+  transpileGlassPython,
+} from '@glass-lang/glassc'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
@@ -92,6 +97,36 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('glass.openSupportChat', async () => {
       await vscode.commands.executeCommand('workbench.view.extension.glass')
     }),
+    vscode.commands.registerCommand('glass.reset', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+        return
+      }
+      try {
+        let parsed: any[] = parseGlassTopLevelJsxElements(activeEditor.document.getText())
+        let generatedTags = parsed.filter(
+          tag => ['User', 'Assistant'].includes(tag.tagName) && tag.attrs.some((attr: any) => attr.name === 'generated')
+        )
+        while (generatedTags.length > 0) {
+          const tag = generatedTags[0]
+          await activeEditor.edit(editBuilder => {
+            editBuilder.delete(
+              new vscode.Range(
+                activeEditor.document.positionAt(tag.position.start.offset),
+                activeEditor.document.positionAt(tag.position.end.offset)
+              )
+            )
+          })
+          parsed = parseGlassTopLevelJsxElements(activeEditor.document.getText())
+          generatedTags = parsed.filter(
+            tag =>
+              ['User', 'Assistant'].includes(tag.tagName) && tag.attrs.some((attr: any) => attr.name === 'generated')
+          )
+        }
+      } catch {
+        await vscode.window.showErrorMessage('Unable to parse this Glass file')
+      }
+    }),
     vscode.commands.registerCommand('glass.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || activeEditor.document.languageId !== 'glass') {
@@ -137,10 +172,10 @@ export async function activate(context: vscode.ExtensionContext) {
           const lines = activeEditor.document.getText().split('\n')
           const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
           const blockCharacterLine = lines[blockCharacterLineIndex]
-          // find the line of the <Assistant> tag that was before the blockCharacterLine
+          // find the line of the <Assistant generated={true}> tag that was before the blockCharacterLine
           let startAssistantIndex = blockCharacterLineIndex
           for (let i = blockCharacterLineIndex; i >= 0; i--) {
-            if (lines[i].includes('<Assistant>')) {
+            if (lines[i].includes('<Assistant generated={true}>')) {
               startAssistantIndex = i
               break
             }

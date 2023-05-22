@@ -141,6 +141,10 @@
         "title": "Glass: Run"
       },
       {
+        "command": "glass.reset",
+        "title": "Glass: Reset file"
+      },
+      {
         "command": "glass.openSupportChat",
         "title": "Glass: Open support chat"
       },
@@ -178,6 +182,12 @@
         "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
+        "when": "editorTextFocus && resourceLangId == glass"
+      },
+      {
+        "command": "glass.reset",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
         "when": "editorTextFocus && resourceLangId == glass"
       }
     ],

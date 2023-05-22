@@ -21,7 +21,7 @@ export async function runGlass(
   initDoc: string
   finalDoc: string
 }> {
-  initDoc = initDoc.replace(`<Chat model="${model}">`, '<User>').replace('</Chat', '</User')
+  initDoc = initDoc.replace(`<Chat model="${model}">`, '<User generated={true}>').replace('</Chat', '</User')
   if (options?.progress) {
     const completionFragment = generateCompletionFragment('', true, model)
     const nextDoc = `${initDoc.trim()}\n\n${completionFragment}`
@@ -37,7 +37,7 @@ export async function runGlass(
 }
 
 const generateCompletionFragment = (message: string, streaming: boolean, model: string) => {
-  return `<Assistant>
+  return `<Assistant generated={true}>
 ${message}${streaming ? '█' : ''}
 </Assistant>
 
