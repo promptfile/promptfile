@@ -10,22 +10,6 @@ ${website}
 ###
 </System>
 
-<User>
-hey where did elliott go to grad school?
-</User>
+<Chat model="gpt-3.5-turbo">
 
-<Assistant>
-Elliott Burris went to graduate school at Cambridge, where he received an M.Phil.
-</Assistant>
-
-<User>
-what is elliott's favorite color?
-</User>
-
-<Assistant>
-Sorry, we cannot determine Elliott's favorite color from the provided website code.
-</Assistant>
-
-<User>
-
-</User>
+</Chat>

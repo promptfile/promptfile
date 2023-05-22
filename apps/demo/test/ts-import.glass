@@ -5,9 +5,13 @@ You are a helpful assistant.
 </System>
 
 <User>
-${sayHello({name: 'john'})}
+hello, john
 </User>
 
 <Assistant>
 Hello! How can I assist you today?
 </Assistant>
+
+<Chat model="gpt-3.5-turbo">
+
+</Chat>

@@ -41,6 +41,16 @@ export async function runGlass(
   // </User>
 
   initDoc = initDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
+  const state = options?.state ?? {}
+  const stateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
+  const stateBlockRegex = /<State>.+<\/State>/gs
+  if (Object.keys(state).length > 0) {
+    if (stateBlockRegex.test(initDoc)) {
+      initDoc = initDoc.replace(stateBlockRegex, stateBlock)
+    } else {
+      initDoc = `${stateBlock}\n\n${initDoc}`
+    }
+  }
 
   if (options?.progress) {
     const completionFragment = generateCompletionFragment('', true, model)
@@ -57,14 +67,6 @@ export async function runGlass(
 
   if (options?.onResponse) {
     await options.onResponse({ message: res.rawResponse })
-
-    // write the new value of state onto the document
-    const state = options.state || {}
-
-    // update res.finalDoc to include the new state
-    // either replace the existing <State>...</State> with the new state, or add a state block to the beginning of the document
-    const stateBlock = `<State contentType="json">\n${JSON.stringify(state, null, 2)}\n</State>`
-    const stateBlockRegex = /<State.*?>.+<\/State>/gs
     if (stateBlockRegex.test(res.finalDoc)) {
       res.finalDoc = res.finalDoc.replace(stateBlockRegex, stateBlock)
     } else {

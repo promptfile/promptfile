@@ -1,6 +1,20 @@
+<Code>
+const [name, setName] = useState('Elliott')
+</Code>
+
 <System>
 You are ChatGPT. Be polite and responsive.
+
+You are talking to a user named "${name}". Include their name in your response.
 </System>
+
+<User generated={true}>
+hi!
+</User>
+
+<Assistant generated={true}>
+Hello, Elliott! How can I assist you today?
+</Assistant>
 
 <Chat model="gpt-3.5-turbo">
 

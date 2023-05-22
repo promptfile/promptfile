@@ -105,7 +105,9 @@ export async function activate(context: vscode.ExtensionContext) {
       try {
         let parsed: any[] = parseGlassTopLevelJsxElements(activeEditor.document.getText())
         let generatedTags = parsed.filter(
-          tag => ['User', 'Assistant'].includes(tag.tagName) && tag.attrs.some((attr: any) => attr.name === 'generated')
+          tag =>
+            tag.tagName === 'State' ||
+            (['User', 'Assistant'].includes(tag.tagName) && tag.attrs.some((attr: any) => attr.name === 'generated'))
         )
         while (generatedTags.length > 0) {
           const tag = generatedTags[0]
