@@ -9,7 +9,7 @@ export function findAnthropicDiagnostics(textDocument: TextDocument): Diagnostic
     if (!chatElement) {
       return []
     }
-    const model = chatElement.attrs.find(attr => attr.name === 'model')
+    const model = chatElement.attrsr.find(attr => attr.name === 'model')
     if (!model || !model.stringValue.startsWith('claude')) {
       return []
     }
