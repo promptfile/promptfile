@@ -72,7 +72,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
     {
       label: 'For',
       kind: CompletionItemKind.Snippet,
-      insertText: 'For each={$1} fragment={item => <Block role={item.role} content={item.content} />} />',
+      insertText: 'For each={$1} item="$2">\n$3\n</For>',
       insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',

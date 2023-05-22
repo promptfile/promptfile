@@ -24,9 +24,11 @@ You are an AI community moderator. Your job is to read and process comments on a
 </System>
 
 <For each={examples} item="example">
+
 <User>
 ${example.message}
 </User>
+
 <Assistant>
 ${example.classification}
 </Assistant>

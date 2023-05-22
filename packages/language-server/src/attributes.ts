@@ -76,6 +76,15 @@ export const glassAttributes: Record<string, GlassAttribute[]> = {
       documentation: 'The `fragment` attribute defines the fragment you want to render for each item.',
       type: 'function',
       completion: 'fragment={item => <Block role={item.role} content={item.content} />}',
+      optional: true,
+    },
+    {
+      name: 'item',
+      detail: 'alias for each item in the array',
+      documentation: 'The `item` attribute defines the alias for each item in the array.',
+      type: 'string',
+      completion: 'item="item"',
+      optional: true,
     },
   ],
   User: [
