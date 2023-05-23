@@ -57,9 +57,7 @@ async function executeTypescript(document: vscode.TextDocument, fileName: string
   fs.writeFileSync(
     tmpFilePath,
     `${transpiledCode}
-context.response = ${getGlassExportName(fileName)}({ args: ${JSON.stringify(
-      interpolationArgs
-    )}, options: { openaiKey: OPENAI_API_KEY, anthropicKey: ANTHROPIC_API_KEY, progress } })`,
+context.response = ${getGlassExportName(fileName)}()`,
     {
       encoding: 'utf-8',
     }

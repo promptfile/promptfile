@@ -1,6 +1,6 @@
 {
   "settings": {
-    "git.openRepositoryInParentFolders": "never",    
+    "git.openRepositoryInParentFolders": "never",
     "glass.outputDirectory": "${workspaceFolder}",
     "files.trimTrailingWhitespace": false,
     "files.insertFinalNewline": false,
