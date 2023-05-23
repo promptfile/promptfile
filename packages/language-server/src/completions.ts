@@ -22,7 +22,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
     })
     completionItems.push({
       label: element.name,
-      kind: CompletionItemKind.Class, // Specifies the type of completion item, such as Class, Method, Property
+      kind: CompletionItemKind.Property,
       detail: element.detail,
       documentation: element.documentation
         ? {
