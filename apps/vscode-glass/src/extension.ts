@@ -12,6 +12,7 @@ import { LeftPanelWebview } from './LeftPanelWebview'
 import { executeGlassFile } from './executeGlassFile'
 import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
+import { hasGlassFileOpen } from './util/isGlassFile'
 import { getOpenaiKey } from './util/keys'
 
 let client: LanguageClient | null = null
@@ -35,7 +36,10 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     },
     {
-      documentSelector: [{ scheme: 'file', language: 'glass' }],
+      documentSelector: [
+        { scheme: 'file', language: 'glass' },
+        { scheme: 'file', language: 'glass-py' },
+      ],
       outputChannelName: 'Glass Language Server',
     }
   )
@@ -74,7 +78,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor(
       editor => {
         activeEditor = editor
-        if (editor && editor.document.languageId === 'glass') {
+        if (editor && ['glass', 'glass-py'].includes(editor.document.languageId)) {
           updateDecorations(editor, codeDecorations)
           updateCharacterCount()
         } else {
@@ -131,7 +135,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('glass.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
       }
 
@@ -142,6 +146,11 @@ export async function activate(context: vscode.ExtensionContext) {
       if (openaiKey == null || openaiKey === '') {
         await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
         await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
+        return
+      }
+
+      if (activeEditor.document.languageId === 'glass-py') {
+        await executeGlassFilePython(activeEditor.document, {})
         return
       }
 
@@ -256,12 +265,12 @@ export async function activate(context: vscode.ExtensionContext) {
       if (editor) {
         const document = editor.document
         const filePath = document.uri.fsPath
+        const file = filePath.split('/').slice(-1)[0]
         try {
-          const file = filePath.split('/').slice(-1)[0]
-          const code = transpileGlass(path.dirname(filePath), filePath, 'typescript', path.join(path.dirname(filePath)))
-
-          // Fs.writeFileSync(path.join(outputDirectory, 'glassPrompts.ts'), code)
-          // const code = processFile(filePath)
+          const code =
+            document.languageId === 'glass-py'
+              ? transpileGlassPython(filePath, filePath, 'python', path.join(path.dirname(filePath)))
+              : transpileGlass(filePath, filePath, 'typescript', path.join(path.dirname(filePath)))
           await vscode.env.clipboard.writeText(code)
           await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
         } catch (error) {
@@ -294,33 +303,10 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       }
     }),
-    vscode.commands.registerCommand('glass.transpilePython', async () => {
-      const editor = vscode.window.activeTextEditor
-      if (editor) {
-        const document = editor.document
-        const filePath = document.uri.fsPath
-        try {
-          const file = filePath.split('/').slice(-1)[0]
-          const code = transpileGlassPython(
-            path.dirname(filePath),
-            filePath,
-            'typescript',
-            path.join(path.dirname(filePath))
-          )
 
-          // Fs.writeFileSync(path.join(outputDirectory, 'glassPrompts.ts'), code)
-          // const code = processFile(filePath)
-          await vscode.env.clipboard.writeText(code)
-          await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
-        } catch (error) {
-          console.error(error)
-          throw error
-        }
-      }
-    }),
     vscode.commands.registerCommand('glass.runPython', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
       }
 

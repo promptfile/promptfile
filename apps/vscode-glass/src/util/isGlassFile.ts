@@ -1,7 +1,11 @@
 import * as vscode from 'vscode'
 
 export function isGlassFile(document: vscode.TextDocument) {
-  return document.fileName.endsWith('.glass')
+  return ['glass', 'glass-py'].includes(document.languageId)
+}
+
+export function hasGlassFileOpen(editor: vscode.TextEditor) {
+  return isGlassFile(editor.document)
 }
 
 export function getDocumentFilename(document: vscode.TextDocument) {
