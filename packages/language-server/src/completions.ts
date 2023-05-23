@@ -17,6 +17,8 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
           ? `\${${cursorIndex}|true,false|}`
           : attribute.type === 'string'
           ? `"$${cursorIndex}"`
+          : attribute.type === 'array'
+          ? `{[$${cursorIndex}]}`
           : `\$${cursorIndex}`
       return ` ${attribute.name}=${attributeValue}`
     })

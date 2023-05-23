@@ -1,0 +1,61 @@
+<System>
+Read the Message provided by the user.  First, determine whether the User agreed to remember information based on the conversation.  If the User did agree to remember information, return the updated Profile as fenced JSON with the addition of the new infromation provided by the user.
+
+If the user did not agree to remember information, simply reply NO_ACTION
+</System>
+
+<User>
+Profile:
+```json
+{
+    "firstName": "Ellington",
+    "lastName": "Burrington"
+}
+```
+
+Message: 
+###
+Sure, i'll remember that your email is "ellington@gmail.com." Is there anything else you'd like me to know?
+###
+</User>
+
+<Assistant>
+```json
+{
+    "firstName": "Ellington",
+    "lastName": "Burrington",
+    "email": "ellington@gmail.com"
+}
+```
+</Assistant>
+
+<User>
+Profile:
+```json
+{
+    "nameOfWife": "Siwon Burris",
+    "email": "blarg@yahoo.com"
+}
+```
+
+Message: 
+###
+You're very welcome. Let me know if you have any other questions!
+###
+</User>
+
+<Assistant>
+NO_ACTION
+</Assistant>
+
+<User>
+Profile: 
+```json
+${profile}
+```
+
+Message: 
+###
+${message}
+###
+</User>
