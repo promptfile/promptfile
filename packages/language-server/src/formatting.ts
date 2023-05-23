@@ -53,7 +53,7 @@ export function formatDocument(text: string) {
 
   try {
     const frontmatter = parseGlassFrontmatter(finalText)
-    if (frontmatter != null && Object.keys(frontmatter).length === 0) {
+    if (frontmatter.length === 0) {
       finalText = removeGlassFrontmatter(finalText)
     }
   } catch {

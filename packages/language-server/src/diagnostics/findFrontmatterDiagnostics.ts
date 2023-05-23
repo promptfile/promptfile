@@ -28,7 +28,7 @@ export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnost
         }
       } else {
         diagnostics.push({
-          severity: DiagnosticSeverity.Error,
+          severity: DiagnosticSeverity.Warning,
           range,
           message: `Unsupported frontmatter key: ${f.name}`,
           source: 'glass',
