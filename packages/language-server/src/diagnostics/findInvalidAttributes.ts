@@ -1,4 +1,4 @@
-import { parseGlassTopLevelJsxElements } from '@glass-lang/glassc'
+import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from '../elements'

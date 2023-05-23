@@ -1,4 +1,4 @@
-import { parseGlassFrontmatter } from '@glass-lang/glassc'
+import { parseGlassFrontmatter } from '@glass-lang/glasslib'
 import * as vscode from 'vscode'
 import { isGlassFile } from './isGlassFile'
 

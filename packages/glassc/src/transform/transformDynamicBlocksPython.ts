@@ -1,10 +1,9 @@
-import { JSXNode } from '@glass-lang/glasslib'
+import glasslib from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
-import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements'
 import { transformGlassDocumentToTemplateStringPython } from './transformGlassDocToTemplateString'
 
 export function transformDynamicBlocksPython(doc: string) {
-  const jsxNodes = parseGlassTopLevelJsxElements(doc)
+  const jsxNodes = glasslib.parseGlassTopLevelJsxElements(doc)
 
   let jsxInterpolations: any = {}
 
@@ -122,7 +121,7 @@ export function transformDynamicBlocksPython(doc: string) {
   return { doc, jsxInterpolations, undeclaredSymbols: Array.from(undeclaredSymbols) }
 }
 
-function nestedTagHelper(currInterpolation: number, doc: string, docNode: JSXNode) {
+function nestedTagHelper(currInterpolation: number, doc: string, docNode: glasslib.JSXNode) {
   let jsxInterpolations: any = {}
 
   if (docNode.children.length === 0) {
@@ -143,7 +142,7 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: JSXNod
     lastChild.position.end.offset - sectionStart
   )
 
-  const innerNodes = parseGlassTopLevelJsxElements(nodeInsides)
+  const innerNodes = glasslib.parseGlassTopLevelJsxElements(nodeInsides)
 
   for (let i = 0; i < innerNodes.length; i++) {
     const node = innerNodes[i]

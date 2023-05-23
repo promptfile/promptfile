@@ -1,10 +1,10 @@
-import glasslib from '@glass-lang/glasslib'
+import { DocumentNode, determineLineAndColumn } from './ast'
 import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 
-export function parseGlassTopLevelNodes(doc: string): glasslib.DocumentNode[] {
+export function parseGlassTopLevelNodes(doc: string): DocumentNode[] {
   const jsxNodes = parseGlassTopLevelJsxElements(doc)
 
-  const result: glasslib.DocumentNode[] = []
+  const result: DocumentNode[] = []
   let prevEndOffset = 0
 
   for (const jsxNode of jsxNodes) {
@@ -13,8 +13,8 @@ export function parseGlassTopLevelNodes(doc: string): glasslib.DocumentNode[] {
       const textBlock = doc.substring(prevEndOffset, jsxNode.position.start.offset)
 
       // Here you might need a separate function to determine line and column based on offset
-      const startPosition = glasslib.determineLineAndColumn(doc, prevEndOffset)
-      const endPosition = glasslib.determineLineAndColumn(doc, jsxNode.position.start.offset)
+      const startPosition = determineLineAndColumn(doc, prevEndOffset)
+      const endPosition = determineLineAndColumn(doc, jsxNode.position.start.offset)
 
       result.push({
         type: 'text',
@@ -35,8 +35,8 @@ export function parseGlassTopLevelNodes(doc: string): glasslib.DocumentNode[] {
     const textBlock = doc.substring(prevEndOffset)
 
     // Here you might need a separate function to determine line and column based on offset
-    const startPosition = glasslib.determineLineAndColumn(doc, prevEndOffset)
-    const endPosition = glasslib.determineLineAndColumn(doc, doc.length)
+    const startPosition = determineLineAndColumn(doc, prevEndOffset)
+    const endPosition = determineLineAndColumn(doc, doc.length)
 
     result.push({
       type: 'text',

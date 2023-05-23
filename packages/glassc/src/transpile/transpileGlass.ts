@@ -3,12 +3,9 @@ import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
-import { parseGlassAST } from '../parse/parseGlassAST.js'
-import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
 import { parseCodeBlock } from '../parse/parseTypescript.js'
-import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
 import { TYPESCRIPT_GLOBALS } from './typescriptGlobals.js'
 
@@ -50,12 +47,15 @@ export function transpileGlassFile(
   const exportName = getGlassExportName(fileName)
   const isChat = isChatTemplate(doc)
 
-  const { imports, frontmatterArgs, interpolationArgs, jsxExpressions, jsxNodes, isAsync } = parseGlassAST(doc, {
-    workspaceFolder,
-    folderPath,
-    outputDirectory,
-    fileName,
-  })
+  const { imports, frontmatterArgs, interpolationArgs, jsxExpressions, jsxNodes, isAsync } = glasslib.parseGlassAST(
+    doc,
+    {
+      workspaceFolder,
+      folderPath,
+      outputDirectory,
+      fileName,
+    }
+  )
 
   // all variables inside {} are interpolation variables, including ones like {foo.bar}
   const allInterpolationVars = Object.keys(interpolationArgs)
@@ -92,7 +92,7 @@ export function transpileGlassFile(
   let argsNode = ''
 
   // find all the interpolation variables from dynamic code blocks
-  for (const jsxNode of parseGlassTopLevelJsxElements(originalDoc)) {
+  for (const jsxNode of glasslib.parseGlassTopLevelJsxElements(originalDoc)) {
     if (jsxNode.tagName === 'Args') {
       argsNode = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
     }
@@ -156,7 +156,7 @@ export function transpileGlassFile(
   // }
 
   // remove frontmatter after parsing the AST
-  doc = removeGlassFrontmatter(doc)
+  doc = glasslib.removeGlassFrontmatter(doc)
 
   let codeSanitizedDoc = doc
   const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }

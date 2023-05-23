@@ -1,9 +1,5 @@
-import {
-  parseGlassTopLevelJsxElements,
-  transpileGlass,
-  transpileGlassNext,
-  transpileGlassPython,
-} from '@glass-lang/glassc'
+import { transpileGlass, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
+import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'

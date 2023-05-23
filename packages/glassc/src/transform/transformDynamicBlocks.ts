@@ -1,11 +1,10 @@
-import { JSXNode } from '@glass-lang/glasslib'
+import glasslib from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
-import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements'
 import { transformGlassDocumentToTemplateString } from './transformGlassDocToTemplateString'
 import { transformJsxExpressionToTemplateString } from './transformJsxExpressionToTemplateString'
 
 export function transformDynamicBlocks(doc: string, next?: boolean) {
-  const jsxNodes = parseGlassTopLevelJsxElements(doc)
+  const jsxNodes = glasslib.parseGlassTopLevelJsxElements(doc)
 
   let jsxInterpolations: any = {}
 
@@ -160,7 +159,7 @@ export function transformDynamicBlocks(doc: string, next?: boolean) {
 //   return { doc, jsxInterpolations }
 // }
 
-function nestedTagHelper(currInterpolation: number, doc: string, docNode: JSXNode, next?: boolean) {
+function nestedTagHelper(currInterpolation: number, doc: string, docNode: glasslib.JSXNode, next?: boolean) {
   let jsxInterpolations: any = {}
 
   if (docNode.children.length === 0) {
@@ -179,7 +178,7 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: JSXNod
     lastChild.position.end.offset - sectionStart
   )
 
-  const innerNodes = parseGlassTopLevelJsxElements(nodeInsides)
+  const innerNodes = glasslib.parseGlassTopLevelJsxElements(nodeInsides)
 
   for (let i = 0; i < innerNodes.length; i++) {
     const node = innerNodes[i]

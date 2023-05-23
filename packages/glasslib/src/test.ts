@@ -1,1 +1,7 @@
+import './interpolateGlass.test'
+import './interpolateGlassChat.test'
+import './parseGlassBlocks.test'
 import './parseGlassTopLevelJsxElements.test'
+import './parseGlassTopLevelNodes.test'
+import './removeGlassComments.test'
+import './removeGlassFrontmatter.test'

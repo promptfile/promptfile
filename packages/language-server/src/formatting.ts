@@ -1,4 +1,4 @@
-import { parseGlassFrontmatter, removeGlassFrontmatter } from '@glass-lang/glassc'
+import { parseGlassFrontmatter, removeGlassFrontmatter } from '@glass-lang/glasslib'
 
 export function formatDocument(text: string) {
   // Check if the document contains any of the required tags

@@ -4,8 +4,6 @@ import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
-import { parseGlassAST } from '../parse/parseGlassAST.js'
-import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
 import {
@@ -14,7 +12,6 @@ import {
   parseReturnExpression,
   removeReturnStatements,
 } from '../parse/parseTypescript.js'
-import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
 import { getUseStatePairs, transformSetState } from '../transform/transformSetState.js'
 import { getGlassExportName } from './transpileGlass.js'
@@ -43,7 +40,7 @@ export function transpileGlassFileNext(
 
   const originalDoc = doc
 
-  const toplevelNodes = parseGlassTopLevelJsxElements(originalDoc)
+  const toplevelNodes = glasslib.parseGlassTopLevelJsxElements(originalDoc)
 
   const testNodes = toplevelNodes.filter(node => node.tagName === 'Test')
   checkOk(testNodes.length <= 1, 'Only one <Test> block is allowed per file')
@@ -112,7 +109,7 @@ function getTestData() {
   const hasPrompt = toplevelNodes.filter(node => node.tagName === 'Prompt').length > 0
   const isChat = !hasPrompt
 
-  const { imports, interpolationArgs, jsxExpressions, isAsync } = parseGlassAST(doc, {
+  const { imports, interpolationArgs, jsxExpressions, isAsync } = glasslib.parseGlassAST(doc, {
     workspaceFolder,
     folderPath,
     outputDirectory,
@@ -223,7 +220,7 @@ function getTestData() {
   // }
 
   // remove frontmatter after parsing the AST
-  doc = removeGlassFrontmatter(doc)
+  doc = glasslib.removeGlassFrontmatter(doc)
 
   let codeSanitizedDoc = doc
   const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }

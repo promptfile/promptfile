@@ -1,17 +1,17 @@
-import { parseGlassTopLevelJsxElements } from '@glass-lang/glassc'
+import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
 export function findAnthropicDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
-    const parsed: any[] = parseGlassTopLevelJsxElements(textDocument.getText())
+    const parsed = parseGlassTopLevelJsxElements(textDocument.getText())
     const chatElement = parsed.find(tag => tag.tagName === 'Chat')
     if (!chatElement) {
       console.log('no chat element')
       return []
     }
     const model = chatElement.attrs.find(attr => attr.name === 'model')
-    if (!model || !model.stringValue.startsWith('claude')) {
+    if (!model || !model.stringValue!.startsWith('claude')) {
       console.log('not claude')
       return []
     }

@@ -1,10 +1,10 @@
-import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements'
+import glasslib from '@glass-lang/glasslib'
 import { parsePythonUndeclaredSymbols } from '../parse/parsePython'
 import { escapePythonTemplateSequences } from './escapePythonTemplateSequences'
 import { transformJsxElementToTemplateString } from './transformJsxElementToTemplateString'
 
 export function transformGlassDocumentToTemplateString(input: string): string {
-  const jsxNodes = parseGlassTopLevelJsxElements(input)
+  const jsxNodes = glasslib.parseGlassTopLevelJsxElements(input)
 
   const replacementMap: Record<string, string> = {}
 
@@ -27,7 +27,7 @@ export function transformGlassDocumentToTemplateString(input: string): string {
 }
 
 export function transformGlassDocumentToTemplateStringPython(input: string) {
-  const jsxNodes = parseGlassTopLevelJsxElements(input)
+  const jsxNodes = glasslib.parseGlassTopLevelJsxElements(input)
 
   const replacementMap: Record<string, string> = {}
 

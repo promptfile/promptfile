@@ -1,4 +1,4 @@
-import { parseGlassFrontmatter } from '@glass-lang/glassc'
+import { parseGlassFrontmatter } from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 

@@ -1,4 +1,3 @@
-import glasslib from '@glass-lang/glasslib'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
 import { fromMarkdown } from 'mdast-util-from-markdown'
@@ -11,15 +10,17 @@ import { mdxMd } from 'micromark-extension-mdx-md'
 import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
 import { combineExtensions } from 'micromark-util-combine-extensions'
 import * as path from 'node:path'
-import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter'
+import { JSXNode } from './ast'
 import { glassASTNodeToJSXNode } from './parseGlassTopLevelJsxElements'
+import { removeGlassComments } from './removeGlassComments'
+import { removeGlassFrontmatter } from './removeGlassFrontmatter'
 
 export function parseGlassAST(
   doc: string,
   folders: { workspaceFolder: string; folderPath: string; outputDirectory: string; fileName: string }
 ) {
   // preprocessing: remove all comments
-  doc = glasslib.removeGlassComments(doc)
+  doc = removeGlassComments(doc)
 
   const mdxSettings = {
     acorn: Parser.extend(acornJsx()),
@@ -48,7 +49,7 @@ export function parseGlassAST(
   const frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[] = []
   const interpolationArgs: Record<string, boolean> = {}
   const jsxExpressions: string[] = []
-  const jsxNodes: glasslib.JSXNode[] = []
+  const jsxNodes: JSXNode[] = []
   let isAsync = false
 
   for (const node of tree.children) {
@@ -78,7 +79,7 @@ function parseAstHelper(
   frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[],
   interpolationArgs: Record<string, boolean>,
   jsxExpressions: string[],
-  jsxNodes: glasslib.JSXNode[]
+  jsxNodes: JSXNode[]
 ) {
   let isAsync = false
 
