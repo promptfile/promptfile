@@ -1,3 +1,4 @@
+import { parseGlassAST } from '@glass-lang/glassc'
 import * as vscode from 'vscode'
 import { isGlassFile } from './isGlassFile'
 
@@ -7,12 +8,17 @@ export async function updateLanguageMode(textDocument: vscode.TextDocument) {
   }
   console.log('OMG!')
   try {
-    if (textDocument.languageId === 'glass') {
-      console.log('no need to update')
-      return
+    const ast = parseGlassAST(textDocument.getText())
+    const frontmatterArgs = ast.frontmatterArgs
+    const languageFrontmatter = frontmatterArgs.find(arg => arg.name === 'language')
+    let targetLanguage = 'glass'
+    console.log('frontmatter', ast.frontmatterArgs)
+    if (languageFrontmatter && languageFrontmatter.type === 'python') {
+      targetLanguage = 'glass-py'
     }
-    console.log('updating...')
-    await vscode.languages.setTextDocumentLanguage(textDocument, 'glass')
+    if (textDocument.languageId !== targetLanguage) {
+      await vscode.languages.setTextDocumentLanguage(textDocument, targetLanguage)
+    }
   } catch {
     // ignore
   }

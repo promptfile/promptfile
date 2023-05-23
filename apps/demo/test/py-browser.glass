@@ -2,6 +2,8 @@ import requests from "requests"
 
 <Code>
 response = requests.get("https://elliottburris.com")
+def hello():
+    return  "hi"
 </Code>
 
 <System>
