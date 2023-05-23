@@ -135,6 +135,8 @@ export async function activate(context: vscode.ExtensionContext) {
       } catch {
         await vscode.window.showErrorMessage('Unable to parse this Glass file')
       }
+      // call the document formatter
+      await vscode.commands.executeCommand('editor.action.formatDocument')
     }),
     vscode.commands.registerCommand('glass.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
