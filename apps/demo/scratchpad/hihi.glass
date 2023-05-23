@@ -2,6 +2,8 @@
 Here's the message from the user:
 
 User: ${hello}
+${hello}: User
 
-Please respond in the style of a ${style}
+Please respond in the style of a ${style} and be a very nice
+
 </System>

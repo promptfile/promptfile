@@ -1,12 +1,10 @@
---Brief Description--
-This Glass file fetches information about a word from an API and then designs a fill-in-the-blank question for the user along with 4 options to select from. This demonstrates how Glass easily allows you to write code in your prompt, provide examples with the appropriate role and have variables interpolated.
+// This Glass file fetches information about a word from an API and then designs a fill-in-the-blank question for the user along with 4 options to select from. This demonstrates how Glass easily allows you to write code in your prompt, provide examples with the appropriate role and have variables interpolated.
 
 <Code>
 const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
 const res = await fetch(url)
 const data = await res.text()
 </Code>
-
 
 <System>
 You are an AI designed to help generate fill-in-the-blank questions for students to test their knowledge about their vocabulary. The user will provide you a word and you will be given information about that word such as its origin, part of speech, synoyms and more. From that information, your job is to generate an example sentence with the word missing (leave a series of four dashes like ----) and present four options for the user to choose from. The options that you present should be plausible in replacing the missing word. Your goal is to choose sentences and examples that really test the user's knowledge of the word. However, there can only be on correct option from the four options you present to the user. The correct option should be the word provided. The options should be of similar complexity and difficulty. Provide a brief explanation as to why the correct option makes sense given the context clues and in comparison to the other answers.
@@ -25,8 +23,6 @@ Information about Word:
 ###
 </User>
 
-
-
 <Assistant>
 Example Sentence: Although he remained quite skinny, Jeff's ---- proved to be extremely unhealthy given the large amount of sugar he consumed.
 Option A: frugality
@@ -34,6 +30,7 @@ Option B: grandiloquence
 Option C: wan
 Option D: gluttony
 </Assistant>
+
 <User>
 Word: Sedition
 Information about Word:
