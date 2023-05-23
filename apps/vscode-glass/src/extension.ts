@@ -9,7 +9,7 @@ import { executeGlassFile } from './executeGlassFile'
 import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
 import { hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
-import { getOpenaiKey } from './util/keys'
+import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
 
 let client: LanguageClient | null = null
@@ -140,14 +140,27 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
 
-      const openaiKey = getOpenaiKey()
-      const config = vscode.workspace.getConfiguration('glass')
-      const defaultChatModel = config.get('defaultChatModel') as string | undefined
-
-      if (openaiKey == null || openaiKey === '') {
-        await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
-        await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
-        return
+      try {
+        const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
+        const chatElement = elements.find(element => element.tagName === 'Chat')
+        const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
+        if (model?.startsWith('claude')) {
+          const anthropicKey = getAnthropicKey()
+          if (anthropicKey == null || anthropicKey === '') {
+            await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
+            await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
+            return
+          }
+        } else {
+          const openaiKey = getOpenaiKey()
+          if (openaiKey == null || openaiKey === '') {
+            await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
+            await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
+            return
+          }
+        }
+      } catch (e) {
+        console.error(e)
       }
 
       if (activeEditor.document.languageId === 'glass-py') {
@@ -304,28 +317,6 @@ export async function activate(context: vscode.ExtensionContext) {
           throw error
         }
       }
-    }),
-
-    vscode.commands.registerCommand('glass.runPython', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
-        return
-      }
-
-      const config = vscode.workspace.getConfiguration('glass')
-      const openaiKey = getOpenaiKey()
-      const defaultChatModel = config.get('defaultChatModel') as string | undefined
-
-      if (openaiKey == null || openaiKey === '') {
-        await vscode.window.showErrorMessage('Set `glass.openaiKey` in your settings to run Glass files.')
-        return
-      }
-
-      // get the current cursor position
-      const cursorPosition = activeEditor.selection.active
-
-      const resp = await executeGlassFilePython(activeEditor.document, {})
-      console.log('execute glass file python returned', JSON.stringify({ resp }))
     })
   )
 }

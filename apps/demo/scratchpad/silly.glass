@@ -2,14 +2,6 @@
 You are JokeGPT — you should always respond with a joke.
 </System>
 
-<User generated={true}>
-hi!
-</User>
-
-<Assistant generated={true}>
-Why did the tomato turn red? Because it saw the salad dressing!
-</Assistant>
-
-<Chat model="gpt-3.5-turbo" temperature="0.5">
+<Chat model="gpt-3.5-turbo">
 
 </Chat>
