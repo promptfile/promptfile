@@ -1,4 +1,4 @@
-import { transpileGlass, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
+import { transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
 import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
@@ -263,7 +263,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
           console.log('about to transpile')
           try {
-            const output = transpileGlass(folderPath, folderPath, 'typescript', outDir)
+            const output = transpileGlassNext(folderPath, folderPath, 'typescript', outDir)
 
             console.log({ output })
 
@@ -286,31 +286,7 @@ export async function activate(context: vscode.ExtensionContext) {
           const code =
             document.languageId === 'glass-py'
               ? transpileGlassPython(filePath, filePath, 'python', path.join(path.dirname(filePath)))
-              : transpileGlass(filePath, filePath, 'typescript', path.join(path.dirname(filePath)))
-          await vscode.env.clipboard.writeText(code)
-          await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
-        } catch (error) {
-          console.error(error)
-          throw error
-        }
-      }
-    }),
-    vscode.commands.registerCommand('glass.transpileCurrentFileNext', async () => {
-      const editor = vscode.window.activeTextEditor
-      if (editor) {
-        const document = editor.document
-        const filePath = document.uri.fsPath
-        try {
-          const file = filePath.split('/').slice(-1)[0]
-          const code = transpileGlassNext(
-            path.dirname(filePath),
-            filePath,
-            'typescript',
-            path.join(path.dirname(filePath))
-          )
-
-          // Fs.writeFileSync(path.join(outputDirectory, 'glassPrompts.ts'), code)
-          // const code = processFile(filePath)
+              : transpileGlassNext(filePath, filePath, 'typescript', path.join(path.dirname(filePath)))
           await vscode.env.clipboard.writeText(code)
           await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
         } catch (error) {

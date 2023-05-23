@@ -1,20 +1,25 @@
-import { runGlass } from '@glass-lang/glasslib'
+export function getWithInterpolationPrompt() {
+  function getTestData() {
+    return {}
+  }
 
-export async function getFooPrompt(opt: {
-  args: { foo: string }
-  options?: { openaiKey?: string; progress?: (data: { nextDoc: string; rawResponse?: string }) => void }
-}) {
-  const GLASS_STATE = {}
-  const { foo } = opt.args
+  const compile = async (opt: { args: { foo: string } }) => {
+    const GLASS_STATE = {}
+    const { foo } = opt.args
 
-  const GLASSVAR = {}
-  const TEMPLATE = `<Prompt>
+    const GLASSVAR = {}
+    const TEMPLATE = `<Prompt>
 ${foo}
 </Prompt>`
-  return await runGlass(
-    'foo',
-    'text-davinci-003',
-    { interpolatedDoc: TEMPLATE, originalDoc: '<Prompt>\n${foo}\n</Prompt>' },
-    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
-  )
+    return {
+      fileName: 'withInterpolation',
+      model: 'text-davinci-003',
+      interpolatedDoc: TEMPLATE,
+      originalDoc: '<Prompt>\n${foo}\n</Prompt>',
+      state: GLASS_STATE,
+      onResponse: undefined,
+    }
+  }
+
+  return { getTestData, compile }
 }

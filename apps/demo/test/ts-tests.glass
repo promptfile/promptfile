@@ -2,13 +2,13 @@
 const url = "https://elliottburris.com"
 const question = "where did elliott go to school"
 // or return an array of objects to run a list of tests
-// return [{
-//     question: "where did elliott go to school",
-// },{
-//     question: "what is elliott's last name",
-// },{
-//     question: "where was elliott born",
-// }]
+return [{
+    question: "where did elliott go to school",
+},{
+    question: "what is elliott's last name",
+},{
+    question: "where was elliott born",
+}]
 </Test>
 
 <Code>

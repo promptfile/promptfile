@@ -4,7 +4,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { parsePythonLocalVariables, parsePythonUndeclaredSymbols } from '../parse/parsePython.js'
 import { transformDynamicBlocksPython } from '../transform/transformDynamicBlocksPython.js'
-import { getGlassExportName } from './transpileGlass.js'
+import { getGlassExportName } from './transpileGlassNext.js'
 
 const extension = 'glass'
 

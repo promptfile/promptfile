@@ -1,13 +1,8 @@
 export { parseGlassMetadata } from './parse/parseGlassMetadata.js'
 // breaks CommonJS projects, since it imports ESM packages
 export {
-  constructGlassOutputFile,
-  getGlassExportName,
-  transpileGlass,
-  transpileGlassFile,
-} from './transpile/transpileGlass.js'
-export {
   constructGlassOutputFileNext,
+  getGlassExportName,
   transpileGlassFileNext,
   transpileGlassNext,
 } from './transpile/transpileGlassNext.js'

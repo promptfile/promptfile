@@ -5,5 +5,11 @@
     "glass.outputDirectory": "${workspaceFolder}",
     "editor.wordWrap": "on"
   },
-  "folders": [{ "path": "chat" }, { "path": "gpt3" }, { "path": "scratchpad" }, { "path": "test" }]
+  "folders": [
+    { "path": "chat" },
+    { "path": "gpt3" },
+    { "path": "scratchpad" },
+    { "path": "test" },
+    { "path": "../../packages/glassc" }
+  ]
 }

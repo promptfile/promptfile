@@ -30,15 +30,20 @@ export type ModelName =
   | 'babbage'
   | 'ada'
 
+export interface TranspilerOutput {
+  fileName: string
+  model: ModelName
+  interpolatedDoc: string
+  originalDoc: string
+  state: any
+  onResponse?: (data: { message: string }) => Promise<any>
+}
+
 export async function runGlass(
-  fileName: string,
-  model: ModelName,
-  docs: { interpolatedDoc: string; originalDoc: string },
+  { fileName, model, originalDoc, interpolatedDoc, state, onResponse }: TranspilerOutput,
   options?: {
-    args?: any
     openaiKey?: string
-    onResponse?: (message: any) => void
-    state?: any
+    anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
@@ -62,61 +67,64 @@ export async function runGlass(
   // (content)
   // </User>
 
-  const parsedOrig = parseGlassTopLevelJsxElements(docs.originalDoc)
+  const parsedOrig = parseGlassTopLevelJsxElements(originalDoc)
 
   const chatNode = parsedOrig.find(node => node.tagName === 'Chat')
   let newChatNode = `<Chat model="${model}">
 
 </Chat>`
   if (chatNode) {
-    newChatNode = getJSXNodeShellString(chatNode, docs.originalDoc)
+    newChatNode = getJSXNodeShellString(chatNode, originalDoc)
   }
 
-  let originalDoc = docs.originalDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
-  let interpolatedDoc = docs.interpolatedDoc.replace(
-    /<Chat.*?>\n(.+?)\n<\/Chat>/gs,
-    '<User generated={true}>\n$1\n</User>'
-  )
+  let origDoc = originalDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
+  let interpDoc = interpolatedDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
 
-  const state = options?.state ?? {}
-  const stateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
+  const newState = state ?? {}
+  const stateBlock = `<State>\n${JSON.stringify(newState, null, 2)}\n</State>`
   const stateBlockRegex = /<State>.+<\/State>/gs
-  if (Object.keys(state).length > 0) {
-    if (stateBlockRegex.test(originalDoc)) {
-      originalDoc = originalDoc.replace(stateBlockRegex, stateBlock)
+  if (Object.keys(newState).length > 0) {
+    if (stateBlockRegex.test(origDoc)) {
+      origDoc = origDoc.replace(stateBlockRegex, stateBlock)
     } else {
-      originalDoc = `${stateBlock}\n\n${originalDoc}`
+      origDoc = `${stateBlock}\n\n${origDoc}`
     }
-    if (stateBlockRegex.test(interpolatedDoc)) {
-      interpolatedDoc = interpolatedDoc.replace(stateBlockRegex, stateBlock)
+    if (stateBlockRegex.test(interpDoc)) {
+      interpDoc = interpDoc.replace(stateBlockRegex, stateBlock)
     } else {
-      interpolatedDoc = `${stateBlock}\n\n${interpolatedDoc}`
+      interpDoc = `${stateBlock}\n\n${interpDoc}`
     }
   }
 
   if (options?.progress) {
     const completionFragment = generateCompletionFragment('', true, model, newChatNode)
     options.progress({
-      nextDoc: `${originalDoc.trim()}\n\n${completionFragment}`,
-      nextInterpolatedDoc: `${interpolatedDoc.trim()}\n\n${completionFragment}`,
+      nextDoc: `${origDoc.trim()}\n\n${completionFragment}`,
+      nextInterpolatedDoc: `${interpDoc.trim()}\n\n${completionFragment}`,
       rawResponse: '█',
     })
   }
   const res =
     model === 'gpt-3.5-turbo' || model === 'gpt-4'
-      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, newChatNode, options)
+      ? await runGlassChat(fileName, model, { originalDoc: origDoc, interpolatedDoc: interpDoc }, newChatNode, options)
       : model.startsWith('claude')
-      ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, newChatNode, options)
-      : await runGlassCompletion(fileName, model as any, { originalDoc, interpolatedDoc }, options)
+      ? await runGlassChatAnthropic(
+          fileName,
+          model,
+          { originalDoc: origDoc, interpolatedDoc: interpDoc },
+          newChatNode,
+          options
+        )
+      : await runGlassCompletion(fileName, model as any, { originalDoc: origDoc, interpolatedDoc: interpDoc }, options)
 
-  if (options?.onResponse) {
-    await options.onResponse({ message: res.rawResponse })
+  if (onResponse) {
+    await onResponse({ message: res.rawResponse })
     if (stateBlockRegex.test(res.finalDoc)) {
       res.finalDoc = res.finalDoc.replace(stateBlockRegex, stateBlock)
     }
   }
 
-  return { ...res, initDoc: docs.originalDoc, initInterpolatedDoc: docs.interpolatedDoc }
+  return { ...res, initDoc: originalDoc, initInterpolatedDoc: interpolatedDoc }
 }
 
 const generateCompletionFragment = (message: string, streaming: boolean, model: string, newChatNode: string) => {
@@ -130,7 +138,7 @@ ${newChatNode}`
 /**
  * Takes a glass template string and interpolation variables and outputs an array of chat messages you can use to prompt ChatGPT API (e.g. gpt-3.5-turbo or gpt-4).
  */
-export async function runGlassChat(
+async function runGlassChat(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
@@ -185,7 +193,7 @@ export async function runGlassChat(
 /**
  * Takes a glass template string and interpolation variables and outputs an array of chat messages you can use to prompt ChatGPT API (e.g. gpt-3.5-turbo or gpt-4).
  */
-export async function runGlassChatAnthropic(
+async function runGlassChatAnthropic(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
@@ -257,7 +265,7 @@ export async function runGlassChatAnthropic(
 /**
  * Takes a glass template string and interpolation variables and outputs an array of chat messages you can use to prompt ChatGPT API (e.g. gpt-3.5-turbo or gpt-4).
  */
-export async function runGlassCompletion(
+async function runGlassCompletion(
   fileName: string,
   model: 'text-davinci-003',
   docs: { interpolatedDoc: string; originalDoc: string },

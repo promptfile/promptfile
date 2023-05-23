@@ -1,4 +1,5 @@
 import { constructGlassOutputFileNext, getGlassExportName, transpileGlassFileNext } from '@glass-lang/glassc'
+import { runGlass } from '@glass-lang/glasslib'
 import * as esbuild from 'esbuild'
 import fs from 'fs'
 import fetch from 'node-fetch'
@@ -88,5 +89,10 @@ context.response = ${getGlassExportName(fileName)}({ args: ${JSON.stringify(
   vm.createContext(ctx)
   script.runInContext(ctx)
 
-  return context.response
+  const { getTestData, compile } = context.response
+
+  const t = getTestData()
+  const c = await compile(t)
+
+  return await runGlass(c, { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
 }

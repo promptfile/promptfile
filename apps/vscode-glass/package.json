@@ -160,10 +160,6 @@
         "title": "Glass: Open documentation"
       },
       {
-        "command": "glass.transpileCurrentFileNext",
-        "title": "Glass: Transpile current file (next)"
-      },
-      {
         "command": "glass.transpileCurrentFile",
         "title": "Glass: Transpile current file"
       },
