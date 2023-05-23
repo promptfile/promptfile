@@ -246,11 +246,15 @@ export async function ${exportName}(${functionArgs}) {${language === 'javascript
       .join(',')}
   }
   const TEMPLATE = \`${codeSanitizedDoc.replaceAll('`', '\\`')}\`
-  return await runGlass('${fileName}', '${model}', {interpolatedDoc: TEMPLATE, originalDoc}, ${finalArg})
+  return await runGlass('${fileName}', '${model}', {interpolatedDoc: TEMPLATE, originalDoc: ${JSON.stringify(
+    originalDoc
+  )}}, ${finalArg})
 }`
 
   const formattedCode = prettier.format(code, {
-    parser: 'babel',
+    parser: 'typescript',
+    printWidth: 120,
+    arrowParens: 'avoid',
     semi: false,
     singleQuote: true,
     trailingComma: 'es5',
@@ -294,7 +298,9 @@ export function constructGlassOutputFileNext(functions: ReturnType<typeof transp
   `
 
   const output = prettier.format(code, {
-    parser: 'babel',
+    parser: 'typescript',
+    printWidth: 120,
+    arrowParens: 'avoid',
     semi: false,
     singleQuote: true,
     trailingComma: 'es5',

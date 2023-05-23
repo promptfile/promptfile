@@ -41,38 +41,40 @@ export async function runGlass(
   // (content)
   // </User>
 
-  initDoc = initDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
+  let originalDoc = docs.originalDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
+  let interpolatedDoc = docs.interpolatedDoc.replace(
+    /<Chat.*?>\n(.+?)\n<\/Chat>/gs,
+    '<User generated={true}>\n$1\n</User>'
+  )
+
   const state = options?.state ?? {}
   const stateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
   const stateBlockRegex = /<State>.+<\/State>/gs
   if (Object.keys(state).length > 0) {
-    if (stateBlockRegex.test(initDoc)) {
-      initDoc = initDoc.replace(stateBlockRegex, stateBlock)
+    if (stateBlockRegex.test(originalDoc)) {
+      originalDoc = originalDoc.replace(stateBlockRegex, stateBlock)
     } else {
-      initDoc = `${stateBlock}\n\n${initDoc}`
+      originalDoc = `${stateBlock}\n\n${originalDoc}`
+    }
+    if (stateBlockRegex.test(interpolatedDoc)) {
+      interpolatedDoc = interpolatedDoc.replace(stateBlockRegex, stateBlock)
+    } else {
+      interpolatedDoc = `${stateBlock}\n\n${interpolatedDoc}`
     }
   }
-
-  // =======
-  //   const initDoc = docs.originalDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
-  //   const interpolatedDoc = docs.interpolatedDoc.replace(
-  //     /<Chat.*?>\n(.+?)\n<\/Chat>/gs,
-  //     '<User generated={true}>\n$1\n</User>'
-  //   )
-  // >>>>>>> bde2ec7 (wip)
 
   if (options?.progress) {
     const completionFragment = generateCompletionFragment('', true, model)
     options.progress({
-      nextDoc: `${initDoc.trim()}\n\n${completionFragment}`,
+      nextDoc: `${originalDoc.trim()}\n\n${completionFragment}`,
       nextInterpolatedDoc: `${interpolatedDoc.trim()}\n\n${completionFragment}`,
       rawResponse: '█',
     })
   }
   const res =
     model === 'gpt-3.5-turbo' || model === 'gpt-4'
-      ? await runGlassChat(fileName, model, initDoc, options)
-      : await runGlassCompletion(fileName, model as any, initDoc, options)
+      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, options)
+      : await runGlassCompletion(fileName, model as any, { originalDoc, interpolatedDoc }, options)
 
   if (options?.onResponse) {
     await options.onResponse({ message: res.rawResponse })
@@ -81,7 +83,7 @@ export async function runGlass(
     }
   }
 
-  return res
+  return { ...res, initDoc: docs.originalDoc, initInterpolatedDoc: docs.interpolatedDoc }
 }
 
 const generateCompletionFragment = (message: string, streaming: boolean, model: string) => {
@@ -107,8 +109,6 @@ export async function runGlassChat(
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
-  initDoc: string
-  initInterpolatedDoc: string
   finalDoc: string
   finalInterpolatedDoc: string
   rawResponse: string
@@ -119,7 +119,7 @@ export async function runGlassChat(
     method: 'POST',
     headers: {
       // eslint-disable-next-line turbo/no-undeclared-env-vars
-      Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_KEY}`,
+      Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -143,10 +143,9 @@ export async function runGlassChat(
   })
 
   const fragment = generateCompletionFragment(response, false, model)
-  const nextDoc = `${initDoc.trim()}\n\n${fragment}`
   return {
-    initDoc,
-    finalDoc: nextDoc,
+    finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
+    finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
     rawResponse: response,
   }
 }
@@ -157,24 +156,24 @@ export async function runGlassChat(
 export async function runGlassCompletion(
   fileName: string,
   model: 'text-davinci-003',
-  initDoc: string,
+  docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
     args?: any
     openaiKey?: string
-    progress?: (data: { nextDoc: string; rawResponse?: string }) => void
+    progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
-  initDoc: string
   finalDoc: string
+  finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const prompt = interpolateGlass(fileName, initDoc)
+  const prompt = interpolateGlass(fileName, docs.interpolatedDoc)
 
   const r = await fetch('https://api.openai.com/v1/completions', {
     method: 'POST',
     headers: {
       // eslint-disable-next-line turbo/no-undeclared-env-vars
-      Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_KEY}`,
+      Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -187,15 +186,16 @@ export async function runGlassCompletion(
   const response = await handleStream(r, handleCompletionChunk, next => {
     if (options?.progress) {
       options.progress({
-        nextDoc: `${initDoc}${next}<Completion model="${model}" />`,
+        nextDoc: `${docs.originalDoc}${next}<Completion model="${model}" />`,
+        nextInterpolatedDoc: `${docs.interpolatedDoc}${next}<Completion model="${model}" />`,
         rawResponse: next,
       })
     }
   })
 
   return {
-    initDoc,
-    finalDoc: `${initDoc}${response}<Completion model="${model}" />`,
+    finalDoc: `${docs.originalDoc}${response}<Completion model="${model}" />`,
+    finalInterpolatedDoc: `${docs.interpolatedDoc}${response}<Completion model="${model}" />`,
     rawResponse: response,
   }
 }

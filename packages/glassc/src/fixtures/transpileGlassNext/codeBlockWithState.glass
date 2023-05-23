@@ -1,0 +1,9 @@
+<Code>
+const initProfile = { firstName: '', lastName: '', hasChatted: false }
+const [profile, setProfile] = useState(initProfile)
+const [moreState, setMoreState] = useState('')
+</Code>
+
+<Chat model="gpt-4" onResponse={() => setProfile({ hasChatted: true})}>
+hello world
+</Chat>

@@ -1,0 +1,11 @@
+<Args messages="{ role: string, content: string }[]" />
+
+<System>
+You are a helpful assistant.
+</System>
+
+<For each={messages} fragment={m => <Block role={m.role} content={m.content} />} />
+
+<User>
+${foo}
+</User>

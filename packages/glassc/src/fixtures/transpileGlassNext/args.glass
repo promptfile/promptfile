@@ -1,0 +1,4 @@
+<Args foo="number" bar="string" />
+<Prompt>
+${foo} ${bar}
+</Prompt>

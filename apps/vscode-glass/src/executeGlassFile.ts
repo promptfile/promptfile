@@ -45,7 +45,7 @@ export async function executeGlassFile(
     `${transpiledCode}
 context.response = ${getGlassExportName(fileName)}({ args: ${JSON.stringify(
       interpolationArgs
-    )}, options: { openaiKey: OPENAI_KEY, progress } })`,
+    )}, options: { openaiKey: OPENAI_API_KEY, progress } })`,
     {
       encoding: 'utf-8',
     }
@@ -78,7 +78,7 @@ context.response = ${getGlassExportName(fileName)}({ args: ${JSON.stringify(
     module: { exports: {} },
     require: require,
     __filename: 'outputFile.js',
-    OPENAI_KEY: openaiKey,
+    OPENAI_API_KEY: openaiKey,
     fetch,
     progress,
   }

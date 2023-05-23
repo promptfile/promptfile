@@ -1,0 +1,8 @@
+import c from "c"
+
+<Code>
+const a = "3"
+</Code>
+<Prompt>
+${a} ${b} ${c}
+</Prompt>
