@@ -6,7 +6,6 @@ import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { LeftPanelWebview } from './LeftPanelWebview'
 import { executeGlassFile } from './executeGlassFile'
-import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
 import { hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
@@ -164,63 +163,63 @@ export async function activate(context: vscode.ExtensionContext) {
         console.error(e)
       }
 
-      if (activeEditor.document.languageId === 'glass-py') {
-        await executeGlassFilePython(activeEditor.document, {})
-        return
-      }
-
       // get the current cursor position
       let firstLoad = true
       try {
-        const resp = await executeGlassFile(activeEditor.document, {}, async ({ nextDoc, rawResponse }) => {
-          const currentText = activeEditor.document.getText()
-          if (firstLoad) {
-            const maxRange = activeEditor.document.validateRange(
-              new vscode.Range(
-                new vscode.Position(0, 0),
-                new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
+        const resp = await executeGlassFile(
+          activeEditor.document,
+          {},
+          activeEditor.document.languageId === 'glass-py',
+          async ({ nextDoc, rawResponse }) => {
+            const currentText = activeEditor.document.getText()
+            if (firstLoad) {
+              const maxRange = activeEditor.document.validateRange(
+                new vscode.Range(
+                  new vscode.Position(0, 0),
+                  new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
+                )
               )
-            )
-            await activeEditor.edit(editBuilder => {
-              editBuilder.replace(maxRange, nextDoc)
+              await activeEditor.edit(editBuilder => {
+                editBuilder.replace(maxRange, nextDoc)
+              })
+              const lastLineIndex = activeEditor.document.lineCount
+              const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
+              activeEditor.selection = new vscode.Selection(targetPosition, targetPosition)
+              activeEditor.revealRange(new vscode.Range(targetPosition, targetPosition))
+              firstLoad = false
+              return
+            }
+            if (!currentText.includes('█') && !firstLoad) {
+              return
+            }
+
+            const lines = activeEditor.document.getText().split('\n')
+            const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
+            const blockCharacterLine = lines[blockCharacterLineIndex]
+            // find the line of the <Assistant generated={true}> tag that was before the blockCharacterLine
+            let startAssistantIndex = blockCharacterLineIndex
+            for (let i = blockCharacterLineIndex; i >= 0; i--) {
+              if (lines[i].includes('<Assistant generated={true}>')) {
+                startAssistantIndex = i
+                break
+              }
+            }
+
+            // Replace the entire range between "<Assistant>" and "</Assistant>"
+            void activeEditor.edit(editBuilder => {
+              editBuilder.replace(
+                new vscode.Range(
+                  new vscode.Position(startAssistantIndex + 1, 0),
+                  new vscode.Position(blockCharacterLineIndex, blockCharacterLine.length)
+                ),
+                `${rawResponse}█`
+              )
             })
             const lastLineIndex = activeEditor.document.lineCount
             const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
-            activeEditor.selection = new vscode.Selection(targetPosition, targetPosition)
             activeEditor.revealRange(new vscode.Range(targetPosition, targetPosition))
-            firstLoad = false
-            return
           }
-          if (!currentText.includes('█') && !firstLoad) {
-            return
-          }
-
-          const lines = activeEditor.document.getText().split('\n')
-          const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
-          const blockCharacterLine = lines[blockCharacterLineIndex]
-          // find the line of the <Assistant generated={true}> tag that was before the blockCharacterLine
-          let startAssistantIndex = blockCharacterLineIndex
-          for (let i = blockCharacterLineIndex; i >= 0; i--) {
-            if (lines[i].includes('<Assistant generated={true}>')) {
-              startAssistantIndex = i
-              break
-            }
-          }
-
-          // Replace the entire range between "<Assistant>" and "</Assistant>"
-          void activeEditor.edit(editBuilder => {
-            editBuilder.replace(
-              new vscode.Range(
-                new vscode.Position(startAssistantIndex + 1, 0),
-                new vscode.Position(blockCharacterLineIndex, blockCharacterLine.length)
-              ),
-              `${rawResponse}█`
-            )
-          })
-          const lastLineIndex = activeEditor.document.lineCount
-          const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
-          activeEditor.revealRange(new vscode.Range(targetPosition, targetPosition))
-        })
+        )
 
         while (activeEditor.document.getText().includes('█')) {
           await activeEditor.edit(editBuilder => {

@@ -1,0 +1,4 @@
+<Prompt>
+${foo} ${bar} ${foo}
+${bar}
+</Prompt>

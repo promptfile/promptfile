@@ -7,23 +7,35 @@ import path from 'path'
 import { TextDecoder } from 'util'
 import vm from 'vm'
 import * as vscode from 'vscode'
+import { executeGlassFilePython } from './executeGlassFilePython'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
 export async function executeGlassFile(
   document: vscode.TextDocument,
   interpolationArgs: any,
+  usePython: boolean,
   progress?: (data: { nextDoc: string; rawResponse?: string }) => void
 ) {
   const fileName = getDocumentFilename(document)
 
+  const openaiKey = getOpenaiKey()
+  const anthropicKey = getAnthropicKey()
+
+  const c = usePython
+    ? await executeGlassFilePython(document, interpolationArgs)
+    : await executeTypescript(document, fileName, interpolationArgs)
+
+  return await runGlass(c, { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
+}
+
+async function executeTypescript(document: vscode.TextDocument, fileName: string, interpolationArgs: any) {
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
   if (!activeEditorWorkspaceFolder) {
     throw new Error('Could not find active editor workspace folder')
   }
+
   const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
-  const openaiKey = getOpenaiKey()
-  const anthropicKey = getAnthropicKey()
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
@@ -80,10 +92,7 @@ context.response = ${getGlassExportName(fileName)}({ args: ${JSON.stringify(
     module: { exports: {} },
     require: require,
     __filename: 'outputFile.js',
-    OPENAI_API_KEY: openaiKey,
-    ANTHROPIC_API_KEY: anthropicKey,
     fetch,
-    progress,
   }
 
   vm.createContext(ctx)
@@ -93,6 +102,5 @@ context.response = ${getGlassExportName(fileName)}({ args: ${JSON.stringify(
 
   const t = getTestData()
   const c = await compile(t)
-
-  return await runGlass(c, { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
+  return c
 }

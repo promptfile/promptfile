@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { loadFixtureNext } from '../fixtures/loadFixture'
+import { loadTestfile } from '../testfiles/loadTestfile'
 import { transpileGlassFileNext } from './transpileGlassNext'
 
 const folders = {
@@ -10,9 +10,9 @@ const folders = {
   outputDirectory: '/Users/me/glassc/src',
 }
 
-describe('transpileGlassNext', () => {
+describe('transpileGlassTypescript', () => {
   it('should transpile without interpolation variables', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/noInterpolation')
+    const { input, output } = loadTestfile('noInterpolation', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'noInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
@@ -53,13 +53,13 @@ describe('transpileGlassNext', () => {
   //   })
 
   it('should transpile with interpolation variables', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/withInterpolation')
+    const { input, output } = loadTestfile('withInterpolation', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'withInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile including interstitial text', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/interstitialText')
+    const { input, output } = loadTestfile('interstitialText', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'interstitialText' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
@@ -97,79 +97,79 @@ describe('transpileGlassNext', () => {
   })
 
   it('should transpile with non-interpolation sequences', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/nonInterpolationSequence')
+    const { input, output } = loadTestfile('nonInterpolationSequence', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'nonInterpolationSequence' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with multiple interpolation variables', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/multipleInterpolation')
+    const { input, output } = loadTestfile('multipleInterpolation', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'multipleInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with duplicate interpolation variables', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/duplicateInterpolation')
+    const { input, output } = loadTestfile('duplicateInterpolation', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'duplicateInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with Args block', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/args')
+    const { input, output } = loadTestfile('args', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'args' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with code block', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/codeBlock')
+    const { input, output } = loadTestfile('codeBlock', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'codeBlock' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with code block containing state', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/codeBlockWithState')
+    const { input, output } = loadTestfile('codeBlockWithState', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'codeBlockWithState' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with complex code block', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/withImport')
+    const { input, output } = loadTestfile('withImport', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'withImport' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with imports and code interpolations', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/complex')
+    const { input, output } = loadTestfile('complex', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'complex' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with dynamic for loop', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/moreFor')
+    const { input, output } = loadTestfile('moreFor', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'moreFor' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with dynamic for loop', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/forLoop')
+    const { input, output } = loadTestfile('forLoop', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'forLoop' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with single <For> loop', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/forLoopAttributesOnly')
+    const { input, output } = loadTestfile('forLoopAttributesOnly', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'forLoopAttributesOnly' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with single if condition', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/ifCondition')
+    const { input, output } = loadTestfile('ifCondition', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'ifCondition' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with single if condition, string value', () => {
-    const { input, output } = loadFixtureNext('transpileGlassNext/singleIfCondition')
+    const { input, output } = loadTestfile('singleIfCondition', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'singleIfCondition' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })

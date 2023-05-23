@@ -1,0 +1,3 @@
+<Prompt>
+${foo} and {foo}
+</Prompt>

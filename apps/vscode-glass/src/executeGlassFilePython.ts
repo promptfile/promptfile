@@ -36,14 +36,20 @@ export async function executeGlassFilePython(document: vscode.TextDocument, inte
     'code is',
     `${transpiledCode}
 
-  print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))`
+print(${getGlassExportName(fileName)}())`
   )
+  // console.log(
+  //   'code is',
+  //   `${transpiledCode}
+
+  // print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))`
+  // )
 
   fs.writeFileSync(
     tmpFilePath,
     `${transpiledCode}
 
-print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))`,
+print(${getGlassExportName(fileName)}())`,
     {
       encoding: 'utf-8',
     }
@@ -51,9 +57,13 @@ print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))
 
   const output = await executePythonScript(tmpFilePath)
 
+  console.log('got python output', JSON.stringify({ output }))
+
+  const c = JSON.parse(output)
+
   fs.unlinkSync(tmpFilePath)
 
-  return output
+  return c
 }
 
 const pythonExecutable = vscode.workspace.getConfiguration('glass').get('pythonPath') || 'python3'

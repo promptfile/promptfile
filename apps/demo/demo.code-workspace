@@ -1,9 +1,17 @@
 {
   "settings": {
     "git.openRepositoryInParentFolders": "never",
-    "glass.language": "typescript",
+    "glass.defaultLanguageMode": "python",
     "glass.outputDirectory": "${workspaceFolder}",
-    "editor.wordWrap": "on"
+    "files.trimTrailingWhitespace": false,
+    "files.insertFinalNewline": false,
+    "editor.wordWrap": "on",
+    "editor.codeActionsOnSave": {
+      "source.addMissingImports": false,
+      "source.organizeImports": false,
+      "source.fixAll": false
+    },
+    "editor.formatOnSave": false
   },
   "folders": [
     { "path": "chat" },

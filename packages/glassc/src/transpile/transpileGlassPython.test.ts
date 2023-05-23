@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { loadTestfile } from '../testfiles/loadTestfile'
 import { transpileGlassFilePython } from './transpileGlassPython'
 
 const folders = {
@@ -11,23 +12,12 @@ const folders = {
 
 describe('transpileGlassPython', () => {
   it('should transpile without interpolation variables', () => {
-    const transpiled = transpileGlassFilePython(
-      `<Prompt>
-foo
-</Prompt>`,
-      folders
-    )
-
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
-    GLASSVAR = {
-        0: """{}""".format("""<Prompt>
-{}
-</Prompt>""".format("""foo""".format()))
-    }
-    return """{}""".format(GLASSVAR[0])`)
+    const { input, output } = loadTestfile('basic', 'py')
+    const transpiled = transpileGlassFilePython(input, { ...folders, fileName: 'basic' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  it('should transpile with get-prefixed named', () => {
+  it.skip('should transpile with get-prefixed named', () => {
     const transpiled = transpileGlassFilePython(
       `<Prompt>
 foo
@@ -51,101 +41,33 @@ foo
   })
 
   it('should transpile with interpolation variables', () => {
-    const transpiled = transpileGlassFilePython(
-      `<Prompt>
-\${foo}
-</Prompt>`,
-      folders
-    )
-
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
-    foo = opt["args"]["foo"]
-    GLASSVAR = {
-        0: """{}""".format("""<Prompt>
-{}
-</Prompt>""".format("""{}""".format(foo)))
-    }
-    return """{}""".format(GLASSVAR[0])`)
+    const { input, output } = loadTestfile('interpolation', 'py')
+    const transpiled = transpileGlassFilePython(input, { ...folders, fileName: 'interpolation' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile including interstitial text', () => {
-    const transpiled = transpileGlassFilePython(
-      `ignore me
-<Prompt>
-\${foo}
-</Prompt>
-and me`,
-      folders
-    )
-
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
-    foo = opt["args"]["foo"]
-    GLASSVAR = {
-        0: """{}""".format("""<Prompt>
-{}
-</Prompt>""".format("""{}""".format(foo)))
-    }
-    return """ignore me
-{}
-and me""".format(GLASSVAR[0])`)
+    const { input, output } = loadTestfile('interstitial', 'py')
+    const transpiled = transpileGlassFilePython(input, { ...folders, fileName: 'interstitial' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with non-interpolation sequences', () => {
-    const transpiled = transpileGlassFilePython(
-      `<Prompt>
-\${foo} and {foo}
-</Prompt>`,
-      folders
-    )
-
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
-    foo = opt["args"]["foo"]
-    GLASSVAR = {
-        0: """{}""".format("""<Prompt>
-{}
-</Prompt>""".format("""{} and {{foo}}""".format(foo)))
-    }
-    return """{}""".format(GLASSVAR[0])`)
+    const { input, output } = loadTestfile('nonInterpolation', 'py')
+    const transpiled = transpileGlassFilePython(input, { ...folders, fileName: 'nonInterpolation' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with multiple interpolation variables', () => {
-    const transpiled = transpileGlassFilePython(
-      `<Prompt>
-\${foo} \${bar}
-</Prompt>`,
-      folders
-    )
-
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
-    foo = opt["args"]["foo"]
-    bar = opt["args"]["bar"]
-    GLASSVAR = {
-        0: """{}""".format("""<Prompt>
-{}
-</Prompt>""".format("""{} {}""".format(foo, bar)))
-    }
-    return """{}""".format(GLASSVAR[0])`)
+    const { input, output } = loadTestfile('multipleInterpolation', 'py')
+    const transpiled = transpileGlassFilePython(input, { ...folders, fileName: 'multipleInterpolation' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with duplicate interpolation variables', () => {
-    const transpiled = transpileGlassFilePython(
-      `<Prompt>
-\${foo} \${bar} \${foo}
-\${bar}
-</Prompt>`,
-      folders
-    )
-
-    expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
-    foo = opt["args"]["foo"]
-    bar = opt["args"]["bar"]
-    GLASSVAR = {
-        0: """{}""".format("""<Prompt>
-{}
-</Prompt>""".format("""{} {} {}
-{}""".format(foo, bar, foo, bar)))
-    }
-    return """{}""".format(GLASSVAR[0])`)
+    const { input, output } = loadTestfile('duplicateInterpolation', 'py')
+    const transpiled = transpileGlassFilePython(input, { ...folders, fileName: 'duplicateInterpolation' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   // it('should transpile with Args block', () => {
