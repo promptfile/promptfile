@@ -1,4 +1,4 @@
-export { parseGlassAST } from './parse/parseGlassAST.js'
+export { parseGlassFrontmatter } from './parse/parseGlassFrontmatter.js'
 export { parseGlassMetadata } from './parse/parseGlassMetadata.js'
 export { parseGlassTopLevelJsxElements } from './parse/parseGlassTopLevelJsxElements.js'
 export { removeGlassFrontmatter } from './transform/removeGlassFrontmatter.js'
