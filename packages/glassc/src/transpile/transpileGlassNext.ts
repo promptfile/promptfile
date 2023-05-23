@@ -6,12 +6,7 @@ import * as path from 'node:path'
 import prettier from 'prettier'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
-import {
-  parseCodeBlock,
-  parseCodeBlockLocalVars,
-  parseReturnExpression,
-  removeReturnStatements,
-} from '../parse/parseTypescript.js'
+import { parseCodeBlock } from '../parse/parseTypescript.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
 import { getUseStatePairs, transformSetState } from '../transform/transformSetState.js'
 import { getGlassExportName } from './transpileGlass.js'
@@ -56,24 +51,6 @@ export function transpileGlassFileNext(
   })
 
   const testContent = testData[0] || ''
-  const returnExpression = parseReturnExpression(testContent)
-  const pruned = removeReturnStatements(testContent)
-  const testLocalVars = parseCodeBlockLocalVars(pruned)
-
-  const localVarsString = testLocalVars.length ? `{ ${testLocalVars.join(', ')} }` : '{}'
-
-  const testBlock = testContent
-    ? `
-function getTestData() {
-  ${pruned}
-  ${
-    returnExpression
-      ? `return ${returnExpression}.map(glass_example => ({ ...${localVarsString}, ...glassExample }))`
-      : `return ${localVarsString}`
-  }
-}
-`
-    : ''
 
   // first, parse the document blocks to make sure the document is valid
   // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output

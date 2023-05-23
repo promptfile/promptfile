@@ -2,6 +2,8 @@ import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { interpolateGlass } from './interpolateGlass'
 import { interpolateGlassChat } from './interpolateGlassChat'
+import { getJSXNodeShellString } from './jsxElementNode'
+import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
@@ -60,6 +62,16 @@ export async function runGlass(
   // (content)
   // </User>
 
+  const parsedOrig = parseGlassTopLevelJsxElements(docs.originalDoc)
+
+  const chatNode = parsedOrig.find(node => node.tagName === 'Chat')
+  let newChatNode = `<Chat model="${model}">
+
+</Chat>`
+  if (chatNode) {
+    newChatNode = getJSXNodeShellString(chatNode, docs.originalDoc)
+  }
+
   let originalDoc = docs.originalDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
   let interpolatedDoc = docs.interpolatedDoc.replace(
     /<Chat.*?>\n(.+?)\n<\/Chat>/gs,
@@ -83,7 +95,7 @@ export async function runGlass(
   }
 
   if (options?.progress) {
-    const completionFragment = generateCompletionFragment('', true, model)
+    const completionFragment = generateCompletionFragment('', true, model, newChatNode)
     options.progress({
       nextDoc: `${originalDoc.trim()}\n\n${completionFragment}`,
       nextInterpolatedDoc: `${interpolatedDoc.trim()}\n\n${completionFragment}`,
@@ -92,9 +104,9 @@ export async function runGlass(
   }
   const res =
     model === 'gpt-3.5-turbo' || model === 'gpt-4'
-      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, options)
+      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, newChatNode, options)
       : model.startsWith('claude')
-      ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, options)
+      ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, newChatNode, options)
       : await runGlassCompletion(fileName, model as any, { originalDoc, interpolatedDoc }, options)
 
   if (options?.onResponse) {
@@ -107,14 +119,12 @@ export async function runGlass(
   return { ...res, initDoc: docs.originalDoc, initInterpolatedDoc: docs.interpolatedDoc }
 }
 
-const generateCompletionFragment = (message: string, streaming: boolean, model: string) => {
+const generateCompletionFragment = (message: string, streaming: boolean, model: string, newChatNode: string) => {
   return `<Assistant generated={true}>
 ${message}${streaming ? '█' : ''}
 </Assistant>
 
-<Chat model="${model}">
-
-</Chat>`
+${newChatNode}`
 }
 
 /**
@@ -124,6 +134,7 @@ export async function runGlassChat(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
+  newChatNode: string,
   options?: {
     args?: any
     openaiKey?: string
@@ -151,7 +162,7 @@ export async function runGlassChat(
   })
 
   const response = await handleStream(r, handleChatChunk, next => {
-    const fragment = generateCompletionFragment(next, options?.progress != null, model)
+    const fragment = generateCompletionFragment(next, options?.progress != null, model, newChatNode)
     const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
     const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
     if (options?.progress) {
@@ -163,7 +174,7 @@ export async function runGlassChat(
     }
   })
 
-  const fragment = generateCompletionFragment(response, false, model)
+  const fragment = generateCompletionFragment(response, false, model, newChatNode)
   return {
     finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
     finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
@@ -178,6 +189,7 @@ export async function runGlassChatAnthropic(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
+  newChatNode: string,
   options?: {
     args?: any
     openaiKey?: string
@@ -222,7 +234,7 @@ export async function runGlassChatAnthropic(
   })
 
   const response = await handleStream(r, handleAnthropicChunk, next => {
-    const fragment = generateCompletionFragment(next, options?.progress != null, model)
+    const fragment = generateCompletionFragment(next, options?.progress != null, model, newChatNode)
     const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
     const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
     if (options?.progress) {
@@ -234,7 +246,7 @@ export async function runGlassChatAnthropic(
     }
   })
 
-  const fragment = generateCompletionFragment(response, false, model)
+  const fragment = generateCompletionFragment(response, false, model, newChatNode)
   return {
     finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
     finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
