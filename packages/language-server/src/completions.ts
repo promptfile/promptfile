@@ -35,10 +35,70 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
     })
   }
 
+  // Extract the current line's text up to the cursor position
   const linePrefix = document.getText({
     start: { line: textDocumentPosition.position.line, character: 0 },
     end: textDocumentPosition.position,
   })
+
+  // Check if we're inside an attribute value
+  const attributeValueMatch = linePrefix.match(/<(\w+).*? (\w+)="([^"]*)$/)
+
+  if (attributeValueMatch) {
+    const tagName = attributeValueMatch[1]
+    const attributeName = attributeValueMatch[2]
+
+    // Look up the element and attribute
+    const element = glassElements.find(e => e.name === tagName)
+    const attribute = element ? element.attributes.find(a => a.name === attributeName) : undefined
+
+    // If we found an element and attribute with valid values, return those as completions
+    if (attribute && attribute.values) {
+      return attribute.values.map(value => ({
+        label: value,
+        kind: CompletionItemKind.EnumMember,
+        insertText: value,
+        insertTextFormat: InsertTextFormat.PlainText,
+      }))
+    }
+  }
+
+  // Check if we're at a position to input an attribute name
+  const tagNameMatch = linePrefix.match(/<(\w+)(.*?)$/)
+  if (tagNameMatch) {
+    const tagName = tagNameMatch[1]
+    const tagContent = tagNameMatch[2]
+
+    // Look up the element
+    const element = glassElements.find(e => e.name === tagName)
+
+    // Parse existing attributes
+    const existingAttributeNames = [...tagContent.matchAll(/(\w+)="[^"]*"/g)].map(match => match[1])
+
+    // If we found an element with attributes, return those as completions
+    if (element && element.attributes) {
+      // Filter out already existing attributes
+      const remainingAttributes = element.attributes.filter(a => !existingAttributeNames.includes(a.name))
+
+      return remainingAttributes.map(attribute => {
+        if (attribute.values) {
+          return {
+            label: attribute.name,
+            kind: CompletionItemKind.Property,
+            insertText: `${attribute.name}="\${1|${attribute.values.sort().join(',')}|}"`,
+            insertTextFormat: InsertTextFormat.Snippet,
+          }
+        } else {
+          return {
+            label: attribute.name,
+            kind: CompletionItemKind.Property,
+            insertText: `${attribute.name}="$1"`,
+            insertTextFormat: InsertTextFormat.Snippet,
+          }
+        }
+      })
+    }
+  }
 
   if (linePrefix.endsWith('<')) {
     // Find the unclosed tags
