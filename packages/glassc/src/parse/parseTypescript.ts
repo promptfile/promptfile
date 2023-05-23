@@ -59,6 +59,68 @@ export function parseCodeBlockLocalVars(code: string) {
  * Takes a TypeScript code block like:
  *
  * ```ts
+ * const foo = 1
+ * const {bar} = {bar: 2}
+ * return [foo, bar]
+ * ```
+ *
+ * And returns the return expression, e.g. "[foo, bar]"
+ */
+export function parseReturnExpression(code: string) {
+  const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
+  let returnExpression = ''
+
+  function visit(node: ts.Node) {
+    if (ts.isReturnStatement(node)) {
+      // Get the return statement's text and remove the "return" keyword
+      returnExpression = node.getText(sourceFile).replace(/return /, '')
+    } else {
+      ts.forEachChild(node, visit)
+    }
+  }
+
+  visit(sourceFile)
+  return returnExpression
+}
+
+/**
+ * Takes a TypeScript code block like:
+ *
+ * ```ts
+ * const url = "https://elliottburris.com"
+ * const question = "where did elliott go to school"
+ * return [{ foo: "bar"}]
+ * ```
+ *
+ * And returns the code block with all `return` statements removed.
+ */
+export function removeReturnStatements(code: string): string {
+  const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
+
+  const printer = ts.createPrinter()
+
+  function transformReturnStatements(context: ts.TransformationContext) {
+    return (rootNode: ts.Node) => {
+      function visitor(node: ts.Node): ts.Node {
+        // If the node is a return statement, remove it by not returning anything
+        if (ts.isReturnStatement(node)) {
+          return ts.factory.createEmptyStatement()
+        }
+        return ts.visitEachChild(node, visitor, context)
+      }
+      return ts.visitNode(rootNode, visitor)
+    }
+  }
+
+  const result = ts.transform(sourceFile, [transformReturnStatements]).transformed[0] as ts.SourceFile
+
+  return printer.printFile(result)
+}
+
+/**
+ * Takes a TypeScript code block like:
+ *
+ * ```ts
  * const foo = hello
  * const bar = (m: any) => m.doSomething() + other
  * }

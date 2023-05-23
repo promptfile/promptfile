@@ -5,6 +5,8 @@ import {
   parseCodeBlockLocalVars,
   parseCodeBlockUndeclaredSymbols,
   parseCodeImportedSymbols,
+  parseReturnExpression,
+  removeReturnStatements,
 } from './parseTypescript'
 
 describe('parseTypescript', () => {
@@ -111,6 +113,59 @@ const messages = await db.message.findMany({where: {conversationId: conversation
       importedSymbols: [],
       symbolsAddedToScope: ['conversation', 'messages'],
       undeclaredValuesNeededInScope: ['db', 'conversationId'],
+    })
+  })
+
+  describe('parseReturnExpression', () => {
+    it('should parse return expression', () => {
+      const code = `
+const url = "https://elliottburris.com"
+const question = "where did elliott go to school"
+return [{ foo: "bar"}]
+`
+
+      const returnExpression = parseReturnExpression(code)
+      expect(returnExpression).to.equal('[{ foo: "bar"}]')
+    })
+
+    it('should parse empty expression', () => {
+      const code = `
+const url = "https://elliottburris.com"
+const question = "where did elliott go to school"
+`
+
+      const returnExpression = parseReturnExpression(code)
+      expect(returnExpression).to.equal('')
+    })
+
+    it('should parse empty expression', () => {
+      const code = ``
+
+      const returnExpression = parseReturnExpression(code)
+      expect(returnExpression).to.equal('')
+    })
+  })
+
+  describe('removeReturnStatements', () => {
+    it('should remove return statements', () => {
+      const code = `const url = "https://elliottburris.com"
+const question = "where did elliott go to school"
+return [{ foo: "bar"}]`
+
+      const transform = removeReturnStatements(code)
+      expect(transform).to.equal(`const url = "https://elliottburris.com";
+const question = "where did elliott go to school";
+;
+`)
+    })
+
+    it('should not transform expression without return statements', () => {
+      const code = `const url = "https://elliottburris.com";
+const question = "where did elliott go to school";
+`
+
+      const transform = removeReturnStatements(code)
+      expect(transform).to.equal(code)
     })
   })
 })

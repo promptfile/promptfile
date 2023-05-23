@@ -1,4 +1,5 @@
 import ts from 'typescript'
+
 function transformSetStateHelper(context: ts.TransformationContext) {
   return (rootNode: ts.Node) => {
     function visitor(node: ts.Node): ts.Node {
@@ -36,6 +37,9 @@ function transformSetStateHelper(context: ts.TransformationContext) {
   }
 }
 
+/**
+ * Updates all instances of `const [varName, setVarName] = setState(...)` in the sourceText to `setState(..., GLASS_STATE, "varName")`
+ */
 export function transformSetState(sourceText: string): string {
   const sourceFile = ts.createSourceFile('temp.ts', sourceText, ts.ScriptTarget.Latest, true)
   const result = ts.transform(sourceFile, [transformSetStateHelper]).transformed[0] as ts.SourceFile

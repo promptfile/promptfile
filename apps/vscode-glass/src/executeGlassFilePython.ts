@@ -4,6 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { getDocumentFilename } from './util/isGlassFile'
+import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
 export async function executeGlassFilePython(document: vscode.TextDocument, interpolationArgs: any) {
   const fileName = getDocumentFilename(document)
@@ -58,8 +59,19 @@ print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))
 const pythonExecutable = vscode.workspace.getConfiguration('glass').get('pythonPath') || 'python3'
 
 function executePythonScript(filePath: string): Promise<string> {
+  const openaiKey = getOpenaiKey()
+  const anthropicKey = getAnthropicKey()
+
+  let env = ''
+  if (openaiKey) {
+    env += `OPENAI_API_KEY=${openaiKey} `
+  }
+  if (anthropicKey) {
+    env += `ANTHROPIC_API_KEY=${anthropicKey} `
+  }
+
   return new Promise((resolve, reject) => {
-    child_process.exec(`${pythonExecutable} ${filePath}`, (error, stdout, stderr) => {
+    child_process.exec(`${env} ${pythonExecutable} ${filePath}`, (error, stdout, stderr) => {
       if (error) {
         reject(`Error: ${error.message}`)
         return

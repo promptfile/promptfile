@@ -1,0 +1,27 @@
+<Test>
+const url = "https://elliottburris.com"
+const question = "where did elliott go to school"
+// or return an array of objects to run a list of tests
+// return [{
+//     question: "where did elliott go to school",
+// },{
+//     question: "what is elliott's last name",
+// },{
+//     question: "where was elliott born",
+// }]
+</Test>
+
+<Code>
+const res = await fetch(url)
+const website = await res.text()
+</Code>
+
+<Chat model="claude-v1" temperature={0.3} test={({message}) => {
+    assert.equal(message, "fail")
+}}>
+your job is to answer questions based on the following website code:
+###
+${website}
+###
+${question}
+</Chat>

@@ -1,4 +1,5 @@
 import { parseGlassBlocks, removeGlassComments } from '@glass-lang/glasslib'
+import { checkOk } from '@glass-lang/util'
 import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
@@ -7,7 +8,12 @@ import { parseGlassAST } from '../parse/parseGlassAST.js'
 import { parseGlassTopLevelJsxElements } from '../parse/parseGlassTopLevelJsxElements.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
-import { parseCodeBlock } from '../parse/parseTypescript.js'
+import {
+  parseCodeBlock,
+  parseCodeBlockLocalVars,
+  parseReturnExpression,
+  removeReturnStatements,
+} from '../parse/parseTypescript.js'
 import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
 import { getUseStatePairs, transformSetState } from '../transform/transformSetState.js'
@@ -38,6 +44,39 @@ export function transpileGlassFileNext(
   const originalDoc = doc
 
   const toplevelNodes = parseGlassTopLevelJsxElements(originalDoc)
+
+  const testNodes = toplevelNodes.filter(node => node.tagName === 'Test')
+  checkOk(testNodes.length <= 1, 'Only one <Test> block is allowed per file')
+  const testData = testNodes.map(n => {
+    if (n.children.length === 0) {
+      return ''
+    }
+    // get the inside content of the node
+    return originalDoc.substring(
+      n.children[0].position.start.offset,
+      n.children[n.children.length - 1].position.end.offset
+    )
+  })
+
+  const testContent = testData[0] || ''
+  const returnExpression = parseReturnExpression(testContent)
+  const pruned = removeReturnStatements(testContent)
+  const testLocalVars = parseCodeBlockLocalVars(pruned)
+
+  const localVarsString = testLocalVars.length ? `{ ${testLocalVars.join(', ')} }` : '{}'
+
+  const testBlock = testContent
+    ? `
+function getTestData() {
+  ${pruned}
+  ${
+    returnExpression
+      ? `return ${returnExpression}.map(glass_example => ({ ...${localVarsString}, ...glassExample }))`
+      : `return ${localVarsString}`
+  }
+}
+`
+    : ''
 
   // first, parse the document blocks to make sure the document is valid
   // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output
@@ -99,6 +138,11 @@ export function transpileGlassFileNext(
       argsNode = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
     }
     if (jsxNode.tagName === 'Code') {
+      // don't strip away codeblocks, yet
+      // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
+      continue // ignore all interpolation sequences / requirements in code blocks
+    }
+    if (jsxNode.tagName === 'Test') {
       // don't strip away codeblocks, yet
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
