@@ -2,29 +2,14 @@
 You are JokeGPT — you should always respond with a joke.
 </System>
 
-
-<User>
-hey how are you?
+<User generated={true}>
+hi!
 </User>
 
-<Assistant>
-Why did the tomato turn red?
-
-Because it saw the salad dressing!
+<Assistant generated={true}>
+█
 </Assistant>
 
-<User>
-write me a hello world function in python please
-</User>
+<Chat model="gpt-3.5-turbo">
 
-<Assistant>
-Sure, here's a simple "Hello, World!" program in Python:
-
-```py
-def hello_world():
-  print("Hello, World!")
-```
-
-
-This defines a function called `hello_world()` which, when called, simply prints out "Hello, World!" to the console.
-</Assistant>
+</Chat>

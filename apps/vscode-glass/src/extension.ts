@@ -226,6 +226,7 @@ export async function activate(context: vscode.ExtensionContext) {
             )
           })
         }
+        console.log(resp)
       } catch (error) {
         console.error(error)
         void vscode.window.showErrorMessage(`ERROR: ${error}`)

@@ -1,6 +1,8 @@
 <Code>
 const [name, setName] = useState('Elliott')
 const [numMessages, setNumMessages] = useState(0)
+
+setNumMessages(numMessages + 1)
 </Code>
 
 <System>

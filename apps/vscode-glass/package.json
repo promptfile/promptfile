@@ -31,7 +31,9 @@
   ],
   "icon": "assets/glass.png",
   "activationEvents": [
-    "onView:glass"
+    "onView:glass",
+    "onLanguage:glass",
+    "onLanguage:glass-py"
   ],
   "scripts": {
     "vscode:prepublish": "npm run build",
@@ -479,11 +481,9 @@
       {
         "id": "glass-py",
         "aliases": [
-          "glass-py"
+          "Glass (python)"
         ],
-        "extensions": [
-          ".glass"
-        ],
+        "extensions": [],
         "configuration": "./language-configuration.json",
         "icon": {
           "dark": "./images/dark.svg",
