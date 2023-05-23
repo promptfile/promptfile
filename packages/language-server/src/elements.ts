@@ -96,12 +96,10 @@ export const glassElements: GlassElement[] = [
         documentation: 'The `model` attribute determines which chat model to inference',
         type: 'enum',
         values: [
-          // openai
           'gpt-3.5-turbo',
           'gpt-4',
           'gpt-4-0314',
           'gpt-3.5-turbo-0301',
-          // anthropic
           'claude-v1',
           'claude-v1-100k',
           'claude-instant-v1',

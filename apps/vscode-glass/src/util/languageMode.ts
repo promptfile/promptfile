@@ -6,26 +6,30 @@ export async function updateLanguageMode(textDocument: vscode.TextDocument) {
   if (!isGlassFile(textDocument)) {
     return
   }
-  let targetLanguage = 'glass-ts'
+
+  const lookup: Record<string, string> = {
+    typescript: 'glass-ts',
+    javascript: 'glass-js',
+    python: 'glass-py',
+  }
+
+  const targetLanguageName =
+    (vscode.workspace.getConfiguration('glass').get('defaultLanguageMode') as string | undefined) ?? 'glass-ts'
+  let targetLanguage = lookup[targetLanguageName]
+
   try {
     // Extract the frontmatter from the beginning of the document
     const frontmatter = parseGlassFrontmatter(textDocument.getText())
 
     const languageFrontmatter = frontmatter.find((f: any) => f.name === 'language')
-    if (languageFrontmatter) {
-      if (languageFrontmatter.type === 'python') {
-        targetLanguage = 'glass-py'
-      } else if (languageFrontmatter.type === 'javascript') {
-        targetLanguage = 'glass-js'
-      } else if (languageFrontmatter.type === 'typescript') {
-        targetLanguage = 'glass-ts'
-      }
+    if (languageFrontmatter && languageFrontmatter.type) {
+      targetLanguage = lookup[languageFrontmatter.type]
     }
   } catch (error) {
     console.log(error)
   }
 
-  if (textDocument.languageId !== targetLanguage) {
+  if (targetLanguage && textDocument.languageId !== targetLanguage) {
     await vscode.languages.setTextDocumentLanguage(textDocument, targetLanguage)
   }
 }

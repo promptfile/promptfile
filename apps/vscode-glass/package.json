@@ -192,7 +192,12 @@
             "description": "Default model for chat prompts",
             "enum": [
               "gpt-3.5-turbo",
-              "gpt-4"
+              "gpt-4",
+              "gpt-4-32k",
+              "claude-v1",
+              "claude-v1-100k",
+              "claude-instant-v1",
+              "claude-instant-v1-100k"
             ]
           },
           "glass.defaultCompletionModel": {
@@ -240,7 +245,25 @@
       }
     ],
     "configurationDefaults": {
-      "[glass]": {
+      "[glass-js]": {
+        "editor.formatOnSave": true,
+        "editor.quickSuggestions": {
+          "other": "on",
+          "comments": "on",
+          "strings": "on"
+        },
+        "files.insertFinalNewline": false
+      },
+      "[glass-py]": {
+        "editor.formatOnSave": true,
+        "editor.quickSuggestions": {
+          "other": "on",
+          "comments": "on",
+          "strings": "on"
+        },
+        "files.insertFinalNewline": false
+      },
+      "[glass-ts]": {
         "editor.formatOnSave": true,
         "editor.quickSuggestions": {
           "other": "on",

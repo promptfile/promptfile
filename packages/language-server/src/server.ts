@@ -151,7 +151,9 @@ connection.onDocumentFormatting(async (params: DocumentFormattingParams): Promis
   }
 
   // Call your custom formatting function here
+  console.log('FORMATTING')
   const formattedText = formatDocument(document.getText())
+  console.log(formattedText)
 
   // Compute the range of the entire document
   const start = document.positionAt(0)

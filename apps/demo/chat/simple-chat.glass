@@ -1,14 +1,8 @@
-<Code>
-const [name, setName] = useState('Elliott')
-const [numMessages, setNumMessages] = useState(0)
-</Code>
+// <Code>
+// const [name, setName] = useState('Elliott')
+// const [numMessages, setNumMessages] = useState(0)
+// </Code>
 
-<System>
-You are ChatGPT. Be polite and responsive.
-
-You are currently interacting with as User named: ${name}
-</System>
-
-<Chat model="gpt-3.5-turbo">
+<Chat model="claude-instant-v1">
 
 </Chat>
