@@ -9,9 +9,28 @@ export interface ChatCompletionRequestMessage {
   name?: string
 }
 
+export type ModelName =
+  | 'gpt-3.5-turbo'
+  | 'gpt-4'
+  | 'claude-v1'
+  | 'claude-v1-100k'
+  | 'claude-instant-v1'
+  | 'claude-instant-v1-100k'
+  | 'claude-v1.3'
+  | 'claude-v1.3-100k'
+  | 'claude-v1.2'
+  | 'claude-v1.0'
+  | 'claude-instant-v1.1'
+  | 'claude-instant-v1.1-100k'
+  | 'claude-instant-v1.0'
+  | 'text-davinci-003'
+  | 'curie'
+  | 'babbage'
+  | 'ada'
+
 export async function runGlass(
   fileName: string,
-  model: 'gpt-3.5-turbo' | 'gpt-4' | 'text-davinci-003' | 'curie' | 'babbage' | 'ada',
+  model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
     args?: any
@@ -74,6 +93,8 @@ export async function runGlass(
   const res =
     model === 'gpt-3.5-turbo' || model === 'gpt-4'
       ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, options)
+      : model.startsWith('claude')
+      ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, options)
       : await runGlassCompletion(fileName, model as any, { originalDoc, interpolatedDoc }, options)
 
   if (options?.onResponse) {
@@ -101,7 +122,7 @@ ${message}${streaming ? '█' : ''}
  */
 export async function runGlassChat(
   fileName: string,
-  model: 'gpt-3.5-turbo' | 'gpt-4',
+  model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
     args?: any
@@ -130,6 +151,77 @@ export async function runGlassChat(
   })
 
   const response = await handleStream(r, handleChatChunk, next => {
+    const fragment = generateCompletionFragment(next, options?.progress != null, model)
+    const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
+    const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
+    if (options?.progress) {
+      return options.progress({
+        nextDoc: nextDoc,
+        nextInterpolatedDoc,
+        rawResponse: next,
+      })
+    }
+  })
+
+  const fragment = generateCompletionFragment(response, false, model)
+  return {
+    finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
+    finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
+    rawResponse: response,
+  }
+}
+
+/**
+ * Takes a glass template string and interpolation variables and outputs an array of chat messages you can use to prompt ChatGPT API (e.g. gpt-3.5-turbo or gpt-4).
+ */
+export async function runGlassChatAnthropic(
+  fileName: string,
+  model: ModelName,
+  docs: { interpolatedDoc: string; originalDoc: string },
+  options?: {
+    args?: any
+    openaiKey?: string
+    anthropicKey?: string
+    progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+  }
+): Promise<{
+  finalDoc: string
+  finalInterpolatedDoc: string
+  rawResponse: string
+}> {
+  console.log('running glass anthropic')
+  const messages = interpolateGlassChat(fileName, docs.interpolatedDoc)
+
+  let anthropicQuery = ''
+  for (const msg of messages) {
+    if (msg.role === 'assistant') {
+      anthropicQuery += `\n\nAssistant: ${msg.content}`
+    } else if (msg.role === 'user') {
+      anthropicQuery += `\n\nHuman: ${msg.content}`
+    } else {
+      throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
+    }
+  }
+  anthropicQuery += '\n\nAssistant:'
+  console.log('anthropic query', anthropicQuery)
+
+  const r = await fetch('https://api.anthropic.com/v1/complete', {
+    method: 'POST',
+    headers: {
+      // eslint-disable-next-line turbo/no-undeclared-env-vars
+      'X-API-Key': (options?.anthropicKey || process.env.ANTHROPIC_API_KEY)!,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: model,
+      prompt: anthropicQuery,
+      max_tokens_to_sample: 1024,
+      stopSequences: ['Human:', 'Assistant:'],
+      stream: true,
+    }),
+  })
+
+  const response = await handleStream(r, handleAnthropicChunk, next => {
     const fragment = generateCompletionFragment(next, options?.progress != null, model)
     const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
     const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
@@ -209,7 +301,7 @@ async function handleStream(
     throw new Error(`HTTP error: ${r.status}`)
   }
 
-  if (r.headers.get('content-type') !== 'text/event-stream') {
+  if (!r.headers.get('content-type').startsWith('text/event-stream')) {
     throw new Error(`Expected "text/event-stream" content type, but received "${r.headers.get('content-type')}"`)
   }
 
@@ -241,6 +333,7 @@ async function handleStream(
     })
 
     readStream.on('error', error => {
+      console.log('error on stream', error)
       reject(error)
     })
   })
@@ -252,6 +345,13 @@ function handleChatChunk(currResult: string, eventData: { choices: { delta: { co
   if (eventData.choices[0].delta.content) {
     const newResult = currResult + eventData.choices[0].delta.content
     return newResult
+  }
+  return currResult
+}
+
+function handleAnthropicChunk(currResult: string, eventData: { completion: string }) {
+  if (eventData.completion) {
+    return eventData.completion
   }
   return currResult
 }

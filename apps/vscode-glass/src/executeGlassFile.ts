@@ -7,7 +7,7 @@ import { TextDecoder } from 'util'
 import vm from 'vm'
 import * as vscode from 'vscode'
 import { getDocumentFilename } from './util/isGlassFile'
-import { getOpenaiKey } from './util/keys'
+import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
 export async function executeGlassFile(
   document: vscode.TextDocument,
@@ -22,6 +22,7 @@ export async function executeGlassFile(
   }
   const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
   const openaiKey = getOpenaiKey()
+  const anthropicKey = getAnthropicKey()
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
@@ -45,7 +46,7 @@ export async function executeGlassFile(
     `${transpiledCode}
 context.response = ${getGlassExportName(fileName)}({ args: ${JSON.stringify(
       interpolationArgs
-    )}, options: { openaiKey: OPENAI_API_KEY, progress } })`,
+    )}, options: { openaiKey: OPENAI_API_KEY, anthropicKey: ANTHROPIC_API_KEY, progress } })`,
     {
       encoding: 'utf-8',
     }
@@ -79,6 +80,7 @@ context.response = ${getGlassExportName(fileName)}({ args: ${JSON.stringify(
     require: require,
     __filename: 'outputFile.js',
     OPENAI_API_KEY: openaiKey,
+    ANTHROPIC_API_KEY: anthropicKey,
     fetch,
     progress,
   }
