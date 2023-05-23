@@ -116,6 +116,22 @@ const messages = await db.message.findMany({where: {conversationId: conversation
     })
   })
 
+  it('should parse block with set state', () => {
+    const code = `
+const initProfile = { firstName: '', lastName: '', hasChatted: false }
+const [profile, setProfile] = useState(initProfile)
+const [moreState, setMoreState] = useState('')
+
+setMoreState('foo')
+`
+    expect(parseCodeBlock(code)).to.deep.equal({
+      isAsync: false,
+      importedSymbols: [],
+      symbolsAddedToScope: ['initProfile', 'profile', 'setProfile', 'moreState', 'setMoreState'],
+      undeclaredValuesNeededInScope: ['useState'],
+    })
+  })
+
   describe('parseReturnExpression', () => {
     it('should parse return expression', () => {
       const code = `

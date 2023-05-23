@@ -7,7 +7,7 @@ export function parseCodeBlock(code: string) {
   const symbolsAddedToScope = parseCodeBlockLocalVars(code)
   const undeclaredSymbols = parseCodeBlockUndeclaredSymbols(code)
   const undeclaredValuesNeededInScope = undeclaredSymbols.filter(
-    value => !importedSymbols.has(value) && !typescriptGlobals.has(value)
+    value => !importedSymbols.has(value) && !typescriptGlobals.has(value) && !new Set(symbolsAddedToScope).has(value)
   )
   const isAsync = codeBlockContainsAwait(code)
   return { symbolsAddedToScope, undeclaredValuesNeededInScope, importedSymbols: Array.from(importedSymbols), isAsync }
