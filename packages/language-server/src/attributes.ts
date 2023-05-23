@@ -70,6 +70,27 @@ export const glassAttributes: Record<string, GlassAttribute[]> = {
         'claude-instant-v1-100k',
       ],
     },
+    {
+      name: 'temperature',
+      detail: 'temperature for inference',
+      documentation: 'The `temperature` attribute determines the temperature for inference',
+      type: 'number',
+      optional: true,
+    },
+    {
+      name: 'maxTokens',
+      detail: 'max tokens for inference',
+      documentation: 'The `maxTokens` attribute determines the max tokens for inference',
+      type: 'number',
+      optional: true,
+    },
+    {
+      name: 'onResponse',
+      detail: 'callback for response',
+      documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
+      type: 'function',
+      optional: true,
+    },
   ],
   Code: [],
   Completion: [

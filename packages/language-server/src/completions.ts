@@ -96,7 +96,16 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
     {
       label: 'Chat',
       kind: CompletionItemKind.Snippet,
-      insertText: 'Chat model="$1">\n$2\n</Chat>',
+      textEdit: {
+        range: {
+          start: textDocumentPosition.position,
+          end: {
+            line: textDocumentPosition.position.line,
+            character: textDocumentPosition.position.character + 1,
+          },
+        },
+        newText: 'Chat model="$1">\n$2\n</Chat>',
+      },
       insertTextFormat: InsertTextFormat.Snippet,
       documentation: {
         kind: 'markdown',
@@ -153,37 +162,37 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
         values: [
           {
             label: 'gpt-3.5-turbo',
-            kind: CompletionItemKind.Value,
+            kind: CompletionItemKind.EnumMember,
             detail: 'OpenAI',
             data: 8,
           },
           {
             label: 'gpt-4',
-            kind: CompletionItemKind.Value,
+            kind: CompletionItemKind.EnumMember,
             detail: 'OpenAI',
             data: 9,
           },
           {
             label: 'claude-v1',
-            kind: CompletionItemKind.Value,
+            kind: CompletionItemKind.EnumMember,
             detail: 'Anthropic',
             data: 8,
           },
           {
             label: 'claude-v1-100k',
-            kind: CompletionItemKind.Value,
+            kind: CompletionItemKind.EnumMember,
             detail: 'Anthropic',
             data: 9,
           },
           {
             label: 'claude-instant-v1',
-            kind: CompletionItemKind.Value,
+            kind: CompletionItemKind.EnumMember,
             detail: 'Anthropic',
             data: 8,
           },
           {
             label: 'claude-instant-v1-100k',
-            kind: CompletionItemKind.Value,
+            kind: CompletionItemKind.EnumMember,
             detail: 'Anthropic',
             data: 9,
           },
@@ -212,6 +221,19 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
             value: 'The `maxTokens` attribute allows you to set the maximum tokens for the model inference.',
           },
           detail: 'Set maximum tokens',
+          data: 7,
+        },
+      },
+      {
+        completionItem: {
+          label: 'onResponse',
+          kind: CompletionItemKind.Property,
+          insertText: 'onResponse={response => {}}',
+          documentation: {
+            kind: 'markdown',
+            value: 'The `onResponse` attribute allows you to set a callback for the model response.',
+          },
+          detail: 'Set model response callback',
           data: 7,
         },
       },
