@@ -29,8 +29,10 @@ const a = "3"
 <Prompt>
 ${a} ${b} ${c}
 </Prompt>`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
+  )
 }

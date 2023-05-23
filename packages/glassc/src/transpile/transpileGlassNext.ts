@@ -246,7 +246,7 @@ export async function ${exportName}(${functionArgs}) {${language === 'javascript
       .join(',')}
   }
   const TEMPLATE = \`${codeSanitizedDoc.replaceAll('`', '\\`')}\`
-  return await runGlass('${fileName}', '${model}', TEMPLATE, ${finalArg})
+  return await runGlass('${fileName}', '${model}', {interpolatedDoc: TEMPLATE, originalDoc}, ${finalArg})
 }`
 
   const formattedCode = prettier.format(code, {

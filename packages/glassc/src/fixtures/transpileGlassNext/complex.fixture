@@ -78,8 +78,10 @@ Transcript
 ${transcript}
 ###
 </User>`
-  return await runGlass('foo', 'gpt-3.5-turbo', TEMPLATE, {
-    ...(opt.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'gpt-3.5-turbo',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
+  )
 }

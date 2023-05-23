@@ -12,18 +12,19 @@ export interface ChatCompletionRequestMessage {
 export async function runGlass(
   fileName: string,
   model: 'gpt-3.5-turbo' | 'gpt-4' | 'text-davinci-003' | 'curie' | 'babbage' | 'ada',
-  initDoc: string,
-
+  docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
     args?: any
     openaiKey?: string
     onResponse?: (message: any) => void
     state?: any
-    progress?: (data: { nextDoc: string; rawResponse?: string }) => void
+    progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
   initDoc: string
+  initInterpolatedDoc: string
   finalDoc: string
+  finalInterpolatedDoc: string
 }> {
   // replace initDoc instances of
   //
@@ -52,11 +53,19 @@ export async function runGlass(
     }
   }
 
+  // =======
+  //   const initDoc = docs.originalDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
+  //   const interpolatedDoc = docs.interpolatedDoc.replace(
+  //     /<Chat.*?>\n(.+?)\n<\/Chat>/gs,
+  //     '<User generated={true}>\n$1\n</User>'
+  //   )
+  // >>>>>>> bde2ec7 (wip)
+
   if (options?.progress) {
     const completionFragment = generateCompletionFragment('', true, model)
-    const nextDoc = `${initDoc.trim()}\n\n${completionFragment}`
     options.progress({
-      nextDoc: nextDoc,
+      nextDoc: `${initDoc.trim()}\n\n${completionFragment}`,
+      nextInterpolatedDoc: `${interpolatedDoc.trim()}\n\n${completionFragment}`,
       rawResponse: '█',
     })
   }
@@ -91,18 +100,20 @@ ${message}${streaming ? '█' : ''}
 export async function runGlassChat(
   fileName: string,
   model: 'gpt-3.5-turbo' | 'gpt-4',
-  initDoc: string,
+  docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
     args?: any
     openaiKey?: string
-    progress?: (data: { nextDoc: string; rawResponse?: string }) => void
+    progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
   initDoc: string
+  initInterpolatedDoc: string
   finalDoc: string
+  finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messages = interpolateGlassChat(fileName, initDoc)
+  const messages = interpolateGlassChat(fileName, docs.interpolatedDoc)
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -120,10 +131,12 @@ export async function runGlassChat(
 
   const response = await handleStream(r, handleChatChunk, next => {
     const fragment = generateCompletionFragment(next, options?.progress != null, model)
-    const nextDoc = `${initDoc.trim()}\n\n${fragment}`
+    const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
+    const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
     if (options?.progress) {
       return options.progress({
         nextDoc: nextDoc,
+        nextInterpolatedDoc,
         rawResponse: next,
       })
     }

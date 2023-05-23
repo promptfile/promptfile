@@ -31,10 +31,15 @@ foo
   const TEMPLATE = \`<Prompt>
 foo
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt?.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    {
+      ...(opt?.options || {}),
+      ...{ state: GLASS_STATE, onResponse: undefined },
+    }
+  )
 }`)
   })
 
@@ -64,10 +69,15 @@ foo
   const TEMPLATE = \`<Prompt>
 foo
 </Prompt>\`
-  return await runGlass('get-foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt?.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'get-foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    {
+      ...(opt?.options || {}),
+      ...{ state: GLASS_STATE, onResponse: undefined },
+    }
+  )
 }`)
   })
 
@@ -93,10 +103,12 @@ foo
   const TEMPLATE = \`<Prompt>
 \${foo}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
+  )
 }`)
   })
 
@@ -126,10 +138,12 @@ and me`,
 \${foo}
 </Prompt>
 and me\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
+  )
 }`)
   })
 
@@ -156,10 +170,12 @@ and me\`
   const TEMPLATE = \`<Prompt>
 \${foo}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
+  )
 }`)
   })
 
@@ -185,10 +201,12 @@ and me\`
   const TEMPLATE = \`<Prompt>
 \${foo} and {foo}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
+  )
 }`)
   })
 
@@ -214,10 +232,12 @@ and me\`
   const TEMPLATE = \`<Prompt>
 \${foo} \${bar}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
+  )
 }`)
   })
 
@@ -245,10 +265,12 @@ and me\`
 \${foo} \${bar} \${foo}
 \${bar}
 </Prompt>\`
-  return await runGlass('foo', 'text-davinci-003', TEMPLATE, {
-    ...(opt.options || {}),
-    ...{ state: GLASS_STATE, onResponse: undefined },
-  })
+  return await runGlass(
+    'foo',
+    'text-davinci-003',
+    { interpolatedDoc: TEMPLATE, originalDoc },
+    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
+  )
 }`)
   })
 
@@ -262,7 +284,6 @@ and me\`
     const { input, output } = loadFixture('transpileGlassNext/codeBlock')
     const transpiled = transpileGlassFileNext(input, folders)
     expect(transpiled.code).to.equal(output)
-    const val = `${2 + 5} i'm in the string`
   })
 
   it('should transpile with code block containing state', () => {
