@@ -35,7 +35,8 @@ export async function activate(context: vscode.ExtensionContext) {
     {
       documentSelector: [
         { scheme: 'file', language: 'glass-py' },
-        { scheme: 'file', language: 'glass' },
+        { scheme: 'file', language: 'glass-ts' },
+        { scheme: 'file', language: 'glass-js' },
       ],
       outputChannelName: 'Glass Language Server',
     }
@@ -102,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('glass.reset', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || activeEditor.document.languageId !== 'glass') {
+      if (!activeEditor || !isGlassFile(activeEditor.document)) {
         return
       }
       try {

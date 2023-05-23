@@ -16,6 +16,16 @@ interface GlassAttribute {
   type?: 'string' | 'boolean' | 'number' | 'object' | 'array' | 'function' | 'enum'
 }
 
+interface GlassAttribute {
+  name: string
+  detail?: string
+  documentation?: string
+  optional?: boolean
+  insertText?: string
+  values?: string[]
+  type?: 'string' | 'boolean' | 'number' | 'object' | 'array' | 'function' | 'enum'
+}
+
 export const glassElements: GlassElement[] = [
   {
     name: 'Args',

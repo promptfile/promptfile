@@ -32,7 +32,8 @@
   "icon": "assets/glass.png",
   "activationEvents": [
     "onView:glass",
-    "onLanguage:glass",
+    "onLanguage:glass-js",
+    "onLanguage:glass-ts",
     "onLanguage:glass-py"
   ],
   "scripts": {
@@ -176,13 +177,13 @@
         "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "resourceLangId == glass || resourceLangId == glass-py"
+        "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
       },
       {
         "command": "glass.reset",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
-        "when": "resourceLangId == glass || resourceLangId == glass-py"
+        "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
       }
     ],
     "configuration": [
@@ -209,7 +210,7 @@
               "text-ada-001"
             ]
           },
-          "glass.language": {
+          "glass.defaultLanguageMode": {
             "type": "string",
             "default": "typescript",
             "enum": [
@@ -217,7 +218,7 @@
               "javascript",
               "python"
             ],
-            "description": "Language to transpile .glass files to"
+            "description": "Default language mode for Glass files"
           },
           "glass.openaiKey": {
             "type": "string",
@@ -353,9 +354,62 @@
     },
     "grammars": [
       {
-        "language": "glass",
+        "language": "glass-ts",
         "scopeName": "source.glass",
-        "path": "./syntaxes/glass.tmLanguage.json",
+        "path": "./syntaxes/glass-ts.tmLanguage.json",
+        "embeddedLanguages": {
+          "source.js": "javascript",
+          "source.js.jsx": "javascriptreact",
+          "meta.tag.js": "jsx-tags",
+          "meta.tag.without-attributes.js": "jsx-tags",
+          "meta.embedded.block.frontmatter": "yaml",
+          "meta.embedded.block.css": "css",
+          "meta.embedded.block.ini": "ini",
+          "meta.embedded.block.java": "java",
+          "meta.embedded.block.lua": "lua",
+          "meta.embedded.block.makefile": "makefile",
+          "meta.embedded.block.perl": "perl",
+          "meta.embedded.block.r": "r",
+          "meta.embedded.block.ruby": "ruby",
+          "meta.embedded.block.php": "php",
+          "meta.embedded.block.sql": "sql",
+          "meta.embedded.block.vs_net": "vs_net",
+          "meta.embedded.block.html": "html",
+          "meta.embedded.block.xml": "xml",
+          "meta.embedded.block.xsl": "xsl",
+          "meta.embedded.block.yaml": "yaml",
+          "meta.embedded.block.dosbatch": "dosbatch",
+          "meta.embedded.block.clojure": "clojure",
+          "meta.embedded.block.coffee": "coffee",
+          "meta.embedded.block.c": "c",
+          "meta.embedded.block.cpp": "cpp",
+          "meta.embedded.block.diff": "diff",
+          "meta.embedded.block.dockerfile": "dockerfile",
+          "meta.embedded.block.go": "go",
+          "meta.embedded.block.groovy": "groovy",
+          "meta.embedded.block.pug": "jade",
+          "meta.embedded.block.javascript": "javascript",
+          "meta.embedded.block.javascriptreact": "javascriptreact",
+          "meta.embedded.block.json": "json",
+          "meta.embedded.block.less": "less",
+          "meta.embedded.block.objc": "objc",
+          "meta.embedded.block.scss": "scss",
+          "meta.embedded.block.perl6": "perl6",
+          "meta.embedded.block.powershell": "powershell",
+          "meta.embedded.block.python": "python",
+          "meta.embedded.block.rust": "rust",
+          "meta.embedded.block.scala": "scala",
+          "meta.embedded.block.shellscript": "shellscript",
+          "meta.embedded.block.typescript": "typescript",
+          "meta.embedded.block.typescriptreact": "typescriptreact",
+          "meta.embedded.block.csharp": "csharp",
+          "meta.embedded.block.fsharp": "fsharp"
+        }
+      },
+      {
+        "language": "glass-js",
+        "scopeName": "source.glass",
+        "path": "./syntaxes/glass-ts.tmLanguage.json",
         "embeddedLanguages": {
           "source.js": "javascript",
           "source.js.jsx": "javascriptreact",
@@ -465,13 +519,25 @@
     },
     "languages": [
       {
-        "id": "glass",
+        "id": "glass-ts",
         "aliases": [
-          "Glass"
+          "Glass (typescript)"
         ],
         "extensions": [
           ".glass"
         ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "dark": "./images/dark.svg",
+          "light": "./images/light.svg"
+        }
+      },
+      {
+        "id": "glass-js",
+        "aliases": [
+          "Glass (javascript)"
+        ],
+        "extensions": [],
         "configuration": "./language-configuration.json",
         "icon": {
           "dark": "./images/dark.svg",
