@@ -1,8 +1,14 @@
 import { expect } from 'chai'
 import { interpolateGlass } from './interpolateGlass'
+import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 
 describe('interpolateGlass', () => {
   it('should interpolate an empty document', () => {
+    console.log(
+      parseGlassTopLevelJsxElements(`<Prompt>
+foo
+</Prompt>`)
+    )
     expect(
       interpolateGlass(
         'test',

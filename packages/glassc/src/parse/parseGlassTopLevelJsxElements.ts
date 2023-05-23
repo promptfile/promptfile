@@ -1,4 +1,4 @@
-import { JSXNode, removeGlassComments } from '@glass-lang/glasslib'
+import glasslib from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
@@ -31,7 +31,7 @@ import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter'
  */
 export function parseGlassTopLevelJsxElements(doc: string) {
   // preprocessing: remove all comments
-  doc = removeGlassComments(doc)
+  doc = glasslib.removeGlassComments(doc)
 
   const mdxSettings = {
     acorn: Parser.extend(acornJsx()),
@@ -55,7 +55,7 @@ export function parseGlassTopLevelJsxElements(doc: string) {
   // remove frontmatter after parsing the AST
   doc = removeGlassFrontmatter(doc)
 
-  const jsx: JSXNode[] = []
+  const jsx: glasslib.JSXNode[] = []
 
   for (const node of tree.children) {
     parseJSXElementHelper(node, jsx)
@@ -64,7 +64,7 @@ export function parseGlassTopLevelJsxElements(doc: string) {
   return jsx
 }
 
-function parseJSXElementHelper(node: any, jsx: JSXNode[]) {
+function parseJSXElementHelper(node: any, jsx: glasslib.JSXNode[]) {
   switch (node.type) {
     case 'paragraph': {
       for (const child of node.children) {
@@ -107,7 +107,7 @@ export function glassASTNodeToJSXNode(node: any) {
     return { name: attrName, expressionValue: attrValue }
   })
   const children = (node.children || []).map((child: any) => glassASTNodeToJSXNode(child))
-  const res: JSXNode = { tagName, attrs, position, children, type: node.type }
+  const res: glasslib.JSXNode = { tagName, attrs, position, children, type: node.type }
   if (value != null) {
     res['value'] = value
   }

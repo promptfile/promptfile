@@ -1,4 +1,4 @@
-import { removeGlassComments } from '@glass-lang/glasslib'
+import glasslib from '@glass-lang/glasslib'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
 import { fromMarkdown } from 'mdast-util-from-markdown'
@@ -14,7 +14,7 @@ import { removeGlassFrontmatter } from '../transform/removeGlassFrontmatter'
 
 export function parseGlassImports(doc: string) {
   // preprocessing: remove all comments
-  doc = removeGlassComments(doc)
+  doc = glasslib.removeGlassComments(doc)
 
   const mdxSettings = {
     acorn: Parser.extend(acornJsx()),

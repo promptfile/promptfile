@@ -1,11 +1,11 @@
-import { parseGlassBlocks } from '@glass-lang/glasslib'
+import glasslib from '@glass-lang/glasslib'
 import { parseGlassImports } from './parseGlassImports'
 import { parseCodeBlock } from './parseTypescript'
 
 const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block', 'Prompt'])
 
 export function parseGlassMetadata(document: string) {
-  const blocks = parseGlassBlocks(document)
+  const blocks = glasslib.parseGlassBlocks(document)
 
   const relevantBlocks = blocks.filter(block => contentBlocks.has(block.tag))
 

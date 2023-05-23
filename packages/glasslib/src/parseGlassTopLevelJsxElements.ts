@@ -1,3 +1,4 @@
+import { checkOk } from '@glass-lang/util'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
 import { fromMarkdown } from 'mdast-util-from-markdown'
@@ -9,6 +10,9 @@ import { mdxJsx } from 'micromark-extension-mdx-jsx'
 import { mdxMd } from 'micromark-extension-mdx-md'
 import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
 import { combineExtensions } from 'micromark-util-combine-extensions'
+import { JSXNode } from './ast'
+import { removeGlassComments } from './removeGlassComments'
+import { removeGlassFrontmatter } from './removeGlassFrontmatter'
 
 /**
  * Takes a glass document and returns all the top-level JSX elements.
@@ -28,6 +32,7 @@ import { combineExtensions } from 'micromark-util-combine-extensions'
  */
 export function parseGlassTopLevelJsxElements(doc: string) {
   // preprocessing: remove all comments
+  doc = removeGlassComments(doc)
 
   const mdxSettings = {
     acorn: Parser.extend(acornJsx()),
@@ -48,7 +53,10 @@ export function parseGlassTopLevelJsxElements(doc: string) {
     mdastExtensions: [mdxFromMarkdown(), frontmatterFromMarkdown(['yaml', 'toml'])],
   })
 
-  const jsx: any[] = []
+  // remove frontmatter after parsing the AST
+  doc = removeGlassFrontmatter(doc)
+
+  const jsx: JSXNode[] = []
 
   for (const node of tree.children) {
     parseJSXElementHelper(node, jsx)
@@ -57,7 +65,7 @@ export function parseGlassTopLevelJsxElements(doc: string) {
   return jsx
 }
 
-function parseJSXElementHelper(node: any, jsx: any[]) {
+function parseJSXElementHelper(node: any, jsx: JSXNode[]) {
   switch (node.type) {
     case 'paragraph': {
       for (const child of node.children) {
@@ -87,15 +95,20 @@ export function glassASTNodeToJSXNode(node: any) {
   const position = node.position
   const value = node.value
   const attrs = (node.attributes || []).map((attr: any) => {
+    checkOk(attr.type === 'mdxJsxAttribute', `Expected attribute node type 'mdxJsxAttribute', got '${attr.type}'`)
     const attrName: string = attr.name
     if (typeof attr.value === 'string') {
       return { name: attrName, stringValue: attr.value }
     }
+    checkOk(
+      attr.value.type === 'mdxJsxAttributeValueExpression',
+      `Expected attribute value node type 'mdxJsxAttributeValueExpression', got '${attr.value.type}'`
+    )
     const attrValue: string = attr.value.value
     return { name: attrName, expressionValue: attrValue }
   })
   const children = (node.children || []).map((child: any) => glassASTNodeToJSXNode(child))
-  const res: any = { tagName, attrs, position, children, type: node.type }
+  const res: JSXNode = { tagName, attrs, position, children, type: node.type }
   if (value != null) {
     res['value'] = value
   }

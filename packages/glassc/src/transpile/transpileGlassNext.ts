@@ -1,4 +1,4 @@
-import { parseGlassBlocks, removeGlassComments } from '@glass-lang/glasslib'
+import glasslib from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import camelcase from 'camelcase'
 import * as fs from 'node:fs'
@@ -80,7 +80,7 @@ function getTestData() {
 
   // first, parse the document blocks to make sure the document is valid
   // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output
-  const blocks = parseGlassBlocks(doc)
+  const blocks = glasslib.parseGlassBlocks(doc)
   // if (blocks.length === 0) {
   //   throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
   // }
@@ -105,7 +105,7 @@ function getTestData() {
   const codeBlocks = blocks.filter(b => b.tag === 'Code')
 
   // remove all block comments before any processing happens
-  doc = removeGlassComments(doc)
+  doc = glasslib.removeGlassComments(doc)
   const functionName = camelcase(fileName)
   const exportName = getGlassExportName(fileName)
 

@@ -1,4 +1,4 @@
-import { JSXNode, removeGlassComments } from '@glass-lang/glasslib'
+import glasslib from '@glass-lang/glasslib'
 import { Parser } from 'acorn'
 import acornJsx from 'acorn-jsx'
 import { fromMarkdown } from 'mdast-util-from-markdown'
@@ -19,7 +19,7 @@ export function parseGlassAST(
   folders: { workspaceFolder: string; folderPath: string; outputDirectory: string; fileName: string }
 ) {
   // preprocessing: remove all comments
-  doc = removeGlassComments(doc)
+  doc = glasslib.removeGlassComments(doc)
 
   const mdxSettings = {
     acorn: Parser.extend(acornJsx()),
@@ -48,7 +48,7 @@ export function parseGlassAST(
   const frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[] = []
   const interpolationArgs: Record<string, boolean> = {}
   const jsxExpressions: string[] = []
-  const jsxNodes: JSXNode[] = []
+  const jsxNodes: glasslib.JSXNode[] = []
   let isAsync = false
 
   for (const node of tree.children) {
@@ -78,7 +78,7 @@ function parseAstHelper(
   frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[],
   interpolationArgs: Record<string, boolean>,
   jsxExpressions: string[],
-  jsxNodes: JSXNode[]
+  jsxNodes: glasslib.JSXNode[]
 ) {
   let isAsync = false
 

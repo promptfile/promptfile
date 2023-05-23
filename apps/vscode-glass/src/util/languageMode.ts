@@ -11,7 +11,7 @@ export async function updateLanguageMode(textDocument: vscode.TextDocument) {
     // Extract the frontmatter from the beginning of the document
     const frontmatter = parseGlassFrontmatter(textDocument.getText())
 
-    const languageFrontmatter = frontmatter.find(f => f.name === 'language')
+    const languageFrontmatter = frontmatter.find((f: any) => f.name === 'language')
     if (languageFrontmatter && languageFrontmatter.type === 'python') {
       targetLanguage = 'glass-py'
     }

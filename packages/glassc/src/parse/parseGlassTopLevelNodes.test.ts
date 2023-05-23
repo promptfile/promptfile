@@ -1,4 +1,4 @@
-import { documentNodesToAst, mutateDocumentAst, updateDocumentAst } from '@glass-lang/glasslib'
+import glasslib from '@glass-lang/glasslib'
 import { expect } from 'chai'
 import { parseGlassTopLevelNodes } from './parseGlassTopLevelNodes'
 
@@ -18,7 +18,7 @@ interstitial
 And this is the end`
 
     const parsed = parseGlassTopLevelNodes(mdx)
-    expect(documentNodesToAst(parsed, mdx)).to.equal(mdx)
+    expect(glasslib.documentNodesToAst(parsed, mdx)).to.equal(mdx)
   })
 
   it('should updateDocumentAst', () => {
@@ -49,9 +49,9 @@ interstitial
 And this is the end`
 
     const parsed = parseGlassTopLevelNodes(mdx)
-    const { newNodes, newDoc } = updateDocumentAst(parsed, mdx, 1, '<Bar x={4} y="2" />')
+    const { newNodes, newDoc } = glasslib.updateDocumentAst(parsed, mdx, 1, '<Bar x={4} y="2" />')
     expect(newDoc).to.equal(expected)
-    expect(documentNodesToAst(newNodes, newDoc)).to.equal(expected)
+    expect(glasslib.documentNodesToAst(newNodes, newDoc)).to.equal(expected)
   })
 
   it('should addNodeToDocumentAST', () => {
@@ -91,10 +91,10 @@ interstitial
 And this is the end`
 
     const parsed = parseGlassTopLevelNodes(mdx)
-    const newDoc = mutateDocumentAst(parsed, mdx, '\n<Bar x={4} y="2" />', 2)
+    const newDoc = glasslib.mutateDocumentAst(parsed, mdx, '\n<Bar x={4} y="2" />', 2)
     expect(newDoc).to.equal(expected)
 
-    const newDoc2 = mutateDocumentAst(parsed, mdx, '<Bar x={4} y="2" />\n', 0)
+    const newDoc2 = glasslib.mutateDocumentAst(parsed, mdx, '<Bar x={4} y="2" />\n', 0)
     expect(newDoc2).to.equal(expected2)
   })
 })
