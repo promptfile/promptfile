@@ -1,3 +1,5 @@
+import { parseGlassFrontmatter, removeGlassFrontmatter } from '@glass-lang/glassc'
+
 export function formatDocument(text: string) {
   // Check if the document contains any of the required tags
   const hasTags = /<(Prompt|User|System|Assistant|Code|Chat|State|Text)/.test(text)
@@ -49,5 +51,14 @@ export function formatDocument(text: string) {
     return `<${p1}${p2.trimEnd()}>`
   })
 
-  return finalText
+  try {
+    const frontmatter = parseGlassFrontmatter(finalText)
+    if (frontmatter != null && Object.keys(frontmatter).length === 0) {
+      finalText = removeGlassFrontmatter(finalText)
+    }
+  } catch {
+    // Ignore errors
+  }
+
+  return finalText.trim()
 }

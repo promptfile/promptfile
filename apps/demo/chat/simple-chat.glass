@@ -1,7 +1,3 @@
----
-
----
-
 <Code>
 const [name, setName] = useState('Elliott')
 const [numMessages, setNumMessages] = useState(0)
