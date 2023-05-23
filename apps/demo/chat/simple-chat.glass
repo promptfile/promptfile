@@ -8,3 +8,7 @@ You are ChatGPT. Be polite and responsive.
 
 You are currently interacting with as User named: ${name}
 </System>
+
+<Chat model="gpt-3.5-turbo" onResponse={response => $1}>
+
+</Chat>

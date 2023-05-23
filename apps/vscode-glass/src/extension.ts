@@ -12,8 +12,9 @@ import { LeftPanelWebview } from './LeftPanelWebview'
 import { executeGlassFile } from './executeGlassFile'
 import { executeGlassFilePython } from './executeGlassFilePython'
 import { updateDecorations } from './util/decorations'
-import { hasGlassFileOpen } from './util/isGlassFile'
+import { hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getOpenaiKey } from './util/keys'
+import { updateLanguageMode } from './util/languageMode'
 
 let client: LanguageClient | null = null
 
@@ -76,11 +77,12 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.registerWebviewViewProvider('glass', leftPanelWebViewProvider),
     characterCount,
     vscode.window.onDidChangeActiveTextEditor(
-      editor => {
+      async editor => {
         activeEditor = editor
-        if (editor && ['glass', 'glass-py'].includes(editor.document.languageId)) {
+        if (editor && isGlassFile(editor.document)) {
           updateDecorations(editor, codeDecorations)
           updateCharacterCount()
+          await updateLanguageMode(editor.document)
         } else {
           characterCount.hide()
         }
@@ -89,10 +91,11 @@ export async function activate(context: vscode.ExtensionContext) {
       context.subscriptions
     ),
     vscode.workspace.onDidChangeTextDocument(
-      editor => {
+      async editor => {
         if (activeEditor && editor.document === activeEditor.document) {
           updateDecorations(activeEditor, codeDecorations)
           updateCharacterCount()
+          await updateLanguageMode(editor.document)
         }
       },
       null,
