@@ -1,14 +1,14 @@
-export function parseGlassFrontmatter(document: string): any {
+export function parseGlassFrontmatter(document: string): any[] {
   const frontmatterRegex = /^---\n?([\s\S]*?)\n?---/
   const match = document.match(frontmatterRegex)
 
   if (!match) {
-    return undefined
+    return []
   }
 
   const frontmatter = match[1].trim()
   if (frontmatter === '') {
-    return {}
+    return []
   }
 
   const frontmatterArgs: any[] = []

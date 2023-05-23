@@ -4,10 +4,6 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 
 export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
-    const frontmatter = parseGlassFrontmatter(textDocument.getText())
-    if (!frontmatter) {
-      return []
-    }
     // get the range of the frontmatter
     const regex = /---\n([\s\S]*?)\n---/
     const match = regex.exec(textDocument.getText())
@@ -18,15 +14,15 @@ export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnost
       start: textDocument.positionAt(match.index),
       end: textDocument.positionAt(match.index + match[0].length),
     }
+    const frontmatter = parseGlassFrontmatter(textDocument.getText()) as any[]
     const diagnostics: Diagnostic[] = []
-    const keys = Object.keys(frontmatter)
-    for (const key of keys) {
-      if (key === 'language') {
-        if (!['python', 'javascript', 'typescript'].includes(frontmatter[key])) {
+    for (const f of frontmatter) {
+      if (f.name === 'language') {
+        if (!['python', 'javascript', 'typescript'].includes(f.type)) {
           diagnostics.push({
             severity: DiagnosticSeverity.Error,
             range,
-            message: `Unsupported language: ${frontmatter[key]}`,
+            message: `Unsupported language: ${f.type}`,
             source: 'glass',
           })
         }
@@ -34,7 +30,7 @@ export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnost
         diagnostics.push({
           severity: DiagnosticSeverity.Error,
           range,
-          message: `Unsupported frontmatter key: ${key}`,
+          message: `Unsupported frontmatter key: ${f.name}`,
           source: 'glass',
         })
       }
