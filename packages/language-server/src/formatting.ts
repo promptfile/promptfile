@@ -42,5 +42,12 @@ export function formatDocument(text: string) {
     const regexClose = new RegExp(`${tag}\\s+>`, 'g')
     finalText = finalText.replace(regexOpen, `<${tag}`).replace(regexClose, `${tag}>`)
   })
+
+  // Correctly format tag attributes
+  finalText = finalText.replace(/<(\w+)(\s+[^>]*?)\s+>/g, (match, p1, p2) => {
+    // Trim trailing spaces from attributes and reassemble the tag
+    return `<${p1}${p2.trimEnd()}>`
+  })
+
   return finalText
 }
