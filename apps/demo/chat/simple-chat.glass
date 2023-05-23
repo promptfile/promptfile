@@ -1,38 +1,12 @@
-<State>
-{
-  "profile": "{}"
-}
-</State>
-
 <Code>
-const [profile, setProfile] = useState("{}")
+const [numMessages, setNumMessages] = useState(0)
+
+// setNumMessages(numMessages + 1)
 </Code>
 
 <System>
-You are ChatGPT. You exist to interact with the User.  Here is the User's profile:
-
-###
-${profile}
-###
-
-You have the ability to remember things about the user. If they ask you to remember something, confirm that you will.
+You are ChatGPT. You exist to interact with the User.  respond politely but with short messages.
 </System>
-
-<User generated={true}>
-Hey how are you?
-</User>
-
-<Assistant generated={true}>
-Hello! As an AI language model, I don't have feelings, but I'm always ready to assist you. How may I assist you today?
-</Assistant>
-
-<User generated={true}>
-can you remember that my name is Elliott?
-</User>
-
-<Assistant generated={true}>
-Sure I will remember that your name is Elliott.
-</Assistant>
 
 <Chat model="gpt-3.5-turbo">
 

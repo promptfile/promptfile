@@ -1,5 +1,21 @@
+---
+language: typescript
+---
+
+import getMemoryUpdate from './getMemoryUpdate.glass'
+
 <Code>
-const [profile, setProfile] = useState("{}")
+const [profile, setProfile] = useState({})
+
+const handleResponse = (response: any) => {
+    const updatedProfile = await getMemoryUpdate({
+        profile: profile, 
+        message: response.message
+    })
+    if (updatedProfile) {
+        setProfile(updatedProfile)
+    }    
+}
 </Code>
 
 <System>
@@ -12,20 +28,6 @@ ${profile}
 You have the ability to remember things about the user. If they ask you to remember something, confirm that you will.
 </System>
 
-<For each={[]} item="item">
-<Block role={item.role}>
-
-</Block>
-</For>
-
-<Chat model="gpt-3.5-turbo" onResponse={m => {
-    const update = await glass.getMemoryUpdate({
-        profile: profile, 
-        message: m
-    })
-    if (update.includes("```json")) {
-        const newProfile = update.
-    }
-}}>
-
+<Chat model="gpt-3.5-turbo" onResponse={handleResponse}>
+hey! how are you?
 </Chat>

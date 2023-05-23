@@ -1,3 +1,14 @@
+---
+language: typescript
+---
+
+<Code>
+const handleResponse = (response: any) => {
+    // do some json validation and return valid json
+    return {}
+}
+</Code>
+
 <System>
 Read the Message provided by the user.  First, determine whether the User agreed to remember information based on the conversation.  If the User did agree to remember information, return the updated Profile as fenced JSON with the addition of the new infromation provided by the user.
 
@@ -48,7 +59,7 @@ You're very welcome. Let me know if you have any other questions!
 NO_ACTION
 </Assistant>
 
-<User>
+<Chat model="gpt-3.5-turbo" onResponse={handleResponse}>
 Profile: 
 ```json
 ${profile}
@@ -58,4 +69,4 @@ Message:
 ###
 ${message}
 ###
-</User>
+</Chat>
