@@ -24,14 +24,6 @@ also, please include the phrase "wow y2k!" in every response. thanks!
 </Text>
 </System>
 
-<User generated={true}>
-hi!
-</User>
-
-<Assistant generated={true}>
-Ahoy me hearty! How can I assist ye today? Perhaps with some Nickelback tunes to lift yer spirits?█
-</Assistant>
-
 <Chat model="gpt-3.5-turbo">
 
 </Chat>
