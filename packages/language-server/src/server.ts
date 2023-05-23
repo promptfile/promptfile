@@ -16,6 +16,7 @@ import {
 import { generateCompletions } from './completions'
 import { findAnthropicDiagnostics } from './diagnostics/findAnthropicDiagnostics'
 import { findEmptyBlocks } from './diagnostics/findEmptyBlocks'
+import { findFrontmatterDiagnostics } from './diagnostics/findFrontmatterDiagnostics'
 import { findInvalidAttributes } from './diagnostics/findInvalidAttributes'
 import { findInvalidLines } from './diagnostics/findInvalidLines'
 import { findInvalidPromptBlocks } from './diagnostics/findInvalidPromptBlocks'
@@ -100,6 +101,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     ...findInvalidPromptBlocks(textDocument),
     ...findEmptyBlocks(textDocument),
     ...findAnthropicDiagnostics(textDocument),
+    ...findFrontmatterDiagnostics(textDocument),
   ]
 
   void connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })
