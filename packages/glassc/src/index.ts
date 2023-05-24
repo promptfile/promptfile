@@ -1,3 +1,4 @@
+export { parseFrontmatterFromGlass } from './parse/parseFrontmatter.js'
 export { parseGlassMetadata } from './parse/parseGlassMetadata.js'
 // breaks CommonJS projects, since it imports ESM packages
 export {

@@ -1,4 +1,4 @@
-import { parseGlassFrontmatter } from '@glass-lang/glasslib'
+import { parseFrontmatterFromGlass } from '@glass-lang/glassc'
 import * as vscode from 'vscode'
 import { isGlassFile } from './isGlassFile'
 
@@ -19,7 +19,7 @@ export async function updateLanguageMode(textDocument: vscode.TextDocument) {
 
   try {
     // Extract the frontmatter from the beginning of the document
-    const frontmatter = parseGlassFrontmatter(textDocument.getText())
+    const frontmatter = parseFrontmatterFromGlass(textDocument.getText())
 
     const languageFrontmatter = frontmatter.find((f: any) => f.name === 'language')
     if (languageFrontmatter && languageFrontmatter.type) {

@@ -1,4 +1,5 @@
-import { parseGlassFrontmatter, removeGlassFrontmatter } from '@glass-lang/glasslib'
+import { parseFrontmatterFromGlass } from '@glass-lang/glassc'
+import { removeGlassFrontmatter } from '@glass-lang/glasslib'
 import { glassElements } from './elements'
 
 export function formatDocument(text: string) {
@@ -57,8 +58,8 @@ export function formatDocument(text: string) {
   })
 
   try {
-    const frontmatter = parseGlassFrontmatter(finalText)
-    if (frontmatter.length === 0) {
+    const frontmatter = parseFrontmatterFromGlass(finalText)
+    if (frontmatter == null) {
       finalText = removeGlassFrontmatter(finalText)
     }
   } catch {

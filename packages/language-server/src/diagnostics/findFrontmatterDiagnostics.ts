@@ -1,4 +1,4 @@
-import { parseGlassFrontmatter } from '@glass-lang/glasslib'
+import { parseFrontmatterFromGlass } from '@glass-lang/glassc'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
@@ -14,23 +14,14 @@ export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnost
       start: textDocument.positionAt(match.index),
       end: textDocument.positionAt(match.index + match[0].length),
     }
-    const frontmatter = parseGlassFrontmatter(textDocument.getText()) as any[]
+    const frontmatter = parseFrontmatterFromGlass(textDocument.getText()) as any | null
     const diagnostics: Diagnostic[] = []
-    for (const f of frontmatter) {
-      if (f.name === 'language') {
-        if (!['python', 'javascript', 'typescript'].includes(f.type)) {
-          diagnostics.push({
-            severity: DiagnosticSeverity.Error,
-            range,
-            message: `Unsupported language: ${f.type}`,
-            source: 'glass',
-          })
-        }
-      } else {
+    if (frontmatter) {
+      if (frontmatter.language && !['python', 'javascript', 'typescript'].includes(frontmatter.language)) {
         diagnostics.push({
-          severity: DiagnosticSeverity.Warning,
+          severity: DiagnosticSeverity.Error,
           range,
-          message: `Unsupported frontmatter key: ${f.name}`,
+          message: `Unsupported language: ${frontmatter.language}`,
           source: 'glass',
         })
       }

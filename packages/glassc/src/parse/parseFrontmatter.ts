@@ -5,6 +5,22 @@ interface ParsedResult {
   args: Record<string, string>
 }
 
+export function parseFrontmatterFromGlass(glass: string): ParsedResult | null {
+  const frontmatterRegex = /^---\n?([\s\S]*?)\n?---/
+  const match = glass.match(frontmatterRegex)
+
+  if (!match) {
+    return null
+  }
+
+  const frontmatter = match[1].trim()
+  if (frontmatter === '') {
+    return null
+  }
+
+  return parseFrontmatter(frontmatter)
+}
+
 export function parseFrontmatter(yamlString: string): ParsedResult | null {
   const yamlContent = yamlString.replace(/---/g, '').trim()
 
