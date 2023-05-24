@@ -1,49 +1,17 @@
-<State>
-{
-  "status": "loading"
-}
-</State>
-
-<Test>
-const hello = "yes"
-</Test>
-
 <Code>
 const [status, setStatus] = useState('')
+const [lastMessage, setLastMessage] = useState('')
 
 setStatus('loading')
 </Code>
 
-<System>
-You are ChatGPT. You exist to interact with the User.
-</System>
-
-<User generated={true}>
-hi how are you?
+<User>
+You should try to respond to the User in haiku format.
 </User>
 
-<Assistant generated={true}>
-Hello! As an AI language model, I don't have feelings, but I'm always ready to serve and assist you. How can I assist you today?
-</Assistant>
-
-<User generated={true}>
-tell me a story
-</User>
-
-<Assistant generated={true}>
-Sure, I'd be happy to tell you a story! Here's a short one:
-
-Once upon a time, there was a little bird named Skylar who lived in a forest. Every morning, Skylar would wake up early and fly around the forest, singing her beautiful songs.
-
-One day, Skylar noticed that all the other birds in the forest had built nests in the trees and were getting ready to lay eggs. But Skylar didn't have a nest! She searched and searched, but couldn't find a good place to build one.
-
-Feeling sad and lonely, Skylar decided to ask the other birds for help. She flew from tree to tree, asking if anyone knew where she could build a nest. Finally, she found an old owl who lived in a nearby tree.
-
-The owl listened to Skylar's problem and said, "Skylar, you don't need to build a nest in a tree. You can build a nest anywhere you'd like! Why not build one on the ground, in the tall grass?"
-
-Skylar thought this was a great idea! She flew down to the grass and started building her nest. It took a while,█
-</Assistant>
-
-<Chat model="gpt-3.5-turbo">
+<Chat model="claude-instant-v1" onResponse={({message}) => {
+    setStatus('complete')    
+    setLastMessage(message)
+}}>
 
 </Chat>

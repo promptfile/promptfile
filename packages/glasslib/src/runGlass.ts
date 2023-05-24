@@ -170,7 +170,9 @@ async function runGlassChat(
   })
 
   const response = await handleStream(r, handleChatChunk, next => {
-    const fragment = generateCompletionFragment(next, options?.progress != null, model, newChatNode)
+    // right now claude has a leading whitespace character
+    // we need to remove that!
+    const fragment = generateCompletionFragment(next.trim(), options?.progress != null, model, newChatNode)
     const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
     const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
     if (options?.progress) {
@@ -222,7 +224,7 @@ async function runGlassChatAnthropic(
       throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
     }
   }
-  anthropicQuery += '\n\nAssistant:'
+  anthropicQuery += '\n\nAssistant: '
   console.log('anthropic query', anthropicQuery)
 
   const r = await fetch('https://api.anthropic.com/v1/complete', {
@@ -235,7 +237,7 @@ async function runGlassChatAnthropic(
     body: JSON.stringify({
       model: model,
       prompt: anthropicQuery,
-      max_tokens_to_sample: 1024,
+      max_tokens_to_sample: 2048,
       stopSequences: ['Human:', 'Assistant:'],
       stream: true,
     }),
@@ -249,16 +251,16 @@ async function runGlassChatAnthropic(
       return options.progress({
         nextDoc: nextDoc,
         nextInterpolatedDoc,
-        rawResponse: next,
+        rawResponse: next.trim(), // right now claude always returns a leading empty space
       })
     }
   })
 
-  const fragment = generateCompletionFragment(response, false, model, newChatNode)
+  const fragment = generateCompletionFragment(response.trim(), false, model, newChatNode)
   return {
     finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
     finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
-    rawResponse: response,
+    rawResponse: response.trim(),
   }
 }
 
