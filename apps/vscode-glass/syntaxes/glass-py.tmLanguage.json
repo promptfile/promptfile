@@ -8,13 +8,28 @@
       "include": "#markdown-frontmatter"
     },
     {
-      "include": "#line-comments"
+      "include": "#test-element"
     },
     {
-      "include": "#transcript-speaker"
+      "include": "#state-element"
     },
     {
-      "include": "#markdown-sections"
+      "include": "#text-element"
+    },
+    {
+      "include": "#user-element"
+    },
+    {
+      "include": "#assistant-element"
+    },
+    {
+      "include": "#system-element"
+    },
+    {
+      "include": "#for-element"
+    },
+    {
+      "include": "source.python"
     }
   ],
   "repository": {
@@ -105,87 +120,63 @@
       }
     },
     "system-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(System)(?=[\\s\\/\\>\\{])",
+      "begin": "(<)(System)(>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
+          "name": "source.glass.system.name"
         },
         "3": {
-          "name": "source.glass.system.name"
+          "name": "punctuation.definition.tag.end.jsx"
         }
       },
       "patterns": [
         {
-          "include": "source.tsx#jsx-tag-attribute-name"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attributes-illegal"
+          "include": "#markdown-sections"
         }
       ],
-      "end": "(?:(\\/)\\s*)?(>)",
+      "end": "(<\\/)(System)(>)",
       "endCaptures": {
         "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
+          "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
+          "name": "source.glass.system.name"
+        },
+        "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }
     },
     "assistant-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Assistant)(?=[\\s\\/\\>\\{])",
+      "begin": "(<)(Assistant)(>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
+          "name": "source.glass.assistant.name"
         },
         "3": {
-          "name": "source.glass.assistant.name"
+          "name": "punctuation.definition.tag.end.jsx"
         }
       },
       "patterns": [
         {
-          "include": "source.tsx#jsx-tag-attribute-name"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attributes-illegal"
+          "include": "#markdown-sections"
         }
       ],
-      "end": "(?:(\\/)\\s*)?(>)",
+      "end": "(<\\/)(Assistant)(>)",
       "endCaptures": {
         "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
+          "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
+          "name": "source.glass.assistant.name"
+        },
+        "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }
@@ -217,49 +208,6 @@
           "name": "source.glass.state.name"
         },
         "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
-    },
-    "chat-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Chat)(?=[\\s\\/\\>\\{])",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
-        },
-        "3": {
-          "name": "source.glass.chat.name"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.tsx#jsx-tag-attribute-name"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attributes-illegal"
-        }
-      ],
-      "end": "(?:(\\/)\\s*)?(>)",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
-        },
-        "2": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }
@@ -308,44 +256,32 @@
       }
     },
     "user-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(User)(?=[\\s\\/\\>\\{])",
+      "begin": "(<)(User)(>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
+          "name": "source.glass.user.name"
         },
         "3": {
-          "name": "source.glass.user.name"
+          "name": "punctuation.definition.tag.end.jsx"
         }
       },
       "patterns": [
         {
-          "include": "source.tsx#jsx-tag-attribute-name"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attributes-illegal"
+          "include": "#markdown-sections"
         }
       ],
-      "end": "(?:(\\/)\\s*)?(>)",
+      "end": "(<\\/)(User)(>)",
       "endCaptures": {
         "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
+          "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
+          "name": "source.glass.user.name"
+        },
+        "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }
@@ -363,27 +299,6 @@
           },
           "patterns": [
             {
-              "include": "#code-element"
-            },
-            {
-              "include": "#state-element"
-            },
-            {
-              "include": "#chat-element"
-            },
-            {
-              "include": "#text-element"
-            },
-            {
-              "include": "#user-element"
-            },
-            {
-              "include": "#assistant-element"
-            },
-            {
-              "include": "#system-element"
-            },
-            {
               "include": "#extension-mdx-expression-flow"
             },
             {
@@ -393,18 +308,14 @@
         }
       ]
     },
-    "line-comments": {
-      "name": "comment.line",
-      "match": "^//.*$"
-    },
-    "code-element": {
-      "begin": "(<)(Code)(>)",
+    "test-element": {
+      "begin": "(<)(Test)(>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.code.name"
+          "name": "source.glass.test.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -415,13 +326,13 @@
           "include": "source.python"
         }
       ],
-      "end": "(<\\/)(Code)(>)",
+      "end": "(<\\/)(Code|Test)(>)",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.code.name"
+          "name": "source.glass.test.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -440,6 +351,9 @@
     },
     "markdown-sections": {
       "patterns": [
+        {
+          "include": "#transcript-speaker"
+        },
         {
           "include": "#commonmark-block-quote"
         },
@@ -472,30 +386,6 @@
         },
         {
           "include": "#extension-mdx-esm"
-        },
-        {
-          "include": "#code-element"
-        },
-        {
-          "include": "#state-element"
-        },
-        {
-          "include": "#chat-element"
-        },
-        {
-          "include": "#text-element"
-        },
-        {
-          "include": "#user-element"
-        },
-        {
-          "include": "#assistant-element"
-        },
-        {
-          "include": "#system-element"
-        },
-        {
-          "include": "#for-element"
         },
         {
           "include": "#extension-mdx-expression-flow"
@@ -1920,7 +1810,7 @@
       },
       "patterns": [
         {
-          "include": "source.python"
+          "include": "source.tsx#expression"
         }
       ]
     },
@@ -1940,7 +1830,7 @@
       },
       "patterns": [
         {
-          "include": "source.python"
+          "include": "source.tsx#expression"
         }
       ]
     },
@@ -1986,7 +1876,7 @@
           "include": "source.tsx#jsx-string-single-quoted"
         },
         {
-          "include": "source.python"
+          "include": "source.tsx#jsx-evaluated-code"
         },
         {
           "include": "source.tsx#jsx-tag-attributes-illegal"
@@ -2919,7 +2809,7 @@
           "name": "markup.code.js.mdx",
           "patterns": [
             {
-              "include": "source.js"
+              "include": "source.python"
             }
           ]
         },
@@ -2955,7 +2845,7 @@
           "name": "markup.code.js.mdx",
           "patterns": [
             {
-              "include": "source.js"
+              "include": "source.python"
             }
           ]
         }

@@ -16,7 +16,6 @@
     { "path": "chat" },
     { "path": "gpt3" },
     { "path": "scratchpad" },
-    { "path": "walkthrough" },
     { "path": "test" },
     { "path": "../../packages/glassc" }
   ]

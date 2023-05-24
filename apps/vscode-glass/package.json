@@ -288,7 +288,7 @@
             }
           },
           {
-            "scope": "source.glass.code.name",
+            "scope": "source.glass.test.name",
             "settings": {
               "foreground": "#FFB454",
               "fontStyle": "italic"
@@ -360,7 +360,7 @@
     "grammars": [
       {
         "language": "glass-ts",
-        "scopeName": "source.glass",
+        "scopeName": "source.glass-ts",
         "path": "./syntaxes/glass-ts.tmLanguage.json",
         "embeddedLanguages": {
           "source.js": "javascript",
@@ -413,7 +413,7 @@
       },
       {
         "language": "glass-js",
-        "scopeName": "source.glass",
+        "scopeName": "source.glass-ts",
         "path": "./syntaxes/glass-ts.tmLanguage.json",
         "embeddedLanguages": {
           "source.js": "javascript",
@@ -531,7 +531,7 @@
         "extensions": [
           ".glass"
         ],
-        "configuration": "./language-configuration.json",
+        "configuration": "./configurations/language-configuration-ts.json",
         "icon": {
           "dark": "./images/dark.svg",
           "light": "./images/light.svg"
@@ -543,7 +543,7 @@
           "Glass (javascript)"
         ],
         "extensions": [],
-        "configuration": "./language-configuration.json",
+        "configuration": "./configurations/language-configuration-ts.json",
         "icon": {
           "dark": "./images/dark.svg",
           "light": "./images/light.svg"
@@ -555,7 +555,7 @@
           "Glass (python)"
         ],
         "extensions": [],
-        "configuration": "./language-configuration.json",
+        "configuration": "./configurations/language-configuration-py.json",
         "icon": {
           "dark": "./images/dark.svg",
           "light": "./images/light.svg"

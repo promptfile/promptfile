@@ -18,7 +18,6 @@ import { findAnthropicDiagnostics } from './diagnostics/findAnthropicDiagnostics
 import { findEmptyBlocks } from './diagnostics/findEmptyBlocks'
 import { findFrontmatterDiagnostics } from './diagnostics/findFrontmatterDiagnostics'
 import { findInvalidAttributes } from './diagnostics/findInvalidAttributes'
-import { findInvalidLines } from './diagnostics/findInvalidLines'
 import { findInvalidPromptBlocks } from './diagnostics/findInvalidPromptBlocks'
 import { findMultiplePromptBlocks } from './diagnostics/findMultiplePromptBlocks'
 import { findUnmatchedTags } from './diagnostics/findUnmatchedTags'
@@ -96,7 +95,6 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     ...findUnmatchedTags(textDocument),
     ...findUnsupportedTags(textDocument),
     ...findInvalidAttributes(textDocument),
-    ...findInvalidLines(textDocument),
     ...findMultiplePromptBlocks(textDocument),
     ...findInvalidPromptBlocks(textDocument),
     ...findEmptyBlocks(textDocument),
