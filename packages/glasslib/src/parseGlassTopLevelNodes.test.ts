@@ -1,8 +1,38 @@
 import { expect } from 'chai'
 import { documentNodesToAst, mutateDocumentAst, updateDocumentAst } from './ast'
-import { parseGlassTopLevelNodes } from './parseGlassTopLevelNodes'
+import { parseGlassTopLevelCode, parseGlassTopLevelNodes } from './parseGlassTopLevelNodes'
 
 describe('parseGlassTopLevelNodes', () => {
+  it('should extract code blocks', () => {
+    const mdx = `Hello world this is a document.
+
+<Foo x={3} y="2" />
+
+interstitial
+def foo():
+  return 3
+
+<Bar x={(m) => "hello"}>
+</Bar>
+
+And this is the end`
+
+    const parsed = parseGlassTopLevelCode(mdx)
+    expect(parsed).to.equal(`Hello world this is a document.
+
+
+
+
+interstitial
+def foo():
+  return 3
+
+
+
+
+And this is the end`)
+  })
+
   it('should parse glass document', () => {
     const mdx = `Hello world this is a document.
 

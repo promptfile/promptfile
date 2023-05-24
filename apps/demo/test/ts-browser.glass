@@ -1,7 +1,21 @@
-<Code>
+---
+language: python
+args:
+  -- let you declare documentation for your arguments as comments
+  input: string
+  -- asdfnasdf
+  -- askjfnaskdjfn
+  output: string
+---
+
+<Test>
+const input = "Murder on the orient express"
+</Test>
+
 const res = await fetch("https://elliottburris.com")
 const website = await res.text()
-</Code>
+
+// and this is a comment
 
 <System>
 your job is to answer questions based on the following website code:
@@ -10,6 +24,22 @@ ${website}
 ###
 </System>
 
-<Chat model="gpt-3.5-turbo">
+<User>
 where did elliott go to school
-</Chat>
+</User>
+
+<Assistant>
+According to the website code, Elliott went to Cambridge University where he earned a M.Phil. degree, and to the University of Virginia where he earned a B.A. degree.
+</Assistant>
+
+<Loop>
+<User>
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+</Loop>
+
+// <Chat model="gpt-3.5-turbo">
+// agjasdngkjn
+// </Chat>

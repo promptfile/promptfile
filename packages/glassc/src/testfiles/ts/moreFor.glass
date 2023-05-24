@@ -1,4 +1,7 @@
-<Args messages="{ role: string, content: string }[]" />
+---
+args:
+    messages: "{ role: string, content: string }[]"
+---
 
 <System>
 You are a helpful assistant.

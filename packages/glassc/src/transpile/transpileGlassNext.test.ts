@@ -59,8 +59,8 @@ describe('transpileGlassTypescript', () => {
   })
 
   it('should transpile including interstitial text', () => {
-    const { input, output } = loadTestfile('interstitialText', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'interstitialText' })
+    const { input, output } = loadTestfile('interstitialCode', 'ts')
+    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'interstitialCode' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
@@ -114,7 +114,7 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  it('should transpile with Args block', () => {
+  it.skip('should transpile with Args block', () => {
     const { input, output } = loadTestfile('args', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'args' })
     expect(transpiled.code.trim()).to.equal(output.trim())

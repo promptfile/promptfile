@@ -3,7 +3,7 @@ export function getMoreForPrompt() {
     return {}
   }
 
-  const compile = async (opt: { args: { foo: string; messages: { role: string; content: string }[] } }) => {
+  const compile = async (opt: { args: { foo: string; messages: string } }) => {
     const GLASS_STATE = {}
     const { foo, messages } = opt.args
 
@@ -15,8 +15,7 @@ export function getMoreForPrompt() {
         )
         .join('\n\n'),
     }
-    const TEMPLATE = `<Args messages="{ role: string, content: string }[]" />
-
+    const TEMPLATE = `
 <System>
 You are a helpful assistant.
 </System>
@@ -31,7 +30,7 @@ ${foo}
       model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        '<Args messages="{ role: string, content: string }[]" />\n\n<System>\nYou are a helpful assistant.\n</System>\n\n<For each={messages} fragment={m => <Block role={m.role} content={m.content} />} />\n\n<User>\n${foo}\n</User>',
+        '---\nargs:\n    messages: "{ role: string, content: string }[]"\n---\n\n<System>\nYou are a helpful assistant.\n</System>\n\n<For each={messages} fragment={m => <Block role={m.role} content={m.content} />} />\n\n<User>\n${foo}\n</User>',
       state: GLASS_STATE,
       onResponse: undefined,
     }

@@ -1,6 +1,12 @@
 import { DocumentNode, determineLineAndColumn } from './ast'
 import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 
+export function parseGlassTopLevelCode(doc: string): string {
+  const nodes = parseGlassTopLevelNodes(doc)
+  const codeNodes = nodes.filter(n => n.type === 'text')
+  return codeNodes.map(n => n.value).join('\n')
+}
+
 export function parseGlassTopLevelNodes(doc: string): DocumentNode[] {
   const jsxNodes = parseGlassTopLevelJsxElements(doc)
 

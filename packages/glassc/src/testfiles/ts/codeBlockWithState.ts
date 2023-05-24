@@ -11,21 +11,19 @@ export function getCodeBlockWithStatePrompt() {
     const [moreState, setMoreState] = useState('', GLASS_STATE, 'moreState')
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Code>
-const initProfile = { firstName: '', lastName: '', hasChatted: false }
+    const TEMPLATE = `const initProfile = { firstName: '', lastName: '', hasChatted: false }
 const [profile, setProfile] = useState(initProfile)
 const [moreState, setMoreState] = useState('')
-</Code>
 
-<Chat model="gpt-4" onResponse={() => setProfile({ hasChatted: true})}>
+<Request model="gpt-4" onResponse={() => setProfile({ hasChatted: true})}>
 hello world
-</Chat>`
+</Request>`
     return {
       fileName: 'codeBlockWithState',
       model: 'gpt-4',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        "<Code>\nconst initProfile = { firstName: '', lastName: '', hasChatted: false }\nconst [profile, setProfile] = useState(initProfile)\nconst [moreState, setMoreState] = useState('')\n</Code>\n\n<Chat model=\"gpt-4\" onResponse={() => setProfile({ hasChatted: true})}>\nhello world\n</Chat>",
+        "const initProfile = { firstName: '', lastName: '', hasChatted: false }\nconst [profile, setProfile] = useState(initProfile)\nconst [moreState, setMoreState] = useState('')\n\n<Request model=\"gpt-4\" onResponse={() => setProfile({ hasChatted: true})}>\nhello world\n</Request>",
       state: GLASS_STATE,
       onResponse: () => setProfile({ hasChatted: true }),
     }

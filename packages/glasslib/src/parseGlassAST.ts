@@ -213,17 +213,17 @@ function parseAstHelper(
 
     case 'toml':
     case 'yaml': {
-      const lines = node.value.split('\n')
-      for (const line of lines) {
-        if (line.trim() === '') {
-          continue
-        }
-        const [name, rest] = line.split(/:\s+/)
-        const [type, description] = rest.split(/\s+/)
-        const optional = type.endsWith('?')
-        const normType = optional ? type.slice(0, -1) : type
-        frontmatterArgs.push({ name, type: normType, description, optional })
-      }
+      // const lines = node.value.split('\n')
+      // for (const line of lines) {
+      //   if (line.trim() === '') {
+      //     continue
+      //   }
+      //   const [name, rest] = line.split(/:\s+/)
+      //   const [type, description] = rest.split(/\s+/)
+      //   const optional = type.endsWith('?')
+      //   const normType = optional ? type.slice(0, -1) : type
+      //   frontmatterArgs.push({ name, type: normType, description, optional })
+      // }
 
       break
     }

@@ -52,13 +52,6 @@ export function transpileGlassFileNext(
 
   const testContent = testData[0] || ''
 
-  // first, parse the document blocks to make sure the document is valid
-  // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output
-  const blocks = glasslib.parseGlassBlocks(doc)
-  // if (blocks.length === 0) {
-  //   throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
-  // }
-
   const stateNode = toplevelNodes.find(node => node.tagName === 'State')
   let state = {} as any
   if (stateNode) {
@@ -75,8 +68,6 @@ export function transpileGlassFileNext(
       //TODO: support other content types
     }
   }
-
-  const codeBlocks = blocks.filter(b => b.tag === 'Code')
 
   // remove all block comments before any processing happens
   doc = glasslib.removeGlassComments(doc)
@@ -106,7 +97,7 @@ export function transpileGlassFileNext(
 
   const interpolationVarSet = new Set(interpolationVarNames)
 
-  let argsNode = ''
+  const argsNode = ''
 
   let model = isChat ? 'gpt-3.5-turbo' : 'text-davinci-003'
 
@@ -114,14 +105,6 @@ export function transpileGlassFileNext(
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of toplevelNodes) {
-    if (jsxNode.tagName === 'Args') {
-      argsNode = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
-    }
-    if (jsxNode.tagName === 'Code') {
-      // don't strip away codeblocks, yet
-      // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
-      continue // ignore all interpolation sequences / requirements in code blocks
-    }
     if (jsxNode.tagName === 'Test') {
       // don't strip away codeblocks, yet
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
@@ -130,7 +113,7 @@ export function transpileGlassFileNext(
     if (jsxNode.tagName === 'State') {
       continue
     }
-    if (jsxNode.tagName === 'Chat' || jsxNode.tagName === 'Completion') {
+    if (jsxNode.tagName === 'Request') {
       const modelAttr = jsxNode.attrs.find(a => a.name === 'model')
       // value is either <Chat model="gpt-3.5-turbo" /> or <Chat model={"gpt-4"} />
       // we don't currently support dynamic model values
@@ -166,25 +149,33 @@ export function transpileGlassFileNext(
     interpolationVarSet.delete(globalValue)
   )
 
-  const parsedCodeBlocks =
-    codeBlocks.length === 0
-      ? [parseCodeBlock(`${imports.join('\n')}`)]
-      : codeBlocks.map(block => parseCodeBlock(`${imports.join('\n')}\n${block.content}`))
-  const hasAsyncCodeBlocks = parsedCodeBlocks.filter(block => block.isAsync).length > 0
+  // remove frontmatter after parsing the AST
+  doc = glasslib.removeGlassFrontmatter(doc)
 
-  for (const block of parsedCodeBlocks) {
-    for (const symbol of block.symbolsAddedToScope) {
-      interpolationVarSet.delete(symbol)
+  let toplevelCode = glasslib.parseGlassTopLevelCode(doc)
+
+  // remove all lines from toplevel code that start with `import `
+  toplevelCode = toplevelCode
+    .split('\n')
+    .filter(line => !line.startsWith('import '))
+    .join('\n')
+
+  const codeBlock = parseCodeBlock(`${imports.join('\n')}
+
+${toplevelCode}
+`)
+
+  for (const symbol of codeBlock.symbolsAddedToScope) {
+    interpolationVarSet.delete(symbol)
+  }
+  for (const symbol of codeBlock.importedSymbols) {
+    interpolationVarSet.delete(symbol)
+  }
+  for (const symbol of codeBlock.undeclaredValuesNeededInScope) {
+    if (symbol === 'useState') {
+      continue
     }
-    for (const symbol of block.importedSymbols) {
-      interpolationVarSet.delete(symbol)
-    }
-    for (const symbol of block.undeclaredValuesNeededInScope) {
-      if (symbol === 'useState') {
-        continue
-      }
-      interpolationVarSet.add(symbol)
-    }
+    interpolationVarSet.add(symbol)
   }
 
   const argsOverride = argsNode ? parseJsxAttributes(argsNode) : {}
@@ -201,9 +192,6 @@ export function transpileGlassFileNext(
     fullArgString = language === 'typescript' ? `args: { ${argsString} }` : 'args'
   }
   // }
-
-  // remove frontmatter after parsing the AST
-  doc = glasslib.removeGlassFrontmatter(doc)
 
   let codeSanitizedDoc = doc
   const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }
@@ -248,11 +236,10 @@ export function transpileGlassFileNext(
   // const functionArgs =
   //   language === 'javascript' ? 'opt' : `opt${fullArgString ? '' : '?'}: { ${fullArgString}${options} }`
 
-  const codePairs = codeBlocks.map(b => getUseStatePairs(b.content))
+  const codePairs = getUseStatePairs(toplevelCode)
   // join them all together
-  const allPairs = codePairs.reduce((acc, val) => ({ ...acc, ...val }), {})
   const context: any = {}
-  for (const [k, v] of Object.entries(allPairs)) {
+  for (const [k, v] of Object.entries(codePairs)) {
     context[v] = `(val) => GLASS_STATE[${k}] = val`
   }
 
@@ -279,7 +266,7 @@ export function ${exportName}() {
   const compile = async (${functionArgs}) => {${language === 'javascript' ? '\n  opt = opt || {}' : ''}
     const GLASS_STATE = ${JSON.stringify(state)}
     ${argsString ? `const {${allInterpolationNames.join(',')}} = opt.args` : ''}
-    ${codeBlocks.map(b => transformSetState(b.content)).join('\n')}
+    ${transformSetState(toplevelCode)}
     const GLASSVAR = {
       ${Object.keys(codeInterpolationMap)
         .map(k => `"${k}": ${codeInterpolationMap[k]}`)

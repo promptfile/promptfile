@@ -1,4 +1,5 @@
-export function getCodeBlockPrompt() {
+
+export function getInterstitialCodePrompt() {
   function getTestData() {
     return {}
   }
@@ -6,18 +7,20 @@ export function getCodeBlockPrompt() {
   const compile = async (opt: {}) => {
     const GLASS_STATE = {}
 
-    const a = '3'
+    const foo = 'bar'
+    const baz = 'bar'
 
     const GLASSVAR = {}
-    const TEMPLATE = `const a = "3"
+    const TEMPLATE = `const foo = "bar"
 <Prompt>
-${a}
-</Prompt>`
+${foo}
+</Prompt>
+const baz = "bar"`
     return {
-      fileName: 'codeBlock',
+      fileName: 'interstitialCode',
       model: 'text-davinci-003',
       interpolatedDoc: TEMPLATE,
-      originalDoc: 'const a = "3"\n<Prompt>\n${a}\n</Prompt>',
+      originalDoc: 'const foo = "bar"\n<Prompt>\n${foo}\n</Prompt>\nconst baz = "bar"',
       state: GLASS_STATE,
       onResponse: undefined,
     }
