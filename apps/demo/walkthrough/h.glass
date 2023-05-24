@@ -1,23 +1,49 @@
-// many interesting applications of AI technology involve loading information dynamically (e.g. from an API) and giving the LLM access to this data
-// in this example, let's load the raw HTML from the personal website of elliott burris
-// we can load this raw HTML and inject it into the prompt — the LLM can use this HTML to answer questions
+---
+language: python
+---
 
-// yes, the Code block can run async code — just be sure to `await` any async calls!
+// here's the same example, but running python instead of typescript
+// you can set a default language for glass in vscode preferences (`glass.defaultLanguageMode`)
+// you can also set the language in a glass document itself
 
 <Code>
-const url = "https://elliottburris.com"
-const res = await fetch(url)
-const htmlText = await res.text()
+# loading up the examples as a list
+examples = [
+    {
+        message: "ur product never works, def want my money back",
+        classification: "NEEDS_ATTENTION"
+    },
+    {
+        message: "Love it! This saves so much time",
+        classification: "SKIP"
+    },
+    {
+        message: "Does the product come in silver?",
+        classification: "NEEDS_ATTENTION"
+    },
+    {
+        message: "would highly recommend not buying this product, I've had so many problems",
+        classification: "NEEDS_ATTENTION"
+    }
+]
 </Code>
 
 <System>
-Your job is to answer questions based on the following website.
-
-###
-${htmlText}
-###
+You are an AI community moderator. Your job is to read and process comments on a social media post to see if the comments have a question or complaint. If the comment has a question or complaint, return "NEEDS_ATTENTION". Otherwise, return "SKIP". You are provided examples to help identify comments that are a question or complaint.
 </System>
 
+<For each={examples} item="example">
+
+<User>
+${example["message"]}
+</User>
+
+<Assistant>
+${example["classification"]}
+</Assistant>
+
+</For>
+
 <Chat model="gpt-3.5-turbo">
-where did elliott go to graduate school?
+i'm so angry!
 </Chat>

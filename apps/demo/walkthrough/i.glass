@@ -1,41 +1,27 @@
-// let's try combining some of these concepts to create something more complex
+// many interesting applications of AI technology involve loading information dynamically (e.g. from an API) and giving the LLM access to this data
+// in this example, let's load the raw HTML from the personal website of elliott burris
+// we can load this raw HTML and inject it into the prompt — the LLM can use this HTML to answer questions
 
-// this Glass file has two parts:
-// 1. in the beginning, the LLM will interact with the user in order to get them to provide an email address
-// 2. once the user provides an email address, the LLM will use an API to verify the email address and answer questions about it.
+// yes, the Code block can run async code — just be sure to `await` any async calls!
 
 <Code>
-// store the email as state on the document
-const [email, setEmail] = useState('')
-
-// if the user has provided an email, query the Eva API for validation information about that email
-const hasEmail = email.length > 0 
-const res = hasEmail ? await fetch("https://api.eva.pingutil.com/email?email=" + email) : null
-const emailValidationData = hasEmail ? await res.text() : ''
+const url = "https://elliottburris.com"
+const res = await fetch(url)
+const htmlText = await res.text()
 </Code>
 
-<System if={hasEmail === false}>
-Your job is to get the user to provide their email address.  Politely ignore all other requests — focus all efforts on getting the User to provide you with an email address.
-
-Once the User does provide an email address, reply with the email address that the user provided  (this is VERY important).  Additionally, confirm that you will run the email address through a validation API.  Be sure to include the email address that the User provides in your response.  
-</System>
-
-<System if={hasEmail === true}>
-The user has provided this email: ${email}
-
-This email has been run through an analysis engine, which has returned the following metadata about the email address and its validation status:
+<System>
+Your job is to answer questions based on the following website.
 
 ###
-${emailValidationData}
+${htmlText}
 ###
-
-Use the information above to answer questions the User has about
 </System>
 
-<Assistant>
-Hello! Welcome to Email Validation GPT. To get started, please provide me with your email address.
-</Assistant>
+// ask a question about elliott burris that can be answered from his website
+// e.g. "where did elliott go to graduate school?"
+// or "what is elliott's email?"
 
-<Chat model="gpt-3.5-turbo" onResponse={({message}) => message.includes('@') ? setEmail(message.split(" ").find(m => m.includes("@")).replace(".", "")) : null}>
-thanks! is it?
+<Chat model="gpt-3.5-turbo">
+
 </Chat>
