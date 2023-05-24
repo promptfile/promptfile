@@ -39,7 +39,8 @@ jobs:
       # - run: npx ovsx publish --packagePath *.vsix
       #   env:
       #     OVSX_PAT: ${{secrets.OPEN_VSX_TOKEN}}
-      - run: npx --workspace vscode-glass vsce publish --packagePath *.vsix
+      - run: npx vsce publish --packagePath *.vsix
+        working-directory: ./apps/vscode-glass
         env:
           VSCE_PAT: ${{secrets.VSCE_TOKEN}}
 
