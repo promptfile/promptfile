@@ -36,7 +36,9 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
           }
         : undefined,
       insertText:
-        element.insertText ?? element.selfClosing
+        element.insertText != null
+          ? element.insertText
+          : element.selfClosing != null
           ? `${element.name}${attributesToInsert.join('')} />`
           : `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>`,
       insertTextFormat: InsertTextFormat.Snippet,
