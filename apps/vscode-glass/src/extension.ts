@@ -182,7 +182,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       try {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        const chatElement = elements.find(element => element.tagName === 'Chat')
+        const chatElement = elements.find(element => element.tagName === 'Request')
         const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
         if (model?.startsWith('claude')) {
           const anthropicKey = getAnthropicKey()

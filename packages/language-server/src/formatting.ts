@@ -38,7 +38,7 @@ export function formatDocument(text: string) {
   })
 
   let finalText = cleanedLines.join('\n').trim()
-  const tags = ['User', 'Assistant', 'System', 'Code', 'Prompt', 'Chat', 'Text', 'State']
+  const tags = ['User', 'Assistant', 'System', 'Prompt', 'Text', 'State']
   tags.forEach(tag => {
     const regexOpen = new RegExp(`<\\s+${tag}`, 'g')
     const regexClose = new RegExp(`${tag}\\s+>`, 'g')
