@@ -51,7 +51,6 @@ export function parseGlassBlocks(template: string) {
       line === '</User>' ||
       line === '</System>' ||
       line === '</Prompt>' ||
-      line === '</Code>' ||
       line === '</Block>' ||
       line.endsWith('/>')
     ) {

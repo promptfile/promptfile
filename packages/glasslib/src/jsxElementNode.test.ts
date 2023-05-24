@@ -7,9 +7,11 @@ describe('jsxElementNode', () => {
 const a = "hello world"
 </Code>
 
-<Chat model="gpt-4" onResponse={() => {}}>
+<User>
 \${a}
-</Chat>`
+</User>
+
+<Request model="gpt-4" onResponse={() => {}} />`
 
   const nodes = parseGlassTopLevelJsxElements(doc)
 
@@ -17,9 +19,9 @@ const a = "hello world"
     expect(getJSXNodeString(nodes[0], doc)).to.equal(`<Code>
 const a = "hello world"
 </Code>`)
-    expect(getJSXNodeString(nodes[1], doc)).to.equal(`<Chat model="gpt-4" onResponse={() => {}}>
+    expect(getJSXNodeString(nodes[1], doc)).to.equal(`<User>
 \${a}
-</Chat>`)
+</User>`)
   })
 
   it('should return node insides', () => {
@@ -28,8 +30,8 @@ const a = "hello world"
   })
 
   it('should return node shell', () => {
-    expect(getJSXNodeShellString(nodes[1], doc)).to.equal(`<Chat model="gpt-4" onResponse={() => {}}>
+    expect(getJSXNodeShellString(nodes[1], doc)).to.equal(`<User>
 
-</Chat>`)
+</User>`)
   })
 })

@@ -2,6 +2,8 @@
 You are a helpful assistant.
 </System>
 
-<Chat model="gpt-3.5-turbo">
+<User>
 ${question}
-</Chat>
+</User>
+
+<Request model="gpt-3.5-turbo" />

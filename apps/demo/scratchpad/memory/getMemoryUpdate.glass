@@ -24,7 +24,7 @@ Profile:
 }
 ```
 
-Message: 
+Message:
 ###
 Sure, i'll remember that your email is "ellington@gmail.com." Is there anything else you'd like me to know?
 ###
@@ -49,7 +49,7 @@ Profile:
 }
 ```
 
-Message: 
+Message:
 ###
 You're very welcome. Let me know if you have any other questions!
 ###
@@ -59,14 +59,16 @@ You're very welcome. Let me know if you have any other questions!
 NO_ACTION
 </Assistant>
 
-<Chat model="gpt-3.5-turbo" onResponse={handleResponse}>
-Profile: 
+<User>
+Profile:
 ```json
 ${profile}
 ```
 
-Message: 
+Message:
 ###
 ${message}
 ###
-</Chat>
+</User>
+
+<Request model="gpt-3.5-turbo" onResponse={handleResponse} />

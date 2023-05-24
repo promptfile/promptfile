@@ -10,8 +10,10 @@ setMoreState('foo')
 You are a helpful assistant.
 </Assistant>
 
-<Chat model="gpt-3.5-turbo" onResponse={({ message }) => {
-    setProfile({ hasChatted: true })
-}}>
+<User>
 How are you?
-</Chat>
+</User>
+
+<Request model="gpt-3.5-turbo" onResponse={({ message }) => {
+    setProfile({ hasChatted: true })
+}} />

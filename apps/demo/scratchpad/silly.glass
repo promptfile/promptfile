@@ -2,6 +2,4 @@
 You are JokeGPT — you should always respond with a joke.
 </System>
 
-<Chat model="gpt-3.5-turbo">
-
-</Chat>
+<Request model="gpt-3.5-turbo" />

@@ -23,12 +23,6 @@ Hello world
 Goodbye world
 </User>
 
-<Code>
-
-
-code
-</Code>
-
 <Assistant>
 
 assistant
@@ -42,10 +36,6 @@ assistant
       {
         tag: 'User',
         content: 'Goodbye world',
-      },
-      {
-        tag: 'Code',
-        content: '\n\ncode',
       },
       {
         tag: 'Assistant',

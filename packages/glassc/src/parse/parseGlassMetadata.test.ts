@@ -39,10 +39,8 @@ import {hello} from './world'
 \${bar}
 </User>
 
-<Code>
 const a = await fetch(url)
 const text = await a.text()
-</Code>
 
 <Assistant>
 \${foo}

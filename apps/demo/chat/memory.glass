@@ -25,8 +25,8 @@ hqwecpoijqwef
 qwecpoijqwefpoij
 </Assistant>
 
-<Chat model="gpt-4" onResponse={response => {
-    if (response.includes('UPDATE_USER_NAME')) {
+<Request model="gpt-4" onResponse={async response => {
+    if (response.message.includes('UPDATE_USER_NAME')) {
         return await db.user.update....
     }
 }} />

@@ -19,22 +19,21 @@ export function parseGlassMetadata(document: string) {
   })
 
   const imports = glasslib.parseGlassImports(document)
+  const toplevelCode = glasslib.parseGlassTopLevelCode(glasslib.removeGlassFrontmatter(document))
 
   const codeBlocks = blocks.filter(block => block.tag === 'Code')
-  const parsedCodeBlocks = codeBlocks.map(block => parseCodeBlock(`${imports.join('\n')}\n\n${block.content}`))
+  const parsedCodeBlock = parseCodeBlock(`${imports.join('\n')}\n\n${toplevelCode}`)
 
   const finalVars = new Set(vars)
 
-  for (const block of parsedCodeBlocks) {
-    for (const symbol of block.symbolsAddedToScope) {
-      finalVars.delete(symbol)
-    }
-    for (const symbol of block.importedSymbols) {
-      finalVars.delete(symbol)
-    }
-    for (const symbol of block.undeclaredValuesNeededInScope) {
-      finalVars.add(symbol)
-    }
+  for (const symbol of parsedCodeBlock.symbolsAddedToScope) {
+    finalVars.delete(symbol)
+  }
+  for (const symbol of parsedCodeBlock.importedSymbols) {
+    finalVars.delete(symbol)
+  }
+  for (const symbol of parsedCodeBlock.undeclaredValuesNeededInScope) {
+    finalVars.add(symbol)
   }
 
   return {

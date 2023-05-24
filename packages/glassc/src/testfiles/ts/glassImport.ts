@@ -12,15 +12,17 @@ export function getQuestionAnswerPrompt() {
 You are a helpful assistant.
 </System>
 
-<Chat model="gpt-3.5-turbo">
+<User>
 ${question}
-</Chat>`
+</User>
+
+<Request model="gpt-3.5-turbo" />`
     return {
       fileName: 'questionAnswer',
       model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        '<System>\nYou are a helpful assistant.\n</System>\n\n<Chat model="gpt-3.5-turbo">\n${question}\n</Chat>',
+        '<System>\nYou are a helpful assistant.\n</System>\n\n<User>\n${question}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       onResponse: undefined,
     }
@@ -49,26 +51,26 @@ export function getGlassImportPrompt() {
     const GLASSVAR = {}
     const TEMPLATE = `import questionAnswer from './questionAnswer.glass'
 
-<Code>
 const [field, setField] = useState('')
-</Code>
 
 <Assistant>
 You are an assistant that creates questions for Jeopardy.
 </Assistant>
 
-<Chat model="gpt-3.5-turbo" onResponse={async ({ message }) => {
+<User>
+Make a question about United States history.
+</User>
+
+<Request model="gpt-3.5-turbo" onResponse={async ({ message }) => {
     const answer = await questionAnswer({question: message})
     setField(answer)
-}}>
-Make a question about United States history.
-</Chat>`
+}} />`
     return {
       fileName: 'glassImport',
       model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        "import questionAnswer from './questionAnswer.glass'\n\n<Code>\nconst [field, setField] = useState('')\n</Code>\n\n<Assistant>\nYou are an assistant that creates questions for Jeopardy.\n</Assistant>\n\n<Chat model=\"gpt-3.5-turbo\" onResponse={async ({ message }) => {\n    const answer = await questionAnswer({question: message})\n    setField(answer)\n}}>\nMake a question about United States history.\n</Chat>",
+        "import questionAnswer from './questionAnswer.glass'\n\nconst [field, setField] = useState('')\n\n<Assistant>\nYou are an assistant that creates questions for Jeopardy.\n</Assistant>\n\n<User>\nMake a question about United States history.\n</User>\n\n<Request model=\"gpt-3.5-turbo\" onResponse={async ({ message }) => {\n    const answer = await questionAnswer({question: message})\n    setField(answer)\n}} />",
       state: GLASS_STATE,
       onResponse: async ({ message }) => {
         const answer = await questionAnswer({ question: message })
