@@ -21,7 +21,7 @@ export function findUnmatchedTags(textDocument: TextDocument): Diagnostic[] {
 }
 
 export function extractUnmatchedTags(text: string) {
-  const tagPattern = /^<\/?(Code|User|System|Assistant|Prompt|State|Chat|Test)(\s+[^>]*)?>/gm
+  const tagPattern = /^<\/?(User|System|Assistant|Prompt|State|Test)(\s+[^>]*)?>/gm
   const tagStack: { tag: string; start: number }[] = []
   const unmatchedTags: { tag: string; start: number }[] = []
 

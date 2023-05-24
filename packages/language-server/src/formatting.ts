@@ -2,7 +2,7 @@ import { parseGlassFrontmatter, removeGlassFrontmatter } from '@glass-lang/glass
 
 export function formatDocument(text: string) {
   // Check if the document contains any of the required tags
-  const hasTags = /<(Prompt|User|System|Assistant|Code|Chat|State|Text)/.test(text)
+  const hasTags = /<(Prompt|User|System|Assistant|State|Text)/.test(text)
 
   // If no tags are present, wrap the entire content in <Prompt> </Prompt> tags
   if (!hasTags) {
@@ -14,8 +14,8 @@ export function formatDocument(text: string) {
 
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index]
-    const isClosingTag = line.match(/^<\/(User|System|Assistant|Code|Prompt|Chat|State|Text)/)
-    const isOpeningTag = line.match(/^<(User|System|Assistant|Code|Prompt|Chat|State|Text)/)
+    const isClosingTag = line.match(/^<\/(User|System|Assistant|Prompt|State|Text)/)
+    const isOpeningTag = line.match(/^<(User|System|Assistant|Prompt|State|Text)/)
 
     if (isOpeningTag && insertEmptyLine) {
       if (formattedLines[formattedLines.length - 1].trim() !== '') {

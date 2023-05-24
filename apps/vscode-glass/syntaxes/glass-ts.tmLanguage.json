@@ -326,7 +326,7 @@
           "include": "source.js"
         }
       ],
-      "end": "(<\\/)(Code|Test)(>)",
+      "end": "(<\\/)(Test)(>)",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
