@@ -10,7 +10,7 @@
       "source.organizeImports": false,
       "source.fixAll": false
     },
-    "editor.formatOnSave": false
+    "editor.formatOnSave": true
   },
   "folders": [
     { "path": "chat" },

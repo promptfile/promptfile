@@ -147,7 +147,7 @@ connection.onDocumentFormatting(async (params: DocumentFormattingParams): Promis
   if (!document) {
     return []
   }
-
+  console.log('formatting!!!!')
   const formattedText = formatDocument(document.getText())
 
   // Compute the range of the entire document

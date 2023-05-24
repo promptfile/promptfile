@@ -45,10 +45,10 @@ export function formatDocument(text: string) {
     finalText = finalText.replace(regexOpen, `<${tag}`).replace(regexClose, `${tag}>`)
   })
 
-  // Correctly format tag attributes
-  finalText = finalText.replace(/<(\w+)(\s+[^>]*?)\s+>/g, (match, p1, p2) => {
+  // Correctly format tag attributes and self-closing tags
+  finalText = finalText.replace(/<(\w+)(\s+[^>]*?)(\/?)\s*>/g, (match, p1, p2, p3) => {
     // Trim trailing spaces from attributes and reassemble the tag
-    return `<${p1}${p2.trimEnd()}>`
+    return p3 ? `<${p1}${p2.trimEnd()} ${p3}>` : `<${p1}${p2.trimEnd()}>`
   })
 
   try {
@@ -57,6 +57,7 @@ export function formatDocument(text: string) {
       finalText = removeGlassFrontmatter(finalText)
     }
   } catch {
+    console.log('failed')
     // Ignore errors
   }
 
