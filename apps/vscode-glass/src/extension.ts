@@ -215,9 +215,6 @@ export async function activate(context: vscode.ExtensionContext) {
                 `${rawResponse}█`
               )
             })
-            const lastLineIndex = activeEditor.document.lineCount
-            const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
-            activeEditor.revealRange(new vscode.Range(targetPosition, targetPosition))
           }
         )
 
