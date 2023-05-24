@@ -4,6 +4,11 @@ def getInterstitialPrompt():
     
     def compile(opt = { "args": {} }):
         foo = opt["args"]["foo"]
+        
+        foo = "bar"
+        
+        
+        print(foo)
         GLASSVAR = {
             0: """{}""".format("""<Prompt>
 {}
@@ -13,10 +18,11 @@ def getInterstitialPrompt():
             "fileName": "interstitial",
             "model": "text-davinci-003",
             "state": {},
-            "originalDoc": "ignore me\n<Prompt>\n${foo}\n</Prompt>\nand me",
-            "interpolatedDoc": """ignore me
+            "originalDoc": "---\nlanguage: python\n---\n\nfoo = \"bar\"\n<Prompt>\n${foo}\n</Prompt>\nprint(foo)",
+            "interpolatedDoc": """
+foo = "bar"
 {}
-and me""".format(GLASSVAR[0]),
+print(foo)""".format(GLASSVAR[0]),
         }
     
     return json.dumps(compile())

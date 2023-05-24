@@ -1,5 +1,9 @@
-ignore me
+---
+language: python
+---
+
+foo = "bar"
 <Prompt>
 ${foo}
 </Prompt>
-and me
+print(foo)

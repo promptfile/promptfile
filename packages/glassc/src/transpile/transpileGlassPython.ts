@@ -63,16 +63,11 @@ export function transpileGlassFilePython(
 
   // const interpolationVarNames = Array.from(new Set<string>(allInterpolationVars.map(arg => arg.split('.')[0])))
 
-  let argsNode = ''
-
   let model = isChat ? 'gpt-3.5-turbo' : 'text-davinci-003'
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of toplevelNodes) {
-    if (jsxNode.tagName === 'Args') {
-      argsNode = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
-    }
-    if (jsxNode.tagName === 'Code') {
+    if (jsxNode.tagName === 'Test') {
       // don't strip away codeblocks, yet
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
@@ -88,6 +83,17 @@ export function transpileGlassFilePython(
     //   continue
     // }
   }
+
+  // remove frontmatter after parsing the AST
+  doc = glasslib.removeGlassFrontmatter(doc)
+
+  let toplevelCode = glasslib.parseGlassTopLevelCode(doc)
+
+  // remove all lines from toplevel code that start with `import `
+  toplevelCode = toplevelCode
+    .split('\n')
+    .filter(line => !line.startsWith('import '))
+    .join('\n')
 
   const dynamicTransform = transformDynamicBlocksPython(doc)
   doc = dynamicTransform.doc
@@ -108,9 +114,6 @@ export function transpileGlassFilePython(
     formatArgs.push(match[1])
     finalDoc = finalDoc.replace(match[0], '{}')
   }
-
-  // remove frontmatter after parsing the AST
-  finalDoc = glasslib.removeGlassFrontmatter(finalDoc)
 
   const codeSanitizedDoc = finalDoc
   const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }
@@ -176,8 +179,8 @@ export function transpileGlassFilePython(
   if (undeclaredVars) {
     codeStart = undeclaredVars
   }
-  if (codeBlocks.length) {
-    codeStart = (codeStart ? codeStart + '\n' : codeStart) + codeBlocks.flatMap(b => b.content.split('\n').join('\n'))
+  if (toplevelCode) {
+    codeStart = (codeStart ? codeStart + '\n' : codeStart) + toplevelCode
   }
 
   const glassvar =

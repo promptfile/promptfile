@@ -1,10 +1,12 @@
+---
+language: python
+---
+
 import requests from "requests"
 
-<Code>
 response = requests.get("https://elliottburris.com")
 def hello():
     return  "hi"
-</Code>
 
 <System>
 your job is to answer questions based on the following website code:
