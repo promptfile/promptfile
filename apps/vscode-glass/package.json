@@ -85,25 +85,6 @@
         "path": "./assets/glass-icon-theme.json"
       }
     ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "webview",
-          "title": "Glass",
-          "icon": "./assets/icon-bar.svg"
-        }
-      ]
-    },
-    "views": {
-      "webview": [
-        {
-          "type": "webview",
-          "id": "glass",
-          "name": "",
-          "icon": "src/assets/icon-bar.svg"
-        }
-      ]
-    },
     "colors": [
       {
         "id": "glass.code.background",

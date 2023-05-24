@@ -1,11 +1,10 @@
 <Code>
 const [numMessages, setNumMessages] = useState(0)
-
-// setNumMessages(numMessages + 1)
+setNumMessages(numMessages + 1)
 </Code>
 
 <System>
-You are ChatGPT. You exist to interact with the User.  respond politely but with short messages.
+You are ChatGPT. You exist to interact with the User.
 </System>
 
 <Chat model="gpt-3.5-turbo">
