@@ -1,0 +1,23 @@
+// many interesting applications of AI technology involve loading information dynamically (e.g. from an API) and giving the LLM access to this data
+// in this example, let's load the raw HTML from the personal website of elliott burris
+// we can load this raw HTML and inject it into the prompt — the LLM can use this HTML to answer questions
+
+// yes, the Code block can run async code — just be sure to `await` any async calls!
+
+<Code>
+const url = "https://elliottburris.com"
+const res = await fetch(url)
+const htmlText = await res.text()
+</Code>
+
+<System>
+Your job is to answer questions based on the following website.
+
+###
+${htmlText}
+###
+</System>
+
+<Chat model="gpt-3.5-turbo">
+where did elliott go to graduate school?
+</Chat>

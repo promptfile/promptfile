@@ -1,0 +1,41 @@
+// let's try combining some of these concepts to create something more complex
+
+// this Glass file has two parts:
+// 1. in the beginning, the LLM will interact with the user in order to get them to provide an email address
+// 2. once the user provides an email address, the LLM will use an API to verify the email address and answer questions about it.
+
+<Code>
+// store the email as state on the document
+const [email, setEmail] = useState('')
+
+// if the user has provided an email, query the Eva API for validation information about that email
+const hasEmail = email.length > 0 
+const res = hasEmail ? await fetch("https://api.eva.pingutil.com/email?email=" + email) : null
+const emailValidationData = hasEmail ? await res.text() : ''
+</Code>
+
+<System if={hasEmail === false}>
+Your job is to get the user to provide their email address.  Politely ignore all other requests — focus all efforts on getting the User to provide you with an email address.
+
+Once the User does provide an email address, reply with the email address that the user provided  (this is VERY important).  Additionally, confirm that you will run the email address through a validation API.  Be sure to include the email address that the User provides in your response.  
+</System>
+
+<System if={hasEmail === true}>
+The user has provided this email: ${email}
+
+This email has been run through an analysis engine, which has returned the following metadata about the email address and its validation status:
+
+###
+${emailValidationData}
+###
+
+Use the information above to answer questions the User has about
+</System>
+
+<Assistant>
+Hello! Welcome to Email Validation GPT. To get started, please provide me with your email address.
+</Assistant>
+
+<Chat model="gpt-3.5-turbo" onResponse={({message}) => message.includes('@') ? setEmail(message.split(" ").find(m => m.includes("@")).replace(".", "")) : null}>
+thanks! is it?
+</Chat>
