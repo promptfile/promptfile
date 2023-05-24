@@ -1,6 +1,7 @@
 <Code>
-const [numMessages, setNumMessages] = useState(0)
-setNumMessages(numMessages + 1)
+const [status, setStatus] = useState('')
+
+setStatus('loading')
 </Code>
 
 <System>

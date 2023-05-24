@@ -232,7 +232,29 @@ export async function activate(context: vscode.ExtensionContext) {
             )
           })
         }
-        console.log(resp)
+        const parsedExisting = parseGlassTopLevelJsxElements(activeEditor.document.getText())
+        const existingState = parsedExisting.find(tag => tag.tagName === 'State')
+        console.log('FINALDOC')
+        console.log(resp.finalDoc)
+        console.log('FINALINTERPOLATED')
+        console.log(resp.finalInterpolatedDoc)
+        if (existingState) {
+          // extract <State> through </State> in the response
+          const regex = /<State>([\s\S]*?)<\/State>/g
+          const match = regex.exec(resp.finalDoc)
+          // replace the old state with the new state
+          if (match) {
+            await activeEditor.edit(editBuilder => {
+              editBuilder.replace(
+                new vscode.Range(
+                  activeEditor.document.positionAt(existingState.position.start.offset),
+                  activeEditor.document.positionAt(existingState.position.end.offset)
+                ),
+                `<State>${match[1]}</State>`
+              )
+            })
+          }
+        }
       } catch (error) {
         console.error(error)
         void vscode.window.showErrorMessage(`ERROR: ${error}`)
