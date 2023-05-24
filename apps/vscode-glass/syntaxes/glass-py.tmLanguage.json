@@ -8,6 +8,9 @@
       "include": "#markdown-frontmatter"
     },
     {
+      "include": "#request-element"
+    },
+    {
       "include": "#test-element"
     },
     {
@@ -307,6 +310,49 @@
           ]
         }
       ]
+    },
+    "request-element": {
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Request)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.closing.jsx"
+        },
+        "3": {
+          "name": "source.glass.request.name"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.tsx#jsx-tag-attribute-name"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attribute-assignment"
+        },
+        {
+          "include": "source.tsx#jsx-string-double-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-string-single-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-evaluated-code"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attributes-illegal"
+        }
+      ],
+      "end": "(?:(\\/)\\s*)?(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
     },
     "test-element": {
       "begin": "(<)(Test)(>)",

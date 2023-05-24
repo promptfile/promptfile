@@ -6,6 +6,7 @@ interface GlassElement {
   detail?: string
   documentation?: string
   insertText?: string
+  selfClosing?: boolean
 }
 
 interface GlassAttribute {
@@ -28,6 +29,7 @@ export const glassElements: GlassElement[] = [
   {
     name: 'Args',
     attributes: [],
+    selfClosing: true,
   },
   {
     name: 'Assistant',
@@ -128,6 +130,7 @@ export const glassElements: GlassElement[] = [
     name: 'Request',
     documentation: 'Creates a model inference',
     detail: '(inference) API request to a model',
+    selfClosing: true,
     attributes: [
       {
         name: 'model',

@@ -268,7 +268,7 @@
             }
           },
           {
-            "scope": "source.glass.chat.name",
+            "scope": "source.glass.request.name",
             "settings": {
               "foreground": "#3e69d1",
               "fontStyle": "italic"
@@ -323,12 +323,6 @@
             }
           },
           {
-            "scope": "source.glass.punctuation",
-            "settings": {
-              "foreground": "#7a7a7a"
-            }
-          },
-          {
             "scope": "source.glass.highlight",
             "settings": {
               "foreground": "#569CD6"
@@ -338,13 +332,6 @@
             "scope": "markup.list.table-delimiter.mdx",
             "settings": {
               "foreground": "#569CD6"
-            }
-          },
-          {
-            "scope": "source.glass.comment",
-            "settings": {
-              "foreground": "#575757",
-              "fontStyle": "italic"
             }
           },
           {

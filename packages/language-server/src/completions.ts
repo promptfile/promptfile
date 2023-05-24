@@ -35,7 +35,10 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
             value: element.documentation,
           }
         : undefined,
-      insertText: element.insertText ?? `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>`,
+      insertText:
+        element.insertText ?? element.selfClosing
+          ? `${element.name}${attributesToInsert.join('')} />`
+          : `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>`,
       insertTextFormat: InsertTextFormat.Snippet,
     })
   }
