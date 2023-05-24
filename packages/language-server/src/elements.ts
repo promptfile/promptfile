@@ -209,6 +209,12 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
+    name: 'Test',
+    documentation: 'Creates a Test tag to hold test cases',
+    detail: '(element) holds test cases',
+    attributes: [],
+  },
+  {
     name: 'Text',
     attributes: [
       {

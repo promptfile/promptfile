@@ -6,7 +6,7 @@ export function updateDecorations(activeEditor: vscode.TextEditor, decorations: 
     return
   }
 
-  const regEx = /<(Code|State)>([\s\S]*?)<\/\1>/g
+  const regEx = /<(Code|State|Test)>([\s\S]*?)<\/\1>/g
   const text = activeEditor.document.getText()
   const highlights = []
 

@@ -1,25 +1,12 @@
 import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { glassElements } from '../elements'
 
 export function findUnsupportedTags(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed: any[] = parseGlassTopLevelJsxElements(textDocument.getText())
-    const supportedTags = new Set([
-      'Args',
-      'Assistant',
-      'Block',
-      'Chat',
-      'Completion',
-      'Code',
-      'For',
-      'Prompt',
-      'State',
-      'System',
-      'Text',
-      'User',
-    ])
-    const unsupportedTags = parsed.filter(tag => !supportedTags.has(tag.tagName))
+    const unsupportedTags = parsed.filter(tag => !glassElements.some(element => element.name === tag.tagName))
     return unsupportedTags.map(tag => {
       const diagnostic: Diagnostic = {
         severity: DiagnosticSeverity.Error,

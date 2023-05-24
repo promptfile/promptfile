@@ -398,7 +398,7 @@
       "match": "^//.*$"
     },
     "code-element": {
-      "begin": "(<)(Code)(>)",
+      "begin": "(<)(Code|Test)(>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -415,7 +415,7 @@
           "include": "source.js"
         }
       ],
-      "end": "(<\\/)(Code)(>)",
+      "end": "(<\\/)(Code|Test)(>)",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"

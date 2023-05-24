@@ -25,7 +25,8 @@ export function findInvalidLines(textDocument: TextDocument): Diagnostic[] {
         line.startsWith('<Block') ||
         line.startsWith('<Text') ||
         line.startsWith('<Chat') ||
-        line.startsWith('<State')
+        line.startsWith('<State') ||
+        line.startsWith('<Test')
       ) {
         insideValidElement++
       }
@@ -39,7 +40,8 @@ export function findInvalidLines(textDocument: TextDocument): Diagnostic[] {
         line.startsWith('</Block>') ||
         line.startsWith('</Text>') ||
         line.startsWith('</Chat>') ||
-        line.startsWith('</State>')
+        line.startsWith('</State>') ||
+        line.startsWith('</Test>')
       ) {
         insideValidElement--
       }
@@ -88,9 +90,10 @@ function isInvalidLine(line: string): boolean {
 
   // Check if the line is inside a valid element or contains a valid element with attributes
   const openTagCount = (
-    line.match(/^<(User|Assistant|System|Prompt|Code|Text|Chat|For|State|Block)(\s+[^>]*)?>/g) || []
+    line.match(/^<(User|Assistant|System|Prompt|Code|Text|Chat|For|State|Block|Test)(\s+[^>]*)?>/g) || []
   ).length
-  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code|Text|Chat|For|State|Block)>/g) || []).length
+  const closeTagCount = (line.match(/^<\/(User|Assistant|System|Prompt|Code|Text|Chat|For|State|Block|Test)>/g) || [])
+    .length
 
   return openTagCount === 0 && closeTagCount === 0
 }
