@@ -2,7 +2,7 @@ import { parseGlassFrontmatter, removeGlassFrontmatter } from '@glass-lang/glass
 
 export function formatDocument(text: string) {
   // Check if the document contains any of the required tags
-  const hasTags = /<(Prompt|User|System|Assistant|State|Text)/.test(text)
+  const hasTags = /<(Prompt|User|System|Assistant|State|Text|Request)/.test(text)
 
   // If no tags are present, wrap the entire content in <Prompt> </Prompt> tags
   if (!hasTags) {

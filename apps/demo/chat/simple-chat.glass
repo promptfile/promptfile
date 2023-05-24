@@ -13,6 +13,4 @@ ${text}
 ###
 </System>
 
-<Chat model="gpt-3.5-turbo">
-hi!
-</Chat>
+<Request model="gpt-3.5-turbo" />

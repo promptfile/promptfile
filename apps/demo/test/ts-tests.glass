@@ -1,3 +1,7 @@
+---
+language: typescript
+---
+
 <Test>
 const url = "https://elliottburris.com"
 // const question = "where did elliott go to school"
@@ -9,15 +13,18 @@ return [{
 }]
 </Test>
 
-<Code>
 const res = await fetch(url)
 const website = await res.text()
-</Code>
 
-<Chat model="claude-v1">
+<System>
 your job is to answer questions based on the following website code:
 ###
 ${website}
 ###
+</System>
+
+<User>
 ${question}
-</Chat>
+</User>
+
+<Request model="gpt-3.5-turbo" />

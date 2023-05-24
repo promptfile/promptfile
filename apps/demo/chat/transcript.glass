@@ -1,12 +1,16 @@
+---
+language: typescript
+---
+
 import {db} from './db'
 
-<Code>
 const conversation = await db.conversation.findUniqueOrThrow({where: {id: conversationId}})
 const messages = await db.message.findMany({where: {conversationId: conversation.id}})
-</Code>
 
 <For each={messages} item="item">
 <Block role={item.role}>
 ${item.content}
 </Block>
 </For>
+
+<Request model="gpt-3.5-turbo" />
