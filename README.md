@@ -2,6 +2,8 @@
 
 ![main](https://github.com/foundation-ui/glass/actions/workflows/main.yml/badge.svg)
 
+Looking for an overview? Check out the [quickstart repository](https://github.com/foundation-ui/quickstart).
+
 ## Apps and Packages
 
 - `vscode-glass`: VS Code extension for Glass
