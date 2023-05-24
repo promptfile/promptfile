@@ -1,8 +1,13 @@
 import { parseGlassFrontmatter, removeGlassFrontmatter } from '@glass-lang/glasslib'
+import { glassElements } from './elements'
 
 export function formatDocument(text: string) {
   // Check if the document contains any of the required tags
-  const hasTags = /<(Prompt|User|System|Assistant|State|Text|Request)/.test(text)
+
+  const nonSelfClosingTags = glassElements.filter(e => e.selfClosing !== true)
+
+  const tagNames = glassElements.map(e => e.name).join('|')
+  const hasTags = new RegExp(`<(${tagNames})`).test(text)
 
   // If no tags are present, wrap the entire content in <Prompt> </Prompt> tags
   if (!hasTags) {
@@ -38,7 +43,7 @@ export function formatDocument(text: string) {
   })
 
   let finalText = cleanedLines.join('\n').trim()
-  const tags = ['User', 'Assistant', 'System', 'Prompt', 'Text', 'State']
+  const tags = nonSelfClosingTags.map(e => e.name)
   tags.forEach(tag => {
     const regexOpen = new RegExp(`<\\s+${tag}`, 'g')
     const regexClose = new RegExp(`${tag}\\s+>`, 'g')
@@ -57,7 +62,6 @@ export function formatDocument(text: string) {
       finalText = removeGlassFrontmatter(finalText)
     }
   } catch {
-    console.log('failed')
     // Ignore errors
   }
 

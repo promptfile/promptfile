@@ -1,5 +1,6 @@
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { glassElements } from '../elements'
 
 export function findUnmatchedTags(textDocument: TextDocument): Diagnostic[] {
   const unmatchedTags = extractUnmatchedTags(textDocument.getText())
@@ -21,7 +22,11 @@ export function findUnmatchedTags(textDocument: TextDocument): Diagnostic[] {
 }
 
 export function extractUnmatchedTags(text: string) {
-  const tagPattern = /^<\/?(User|System|Assistant|Prompt|State|Test)(\s+[^>]*)?>/gm
+  const nonSelfClosingTags = glassElements
+    .filter(e => e.selfClosing !== true)
+    .map(e => e.name)
+    .join('|')
+  const tagPattern = new RegExp(`^<\/?(${nonSelfClosingTags})(\\s+[^>]*)?>`, 'gm')
   const tagStack: { tag: string; start: number }[] = []
   const unmatchedTags: { tag: string; start: number }[] = []
 

@@ -224,7 +224,6 @@ export async function activate(context: vscode.ExtensionContext) {
               })
               const lastLineIndex = activeEditor.document.lineCount
               const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
-              activeEditor.selection = new vscode.Selection(targetPosition, targetPosition)
               activeEditor.revealRange(new vscode.Range(targetPosition, targetPosition))
               firstLoad = false
               return
@@ -274,10 +273,6 @@ export async function activate(context: vscode.ExtensionContext) {
         }
         const parsedExisting = parseGlassTopLevelJsxElements(activeEditor.document.getText())
         const existingState = parsedExisting.find(tag => tag.tagName === 'State')
-        console.log('FINALDOC')
-        console.log(resp.finalDoc)
-        console.log('FINALINTERPOLATED')
-        console.log(resp.finalInterpolatedDoc)
         if (existingState) {
           // extract <State> through </State> in the response
           const regex = /<State>([\s\S]*?)<\/State>/g

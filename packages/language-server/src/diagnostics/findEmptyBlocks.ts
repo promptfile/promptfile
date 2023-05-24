@@ -1,14 +1,15 @@
 import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { glassElements } from '../elements'
 
 export function findEmptyBlocks(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed: any[] = parseGlassTopLevelJsxElements(textDocument.getText())
-    const tagsToCheck = new Set(['Assistant', 'Code', 'Prompt', 'System', 'Text', 'User'])
+    const tagsToCheck = glassElements.filter(e => e.selfClosing !== true).map(e => e.name)
     const emptyTags = parsed.filter(
       tag =>
-        tagsToCheck.has(tag.tagName) &&
+        tagsToCheck.includes(tag.tagName) &&
         (tag.children.length === 0 || (tag.length === 1 && tag.children[0].length === 0))
     )
     return emptyTags.map(tag => {

@@ -1,8 +1,10 @@
+---
+language: typescript
+---
+
 import {Onboarding} from './Onboarding.glass'
 
-<Code>
 const user = await db.user.findUnique({conversationId: conversation.id})
-</Code>
 
 <System>
 The company you work for is called Foundation (foundation-ui.com).  Your name is FoundationBot. You should always respond in a friendly fashion.
@@ -17,16 +19,5 @@ Here's information about the user's website:
 </System>
 
 
-<User generated={true}>
-hqwecpoijqwef
-</User>
 
-<Assistant generated={true}>
-qwecpoijqwefpoij
-</Assistant>
 
-<Request model="gpt-4" onResponse={async response => {
-    if (response.message.includes('UPDATE_USER_NAME')) {
-        return await db.user.update....
-    }
-}} />
