@@ -1,17 +1,17 @@
 // let's try switching to anthropic
 
-<System>
+<User>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
-</System>
+</User>
 
 // edit the `model` attribute below to use an anthropic model — e.g. `claude-instant-v1`
 // then, enter some text and run the glass file (command+return)
 
-<Chat model="gpt-3.5-turbo">
-
+<Chat model="claude-instant-v1">
+hello!
 </Chat>
 
-// anthropic actually doesn't support <System> blocks via their API
+// anthropic actually doesn't support System blocks via their API
 // so switching to the `claude-instant-v1` model will trigger a diagnostic (aka "red squiggle")
 
 // the glass language will guide you to use the models (and their varying APIs) correctly

@@ -6,16 +6,16 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 
 // Let's try a `Chat` tag instead of a `User` tag`
 
-<Chat model="gpt-3.5-turbo">
-
-</Chat>
-
-// enter some text in the <Chat>` element and run the `Glass: run file` command
+// enter some text in the Chat element and run the `Glass: run file` command
 // you can do this by using the VSCode command menu (like we did before)
 // or by just pressing `⌘ + return`
 
-// notice how the <Chat> element stays on the Glass document
+// notice how the Chat element stays on the Glass document
 // use that to chat with the bot a few times
 
 // if you want to reset the chat to its original state, run the `Glass: reset file` command
-// you can also just press `⌘ + shift + p`
+// you can also just press `⌘ + shift + r`
+
+<Chat model="gpt-3.5-turbo">
+
+</Chat>

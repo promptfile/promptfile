@@ -1,20 +1,23 @@
-// let's try combining some of these concepts to create a multi-part prompt
-// this introduces conditionals — the idea that parts of the prompt can exist dynamically depending on other data
+// As you've probably noticed, Glass files can contain more than just the prompt.
+// This means that we can store data in the Glass file as well!
+
+// Let's take a look at how Glass handles local state:
 
 <Code>
+// this works just like useState in react
+const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
 
-const isLongConversation = numMessages > 2
+// first, let's increment the numMessages by 1
+setNumMessages(numMessages + 1)
 </Code>
 
-<System if={isLongConversation === false}>
-You are ChatGPT.  Reply to the user in a helpful and polite manner.
+<System>
+You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
 </System>
 
-<System if={isLongConversation}>
-You are AnnoyedGPT.  Replpy to the user as though you are very annoyed by their message. Mention that you might want to end the conversation. Refuse to answer any questions they ask.
-</System>
+// note the `onResponse` attribute. this lets you execute code with the response from the LLM
 
-<Chat model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)}>
+<Chat model="gpt-3.5-turbo" onResponse={(response) => setLastMessageText(response.message)}>
 
 </Chat>
