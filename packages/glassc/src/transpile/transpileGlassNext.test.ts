@@ -173,4 +173,10 @@ describe('transpileGlassTypescript', () => {
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'singleIfCondition' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
+
+  it.skip('should transpile with .glass import', () => {
+    const { input, output } = loadTestfile('glassImport', 'ts')
+    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'glassImport' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
+  })
 })
