@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.9.1
+
+### Patch Changes
+
+- [`8b3ef39`](https://github.com/foundation-ui/glass/commit/8b3ef39011dcb3c8ea85a5ce9181ac4299c16667) Thanks [@rothfels](https://github.com/rothfels)! - bump @glass-lang/glasslib version
+
 ## 0.9.0
 
 ### Minor Changes
