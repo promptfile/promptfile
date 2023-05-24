@@ -229,7 +229,7 @@ export function transpileGlassFileNext(
   // codeSanitizedDoc = unescapeGlass(codeSanitizedDoc)
 
   // handle undefined options
-  const functionArgs = language === 'javascript' ? 'opt' : `opt${fullArgString ? '' : '?'}: { ${fullArgString} }`
+  const functionArgs = language === 'javascript' ? 'opt' : `opt: { ${fullArgString} }`
   // let options =
   //   language === 'typescript'
   //     ? 'options?: {  openaiKey?: string, progress?: (data: { nextDoc: string; rawResponse?: string }) => void } '

@@ -80,10 +80,9 @@ export async function runGlass(
   let origDoc = originalDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
   let interpDoc = interpolatedDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
 
-  const newState = state ?? {}
-  const stateBlock = `<State>\n${JSON.stringify(newState, null, 2)}\n</State>`
+  const stateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
   const stateBlockRegex = /<State>.+<\/State>/gs
-  if (Object.keys(newState).length > 0) {
+  if (Object.keys(state).length > 0) {
     if (stateBlockRegex.test(origDoc)) {
       origDoc = origDoc.replace(stateBlockRegex, stateBlock)
     } else {
@@ -120,7 +119,8 @@ export async function runGlass(
   if (onResponse) {
     await onResponse({ message: res.rawResponse })
     if (stateBlockRegex.test(res.finalDoc)) {
-      res.finalDoc = res.finalDoc.replace(stateBlockRegex, stateBlock)
+      const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
+      res.finalDoc = res.finalDoc.replace(stateBlockRegex, finalStateBlock)
     }
   }
 
