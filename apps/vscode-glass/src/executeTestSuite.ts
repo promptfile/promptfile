@@ -1,17 +1,13 @@
 import { runGlass } from '@glass-lang/glasslib'
-import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassPython } from './executeGlassPython'
 import { executeGlassTypescript } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
-export async function executeGlassFile(
-  document: vscode.TextDocument,
-  interpolationArgs: any,
-  usePython: boolean,
-  progress?: (data: { nextDoc: string; rawResponse?: string }) => void
-) {
+type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
+
+export async function executeTestSuite(document: vscode.TextDocument, interpolationArgs: any, usePython: boolean) {
   const fileName = getDocumentFilename(document)
 
   const openaiKey = getOpenaiKey()
@@ -21,7 +17,10 @@ export async function executeGlassFile(
     ? await executeGlassPython(document, interpolationArgs)
     : await executeGlassTypescript(document, fileName, interpolationArgs)
 
-  checkOk(c.length >= 0, 'No transpiler output generated')
-
-  return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
+  const results: UnwrapPromise<ReturnType<typeof runGlass>>[] = []
+  for (const output of c) {
+    console.log('running glass', output)
+    results.push(await runGlass(output, { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '' }))
+  }
+  return results
 }

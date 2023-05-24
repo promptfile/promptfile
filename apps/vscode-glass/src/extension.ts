@@ -6,6 +6,7 @@ import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { LeftPanelWebview } from './LeftPanelWebview'
 import { executeGlassFile } from './executeGlassFile'
+import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
 import { hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
@@ -133,6 +134,45 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       // call the document formatter
       await vscode.commands.executeCommand('editor.action.formatDocument')
+    }),
+    vscode.commands.registerCommand('glass.runTestSuite', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
+        console.log('no active editor with glassfile')
+        return
+      }
+
+      console.log('checking keys')
+
+      try {
+        const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
+        const chatElement = elements.find(element => element.tagName === 'Chat')
+        const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
+        if (model?.startsWith('claude')) {
+          const anthropicKey = getAnthropicKey()
+          if (anthropicKey == null || anthropicKey === '') {
+            await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
+            await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
+            return
+          }
+        } else {
+          const openaiKey = getOpenaiKey()
+          if (openaiKey == null || openaiKey === '') {
+            await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
+            await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
+            return
+          }
+        }
+      } catch (e) {
+        console.error(e)
+      }
+
+      console.log('about to run test suite')
+
+      const resp = await executeTestSuite(activeEditor.document, {}, activeEditor.document.languageId === 'glass-py')
+
+      console.log('test results')
+      console.log(JSON.stringify(resp, null, 2))
     }),
     vscode.commands.registerCommand('glass.run', async () => {
       const activeEditor = vscode.window.activeTextEditor

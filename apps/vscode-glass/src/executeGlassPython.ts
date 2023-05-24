@@ -1,4 +1,5 @@
 import { constructGlassOutputFilePython, getGlassExportName, transpileGlassFilePython } from '@glass-lang/glassc'
+import { TranspilerOutput } from '@glass-lang/glasslib'
 import * as child_process from 'child_process'
 import fs from 'fs'
 import path from 'path'
@@ -6,7 +7,10 @@ import * as vscode from 'vscode'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
-export async function executeGlassFilePython(document: vscode.TextDocument, interpolationArgs: any) {
+export async function executeGlassPython(
+  document: vscode.TextDocument,
+  interpolationArgs: any
+): Promise<TranspilerOutput[]> {
   const fileName = getDocumentFilename(document)
 
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
@@ -63,12 +67,11 @@ print(${getGlassExportName(fileName)}())`,
 
   fs.unlinkSync(tmpFilePath)
 
-  return c
+  return [c]
 }
 
-const pythonExecutable = vscode.workspace.getConfiguration('glass').get('pythonPath') || 'python3'
-
 function executePythonScript(filePath: string): Promise<string> {
+  const pythonExecutable = vscode.workspace.getConfiguration('glass').get('pythonPath') || 'python3'
   const openaiKey = getOpenaiKey()
   const anthropicKey = getAnthropicKey()
 

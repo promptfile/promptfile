@@ -58,6 +58,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@glass-lang/util": "*",
     "@glass-lang/glassc": "*",
     "@glass-lang/language-server": "*",
     "@glass-lang/rig": "*",
@@ -123,6 +124,10 @@
       {
         "command": "glass.run",
         "title": "Glass: Run"
+      },
+      {
+        "command": "glass.runTestSuite",
+        "title": "Glass: Run tests"
       },
       {
         "command": "glass.reset",
