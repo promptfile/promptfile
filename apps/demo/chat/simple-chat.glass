@@ -2,13 +2,6 @@
 language: typescript
 ---
 
-<State>
-{
-  "numMesages": 0
-}
-</State>
-
-const [numMesages, setNumMessages] = useState(0)
 const res = await fetch("https://elliottburris.com") // first, let's make a request to load some data
 const text = await res.text() // next, let's get the html from that request
 console.log(text) // lets console log this, just to be sure
@@ -22,11 +15,7 @@ ${text}
 </System>
 
 <User>
-Hey, how are you? what's the email address in the website?
+no that's it
 </User>
 
 <Request model="gpt-3.5-turbo" />
-
-<Assistant generated={true}>
-The email address is not directly listed on the website, but a message in the website's code says to "Contact me at e l l i o t t . b u r r i s [at] g m a i l [dot] c o m".
-</Assistant>

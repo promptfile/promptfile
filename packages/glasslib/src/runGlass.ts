@@ -71,52 +71,44 @@ export async function runGlass(
 
   const parsedOrig = parseGlassTopLevelJsxElements(originalDoc)
 
-  const chatNode = parsedOrig.find(node => node.tagName === 'Chat')
-  let newChatNode = `<Chat model="${model}">
+  const requestNode = parsedOrig.find(node => node.tagName === 'Request')
 
-</Chat>`
-  if (chatNode) {
-    newChatNode = getJSXNodeShellString(chatNode, originalDoc)
+  let newRequestNode = `<Request model="${model}" />`
+  if (requestNode) {
+    newRequestNode = getJSXNodeShellString(requestNode, originalDoc)
   }
 
-  let origDoc = originalDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
-  let interpDoc = interpolatedDoc.replace(/<Chat.*?>\n(.+?)\n<\/Chat>/gs, '<User generated={true}>\n$1\n</User>')
+  originalDoc = originalDoc.replace(newRequestNode, '')
 
   const stateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
   const stateBlockRegex = /<State>.+<\/State>/gs
   if (Object.keys(state).length > 0) {
-    if (stateBlockRegex.test(origDoc)) {
-      origDoc = origDoc.replace(stateBlockRegex, stateBlock)
+    if (stateBlockRegex.test(originalDoc)) {
+      originalDoc = originalDoc.replace(stateBlockRegex, stateBlock)
     } else {
-      origDoc = `${stateBlock}\n\n${origDoc}`
+      originalDoc = `${stateBlock}\n\n${originalDoc}`
     }
-    if (stateBlockRegex.test(interpDoc)) {
-      interpDoc = interpDoc.replace(stateBlockRegex, stateBlock)
+    if (stateBlockRegex.test(interpolatedDoc)) {
+      interpolatedDoc = interpolatedDoc.replace(stateBlockRegex, stateBlock)
     } else {
-      interpDoc = `${stateBlock}\n\n${interpDoc}`
+      interpolatedDoc = `${stateBlock}\n\n${interpolatedDoc}`
     }
   }
 
   if (options?.progress) {
-    const completionFragment = generateCompletionFragment('', true, model, newChatNode)
+    const completionFragment = generateCompletionFragment('', true, model, newRequestNode)
     options.progress({
-      nextDoc: `${origDoc.trim()}\n\n${completionFragment}`,
-      nextInterpolatedDoc: `${interpDoc.trim()}\n\n${completionFragment}`,
+      nextDoc: `${originalDoc.trim()}\n\n${completionFragment}`,
+      nextInterpolatedDoc: `${interpolatedDoc.trim()}\n\n${completionFragment}`,
       rawResponse: '█',
     })
   }
   const res =
     model === 'gpt-3.5-turbo' || model === 'gpt-4'
-      ? await runGlassChat(fileName, model, { originalDoc: origDoc, interpolatedDoc: interpDoc }, newChatNode, options)
+      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, newRequestNode, options)
       : model.startsWith('claude')
-      ? await runGlassChatAnthropic(
-          fileName,
-          model,
-          { originalDoc: origDoc, interpolatedDoc: interpDoc },
-          newChatNode,
-          options
-        )
-      : await runGlassCompletion(fileName, model as any, { originalDoc: origDoc, interpolatedDoc: interpDoc }, options)
+      ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, newRequestNode, options)
+      : await runGlassCompletion(fileName, model as any, { originalDoc, interpolatedDoc }, options)
 
   let codeResponse: any = undefined
   if (onResponse) {
@@ -130,12 +122,12 @@ export async function runGlass(
   return { ...res, initDoc: originalDoc, initInterpolatedDoc: interpolatedDoc, codeResponse }
 }
 
-const generateCompletionFragment = (message: string, streaming: boolean, model: string, newChatNode: string) => {
+const generateCompletionFragment = (message: string, streaming: boolean, model: string, newRequestNode: string) => {
   return `<Assistant generated={true}>
 ${message}${streaming ? '█' : ''}
 </Assistant>
 
-${newChatNode}`
+${newRequestNode}`
 }
 
 /**
@@ -145,7 +137,7 @@ async function runGlassChat(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
-  newChatNode: string,
+  newRequestNode: string,
   options?: {
     args?: any
     openaiKey?: string
@@ -175,7 +167,7 @@ async function runGlassChat(
   const response = await handleStream(r, handleChatChunk, next => {
     // right now claude has a leading whitespace character
     // we need to remove that!
-    const fragment = generateCompletionFragment(next.trim(), options?.progress != null, model, newChatNode)
+    const fragment = generateCompletionFragment(next.trim(), options?.progress != null, model, newRequestNode)
     const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
     const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
     if (options?.progress) {
@@ -187,7 +179,7 @@ async function runGlassChat(
     }
   })
 
-  const fragment = generateCompletionFragment(response, false, model, newChatNode)
+  const fragment = generateCompletionFragment(response, false, model, newRequestNode)
   return {
     finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
     finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
@@ -202,7 +194,7 @@ async function runGlassChatAnthropic(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
-  newChatNode: string,
+  newRequestNode: string,
   options?: {
     args?: any
     openaiKey?: string
@@ -246,7 +238,7 @@ async function runGlassChatAnthropic(
   })
 
   const response = await handleStream(r, handleAnthropicChunk, next => {
-    const fragment = generateCompletionFragment(next, options?.progress != null, model, newChatNode)
+    const fragment = generateCompletionFragment(next, options?.progress != null, model, newRequestNode)
     const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
     const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
     if (options?.progress) {
@@ -258,7 +250,7 @@ async function runGlassChatAnthropic(
     }
   })
 
-  const fragment = generateCompletionFragment(response.trim(), false, model, newChatNode)
+  const fragment = generateCompletionFragment(response.trim(), false, model, newRequestNode)
   return {
     finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
     finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
