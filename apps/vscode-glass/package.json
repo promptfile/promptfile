@@ -513,7 +513,7 @@
       {
         "id": "glass-ts",
         "aliases": [
-          "Glass (typescript)"
+          "TypeScript (Glass)"
         ],
         "extensions": [
           ".glass"
@@ -527,7 +527,7 @@
       {
         "id": "glass-js",
         "aliases": [
-          "Glass (javascript)"
+          "JavaScript (Glass)"
         ],
         "extensions": [],
         "configuration": "./configurations/language-configuration-ts.json",
@@ -539,7 +539,7 @@
       {
         "id": "glass-py",
         "aliases": [
-          "Glass (python)"
+          "Python (Glass)"
         ],
         "extensions": [],
         "configuration": "./configurations/language-configuration-py.json",
