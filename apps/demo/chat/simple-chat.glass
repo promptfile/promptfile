@@ -4,7 +4,6 @@ language: typescript
 
 const res = await fetch("https://elliottburris.com") // first, let's make a request to load some data
 const text = await res.text() // next, let's get the html from that request
-console.log(text) // lets console log this, just to be sure
 
 <System>
 Use the following website code to answer the question from the User.

@@ -1,6 +1,6 @@
-<Code>
-userText = "Tell me a story."
-</Code>
+---
+language: python
+---
 
 <System>
 You are a helpful assistant. 
