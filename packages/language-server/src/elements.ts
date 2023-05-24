@@ -1,4 +1,4 @@
-import { LanguageModelType, languageModels } from './languageModels'
+import { languageModels } from './languageModels'
 
 interface GlassElement {
   name: string
@@ -100,61 +100,6 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'Chat',
-    documentation: 'Creates a Chat model inference',
-    detail: '(inference) API request to a Chat model',
-    attributes: [
-      {
-        name: 'model',
-        detail: 'chat model for inference',
-        documentation: 'The `model` attribute determines which chat model to inference',
-        type: 'enum',
-        values: languageModels.filter(model => model.type === LanguageModelType.chat),
-      },
-      {
-        name: 'temperature',
-        detail: 'temperature for inference',
-        documentation: 'The `temperature` attribute determines the temperature for inference',
-        type: 'number',
-        optional: true,
-      },
-      {
-        name: 'maxTokens',
-        detail: 'max tokens for inference',
-        documentation: 'The `maxTokens` attribute determines the max tokens for inference',
-        type: 'number',
-        optional: true,
-      },
-      {
-        name: 'onResponse',
-        detail: 'callback for response',
-        documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
-        type: 'function',
-        optional: true,
-      },
-    ],
-  },
-  {
-    name: 'Code',
-    documentation: 'Creates a Code tag with inner content',
-    detail: '(executable) executable code block',
-    attributes: [],
-  },
-  {
-    name: 'Completion',
-    documentation: 'Creates a Completion model inference',
-    detail: '(inference) API request to a Completion model',
-    attributes: [
-      {
-        name: 'model',
-        detail: 'completion model for inference',
-        documentation: 'The `model` attribute determines which completion model to inference',
-        type: 'enum',
-        values: languageModels.filter(model => model.type === LanguageModelType.completion),
-      },
-    ],
-  },
-  {
     name: 'For',
     documentation: 'Creates a for loop',
     detail: '(element) loop over elements in an array',
@@ -178,6 +123,41 @@ export const glassElements: GlassElement[] = [
     documentation: 'Creates a Prompt tag with inner content',
     detail: '(element) raw Glass prompt block',
     attributes: [],
+  },
+  {
+    name: 'Request',
+    documentation: 'Creates a model inference',
+    detail: '(inference) API request to a model',
+    attributes: [
+      {
+        name: 'model',
+        detail: 'model for inference',
+        documentation: 'The `model` attribute determines which model to inference',
+        type: 'enum',
+        values: languageModels,
+      },
+      {
+        name: 'temperature',
+        detail: 'temperature for inference',
+        documentation: 'The `temperature` attribute determines the temperature for inference',
+        type: 'number',
+        optional: true,
+      },
+      {
+        name: 'maxTokens',
+        detail: 'max tokens for inference',
+        documentation: 'The `maxTokens` attribute determines the max tokens for inference',
+        type: 'number',
+        optional: true,
+      },
+      {
+        name: 'onResponse',
+        detail: 'callback for response',
+        documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
+        type: 'function',
+        optional: true,
+      },
+    ],
   },
   {
     name: 'State',

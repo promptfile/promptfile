@@ -5,12 +5,12 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 export function findAnthropicDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed = parseGlassTopLevelJsxElements(textDocument.getText())
-    const chatElement = parsed.find(tag => tag.tagName === 'Chat')
-    if (!chatElement) {
+    const requestElement = parsed.find(tag => tag.tagName === 'Request')
+    if (!requestElement) {
       return []
     }
-    const model = chatElement.attrs.find(attr => attr.name === 'model')
-    if (!model || !model.stringValue!.startsWith('claude')) {
+    const model = requestElement.attrs.find(attr => attr.name === 'model')
+    if (!model || model.stringValue == null || !model.stringValue.startsWith('claude')) {
       return []
     }
 
