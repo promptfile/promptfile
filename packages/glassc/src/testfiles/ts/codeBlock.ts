@@ -3,7 +3,7 @@ export function getCodeBlockPrompt() {
     return {}
   }
 
-  const compile = async (opt?: {}) => {
+  const compile = async (opt: {}) => {
     const GLASS_STATE = {}
 
     const a = '3'

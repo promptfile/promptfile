@@ -3,7 +3,7 @@ export function getCodeBlockWithStatePrompt() {
     return {}
   }
 
-  const compile = async (opt?: {}) => {
+  const compile = async (opt: {}) => {
     const GLASS_STATE = {}
 
     const initProfile = { firstName: '', lastName: '', hasChatted: false }

@@ -47,6 +47,8 @@ export async function runGlass(
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
   }
 ): Promise<{
+  rawResponse: string
+  codeResponse?: any
   initDoc: string
   initInterpolatedDoc: string
   finalDoc: string
@@ -116,15 +118,16 @@ export async function runGlass(
         )
       : await runGlassCompletion(fileName, model as any, { originalDoc: origDoc, interpolatedDoc: interpDoc }, options)
 
+  let codeResponse: any = undefined
   if (onResponse) {
-    await onResponse({ message: res.rawResponse })
+    codeResponse = await onResponse({ message: res.rawResponse })
     if (stateBlockRegex.test(res.finalDoc)) {
       const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
       res.finalDoc = res.finalDoc.replace(stateBlockRegex, finalStateBlock)
     }
   }
 
-  return { ...res, initDoc: originalDoc, initInterpolatedDoc: interpolatedDoc }
+  return { ...res, initDoc: originalDoc, initInterpolatedDoc: interpolatedDoc, codeResponse }
 }
 
 const generateCompletionFragment = (message: string, streaming: boolean, model: string, newChatNode: string) => {
@@ -211,7 +214,6 @@ async function runGlassChatAnthropic(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  console.log('running glass anthropic')
   const messages = interpolateGlassChat(fileName, docs.interpolatedDoc)
 
   let anthropicQuery = ''

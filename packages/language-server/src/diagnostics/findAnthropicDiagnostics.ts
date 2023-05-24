@@ -7,17 +7,14 @@ export function findAnthropicDiagnostics(textDocument: TextDocument): Diagnostic
     const parsed = parseGlassTopLevelJsxElements(textDocument.getText())
     const chatElement = parsed.find(tag => tag.tagName === 'Chat')
     if (!chatElement) {
-      console.log('no chat element')
       return []
     }
     const model = chatElement.attrs.find(attr => attr.name === 'model')
     if (!model || !model.stringValue!.startsWith('claude')) {
-      console.log('not claude')
       return []
     }
 
     const systemBlocks = parsed.filter(tag => tag.tagName === 'System')
-    console.log(systemBlocks)
     return systemBlocks.map(tag => {
       const diagnostic: Diagnostic = {
         severity: DiagnosticSeverity.Error,

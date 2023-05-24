@@ -6,6 +6,7 @@ import {
   parseCodeBlockUndeclaredSymbols,
   parseCodeImportedSymbols,
   parseReturnExpression,
+  parseTsGlassImports,
   removeReturnStatements,
 } from './parseTypescript'
 
@@ -182,6 +183,16 @@ const question = "where did elliott go to school";
 
       const transform = removeReturnStatements(code)
       expect(transform).to.equal(code)
+    })
+  })
+
+  describe('parseTsGlassImports', () => {
+    it('should parse glass imports', () => {
+      const code = `import {foo, bar} from './someFile'
+import something from './someOtherFile.glass'
+import baz from 'baz'`
+
+      expect(parseTsGlassImports(code)).to.deep.equal([{ name: 'something', path: './someOtherFile.glass' }])
     })
   })
 })

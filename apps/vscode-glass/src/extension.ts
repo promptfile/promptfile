@@ -279,11 +279,8 @@ export async function activate(context: vscode.ExtensionContext) {
             fs.mkdirSync(outDir)
           }
 
-          console.log('about to transpile')
           try {
             const output = transpileGlassNext(folderPath, folderPath, 'typescript', outDir)
-
-            console.log({ output })
 
             fs.writeFileSync(path.join(outDir, 'glass.ts'), output)
           } catch (error) {
@@ -296,15 +293,22 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('glass.transpileCurrentFile', async () => {
       const editor = vscode.window.activeTextEditor
+
       if (editor) {
+        const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri)!
+        const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+        const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
+        const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
+
         const document = editor.document
         const filePath = document.uri.fsPath
         const file = filePath.split('/').slice(-1)[0]
+
         try {
           const code =
             document.languageId === 'glass-py'
               ? transpileGlassPython(filePath, filePath, 'python', path.join(path.dirname(filePath)))
-              : transpileGlassNext(filePath, filePath, 'typescript', path.join(path.dirname(filePath)))
+              : transpileGlassNext(workspacePath, filePath, 'typescript', outDir)
           await vscode.env.clipboard.writeText(code)
           await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
         } catch (error) {

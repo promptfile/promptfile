@@ -1,0 +1,16 @@
+import questionAnswer from './questionAnswer.glass'
+
+<Code>
+const [field, setField] = useState('')
+</Code>
+
+<Assistant>
+You are an assistant that creates questions for Jeopardy.
+</Assistant>
+
+<Chat model="gpt-3.5-turbo" onResponse={async ({ message }) => {
+    const answer = await questionAnswer({question: message})
+    setField(answer)
+}}>
+Make a question about United States history.
+</Chat>

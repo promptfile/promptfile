@@ -1,0 +1,7 @@
+<System>
+You are a helpful assistant.
+</System>
+
+<Chat model="gpt-3.5-turbo">
+${question}
+</Chat>

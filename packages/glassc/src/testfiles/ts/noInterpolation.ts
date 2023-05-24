@@ -3,7 +3,7 @@ export function getNoInterpolationPrompt() {
     return {}
   }
 
-  const compile = async (opt?: {}) => {
+  const compile = async (opt: {}) => {
     const GLASS_STATE = {}
 
     const GLASSVAR = {}
