@@ -22,7 +22,7 @@ export function findInvalidAttributes(textDocument: TextDocument): Diagnostic[] 
       for (const attribute of existingAttributes) {
         const validAttribute = validAttributes.find(validAttribute => validAttribute.name === attribute.name)
         if (validAttribute) {
-          if (validAttribute.values && !validAttribute.values.includes(attribute.stringValue)) {
+          if (validAttribute.values && !validAttribute.values.some(a => a.name === attribute.stringValue)) {
             invalidAttributes.push({ tag, attribute: attribute.name, type: 'invalid' })
           }
         } else {
@@ -41,7 +41,7 @@ export function findInvalidAttributes(textDocument: TextDocument): Diagnostic[] 
           item.type === 'unknown'
             ? `Unknown "${item.attribute}" attribute`
             : item.type === 'invalid'
-            ? `Invalid value for attribute: "${item.attribute}"`
+            ? `Invalid value for attribute "${item.attribute}"`
             : `Missing attribute: "${item.attribute}"`,
         source: 'glass',
       }

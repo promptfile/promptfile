@@ -1,3 +1,5 @@
+import { LanguageModelType, languageModels } from './languageModels'
+
 interface GlassElement {
   name: string
   attributes: GlassAttribute[]
@@ -12,18 +14,14 @@ interface GlassAttribute {
   documentation?: string
   optional?: boolean
   insertText?: string
-  values?: string[]
+  values?: GlassAttributeValue[]
   type?: 'string' | 'boolean' | 'number' | 'object' | 'array' | 'function' | 'enum'
 }
 
-interface GlassAttribute {
+interface GlassAttributeValue {
   name: string
   detail?: string
   documentation?: string
-  optional?: boolean
-  insertText?: string
-  values?: string[]
-  type?: 'string' | 'boolean' | 'number' | 'object' | 'array' | 'function' | 'enum'
 }
 
 export const glassElements: GlassElement[] = [
@@ -68,7 +66,23 @@ export const glassElements: GlassElement[] = [
         name: 'role',
         detail: 'system, user, or assistant',
         documentation: 'The `role` attribute allows you to assign a role to a chat block.',
-        values: ['system', 'user', 'assistant'],
+        values: [
+          {
+            name: 'system',
+            detail: 'system chat block',
+            documentation: 'The `system` role is used for system chat blocks.',
+          },
+          {
+            name: 'user',
+            detail: 'user chat block',
+            documentation: 'The `user` role is used for user chat blocks.',
+          },
+          {
+            name: 'assistant',
+            detail: 'assistant chat block',
+            documentation: 'The `assistant` role is used for assistant chat blocks.',
+          },
+        ],
         type: 'enum',
       },
       {
@@ -95,23 +109,7 @@ export const glassElements: GlassElement[] = [
         detail: 'chat model for inference',
         documentation: 'The `model` attribute determines which chat model to inference',
         type: 'enum',
-        values: [
-          'gpt-3.5-turbo',
-          'gpt-4',
-          'gpt-4-0314',
-          'gpt-3.5-turbo-0301',
-          'claude-v1',
-          'claude-v1-100k',
-          'claude-instant-v1',
-          'claude-instant-v1-100k',
-          'claude-v1.3',
-          'claude-v1.3-100k',
-          'claude-v1.2',
-          'claude-v1.0',
-          'claude-instant-v1.1',
-          'claude-instant-v1.1-100k',
-          'claude-instant-v1.0',
-        ],
+        values: languageModels.filter(model => model.type === LanguageModelType.chat),
       },
       {
         name: 'temperature',
@@ -152,20 +150,7 @@ export const glassElements: GlassElement[] = [
         detail: 'completion model for inference',
         documentation: 'The `model` attribute determines which completion model to inference',
         type: 'enum',
-        values: [
-          // openai
-          'text-davinci-003',
-          'text-curie-001',
-          'text-babbage-001',
-          'text-ada-001',
-          'text-davinci-002',
-          'text-davinci-001',
-          'davinci-instruct-beta',
-          'davinci',
-          'curie',
-          'babbage',
-          'ada',
-        ],
+        values: languageModels.filter(model => model.type === LanguageModelType.completion),
       },
     ],
   },

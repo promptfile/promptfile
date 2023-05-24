@@ -1,16 +1,16 @@
-enum LanguageModelCreator {
+export enum LanguageModelCreator {
   openai = 'openai',
   anthropic = 'anthropic',
 }
 
-enum LanguageModelType {
+export enum LanguageModelType {
   chat = 'chat',
   completion = 'completion',
   edit = 'edit',
   insert = 'insert',
 }
 
-interface LanguageModel {
+export interface LanguageModel {
   name: string
   creator: LanguageModelCreator
   description: string
@@ -143,7 +143,7 @@ export const languageModels: LanguageModel[] = [
     name: 'claude-v1',
     creator: LanguageModelCreator.anthropic,
     description: 'Our largest model, ideal for a wide range of more complex tasks.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 8192,
   },
   {
@@ -151,7 +151,7 @@ export const languageModels: LanguageModel[] = [
     creator: LanguageModelCreator.anthropic,
     description:
       'An enhanced version of claude-v1 with a 100,000 token (roughly 75,000 word) context window. Ideal for summarizing, analyzing, and querying long documents and conversations for nuanced understanding of complex topics and relationships across very long spans of text.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 100000,
   },
   {
@@ -159,7 +159,7 @@ export const languageModels: LanguageModel[] = [
     creator: LanguageModelCreator.anthropic,
     description:
       'A smaller model with far lower latency, sampling at roughly 40 words/sec! Its output quality is somewhat lower than the latest claude-v1 model, particularly for complex tasks. However, it is much less expensive and blazing fast. We believe that this model provides more than adequate performance on a range of tasks including text classification, summarization, and lightweight chat applications, as well as search result summarization.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 8192,
   },
   {
@@ -167,7 +167,7 @@ export const languageModels: LanguageModel[] = [
     creator: LanguageModelCreator.anthropic,
     description:
       'An enhanced version of claude-instant-v1 with a 100,000 token context window that retains its performance. Well-suited for high throughput use cases needing both speed and additional context, allowing deeper understanding from extended conversations and documents.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 100000,
   },
   {
@@ -175,14 +175,14 @@ export const languageModels: LanguageModel[] = [
     creator: LanguageModelCreator.anthropic,
     description:
       "Compared to claude-v1.2, it's more robust against red-team inputs, better at precise instruction-following, better at code, and better and non-English dialogue and writing.",
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 8192,
   },
   {
     name: 'claude-v1.3-100k',
     creator: LanguageModelCreator.anthropic,
     description: 'An enhanced version of claude-v1.3 with a 100,000 token (roughly 75,000 word) context window.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 100000,
   },
   {
@@ -190,14 +190,14 @@ export const languageModels: LanguageModel[] = [
     creator: LanguageModelCreator.anthropic,
     description:
       'An improved version of claude-v1. It is slightly improved at general helpfulness, instruction following, coding, and other tasks. It is also considerably better with non-English languages. This model also has the ability to role play (in harmless ways) more consistently, and it defaults to writing somewhat longer and more thorough responses.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 8192,
   },
   {
     name: 'claude-v1.0',
     creator: LanguageModelCreator.anthropic,
     description: 'An earlier version of claude-v1.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 8192,
   },
   {
@@ -205,14 +205,14 @@ export const languageModels: LanguageModel[] = [
     creator: LanguageModelCreator.anthropic,
     description:
       'An enhanced version of claude-instant-v1.1 with a 100,000 token context window that retains its lightning fast 40 word/sec performance.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 100000,
   },
   {
     name: 'claude-instant-v1.0',
     creator: LanguageModelCreator.anthropic,
     description: 'An earlier version of claude-instant-v1.',
-    type: LanguageModelType.completion,
+    type: LanguageModelType.chat,
     maxTokens: 8192,
   },
 ]

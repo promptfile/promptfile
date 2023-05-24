@@ -12,7 +12,10 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
       const cursorIndex = index + 1
       const attributeValue =
         attribute.values && attribute.values.length > 0
-          ? `"\${${cursorIndex}|${attribute.values.sort().join(',')}|}"`
+          ? `"\${${cursorIndex}|${attribute.values
+              .map(value => value.name)
+              .sort()
+              .join(',')}|}"`
           : attribute.type === 'boolean'
           ? `\${${cursorIndex}|true,false|}`
           : attribute.type === 'string'
@@ -57,10 +60,17 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
     // If we found an element and attribute with valid values, return those as completions
     if (attribute && attribute.values) {
       return attribute.values.map(value => ({
-        label: value,
+        label: value.name,
         kind: CompletionItemKind.EnumMember,
-        insertText: value,
+        insertText: value.name,
         insertTextFormat: InsertTextFormat.PlainText,
+        detail: value.detail,
+        documentation: value.documentation
+          ? {
+              kind: 'markdown',
+              value: value.documentation,
+            }
+          : undefined,
       }))
     }
   }
@@ -87,7 +97,10 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
           return {
             label: attribute.name,
             kind: CompletionItemKind.Property,
-            insertText: `${attribute.name}="\${1|${attribute.values.sort().join(',')}|}"`,
+            insertText: `${attribute.name}="\${1|${attribute.values
+              .map(a => a.name)
+              .sort()
+              .join(',')}|}"`,
             insertTextFormat: InsertTextFormat.Snippet,
           }
         } else {

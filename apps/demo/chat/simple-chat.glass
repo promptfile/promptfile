@@ -13,5 +13,5 @@ You should try to respond to the User in haiku format.
     setStatus('complete')    
     setLastMessage(message)
 }}>
-
+hey how are you?
 </Chat>
