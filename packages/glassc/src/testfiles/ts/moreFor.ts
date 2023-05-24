@@ -3,7 +3,7 @@ export function getMoreForPrompt() {
     return {}
   }
 
-  const compile = async (opt: { args: { foo: string; messages: string } }) => {
+  const compile = async (opt: { args: { foo: string; messages: { role: string; content: string }[] } }) => {
     const GLASS_STATE = {}
     const { foo, messages } = opt.args
 

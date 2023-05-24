@@ -8,15 +8,15 @@ export function getArgsPrompt() {
     const { foo, bar } = opt.args
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Args foo="number" bar="string" />
-<Prompt>
+    const TEMPLATE = `<Prompt>
 ${foo} ${bar}
 </Prompt>`
     return {
       fileName: 'args',
       model: 'text-davinci-003',
       interpolatedDoc: TEMPLATE,
-      originalDoc: '<Args foo="number" bar="string" />\n<Prompt>\n${foo} ${bar}\n</Prompt>',
+      originalDoc:
+        '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n<Prompt>\n${foo} ${bar}\n</Prompt>',
       state: GLASS_STATE,
       onResponse: undefined,
     }

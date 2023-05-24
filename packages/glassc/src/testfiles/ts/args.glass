@@ -1,4 +1,9 @@
-<Args foo="number" bar="string" />
+---
+language: typescript
+args:
+    foo: number
+    bar: string
+---
 <Prompt>
 ${foo} ${bar}
 </Prompt>

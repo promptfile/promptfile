@@ -41,7 +41,8 @@
     "micromark-extension-frontmatter": "^1.1.0",
     "micromark-extension-mdxjs": "^1.0.0",
     "prettier": "^2.8.8",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "yaml": "^2.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",

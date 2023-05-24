@@ -4,6 +4,7 @@ import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
+import { parseFrontmatter } from '../parse/parseFrontmatter.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
 import { parseCodeBlock, parseTsGlassImports } from '../parse/parseTypescript.js'
@@ -77,7 +78,7 @@ export function transpileGlassFileNext(
   const hasPrompt = toplevelNodes.filter(node => node.tagName === 'Prompt').length > 0
   const isChat = !hasPrompt
 
-  const { imports, interpolationArgs, jsxExpressions, isAsync } = glasslib.parseGlassAST(doc, {
+  const { imports, interpolationArgs, jsxExpressions, frontmatter } = glasslib.parseGlassAST(doc, {
     workspaceFolder,
     folderPath,
     outputDirectory,
@@ -96,8 +97,6 @@ export function transpileGlassFileNext(
   const interpolationVarNames = Array.from(new Set<string>(allInterpolationVars.map(arg => arg.split('.')[0])))
 
   const interpolationVarSet = new Set(interpolationVarNames)
-
-  const argsNode = ''
 
   let model = isChat ? 'gpt-3.5-turbo' : 'text-davinci-003'
 
@@ -178,7 +177,7 @@ ${toplevelCode}
     interpolationVarSet.add(symbol)
   }
 
-  const argsOverride = argsNode ? parseJsxAttributes(argsNode) : {}
+  const argsOverride = parseFrontmatter(frontmatter)?.args || {}
 
   const dynamicTransform = transformDynamicBlocks(doc, true)
   doc = dynamicTransform.doc

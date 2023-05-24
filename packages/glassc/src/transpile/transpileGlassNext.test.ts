@@ -114,7 +114,7 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  it.skip('should transpile with Args block', () => {
+  it('should transpile with Args block', () => {
     const { input, output } = loadTestfile('args', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'args' })
     expect(transpiled.code.trim()).to.equal(output.trim())

@@ -46,29 +46,20 @@ export function parseGlassAST(
 
   const parts: string[] = []
   const imports: string[] = []
-  const frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[] = []
   const interpolationArgs: Record<string, boolean> = {}
   const jsxExpressions: string[] = []
   const jsxNodes: JSXNode[] = []
-  let isAsync = false
+
+  let front = ''
 
   for (const node of tree.children) {
-    const async = parseAstHelper(
-      folders,
-      node,
-      parts,
-      imports,
-      frontmatterArgs,
-      interpolationArgs,
-      jsxExpressions,
-      jsxNodes
-    )
-    if (async) {
-      isAsync = true
+    const res = parseAstHelper(folders, node, parts, imports, interpolationArgs, jsxExpressions, jsxNodes)
+    if (res.frontmatter && !front) {
+      front = res.frontmatter
     }
   }
 
-  return { parts, imports, frontmatterArgs, interpolationArgs, jsxExpressions, jsxNodes, isAsync }
+  return { parts, imports, interpolationArgs, jsxExpressions, jsxNodes, frontmatter: front }
 }
 
 function parseAstHelper(
@@ -76,30 +67,17 @@ function parseAstHelper(
   node: any,
   parts: string[],
   imports: string[],
-  frontmatterArgs: { name: string; type: string; description?: string; optional?: boolean }[],
   interpolationArgs: Record<string, boolean>,
   jsxExpressions: string[],
   jsxNodes: JSXNode[]
 ) {
-  let isAsync = false
+  let frontmatter = ''
 
   switch (node.type) {
     case 'paragraph': {
       const paraParts: string[] = []
       for (const child of node.children) {
-        const async = parseAstHelper(
-          folders,
-          child,
-          paraParts,
-          imports,
-          frontmatterArgs,
-          interpolationArgs,
-          jsxExpressions,
-          jsxNodes
-        )
-        if (async) {
-          isAsync = true
-        }
+        parseAstHelper(folders, child, paraParts, imports, interpolationArgs, jsxExpressions, jsxNodes)
       }
 
       for (let i = 0; i < paraParts.length; i++) {
@@ -123,7 +101,7 @@ function parseAstHelper(
 
     case 'mdxTextExpression': {
       if (node.value.startsWith('/*') && node.value.endsWith('*/')) {
-        return // just a comment
+        break
       }
 
       jsxExpressions.push(node.value)
@@ -134,10 +112,6 @@ function parseAstHelper(
         interpolationArgs[interpolationArgMatch[0]] = true
       }
 
-      const async = node.value.trim().startsWith('await')
-      if (async) {
-        isAsync = true
-      }
       parts.push(node.value)
 
       break
@@ -147,7 +121,7 @@ function parseAstHelper(
       const nodeText = node.value.trim()
       // If nodeText looks like a javascript comment block (e.g. /* */) ignore it
       if (nodeText.startsWith('/*') && nodeText.endsWith('*/')) {
-        return
+        break
       }
 
       jsxExpressions.push(node.value)
@@ -162,10 +136,6 @@ function parseAstHelper(
       if (lines.length === 1) {
         parts.push(nodeText)
       } else if (lines.length > 1) {
-        const async = nodeText.trim().startsWith('async')
-        if (async) {
-          isAsync = true
-        }
         parts.push(`${nodeText.startsWith('async') ? 'await ' : ''}(${nodeText})()`)
       }
 
@@ -181,7 +151,7 @@ function parseAstHelper(
       // find the import groups, importLine will match `import (.+) from '(.+)'`
       const match = /import (.+) from ['"](.+)['"]/gms.exec(importLine)
       if (!match) {
-        return
+        break
       }
       const [, importName, importPath] = match
 
@@ -213,17 +183,7 @@ function parseAstHelper(
 
     case 'toml':
     case 'yaml': {
-      // const lines = node.value.split('\n')
-      // for (const line of lines) {
-      //   if (line.trim() === '') {
-      //     continue
-      //   }
-      //   const [name, rest] = line.split(/:\s+/)
-      //   const [type, description] = rest.split(/\s+/)
-      //   const optional = type.endsWith('?')
-      //   const normType = optional ? type.slice(0, -1) : type
-      //   frontmatterArgs.push({ name, type: normType, description, optional })
-      // }
+      frontmatter = node.value
 
       break
     }
@@ -237,19 +197,7 @@ function parseAstHelper(
 
       if (node.children instanceof Array) {
         for (const child of node.children) {
-          const async = parseAstHelper(
-            folders,
-            child,
-            paraParts,
-            imports,
-            frontmatterArgs,
-            interpolationArgs,
-            jsxExpressions,
-            jsxNodes
-          )
-          if (async) {
-            isAsync = true
-          }
+          parseAstHelper(folders, child, paraParts, imports, interpolationArgs, jsxExpressions, jsxNodes)
         }
 
         for (let i = 0; i < paraParts.length; i++) {
@@ -264,5 +212,5 @@ function parseAstHelper(
       }
       break
   }
-  return isAsync
+  return { frontmatter }
 }
