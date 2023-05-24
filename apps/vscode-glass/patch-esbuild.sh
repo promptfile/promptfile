@@ -25,8 +25,8 @@ cd vsix_content/extension
 # Update the package.json file
 jq ".dependencies = {\"esbuild\": \"^0.17.19\", \"@glass-lang/glasslib\": \"*\"}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 jq ".devDependencies = {}" package.json > temp.json && rm -f package.json && mv temp.json package.json
-# mv .yarn.lock yarn.lock
-touch yarn.lock
+mv .yarn.lock yarn.lock
+# touch yarn.lock
 
 # Install the dependency
 yarn install
