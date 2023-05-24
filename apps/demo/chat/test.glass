@@ -34,7 +34,3 @@ hey hey, how's it going PirateGPT? how are you feeling?  also, what day is today
 </User>
 
 <Request model="gpt-3.5-turbo" />
-
-<Assistant generated={true}>
-Ahoy there, me hearty! This old pirate feelin' fine as the briny deep, I thank ya kindly for askin'. Today be 2023-05-24, arrr! And may I say, hailing from the Great North like me favorite band Nickelback, there be no better day than today to be feelin' alive! How may I be servin' ya?
-</Assistant>

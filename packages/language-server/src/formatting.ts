@@ -4,9 +4,7 @@ import { glassElements } from './elements'
 
 export function formatDocument(text: string) {
   // Check if the document contains any of the required tags
-
   const nonSelfClosingTags = glassElements.filter(e => e.selfClosing !== true)
-
   const tagNames = glassElements.map(e => e.name).join('|')
   const hasTags = new RegExp(`<(${tagNames})`).test(text)
 
@@ -14,33 +12,34 @@ export function formatDocument(text: string) {
   if (!hasTags) {
     text = `<Prompt>\n${text}\n</Prompt>`
   }
+
   const lines = text.split('\n')
   const formattedLines: string[] = []
-  let insertEmptyLine = false
 
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index]
-    const isClosingTag = line.match(/^<\/(User|System|Assistant|Prompt|State|Text)/)
-    const isOpeningTag = line.match(/^<(User|System|Assistant|Prompt|State|Text)/)
+    const isClosingTag = line.match(new RegExp(`^</(${tagNames})`))
+    const isOpeningTag = line.match(new RegExp(`^<(${tagNames})`))
 
-    if (isOpeningTag && insertEmptyLine) {
-      if (formattedLines[formattedLines.length - 1].trim() !== '') {
+    if (isOpeningTag) {
+      if (formattedLines[formattedLines.length - 1]?.trim() !== '') {
         formattedLines.push('')
       }
-      insertEmptyLine = false
     }
 
     formattedLines.push(line)
 
     if (isClosingTag) {
-      insertEmptyLine = true
+      if (index !== lines.length - 1 && lines[index + 1]?.trim() !== '') {
+        formattedLines.push('')
+      }
     }
   }
 
-  // Remove consecutive empty lines
+  // Remove consecutive empty lines more than 2
   const cleanedLines = formattedLines.filter((line, index) => {
-    if (index === 0 || index === formattedLines.length - 1) return true
-    return !(line.trim() === '' && formattedLines[index - 1].trim() === '')
+    if (index < 2 || index >= formattedLines.length - 2) return true
+    return !(line.trim() === '' && formattedLines[index - 1].trim() === '' && formattedLines[index - 2].trim() === '')
   })
 
   let finalText = cleanedLines.join('\n').trim()

@@ -123,7 +123,7 @@ export async function runGlass(
 }
 
 const generateCompletionFragment = (message: string, streaming: boolean, model: string, newRequestNode: string) => {
-  return `<Assistant generated={true}>
+  return `<Assistant>
 ${message}${streaming ? '█' : ''}
 </Assistant>
 
@@ -149,6 +149,9 @@ async function runGlassChat(
   rawResponse: string
 }> {
   const messages = interpolateGlassChat(fileName, docs.interpolatedDoc)
+
+  console.log('RUNNINGGGG')
+  console.log(messages)
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',

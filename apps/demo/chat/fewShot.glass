@@ -55,16 +55,14 @@ would highly recommend not buying this product, I've had so many problems
 NEEDS_ATTENTION
 </Assistant>
 
-<User generated={true}>
+<User>
 hey! i love your product
 </User>
 
-<Assistant generated={true}>
+<Assistant>
 SKIP
 </Assistant>
 
-<User>
 
-</User>
 
 <Request model="gpt-3.5-turbo" />
