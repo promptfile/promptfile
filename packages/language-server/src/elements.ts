@@ -189,6 +189,12 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
+    name: 'Prompt',
+    documentation: 'Creates a Prompt tag with inner content',
+    detail: '(element) raw Glass prompt block',
+    attributes: [],
+  },
+  {
     name: 'State',
     insertText: 'State>\n{\n\t"$1": "$2"\n}\n</State>',
     documentation: 'Creates a State tag to hold document state',
