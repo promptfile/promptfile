@@ -1,7 +1,7 @@
 import { expect } from 'chai'
+import { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
 import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 import { parseGlassTopLevelNodesNext, reconstructDocFromNodes } from './parseGlassTopLevelNodesNext'
-import { replaceLiterals, restoreLiterals } from './replaceLiterals'
 describe('parseGlassTopLevelJsxElements', () => {
   it('should parse glass document', () => {
     const mdx = `Hello world this is a document.
@@ -249,6 +249,14 @@ hello
     expect(parseGlassTopLevelJsxElements(mdx)).to.have.length(1)
   })
 
+  it('should succeed wehn there is a JSX element with attribute and no value', () => {
+    expect(() =>
+      parseGlassTopLevelJsxElements(`<System foo>
+asdofin
+</System>`)
+    ).to.not.throw('')
+  })
+
   it('shoudl parse python output', () => {
     const doc = `import requests from "requests"
 
@@ -257,7 +265,7 @@ response = requests.get("https://elliottburris.com")
 <System>
 your job is to answer questions based on the following website code:
 ###
-<Literal>
+<Text escapeHtml>
 <html lang="en">
 <head>
         <meta charset="UTF-8">
@@ -295,7 +303,7 @@ your job is to answer questions based on the following website code:
 </body>
 
 </html>
-</Literal>
+</Text>
 ###
 </System>
 
@@ -323,11 +331,11 @@ what is elliott's last name?
 
 </Request>`
 
-    const replaced = replaceLiterals(doc)
+    const replaced = removeEscapedHtml(doc)
 
     const parsed = parseGlassTopLevelNodesNext(replaced.output)
 
     const reconstructed = reconstructDocFromNodes(parsed, replaced.output)
-    expect(restoreLiterals(reconstructed, replaced.replacements)).to.equal(doc)
+    expect(restoreEscapedHtml(reconstructed, replaced.replacements)).to.equal(doc)
   })
 })

@@ -1,12 +1,12 @@
 import { JSXNode } from './ast'
+import { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
 import { getJSXNodeInsidesString, getJSXNodeString } from './jsxElementNode'
 import { parseGlassTopLevelNodes } from './parseGlassTopLevelNodes'
 import { addNodeToDocument, parseGlassTopLevelNodesNext, replaceDocumentNode } from './parseGlassTopLevelNodesNext'
-import { replaceLiterals, restoreLiterals } from './replaceLiterals'
 
 export function transformGlassDocument(initDocument: string, interpolatedDocument: string) {
-  const initWithoutLiterals = replaceLiterals(initDocument)
-  const interpWithoutLiterals = replaceLiterals(interpolatedDocument)
+  const initWithoutLiterals = removeEscapedHtml(initDocument)
+  const interpWithoutLiterals = removeEscapedHtml(interpolatedDocument)
 
   initDocument = initWithoutLiterals.output
   interpolatedDocument = initWithoutLiterals.output
@@ -62,13 +62,13 @@ export function transformGlassDocument(initDocument: string, interpolatedDocumen
   }
 
   return {
-    transformedInit: restoreLiterals(transformedInit, initWithoutLiterals.replacements),
-    transformedInterp: restoreLiterals(transformedInterp, interpWithoutLiterals.replacements),
+    transformedInit: restoreEscapedHtml(transformedInit, initWithoutLiterals.replacements),
+    transformedInterp: restoreEscapedHtml(transformedInterp, interpWithoutLiterals.replacements),
   }
 }
 
 export function replaceStateNode(newStateNode: string, doc: string) {
-  const docWithoutLiterals = replaceLiterals(doc)
+  const docWithoutLiterals = removeEscapedHtml(doc)
   doc = docWithoutLiterals.output
 
   const parsed = parseGlassTopLevelNodesNext(doc)
@@ -91,11 +91,11 @@ export function replaceStateNode(newStateNode: string, doc: string) {
 
   const stateIndex = parsed.indexOf(stateNode)
   const newDoc = replaceDocumentNode(newStateNode, stateIndex, doc)
-  return restoreLiterals(newDoc, docWithoutLiterals.replacements)
+  return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
 }
 
 export function replaceRequestNode(newRequestNode: string, doc: string) {
-  const docWithoutLiterals = replaceLiterals(doc)
+  const docWithoutLiterals = removeEscapedHtml(doc)
   doc = docWithoutLiterals.output
 
   const parsed = parseGlassTopLevelNodesNext(doc)
@@ -107,5 +107,5 @@ export function replaceRequestNode(newRequestNode: string, doc: string) {
 
   const stateIndex = parsed.indexOf(requestNode)
   const newDoc = replaceDocumentNode(newRequestNode, stateIndex, doc)
-  return restoreLiterals(newDoc, docWithoutLiterals.replacements)
+  return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
 }

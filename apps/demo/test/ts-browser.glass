@@ -10,9 +10,9 @@ const website = await res.text()
 <System>
 your job is to answer questions based on the following website code:
 ###
-<Literal>
+<Text escapeHtml>
 ${website}
-</Literal>
+</Text>
 ###
 </System>
 

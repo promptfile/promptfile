@@ -39,12 +39,12 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
       diagnostics.push(
         ...systemBlocks.map(tag => {
           const diagnostic: Diagnostic = {
-            severity: DiagnosticSeverity.Error,
+            severity: DiagnosticSeverity.Warning,
             range: {
               start: textDocument.positionAt(tag.position.start.offset),
               end: textDocument.positionAt(tag.position.end.offset),
             },
-            message: `<System> blocks not supported by Anthropic — use <User> or <Assistant> instead.`,
+            message: `<System> blocks not supported by Anthropic — this will get converted to a <User> block.`,
             source: 'glass',
           }
           return diagnostic

@@ -204,6 +204,8 @@ async function runGlassChatAnthropic(
       anthropicQuery += `\n\nAssistant: ${msg.content}`
     } else if (msg.role === 'user') {
       anthropicQuery += `\n\nHuman: ${msg.content}`
+    } else if (msg.role === 'system') {
+      anthropicQuery += `\n\nHuman: ${msg.content}`
     } else {
       throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
     }

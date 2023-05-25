@@ -257,9 +257,9 @@ response = requests.get("https://elliottburris.com")
 <System>
 your job is to answer questions based on the following website code:
 ###
-<Literal>
+<Text escapeHtml>
 \${response.text}
-</Literal>
+</Text>
 ###
 </System>`
 

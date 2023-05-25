@@ -100,6 +100,9 @@ export function glassASTNodeToJSXNode(node: any) {
     if (typeof attr.value === 'string') {
       return { name: attrName, stringValue: attr.value }
     }
+    if (attr.value == null) {
+      return { name: attrName }
+    }
     checkOk(
       attr.value.type === 'mdxJsxAttributeValueExpression',
       `Expected attribute value node type 'mdxJsxAttributeValueExpression', got '${attr.value.type}'`

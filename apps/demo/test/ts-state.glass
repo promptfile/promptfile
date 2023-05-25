@@ -1,3 +1,14 @@
+<State>
+{
+  "profile": {
+    "firstName": "",
+    "lastName": "",
+    "hasChatted": false
+  },
+  "moreState": "foo"
+}
+</State>
+
 const initProfile = { firstName: '', lastName: '', hasChatted: false }
 const [profile, setProfile] = useState(initProfile)
 const [moreState, setMoreState] = useState('')
@@ -12,6 +23,8 @@ You are a helpful assistant.
 How are you?
 </User>
 
+<Loop>
 <Request model="gpt-3.5-turbo" onResponse={({ message }) => {
     setProfile({ hasChatted: true })
 }} />
+</Loop>

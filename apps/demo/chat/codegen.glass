@@ -34,3 +34,5 @@ cool cool, thanks!
 
 what do you know about me?
 </User>
+
+<Request model="claude-instant-v1" />
