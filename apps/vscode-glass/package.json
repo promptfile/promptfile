@@ -79,13 +79,6 @@
         }
       ]
     },
-    "iconThemes": [
-      {
-        "id": "glass-icon-theme",
-        "label": "Glass Icon Theme",
-        "path": "./assets/glass-icon-theme.json"
-      }
-    ],
     "colors": [
       {
         "id": "glass.code.background",
@@ -520,8 +513,8 @@
         ],
         "configuration": "./configurations/language-configuration-ts.json",
         "icon": {
-          "dark": "./images/dark.svg",
-          "light": "./images/light.svg"
+          "light": "./assets/icon-tree.svg",
+          "dark": "./assets/icon-tree.svg"
         }
       },
       {
@@ -532,8 +525,8 @@
         "extensions": [],
         "configuration": "./configurations/language-configuration-ts.json",
         "icon": {
-          "dark": "./images/dark.svg",
-          "light": "./images/light.svg"
+          "light": "./assets/icon-tree.svg",
+          "dark": "./assets/icon-tree.svg"
         }
       },
       {
@@ -544,8 +537,8 @@
         "extensions": [],
         "configuration": "./configurations/language-configuration-py.json",
         "icon": {
-          "dark": "./images/dark.svg",
-          "light": "./images/light.svg"
+          "light": "./assets/icon-tree.svg",
+          "dark": "./assets/icon-tree.svg"
         }
       }
     ]

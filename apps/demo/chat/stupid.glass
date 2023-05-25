@@ -1,0 +1,10 @@
+UserUser
+Hello
+/UserUser
+
+
+AssistantAssistant
+Goodbye
+/AssistantAssistant
+
+Request model="gpt-3.5-turbo" /Requestmodel="gpt-3.5-turbo" /
