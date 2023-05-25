@@ -8,6 +8,8 @@ const res = await fetch("https://elliottburris.com") // first, let's make a requ
 const text = await res.text() // next, let's get the html from that request
 const blah = "hi"
 
+setNumMessages(numMessages + 1)
+
 <System>
 You are PirateGPT. Act like a pirate.
 </System>
@@ -15,7 +17,5 @@ You are PirateGPT. Act like a pirate.
 <User>
 hey whats up?
 </User>
-
-setNumMessages(numMessages + 1)
 
 <Request model="gpt-3.5-turbo" />

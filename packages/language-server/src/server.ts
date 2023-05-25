@@ -14,12 +14,10 @@ import {
   createConnection,
 } from 'vscode-languageserver/node'
 import { generateCompletions } from './completions'
-import { findAnthropicDiagnostics } from './diagnostics/findAnthropicDiagnostics'
 import { findEmptyBlocks } from './diagnostics/findEmptyBlocks'
 import { findFrontmatterDiagnostics } from './diagnostics/findFrontmatterDiagnostics'
 import { findInvalidAttributes } from './diagnostics/findInvalidAttributes'
-import { findInvalidPromptBlocks } from './diagnostics/findInvalidPromptBlocks'
-import { findMultiplePromptBlocks } from './diagnostics/findMultiplePromptBlocks'
+import { findModelDiagnostics } from './diagnostics/findModelDiagnostics'
 import { findUnmatchedTags } from './diagnostics/findUnmatchedTags'
 import { findUnsupportedTags } from './diagnostics/findUnsupportedTags'
 import { findFoldableTagPairs, findMarkdownFoldingRanges } from './folding'
@@ -95,10 +93,8 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     ...findUnmatchedTags(textDocument),
     ...findUnsupportedTags(textDocument),
     ...findInvalidAttributes(textDocument),
-    ...findMultiplePromptBlocks(textDocument),
-    ...findInvalidPromptBlocks(textDocument),
+    ...findModelDiagnostics(textDocument),
     ...findEmptyBlocks(textDocument),
-    ...findAnthropicDiagnostics(textDocument),
     ...findFrontmatterDiagnostics(textDocument),
   ]
 
@@ -116,7 +112,7 @@ connection.onCompletion((textDocumentPosition: TextDocumentPositionParams): Comp
     return []
   }
 
-  return generateCompletions(document, textDocumentPosition)
+  return generateCompletions(document, textDocumentPosition) as CompletionItem[]
 })
 
 connection.onFoldingRanges(params => {
