@@ -5,3 +5,5 @@ You are a helpful assistant.
 
 ${userText}
 </System>
+
+<Request model="gpt-3.5-turbo" />

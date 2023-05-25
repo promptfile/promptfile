@@ -1,10 +1,8 @@
-<Code>
 const initProfile = { firstName: '', lastName: '', hasChatted: false }
 const [profile, setProfile] = useState(initProfile)
 const [moreState, setMoreState] = useState('')
 
 setMoreState('foo')
-</Code>
 
 <Assistant>
 You are a helpful assistant.
