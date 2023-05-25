@@ -52,7 +52,7 @@ connection.onInitialize((params: InitializeParams) => {
       textDocumentSync: TextDocumentSyncKind.Incremental,
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: ['<'],
+        triggerCharacters: ['<', ' ', '"', '='],
       },
       foldingRangeProvider: true,
       documentFormattingProvider: true,

@@ -9,8 +9,5 @@ setNumMessages(numMessages + 1)
 You are PirateGPT. Act like a pirate.
 </User>
 
-// make the request
-
-
 
 <Request model="gpt-3.5-turbo" />
