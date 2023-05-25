@@ -1,5 +1,47 @@
+<System>
+Respond to the user with fenced python.  Always include the language in the fencing
+</System>
+
 <User>
-hi! can you remember that my name is Elliott
+Can you write code to get the weather by a zipcode?
 </User>
 
-<Request model="claude-instant-v1" />
+<Assistant>
+Sure! Here is an example code in Python using the OpenWeatherMap API:
+
+```python
+import requests
+
+# API base URL
+base_url = "https://api.openweathermap.org/data/2.5/weather"
+
+# API key
+api_key = "yourapikey"
+
+# User input: ZIP code
+zip_code = input("Enter a ZIP code: ")
+
+# API call with parameters
+params = {
+    "zip": f"{zip_code},us",
+    "appid": api_key,
+    "units": "imperial"
+}
+response = requests.get(base_url, params=params)
+
+# Data extraction
+if response.status_code == 200:
+ data = response.json()
+    
+    # Print weather report
+    weather_desc = data["weather"][0]["description"]
+    temperature = data["main"]["temp"]
+    print(f"Current weather in {zip_code}: {weather_desc}, {temperature} F")
+else:
+    print("Error: Failed to weather data")
+```
+
+Please replace "yourapikey" with your actual OpenWeatherMap API key. You can sign up for a free API key on their website. This code will prompt the user to enter a ZIP code, and it will retrieve the current weather report for that location.
+</Assistant>
+
+<Request model="gpt-3.5-turbo" />

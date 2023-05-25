@@ -197,6 +197,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       let firstLoad = true
       let cancelled = false
+      let prevResponse = '█'
       try {
         const resp = await executeGlassFile(
           activeEditor.document,
@@ -222,33 +223,31 @@ export async function activate(context: vscode.ExtensionContext) {
             }
             if (!currentText.includes('█') && !firstLoad) {
               cancelled = true
+              return
             }
 
-            if (cancelled) {
+            if (cancelled || !rawResponse) {
               return
             }
 
             const lines = activeEditor.document.getText().split('\n')
             const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
-            const blockCharacterLine = lines[blockCharacterLineIndex]
-            // find the line of the <Assistant> tag that was before the blockCharacterLine
-            let startAssistantIndex = blockCharacterLineIndex
-            for (let i = blockCharacterLineIndex; i >= 0; i--) {
-              if (lines[i].includes('<Assistant>')) {
-                startAssistantIndex = i
-                break
-              }
+
+            // Check if prevResponse is still a prefix of rawResponse
+            if (!rawResponse.startsWith(prevResponse)) {
+              // If not, there might have been a missed chunk. Reset prevResponse.
+              prevResponse = ''
             }
 
-            // Replace the entire range between "<Assistant>" and "</Assistant>"
+            const newResponse = rawResponse.substring(prevResponse.length)
+            prevResponse = rawResponse
+
             void activeEditor.edit(editBuilder => {
-              editBuilder.replace(
-                new vscode.Range(
-                  new vscode.Position(startAssistantIndex + 1, 0),
-                  new vscode.Position(blockCharacterLineIndex, blockCharacterLine.length)
-                ),
-                `${rawResponse}█`
+              const endPosition = new vscode.Position(
+                blockCharacterLineIndex,
+                lines[blockCharacterLineIndex].indexOf('█')
               )
+              editBuilder.insert(endPosition, `${newResponse}`)
             })
           }
         )
