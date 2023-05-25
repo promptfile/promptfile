@@ -5,7 +5,8 @@ import { transformGlassDocumentToTemplateStringPython } from './transformGlassDo
 export function transformDynamicBlocksPython(doc: string) {
   const jsxNodes = glasslib.parseGlassTopLevelJsxElements(doc)
 
-  let jsxInterpolations: any = {}
+  const jsxInterpolations: any = {}
+  let nestedInterpolations: any = {}
 
   let currOffset = 0
 
@@ -31,9 +32,11 @@ export function transformDynamicBlocksPython(doc: string) {
             node.children[node.children.length - 1].position.end.offset - nodeStartOffset
           )
 
-    const transformedNode = nestedTagHelper(Object.keys(jsxInterpolations).length, docSection, node)
+    const transformedNode = nestedTagHelper(Object.keys(nestedInterpolations).length, docSection, node)
+    nestedInterpolations = { ...nestedInterpolations, ...transformedNode.jsxInterpolations }
+
     if (node.tagName !== 'For') {
-      jsxInterpolations = { ...jsxInterpolations, ...transformedNode.jsxInterpolations }
+      // jsxInterpolations = { ...jsxInterpolations, ...transformedNode.jsxInterpolations }
     }
     for (const s of transformedNode.undeclaredSymbols) {
       undeclaredSymbols.add(s)
@@ -118,7 +121,7 @@ export function transformDynamicBlocksPython(doc: string) {
   }
 
   undeclaredSymbols.delete('GLASSVAR')
-  return { doc, jsxInterpolations, undeclaredSymbols: Array.from(undeclaredSymbols) }
+  return { doc, jsxInterpolations, nestedInterpolations, undeclaredSymbols: Array.from(undeclaredSymbols) }
 }
 
 function nestedTagHelper(currInterpolation: number, doc: string, docNode: glasslib.JSXNode) {

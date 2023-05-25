@@ -1,7 +1,5 @@
-<Code>
 const useMe = true
 const subject = "Einstein"
-</Code>
 
 <System>
 You are a helpful assistant.
@@ -18,3 +16,5 @@ Who was ${subject}?
 <User if="false">
 Who was gandhi?
 </User>
+
+<Request model="gpt-3.5-turbo" />

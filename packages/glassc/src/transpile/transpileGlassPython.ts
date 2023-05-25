@@ -34,15 +34,6 @@ export function transpileGlassFilePython(
 
   const toplevelNodes = glasslib.parseGlassTopLevelJsxElements(originalDoc)
 
-  // first, parse the document blocks to make sure the document is valid
-  // this will also tell us if there are any special (e.g. <Code>) blocks that should appear unmodified in the final output
-  const blocks = glasslib.parseGlassBlocks(doc)
-  // if (blocks.length === 0) {
-  //   throw new Error(`No blocks found in ${fileName}.${extension}, did you mean to add a <Prompt> block?`)
-  // }
-
-  const codeBlocks = blocks.filter(b => b.tag === 'Code')
-
   // remove all block comments before any processing happens
   doc = glasslib.removeGlassComments(doc)
   const functionName = camelcase(fileName)
@@ -115,8 +106,18 @@ export function transpileGlassFilePython(
     finalDoc = finalDoc.replace(match[0], '{}')
   }
 
-  const codeSanitizedDoc = finalDoc
-  const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }
+  // const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }
+  const codeInterpolationMap: any = {}
+  for (const key of Object.keys(dynamicTransform.jsxInterpolations)) {
+    let interpSequence = dynamicTransform.jsxInterpolations[key]
+    for (const nestedKey of Object.keys(dynamicTransform.nestedInterpolations)) {
+      // replace all instances of `GLASSVAR[${nestedKey}]` with the corresponding value from the nested interpolation sequences
+      const nestedInterpSequence = dynamicTransform.nestedInterpolations[nestedKey]
+      interpSequence = interpSequence.replaceAll(`GLASSVAR[${nestedKey}]`, nestedInterpSequence)
+    }
+
+    codeInterpolationMap[key] = interpSequence
+  }
 
   // iterate over all the jsxExpressions (values inside `{ }`) and replace them with a number if they're supposed to be treated like code (values inside `${ }`)
 
@@ -146,15 +147,12 @@ export function transpileGlassFilePython(
 
   const undeclaredSymbols = new Set(dynamicTransform.undeclaredSymbols)
   // parse the code blocks to remove undeclared symbols
-  for (const codeBlock of codeBlocks) {
-    const localVars = parsePythonLocalVariables(codeBlock.content)
-    for (const localVar of localVars) {
-      undeclaredSymbols.delete(localVar)
-    }
-    const undeclaredVars = parsePythonUndeclaredSymbols(codeBlock.content)
-    for (const undeclaredVar of undeclaredVars) {
-      undeclaredSymbols.add(undeclaredVar)
-    }
+  const localVars = parsePythonLocalVariables(toplevelCode)
+  for (const localVar of localVars) {
+    undeclaredSymbols.delete(localVar)
+  }
+  for (const undeclaredVar of parsePythonUndeclaredSymbols(toplevelCode)) {
+    undeclaredSymbols.add(undeclaredVar)
   }
 
   // if any imports match "import .+ from .+", translate them to "from .+ import .+"
@@ -199,7 +197,7 @@ def ${exportName}():
         return {}
 ${'    '}
     def compile(opt = { "args": {} }):
-${indentLines(codeStart, 8)}
+${indentLines(codeStart.trim(), 8)}
         ${glassvar}
         return {
             "fileName": "${fileName}",

@@ -68,6 +68,7 @@ export async function runGlass(
   // (content)
   // </User>
 
+  // eslint-disable-next-line prefer-const
   let { transformedInit, transformedInterp } = transformGlassDocument(originalDoc, interpolatedDoc)
 
   const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
@@ -127,6 +128,14 @@ async function runGlassChat(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
+  console.log('interpolated doc is')
+  console.log('')
+  console.log('')
+  console.log('')
+  console.log(docs.interpolatedDoc)
+  console.log('')
+  console.log('')
+  console.log('')
   const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
 
   console.log('RUNNINGGGG')

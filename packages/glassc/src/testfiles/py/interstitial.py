@@ -3,8 +3,6 @@ def getInterstitialPrompt():
         return {}
     
     def compile(opt = { "args": {} }):
-        foo = opt["args"]["foo"]
-        
         foo = "bar"
         
         

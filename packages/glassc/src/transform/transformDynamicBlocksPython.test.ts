@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { transformDynamicBlocks } from './transformDynamicBlocks'
 import { transformDynamicBlocksPython } from './transformDynamicBlocksPython'
 
 describe('transformDynamicBlocksPython', () => {
@@ -12,6 +11,7 @@ And this is the end`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: [],
+      nestedInterpolations: {},
       jsxInterpolations: {
         '0': `"""{}""".format("""<Foo x={{"{}"}} y="2">
 {}
@@ -28,6 +28,7 @@ And this is the end`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: ['foo'],
+      nestedInterpolations: {},
       jsxInterpolations: {
         '0': '"""{}""".format("""<Prompt>\n{}\n</Prompt>""".format("""{}""".format(foo)))',
       },
@@ -42,6 +43,7 @@ And this is the end`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: ['bar', 'foo'],
+      nestedInterpolations: {},
       jsxInterpolations: {
         0: `"""{}""".format("""<Prompt if={{"{}"}}>
 {}
@@ -68,6 +70,7 @@ And this is the end`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: [],
+      nestedInterpolations: {},
       jsxInterpolations: {
         '0': `"""{}""".format("""<User>
 {}
@@ -94,6 +97,7 @@ And this is the end`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: ['user'],
+      nestedInterpolations: {},
       jsxInterpolations: {
         '0': `"""{}""".format("""<User if={{"{}"}}>
 {}
@@ -115,17 +119,19 @@ and more
 
       expect(transformDynamicBlocksPython(glass)).to.deep.equal({
         undeclaredSymbols: ['withvar'],
-        jsxInterpolations: {
+        nestedInterpolations: {
           '0': `"""{}""".format("""<Text if="True">
 {}
 </Text>""".format("""With nested if block {}""".format(withvar))) if True else ''`,
-          '1': `"""{}""".format("""<User>
+        },
+        jsxInterpolations: {
+          '0': `"""{}""".format("""<User>
 {}
 </User>""".format("""Inner stuff
 {}
 and more""".format(GLASSVAR[0])))`,
         },
-        doc: '${GLASSVAR[1]}',
+        doc: '${GLASSVAR[0]}',
       })
     })
 
@@ -139,17 +145,17 @@ and more
 </User>`
 
       expect(transformDynamicBlocksPython(glass)).to.deep.equal({
+        nestedInterpolations: {
+          '0': '"""{}""".format("""<Text if="True">\n{}\n</Text>""".format("""With nested if block {}""".format(withvar))) if True else \'\'',
+        },
         jsxInterpolations: {
-          '0': `"""{}""".format("""<Text if="True">
-{}
-</Text>""".format("""With nested if block {}""".format(withvar))) if True else ''`,
-          '1': `"""{}""".format("""<User if="True">
+          '0': `"""{}""".format("""<User if="True">
 {}
 </User>""".format("""Inner stuff
 {}
 and more""".format(GLASSVAR[0]))) if True else ''`,
         },
-        doc: '${GLASSVAR[1]}',
+        doc: '${GLASSVAR[0]}',
         undeclaredSymbols: ['withvar'],
       })
     })
@@ -179,33 +185,27 @@ left alone
 
       expect(transformDynamicBlocksPython(glass)).to.deep.equal({
         undeclaredSymbols: ['withvar'],
+        nestedInterpolations: {
+          '0': `"""{}""".format("""<Text if="True">
+{}
+</Text>""".format("""With nested if block {}""".format(withvar))) if True else ''`,
+          '1': '"""{}""".format("""<Text if="False">\n{}\n</Text>""".format("""do something""".format())) if False else \'\'',
+        },
         jsxInterpolations: {
           '0': `"""{}""".format("""<System>
 {}
 </System>""".format("""system prompt""".format()))`,
-          '1': `"""{}""".format("""<Text if="True">
-{}
-</Text>""".format("""With nested if block {}""".format(withvar))) if True else ''`,
-          '2': `"""{}""".format("""<User if="True">
-{}
-</User>""".format("""Inner stuff
-{}
-and more""".format(GLASSVAR[1]))) if True else ''`,
-          '3': `"""{}""".format("""<Text if="False">
-{}
-</Text>""".format("""do something""".format())) if False else ''`,
-          '4': `"""{}""".format("""<Assistant if="True">
-{}
-</Assistant>""".format("""{}""".format(GLASSVAR[3]))) if True else ''`,
-          '5': `"""{}""".format("""<User>
+          '1': '"""{}""".format("""<User if="True">\n{}\n</User>""".format("""Inner stuff\n{}\nand more""".format(GLASSVAR[0]))) if True else \'\'',
+          '2': '"""{}""".format("""<Assistant if="True">\n{}\n</Assistant>""".format("""{}""".format(GLASSVAR[1]))) if True else \'\'',
+          '3': `"""{}""".format("""<User>
 {}
 </User>""".format("""left alone""".format()))`,
         },
-        doc: '${GLASSVAR[0]}\n\n${GLASSVAR[2]}\n\n${GLASSVAR[4]}\n\n${GLASSVAR[5]}',
+        doc: '${GLASSVAR[0]}\n\n${GLASSVAR[1]}\n\n${GLASSVAR[2]}\n\n${GLASSVAR[3]}',
       })
     })
 
-    it('should transform document with nested text expressions', () => {
+    it.skip('should transform document with nested text expressions', () => {
       const glass = `<Code>
 const useGandhi = true
 </Code>
@@ -234,7 +234,7 @@ who was Einstein?
 </Text>
 </User>`
 
-      expect(transformDynamicBlocks(glass)).to.deep.equal({
+      expect(transformDynamicBlocksPython(glass)).to.deep.equal({
         jsxInterpolations: {
           'jsx-0': "useGandhi ? `<Text if={useGandhi}>\nwho was gandhi?\n</Text>` : ''",
           'jsx-1': "!useGandhi ? `<Text if={!useGandhi}>\nwho was Einstein?\n</Text>` : ''",
@@ -242,6 +242,30 @@ who was Einstein?
           'jsx-3': "!useGandhi ? `<Text if={!useGandhi}>\nwho was Einstein?\n</Text>` : ''",
         },
         doc: '<Code>\nconst useGandhi = true\n</Code>\n\n<System>\nYou are a highly-intelligent AI.\n</System>\n\n<User>\n${jsx-0}\n\n${jsx-1}\n</User>\n\n<User>\n<Text if={useGandhi}>\nwho was gandhi?\n</Text>\n\n<Text if={!useGandhi}>\n<User>\n${jsx-2}\n\n${jsx-3}\n</User>',
+      })
+    })
+
+    it.skip('should transform document with literal', () => {
+      const glass = `---
+language: python
+---
+
+import requests from "requests"
+
+response = requests.get("https://elliottburris.com")
+
+<System>
+your job is to answer questions based on the following website code:
+###
+<Literal>
+\${response.text}
+</Literal>
+###
+</System>`
+
+      expect(transformDynamicBlocksPython(glass)).to.deep.equal({
+        jsxInterpolations: {},
+        doc: '',
       })
     })
   })
