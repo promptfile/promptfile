@@ -130,7 +130,34 @@
       },
       "patterns": [
         {
-          "include": "#markdown-sections"
+          "include": "#request-element"
+        },
+        {
+          "include": "#prompt-element"
+        },
+        {
+          "include": "#test-element"
+        },
+        {
+          "include": "#state-element"
+        },
+        {
+          "include": "#text-element"
+        },
+        {
+          "include": "#user-element"
+        },
+        {
+          "include": "#assistant-element"
+        },
+        {
+          "include": "#system-element"
+        },
+        {
+          "include": "#for-element"
+        },
+        {
+          "include": "source.python"
         }
       ],
       "end": "(<\\/)(Loop)(>)",
