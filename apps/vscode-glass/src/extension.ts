@@ -108,11 +108,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       try {
         let parsed: any[] = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        let generatedTags = parsed.filter(
-          tag =>
-            tag.tagName === 'State' ||
-            (['User', 'Assistant'].includes(tag.tagName) && tag.attrs.some((attr: any) => attr.name === 'generated'))
-        )
+        const generatedTags = parsed.filter(tag => tag.tagName === 'State')
         while (generatedTags.length > 0) {
           const tag = generatedTags[0]
           await activeEditor.edit(editBuilder => {
@@ -124,10 +120,6 @@ export async function activate(context: vscode.ExtensionContext) {
             )
           })
           parsed = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-          generatedTags = parsed.filter(
-            tag =>
-              ['User', 'Assistant'].includes(tag.tagName) && tag.attrs.some((attr: any) => attr.name === 'generated')
-          )
         }
       } catch {
         await vscode.window.showErrorMessage('Unable to parse this Glass file')
@@ -239,10 +231,10 @@ export async function activate(context: vscode.ExtensionContext) {
             const lines = activeEditor.document.getText().split('\n')
             const blockCharacterLineIndex = lines.findIndex(line => line.includes('█'))
             const blockCharacterLine = lines[blockCharacterLineIndex]
-            // find the line of the <Assistant generated={true}> tag that was before the blockCharacterLine
+            // find the line of the <Assistant> tag that was before the blockCharacterLine
             let startAssistantIndex = blockCharacterLineIndex
             for (let i = blockCharacterLineIndex; i >= 0; i--) {
-              if (lines[i].includes('<Assistant generated={true}>')) {
+              if (lines[i].includes('<Assistant>')) {
                 startAssistantIndex = i
                 break
               }

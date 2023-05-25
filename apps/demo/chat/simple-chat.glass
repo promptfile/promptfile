@@ -1,32 +1,5 @@
-<State>
-{
-  "numMessages": 3,
-  "lastMessage": ""
-}
-</State>
-
-const [numMessages, setNumMessages] = useState(0)
-const [lastMessage, setLastMessage] = useState('')
-
-const res = await fetch("https://elliottburris.com") // first, let's make a request to load some data
-const text = await res.text() // next, let's get the html from that request
-setNumMessages(numMessages + 1)
-
-
-
-<System>
-You are PirateGPT. Act like a pirate.
-
-Here's the user you're talking to:
-
-###
-${text}
-###
-</System>
-
 <User>
-How are you?
+hi! can you remember that my name is Elliott
 </User>
 
-
-<Request model="gpt-3.5-turbo" />
+<Request model="claude-instant-v1" />

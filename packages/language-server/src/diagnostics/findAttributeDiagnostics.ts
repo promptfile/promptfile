@@ -3,7 +3,7 @@ import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from '../elements'
 
-export function findInvalidAttributes(textDocument: TextDocument): Diagnostic[] {
+export function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed: any[] = parseGlassTopLevelJsxElements(textDocument.getText())
     const invalidAttributes: { type: string; tag: any; attribute: string }[] = []

@@ -14,9 +14,9 @@ import {
   createConnection,
 } from 'vscode-languageserver/node'
 import { generateCompletions } from './completions'
+import { findAttributeDiagnostics } from './diagnostics/findAttributeDiagnostics'
 import { findEmptyBlocks } from './diagnostics/findEmptyBlocks'
 import { findFrontmatterDiagnostics } from './diagnostics/findFrontmatterDiagnostics'
-import { findInvalidAttributes } from './diagnostics/findInvalidAttributes'
 import { findModelDiagnostics } from './diagnostics/findModelDiagnostics'
 import { findUnmatchedTags } from './diagnostics/findUnmatchedTags'
 import { findUnsupportedTags } from './diagnostics/findUnsupportedTags'
@@ -92,7 +92,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   const diagnostics: Diagnostic[] = [
     ...findUnmatchedTags(textDocument),
     ...findUnsupportedTags(textDocument),
-    ...findInvalidAttributes(textDocument),
+    ...findAttributeDiagnostics(textDocument),
     ...findModelDiagnostics(textDocument),
     ...findEmptyBlocks(textDocument),
     ...findFrontmatterDiagnostics(textDocument),

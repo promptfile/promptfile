@@ -125,7 +125,7 @@ export async function runGlass(
 }
 
 const generateCompletionFragment = (message: string, streaming: boolean, model: string, newRequestNode: string) => {
-  return `<Assistant generated={true}>
+  return `<Assistant>
 ${message}${streaming ? '█' : ''}
 </Assistant>
 
