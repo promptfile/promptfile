@@ -16,34 +16,14 @@ export function formatDocument(text: string) {
   }
   const lines = text.split('\n')
   const formattedLines: string[] = []
-  let insertEmptyLine = false
 
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index]
-    const isClosingTag = line.match(/^<\/(Block|User|System|Assistant|Prompt|State|Request)/)
-    const isOpeningTag = line.match(/^<(Block|User|System|Assistant|Prompt|State|Request)/)
-
-    if (isOpeningTag && insertEmptyLine) {
-      if (formattedLines[formattedLines.length - 1].trim() !== '') {
-        formattedLines.push('')
-      }
-      insertEmptyLine = false
-    }
 
     formattedLines.push(line)
-
-    if (isClosingTag) {
-      insertEmptyLine = true
-    }
   }
 
-  // Remove consecutive empty lines
-  const cleanedLines = formattedLines.filter((line, index) => {
-    if (index === 0 || index === formattedLines.length - 1) return true
-    return !(line.trim() === '' && formattedLines[index - 1].trim() === '')
-  })
-
-  let finalText = cleanedLines.join('\n').trim()
+  let finalText = formattedLines.join('\n').trim()
   const tags = nonSelfClosingTags.map(e => e.name)
   tags.forEach(tag => {
     const regexOpen = new RegExp(`<\\s+${tag}`, 'g')
