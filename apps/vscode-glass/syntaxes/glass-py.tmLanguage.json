@@ -288,6 +288,10 @@
         }
       }
     },
+    "line-comments": {
+      "name": "source.glass.highlight",
+      "match": "^//.*$"
+    },
     "transcript-speaker": {
       "patterns": [
         {
@@ -396,6 +400,9 @@
     },
     "markdown-sections": {
       "patterns": [
+        {
+          "include": "#line-comments"
+        },
         {
           "include": "#transcript-speaker"
         },
