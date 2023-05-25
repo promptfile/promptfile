@@ -44,6 +44,13 @@ export const glassElements: GlassElement[] = [
         optional: true,
       },
       {
+        name: 'generated',
+        detail: 'whether the Assistant block is generated',
+        documentation: 'The `generated` attribute allows you to assign a generated flag to an assistant.',
+        type: 'boolean',
+        optional: true,
+      },
+      {
         name: 'if',
         detail: 'conditional expression',
         documentation: 'The `if` attribute allows you to conditionally render an Assistant block.',

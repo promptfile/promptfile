@@ -78,20 +78,22 @@ export async function runGlass(
     newRequestNode = getJSXNodeShellString(requestNode, originalDoc)
   }
 
-  originalDoc = originalDoc.replace(newRequestNode, '')
-
+  const existingFrontmatter = /---\n?([\s\S]*?)\n?---/.exec(originalDoc)?.[1] ?? ''
+  const newFrontmatter = existingFrontmatter.length > 0 ? `---\n${existingFrontmatter}\n---` : ''
+  originalDoc = originalDoc.replace(newRequestNode, '').replace(newFrontmatter, '').trim()
   const stateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
   const stateBlockRegex = /<State>.+<\/State>/gs
+  originalDoc
   if (Object.keys(state).length > 0) {
     if (stateBlockRegex.test(originalDoc)) {
       originalDoc = originalDoc.replace(stateBlockRegex, stateBlock)
     } else {
-      originalDoc = `${stateBlock}\n\n${originalDoc}`
+      originalDoc = `${newFrontmatter}\n\n${stateBlock}\n\n${originalDoc}`.trim()
     }
     if (stateBlockRegex.test(interpolatedDoc)) {
       interpolatedDoc = interpolatedDoc.replace(stateBlockRegex, stateBlock)
     } else {
-      interpolatedDoc = `${stateBlock}\n\n${interpolatedDoc}`
+      interpolatedDoc = `${newFrontmatter}\n\n${stateBlock}\n\n${interpolatedDoc}`.trim()
     }
   }
 
@@ -123,7 +125,7 @@ export async function runGlass(
 }
 
 const generateCompletionFragment = (message: string, streaming: boolean, model: string, newRequestNode: string) => {
-  return `<Assistant>
+  return `<Assistant generated={true}>
 ${message}${streaming ? '█' : ''}
 </Assistant>
 
