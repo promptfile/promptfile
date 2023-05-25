@@ -1,7 +1,11 @@
+import { glassElements } from './elements'
+
 export function findFoldableTagPairs(
   text: string
 ): { tag: string; start: number; end: number; closingStart: number }[] {
-  const tagPattern = /<(\/?)(User|System|Assistant|Prompt|For|Args|Block|Text|State).*?>/g
+  const tags = glassElements.map(e => e.name)
+  const tagPatternString = `<(\/?)(${tags.join('|')}).*?>`
+  const tagPattern = new RegExp(tagPatternString, 'g')
   const tagStack: { tag: string; start: number }[] = []
   const tagPairs: { tag: string; start: number; end: number; closingStart: number }[] = []
 
@@ -30,12 +34,17 @@ export function findFoldableTagPairs(
 
 export function findMarkdownFoldingRanges(text: string): { tag: string; start: number; end: number }[] {
   const codeBlockPattern = /```[^`]*```/gms // Matches code blocks
+  const frontmatterPattern = /---[^]*?---/gms // Matches frontmatter blocks
 
   const ranges: { tag: string; start: number; end: number }[] = []
 
   let match
   while ((match = codeBlockPattern.exec(text))) {
     ranges.push({ tag: 'markdown', start: match.index, end: codeBlockPattern.lastIndex })
+  }
+
+  while ((match = frontmatterPattern.exec(text))) {
+    ranges.push({ tag: 'frontmatter', start: match.index, end: frontmatterPattern.lastIndex })
   }
 
   // Split the text into lines for processing headers
