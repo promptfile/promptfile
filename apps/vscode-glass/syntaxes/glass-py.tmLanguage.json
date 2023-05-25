@@ -34,6 +34,9 @@
       "include": "#for-element"
     },
     {
+      "include": "#loop-element"
+    },
+    {
       "include": "source.python"
     }
   ],
@@ -106,6 +109,37 @@
         },
         "2": {
           "name": "source.glass.prompt.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "loop-element": {
+      "begin": "(<)(Loop)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.loop.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#markdown-sections"
+        }
+      ],
+      "end": "(<\\/)(Loop)(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.loop.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
