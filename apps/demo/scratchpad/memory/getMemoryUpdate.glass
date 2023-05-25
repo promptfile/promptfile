@@ -2,12 +2,10 @@
 language: typescript
 ---
 
-<Code>
 const handleResponse = (response: any) => {
     // do some json validation and return valid json
     return {}
 }
-</Code>
 
 <System>
 Read the Message provided by the user.  First, determine whether the User agreed to remember information based on the conversation.  If the User did agree to remember information, return the updated Profile as fenced JSON with the addition of the new infromation provided by the user.

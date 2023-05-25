@@ -1,13 +1,3 @@
----
-language: python
-args:
-  -- let you declare documentation for your arguments as comments
-  input: string
-  -- asdfnasdf
-  -- askjfnaskdjfn
-  output: string
----
-
 <Test>
 const input = "Murder on the orient express"
 </Test>
@@ -20,7 +10,9 @@ const website = await res.text()
 <System>
 your job is to answer questions based on the following website code:
 ###
+<Literal>
 ${website}
+</Literal>
 ###
 </System>
 

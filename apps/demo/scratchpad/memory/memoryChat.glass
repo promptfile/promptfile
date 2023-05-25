@@ -4,7 +4,6 @@ language: typescript
 
 import getMemoryUpdate from './getMemoryUpdate.glass'
 
-<Code>
 const [profile, setProfile] = useState({})
 
 const handleResponse = (response: any) => {
@@ -16,7 +15,6 @@ const handleResponse = (response: any) => {
         setProfile(updatedProfile)
     }
 }
-</Code>
 
 <System>
 You are ChatGPT. You exist to interact with the User.  Here is the User's profile:
