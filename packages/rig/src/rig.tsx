@@ -6,7 +6,7 @@ import { TopperView } from './TopperView'
 
 export interface GlassBlock {
   content: string
-  role: 'user' | 'assistant' | 'system'
+  tag: 'User' | 'Assistant' | 'System'
 }
 
 export interface RigState {
@@ -20,21 +20,23 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const initialBlocks: GlassBlock[] = [
-    {
-      role: 'assistant',
-      content: 'Welcome to Glass support. How can I help you today?',
-    },
-  ]
-  const [blocks, setBlocks] = useState<GlassBlock[]>(initialBlocks)
+  const [filename, setFilename] = useState('')
+  const [blocks, setBlocks] = useState<GlassBlock[]>([])
 
   // register a callback for when the extension sends a message
   useEffect(() => {
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
       switch (message.action) {
-        case 'setBlocks':
-          setBlocks(() => message.data.blocks)
+        case 'setData':
+          const newFilename = message.data.filename
+          if (newFilename && newFilename.includes('.glass')) {
+            setFilename(() => newFilename.replace('.glass', ''))
+          }
+          const newBlocks = message.data.blocks
+          if (newBlocks != null) {
+            setBlocks(() => newBlocks)
+          }
         default:
           break
       }
@@ -46,13 +48,18 @@ function RigView() {
     }
   }, [])
 
+  useEffect(() => {
+    vscode.postMessage({
+      action: 'getData',
+    })
+  }, [])
+
   const reset = () => {
-    setBlocks(initialBlocks)
     document.getElementById('composer-input')?.focus()
   }
 
   const send = (text: string) => {
-    setBlocks([...blocks, { content: text, role: 'user' }])
+    console.log('sending: ' + text)
   }
 
   return (
@@ -63,9 +70,10 @@ function RigView() {
         height: '100%',
         width: '100%',
         overflow: 'hidden',
+        justifyContent: 'space-between',
       }}
     >
-      <TopperView reset={reset} />
+      <TopperView filename={filename} reset={reset} />
       <BlocksView blocks={blocks} />
       <ComposerView send={send} />
     </div>

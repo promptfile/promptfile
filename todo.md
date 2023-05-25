@@ -1,0 +1,3 @@
+- document should save state on "run" — if there's an API error, the document should reset back to its original condition
+- open playground command
+- get help / support command should just open a playground with a built-in chatbot

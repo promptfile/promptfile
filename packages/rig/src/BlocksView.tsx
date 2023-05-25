@@ -8,8 +8,6 @@ interface BlocksViewProps {
 export const BlocksView = (props: BlocksViewProps) => {
   const { blocks } = props
 
-  const filteredBlocks = blocks.filter(block => block.role !== 'system')
-
   useEffect(() => {
     const element = document.getElementById(`end`)
     if (element) {
@@ -30,7 +28,7 @@ export const BlocksView = (props: BlocksViewProps) => {
         }}
       >
         <div style={{ width: '100%', height: '16px' }} />
-        {filteredBlocks.map((block, index) => (
+        {blocks.map((block, index) => (
           <span
             key={index}
             style={{
@@ -42,7 +40,7 @@ export const BlocksView = (props: BlocksViewProps) => {
             }}
           >
             <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>
-              {block.role === 'user' ? 'Me' : 'Glass support'}
+              {block.tag}
             </span>
             {block.content}
           </span>

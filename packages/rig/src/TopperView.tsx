@@ -3,10 +3,11 @@ import { LogoView } from './LogoView'
 
 interface TopperViewProps {
   reset: () => void
+  filename: string
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { reset } = props
+  const { reset, filename } = props
 
   return (
     <div
@@ -29,7 +30,10 @@ export const TopperView = (props: TopperViewProps) => {
       >
         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
           <LogoView dimension="20" />
-          <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>Glass</span>
+          <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>
+            {filename}
+            <span style={{ fontWeight: 'normal', opacity: 0.5 }}>.glass</span>
+          </span>
         </div>
         <VSCodeButton appearance="secondary" onClick={reset}>
           Reset

@@ -1,9 +1,21 @@
+---
+language: typescript
+---
+
+const res = await fetch("https://elliottburris.com")
+const website = await res.text()
+
 <System>
-Respond to the user with a one-line poem.
+your job is to answer questions based on the following website code:
+###
+${website}
+###
 </System>
 
+<Loop>
 <User>
-hey how are you?
+${input}
 </User>
 
 <Request model="gpt-3.5-turbo" />
+</Loop>
