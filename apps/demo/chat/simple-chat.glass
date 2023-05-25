@@ -1,21 +1,22 @@
----
-language: typescript
----
-
 const [numMessages, setNumMessages] = useState(0)
 
 const res = await fetch("https://elliottburris.com") // first, let's make a request to load some data
 const text = await res.text() // next, let's get the html from that request
 const blah = "hi"
+const hello = () => {
+    return numMessages + 1
+}
+setNumMessages(hello())
 
-setNumMessages(numMessages + 1)
 
-<System>
-You are PirateGPT. Act like a pirate.
-</System>
 
+
+
+// awesome
 <User>
-hey whats up?
+You are PirateGPT. Act like a pirate.
 </User>
+
+// make the request
 
 <Request model="gpt-3.5-turbo" />

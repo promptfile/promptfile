@@ -203,7 +203,6 @@ export async function activate(context: vscode.ExtensionContext) {
         console.error(e)
       }
 
-      // get the current cursor position
       let firstLoad = true
       try {
         const resp = await executeGlassFile(
