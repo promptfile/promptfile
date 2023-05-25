@@ -1,3 +1,7 @@
+---
+language: typescript
+---
+
 const [numMessages, setNumMessages] = useState(0)
 
 const res = await fetch("https://elliottburris.com") // first, let's make a request to load some data

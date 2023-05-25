@@ -20,10 +20,8 @@ export async function updateLanguageMode(textDocument: vscode.TextDocument) {
   try {
     // Extract the frontmatter from the beginning of the document
     const frontmatter = parseFrontmatterFromGlass(textDocument.getText())
-
-    const languageFrontmatter = frontmatter.find((f: any) => f.name === 'language')
-    if (languageFrontmatter && languageFrontmatter.type) {
-      targetLanguage = lookup[languageFrontmatter.type]
+    if (frontmatter && frontmatter.language) {
+      targetLanguage = lookup[frontmatter.language]
     }
   } catch (error) {
     console.log(error)
