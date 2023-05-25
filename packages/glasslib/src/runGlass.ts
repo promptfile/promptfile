@@ -1,9 +1,8 @@
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { interpolateGlass } from './interpolateGlass'
-import { interpolateGlassChat } from './interpolateGlassChat'
-import { getJSXNodeShellString } from './jsxElementNode'
-import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
+import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
+import { replaceRequestNode, replaceStateNode, transformGlassDocument } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
@@ -69,67 +68,46 @@ export async function runGlass(
   // (content)
   // </User>
 
-  const parsedOrig = parseGlassTopLevelJsxElements(originalDoc)
+  let { transformedInit, transformedInterp } = transformGlassDocument(originalDoc, interpolatedDoc)
 
-  const requestNode = parsedOrig.find(node => node.tagName === 'Request')
+  const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
 
-  let newRequestNode = `<Request model="${model}" />`
-  if (requestNode) {
-    newRequestNode = getJSXNodeShellString(requestNode, originalDoc)
-  }
-
-  const existingFrontmatter = /---\n?([\s\S]*?)\n?---/.exec(originalDoc)?.[1] ?? ''
-  const newFrontmatter = existingFrontmatter.length > 0 ? `---\n${existingFrontmatter}\n---` : ''
-  originalDoc = originalDoc.replace(newRequestNode, '').replace(newFrontmatter, '').trim()
-  const stateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-  const stateBlockRegex = /<State>.+<\/State>/gs
-  originalDoc
   if (Object.keys(state).length > 0) {
-    if (stateBlockRegex.test(originalDoc)) {
-      originalDoc = originalDoc.replace(stateBlockRegex, stateBlock)
-    } else {
-      originalDoc = `${newFrontmatter}\n\n${stateBlock}\n\n${originalDoc}`.trim()
-    }
-    if (stateBlockRegex.test(interpolatedDoc)) {
-      interpolatedDoc = interpolatedDoc.replace(stateBlockRegex, stateBlock)
-    } else {
-      interpolatedDoc = `${newFrontmatter}\n\n${stateBlock}\n\n${interpolatedDoc}`.trim()
-    }
+    transformedInit = replaceStateNode(newStateNode, transformedInit)
+    transformedInterp = replaceStateNode(newStateNode, transformedInterp)
   }
 
   if (options?.progress) {
-    const completionFragment = generateCompletionFragment('', true, model, newRequestNode)
+    const newRequestNode = requestNodeReplacement('', true)
     options.progress({
-      nextDoc: `${originalDoc.trim()}\n\n${completionFragment}`,
-      nextInterpolatedDoc: `${interpolatedDoc.trim()}\n\n${completionFragment}`,
+      nextDoc: replaceRequestNode(newRequestNode, transformedInit),
+      nextInterpolatedDoc: replaceRequestNode(newRequestNode, transformedInterp),
       rawResponse: '█',
     })
   }
   const res =
     model === 'gpt-3.5-turbo' || model === 'gpt-4'
-      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, newRequestNode, options)
+      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, options)
       : model.startsWith('claude')
-      ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, newRequestNode, options)
+      ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, options)
       : await runGlassCompletion(fileName, model as any, { originalDoc, interpolatedDoc }, options)
 
   let codeResponse: any = undefined
   if (onResponse) {
     codeResponse = await onResponse({ message: res.rawResponse })
-    if (stateBlockRegex.test(res.finalDoc)) {
+    if (Object.keys(state).length > 0) {
       const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-      res.finalDoc = res.finalDoc.replace(stateBlockRegex, finalStateBlock)
+      res.finalDoc = replaceStateNode(finalStateBlock, res.finalDoc)
     }
   }
 
-  return { ...res, initDoc: originalDoc, initInterpolatedDoc: interpolatedDoc, codeResponse }
+  return { ...res, initDoc: transformedInit, initInterpolatedDoc: transformedInterp, codeResponse }
 }
 
-const generateCompletionFragment = (message: string, streaming: boolean, model: string, newRequestNode: string) => {
+const requestNodeReplacement = (message: string, streaming: boolean) => {
   return `<Assistant>
 ${message}${streaming ? '█' : ''}
-</Assistant>
-
-${newRequestNode}`
+</Assistant>`
 }
 
 /**
@@ -139,7 +117,6 @@ async function runGlassChat(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
-  newRequestNode: string,
   options?: {
     args?: any
     openaiKey?: string
@@ -150,7 +127,7 @@ async function runGlassChat(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messages = interpolateGlassChat(fileName, docs.interpolatedDoc)
+  const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
 
   console.log('RUNNINGGGG')
   console.log(messages)
@@ -172,9 +149,9 @@ async function runGlassChat(
   const response = await handleStream(r, handleChatChunk, next => {
     // right now claude has a leading whitespace character
     // we need to remove that!
-    const fragment = generateCompletionFragment(next.trim(), options?.progress != null, model, newRequestNode)
-    const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
-    const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
+    const updatedRequestNode = requestNodeReplacement(next.trim(), options?.progress != null)
+    const nextDoc = replaceRequestNode(updatedRequestNode, docs.originalDoc)
+    const nextInterpolatedDoc = replaceRequestNode(updatedRequestNode, docs.interpolatedDoc)
     if (options?.progress) {
       return options.progress({
         nextDoc: nextDoc,
@@ -184,10 +161,10 @@ async function runGlassChat(
     }
   })
 
-  const fragment = generateCompletionFragment(response, false, model, newRequestNode)
+  const updatedRequestNode = requestNodeReplacement(response, false)
   return {
-    finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
-    finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
+    finalDoc: replaceRequestNode(updatedRequestNode, docs.originalDoc),
+    finalInterpolatedDoc: replaceRequestNode(updatedRequestNode, docs.interpolatedDoc),
     rawResponse: response,
   }
 }
@@ -199,7 +176,6 @@ async function runGlassChatAnthropic(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
-  newRequestNode: string,
   options?: {
     args?: any
     openaiKey?: string
@@ -211,7 +187,7 @@ async function runGlassChatAnthropic(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messages = interpolateGlassChat(fileName, docs.interpolatedDoc)
+  const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
 
   let anthropicQuery = ''
   for (const msg of messages) {
@@ -243,9 +219,9 @@ async function runGlassChatAnthropic(
   })
 
   const response = await handleStream(r, handleAnthropicChunk, next => {
-    const fragment = generateCompletionFragment(next, options?.progress != null, model, newRequestNode)
-    const nextDoc = `${docs.originalDoc.trim()}\n\n${fragment}`
-    const nextInterpolatedDoc = `${docs.interpolatedDoc.trim()}\n\n${fragment}`
+    const updatedRequestNode = requestNodeReplacement(next, options?.progress != null)
+    const nextDoc = replaceRequestNode(updatedRequestNode, docs.originalDoc)
+    const nextInterpolatedDoc = replaceRequestNode(updatedRequestNode, docs.interpolatedDoc)
     if (options?.progress) {
       return options.progress({
         nextDoc: nextDoc,
@@ -255,10 +231,10 @@ async function runGlassChatAnthropic(
     }
   })
 
-  const fragment = generateCompletionFragment(response.trim(), false, model, newRequestNode)
+  const updatedRequestNode = requestNodeReplacement(response.trim(), false)
   return {
-    finalDoc: `${docs.originalDoc.trim()}\n\n${fragment}`,
-    finalInterpolatedDoc: `${docs.interpolatedDoc.trim()}\n\n${fragment}`,
+    finalDoc: replaceRequestNode(updatedRequestNode, docs.originalDoc),
+    finalInterpolatedDoc: replaceRequestNode(updatedRequestNode, docs.interpolatedDoc),
     rawResponse: response.trim(),
   }
 }
