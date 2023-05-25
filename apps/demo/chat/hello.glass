@@ -1,0 +1,11 @@
+---
+language: python
+---
+
+foo = "bar"
+
+<Prompt>
+${foo}
+</Prompt>
+
+print(foo)

@@ -10,6 +10,9 @@
       "include": "#request-element"
     },
     {
+      "include": "#prompt-element"
+    },
+    {
       "include": "#test-element"
     },
     {
@@ -79,44 +82,32 @@
       }
     },
     "prompt-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Prompt)(?=[\\s\\/\\>\\{])",
+      "begin": "(<)(Prompt)(>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
+          "name": "source.glass.prompt.name"
         },
         "3": {
-          "name": "source.glass.system.name"
+          "name": "punctuation.definition.tag.end.jsx"
         }
       },
       "patterns": [
         {
-          "include": "source.tsx#jsx-tag-attribute-name"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attributes-illegal"
+          "include": "#markdown-sections"
         }
       ],
-      "end": "(?:(\\/)\\s*)?(>)",
+      "end": "(<\\/)(Prompt)(>)",
       "endCaptures": {
         "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
+          "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
+          "name": "source.glass.prompt.name"
+        },
+        "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }
