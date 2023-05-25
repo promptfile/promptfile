@@ -204,6 +204,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       let firstLoad = true
+      let cancelled = false
       try {
         const resp = await executeGlassFile(
           activeEditor.document,
@@ -228,6 +229,10 @@ export async function activate(context: vscode.ExtensionContext) {
               return
             }
             if (!currentText.includes('█') && !firstLoad) {
+              cancelled = true
+            }
+
+            if (cancelled) {
               return
             }
 
