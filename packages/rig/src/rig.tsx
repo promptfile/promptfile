@@ -109,7 +109,7 @@ function RigView() {
     >
       <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
       {tab === 'Chat' && <BlocksView blocks={blocks} />}
-      {tab === 'Raw' && <RawView filename={filename} glass={glass} />}
+      {tab === 'Raw' && <RawView glass={glass} />}
       {tab === 'History' && <HistoryView glass={glass} />}
       <ComposerView send={send} variables={variables} />
     </div>

@@ -39,23 +39,25 @@ export const ComposerView = (props: ComposerViewProps) => {
           }}
         >
           {Object.keys(values).map((variable, index) => (
-            <VSCodeTextArea
-              key={variable}
-              style={{ width: '100%' }}
-              value={values[variable] ?? ''}
-              id={`composer-input-${index}`}
-              placeholder={variable}
-              onInput={e => {
-                const value = (e.target as any).value
-                setValues({ ...values, [variable]: value })
-              }}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  send(values)
-                }
-              }}
-            />
+            <div key={variable} style={{ flexDirection: 'column', display: 'flex' }}>
+              <span style={{ paddingBottom: '4px' }}>{variable}</span>
+              <VSCodeTextArea
+                style={{ width: '100%' }}
+                value={values[variable] ?? ''}
+                id={`composer-input-${index}`}
+                placeholder={''}
+                onInput={e => {
+                  const value = (e.target as any).value
+                  setValues({ ...values, [variable]: value })
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    send(values)
+                  }
+                }}
+              />
+            </div>
           ))}
         </div>
         <VSCodeButton style={{ width: 'fit-content' }} onClick={() => send(values)}>
