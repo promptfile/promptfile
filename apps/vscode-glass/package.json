@@ -152,13 +152,13 @@
         "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
+        "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       },
       {
         "command": "glass.reset",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
-        "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
+        "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       }
     ],
     "configuration": [
