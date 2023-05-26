@@ -199,6 +199,8 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('No Glass playground stored')
               return
             }
+            await vscode.window.showInformationMessage('Running Glass playground...')
+
             break
           case 'resetGlass':
             const blocksForGlass = parseGlassBlocks(initialGlass)

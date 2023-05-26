@@ -1,17 +1,20 @@
-const res = await fetch("https://elliottburris.com")
-const website = await res.text()
+const res = await fetch('https://elliottburris.com')
+const htmlCode = await res.text()
 
 <System>
-your job is to answer questions based on the following website code:
+You are AnalystGPT. Your job is to analyze website content and respond.
+
+<Text escapeHtml>
+Website content:
 
 ###
-${website}
+${htmlCode}
 ###
+</Text>
 </System>
 
-
 <User>
-${input}
+what is elliott's email?
 </User>
 
 <Request model="gpt-3.5-turbo" />
