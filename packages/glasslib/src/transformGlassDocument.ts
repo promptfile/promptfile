@@ -1,9 +1,16 @@
 import { JSXNode } from './ast'
+import { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
 import { getJSXNodeInsidesString, getJSXNodeString } from './jsxElementNode'
 import { parseGlassTopLevelNodes } from './parseGlassTopLevelNodes'
 import { addNodeToDocument, parseGlassTopLevelNodesNext, replaceDocumentNode } from './parseGlassTopLevelNodesNext'
 
 export function transformGlassDocument(initDocument: string, interpolatedDocument: string) {
+  const initWithoutLiterals = removeEscapedHtml(initDocument)
+  const interpWithoutLiterals = removeEscapedHtml(interpolatedDocument)
+
+  initDocument = initWithoutLiterals.output
+  interpolatedDocument = initWithoutLiterals.output
+
   const parsedInit = parseGlassTopLevelNodesNext(initDocument)
   const parsedInterp = parseGlassTopLevelNodesNext(interpolatedDocument)
 
@@ -54,10 +61,16 @@ export function transformGlassDocument(initDocument: string, interpolatedDocumen
     )
   }
 
-  return { transformedInit, transformedInterp }
+  return {
+    transformedInit: restoreEscapedHtml(transformedInit, initWithoutLiterals.replacements),
+    transformedInterp: restoreEscapedHtml(transformedInterp, interpWithoutLiterals.replacements),
+  }
 }
 
 export function replaceStateNode(newStateNode: string, doc: string) {
+  const docWithoutLiterals = removeEscapedHtml(doc)
+  doc = docWithoutLiterals.output
+
   const parsed = parseGlassTopLevelNodesNext(doc)
 
   const stateNode = parsed.find(node => (node as any).tagName === 'State')
@@ -78,10 +91,13 @@ export function replaceStateNode(newStateNode: string, doc: string) {
 
   const stateIndex = parsed.indexOf(stateNode)
   const newDoc = replaceDocumentNode(newStateNode, stateIndex, doc)
-  return newDoc
+  return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
 }
 
 export function replaceRequestNode(newRequestNode: string, doc: string) {
+  const docWithoutLiterals = removeEscapedHtml(doc)
+  doc = docWithoutLiterals.output
+
   const parsed = parseGlassTopLevelNodesNext(doc)
 
   const requestNode = parsed.find(node => (node as any).tagName === 'Request')
@@ -91,5 +107,5 @@ export function replaceRequestNode(newRequestNode: string, doc: string) {
 
   const stateIndex = parsed.indexOf(requestNode)
   const newDoc = replaceDocumentNode(newRequestNode, stateIndex, doc)
-  return newDoc
+  return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
 }

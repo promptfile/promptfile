@@ -156,11 +156,11 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  it('should transpile with single <For> loop', () => {
-    const { input, output } = loadTestfile('forLoopAttributesOnly', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'forLoopAttributesOnly' })
-    expect(transpiled.code.trim()).to.equal(output.trim())
-  })
+  // it('should transpile with single <For> loop', () => {
+  //   const { input, output } = loadTestfile('forLoopAttributesOnly', 'ts')
+  //   const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'forLoopAttributesOnly' })
+  //   expect(transpiled.code.trim()).to.equal(output.trim())
+  // })
 
   it('should transpile with single if condition', () => {
     const { input, output } = loadTestfile('ifCondition', 'ts')

@@ -128,15 +128,15 @@ export function transpileGlassFileNext(
     const jsxString = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
     const parsedJsx = parseJsxElement(jsxString)
     const attrs = parseJsxAttributes(jsxString)
-    const itemKey = attrs['item']
+    const asKey = attrs['as']
 
-    if (itemKey) {
-      interpolationVarSet.delete(itemKey) // sketchy removal, could cause problems if we have another variable defined with same name but fine for now
+    if (asKey) {
+      interpolationVarSet.delete(asKey) // sketchy removal, could cause problems if we have another variable defined with same name but fine for now
     }
 
     for (const s of parsedJsx.undeclaredVariables) {
-      if (s === itemKey) {
-        // <For each={messages} item="m"> puts "m" in scope
+      if (s === asKey) {
+        // <For each={messages} as="m"> puts "m" in scope
         continue
       }
       interpolationVarSet.add(s)
@@ -177,6 +177,8 @@ ${toplevelCode}
     interpolationVarSet.add(symbol)
   }
 
+  interpolationVarSet.delete('') // TODO: figure out where/why this shows up
+
   const argsOverride = parseFrontmatter(frontmatter)?.args || {}
 
   const dynamicTransform = transformDynamicBlocks(doc, true)
@@ -190,6 +192,7 @@ ${toplevelCode}
   if (allInterpolationNames.length > 0) {
     fullArgString = language === 'typescript' ? `args: { ${argsString} }` : 'args'
   }
+
   // }
 
   let codeSanitizedDoc = doc

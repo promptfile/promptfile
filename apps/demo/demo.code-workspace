@@ -16,7 +16,10 @@
     { "path": "chat" },
     { "path": "gpt3" },
     { "path": "scratchpad" },
+    { "path": "langchain" },
     { "path": "test" },
+    { "path": "language-features" },
+    { "path": "quickstart" },
     { "path": "../../packages/glassc" }
   ]
 }

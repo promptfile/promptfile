@@ -1,12 +1,14 @@
-<Code>
+---
+language: python
+---
+
 messages = [
     { "role": 'user', "content": 'name an ice cream', "show": True  },
     { "role": "assistant", "content": 'Vanilla', "show": True },
     { "role": 'user', "content": 'name a fruit', "show": True  }
 ]
-</Code>
 
-<For each={messages} item="m">
+<For each={messages} as="m">
 
 <Block role={m["role"]}>
 <Text if={m["show"]}>
@@ -15,3 +17,5 @@ ${m["content"]}
 </Block>
 
 </For>
+
+<Request model="gpt-3.5-turbo" />

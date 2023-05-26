@@ -5,13 +5,13 @@ language: python
 import requests from "requests"
 
 response = requests.get("https://elliottburris.com")
-def hello():
-    return  "hi"
 
 <System>
 your job is to answer questions based on the following website code:
 ###
-${response.content}
+<Text escapeHtml>
+${response.text}
+</Text>
 ###
 </System>
 
@@ -34,3 +34,5 @@ Sorry, we cannot determine Elliott's favorite color from the provided website co
 <User>
 what is elliott's last name?
 </User>
+
+<Request model="gpt-3.5-turbo" />

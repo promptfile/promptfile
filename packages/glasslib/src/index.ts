@@ -9,6 +9,7 @@ export {
   mutateDocumentAst,
   updateDocumentAst,
 } from './ast'
+export { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
 export { interpolateGlass } from './interpolateGlass'
 export { interpolateGlassChat } from './interpolateGlassChat'
 export { parseGlassAST } from './parseGlassAST'

@@ -68,6 +68,7 @@ export async function runGlass(
   // (content)
   // </User>
 
+  // eslint-disable-next-line prefer-const
   let { transformedInit, transformedInterp } = transformGlassDocument(originalDoc, interpolatedDoc)
 
   const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
@@ -129,8 +130,7 @@ async function runGlassChat(
 }> {
   const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
 
-  console.log('RUNNINGGGG')
-  console.log(messages)
+  console.log('running glass chat', messages)
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -194,6 +194,8 @@ async function runGlassChatAnthropic(
     if (msg.role === 'assistant') {
       anthropicQuery += `\n\nAssistant: ${msg.content}`
     } else if (msg.role === 'user') {
+      anthropicQuery += `\n\nHuman: ${msg.content}`
+    } else if (msg.role === 'system') {
       anthropicQuery += `\n\nHuman: ${msg.content}`
     } else {
       throw new Error(`Unknown role for anthropic  query: ${msg.role}`)

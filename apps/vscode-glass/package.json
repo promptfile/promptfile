@@ -1,6 +1,6 @@
 {
   "name": "vscode-glass",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "displayName": "Glass",
   "description": "Language support for Glass",
   "categories": [
@@ -141,15 +141,15 @@
     "keybindings": [
       {
         "command": "glass.getNextBlock",
-        "key": "ctrl+shift+enter",
-        "mac": "cmd+shift+enter",
-        "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
+        "key": "ctrl+shift+space",
+        "mac": "cmd+shift+space",
+        "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       },
       {
         "command": "glass.playground",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
+        "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       }
     ],
     "configuration": [

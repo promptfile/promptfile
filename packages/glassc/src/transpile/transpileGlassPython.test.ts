@@ -17,6 +17,12 @@ describe('transpileGlassPython', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
+  it('should transpile with literal sequence', () => {
+    const { input, output } = loadTestfile('literal', 'py')
+    const transpiled = transpileGlassFilePython(input, { ...folders, fileName: 'literal' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
+  })
+
   it.skip('should transpile with get-prefixed named', () => {
     const transpiled = transpileGlassFilePython(
       `<Prompt>

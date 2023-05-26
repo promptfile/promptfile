@@ -19,7 +19,9 @@ const website = await res.text()
 <System>
 your job is to answer questions based on the following website code:
 ###
+<Text escapeHtml>
 ${website}
+</Text>
 ###
 </System>
 
@@ -27,4 +29,6 @@ ${website}
 ${question}
 </User>
 
+<Loop>
 <Request model="gpt-3.5-turbo" />
+</Loop>

@@ -2,8 +2,12 @@
 language: python
 ---
 
+userText = "I need help with my homework"
+
 <System>
-You are a helpful assistant. 
+You are a helpful assistant.
 
 ${userText}
 </System>
+
+<Request model="gpt-3.5-turbo" />

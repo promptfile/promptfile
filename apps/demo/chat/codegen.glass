@@ -1,9 +1,7 @@
-<Code>
 const res = await fetch('https://elliottburris.com')
 const text = await res.text()
 const now = new Date()
 const isoTimestamp = now.toISOString()
-</Code>
 
 <System>
 You're ChatGPT, and you're chatting with a User. Here's the User's personal website:
@@ -36,3 +34,5 @@ cool cool, thanks!
 
 what do you know about me?
 </User>
+
+<Request model="claude-instant-v1" />

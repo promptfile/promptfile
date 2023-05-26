@@ -3,10 +3,8 @@
 
 // we can actually execute Typescript as a Code block at the top of our Glass file.
 // async works too — just be sure to await!
-<Code>
 const date = new Date()
 const formattedDate = date.toISOString().split('T')[0]
-</Code>
 
 // first, add the instructions to the System prompt.
 

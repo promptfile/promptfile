@@ -1,3 +1,4 @@
+import { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
 import { interpolateBlock, interpolateJSXExpressions } from './interpolate'
 import { ChatCompletionRequestMessage } from './interpolateGlassChat'
 import { getJSXNodeInsidesString } from './jsxElementNode'
@@ -46,7 +47,9 @@ export function interpolateGlassChat(
 }
 
 export function parseChatCompletionBlocks(content: string): ChatCompletionRequestMessage[] {
-  const doc = removeGlassComments(content)
+  const removedLiterals = removeEscapedHtml(content)
+
+  const doc = removeGlassComments(removedLiterals.output)
 
   // first interpolate the jsx interpolations
   const nodes = parseGlassTopLevelJsxElements(doc)
@@ -55,7 +58,7 @@ export function parseChatCompletionBlocks(content: string): ChatCompletionReques
 
   for (const node of nodes) {
     let role = node.tagName?.toLowerCase()
-    let blockContent = getJSXNodeInsidesString(node, doc)
+    let blockContent = restoreEscapedHtml(getJSXNodeInsidesString(node, doc), removedLiterals.replacements)
     if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
       continue // ignore
     }

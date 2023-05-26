@@ -1,0 +1,24 @@
+// Let's try combining some of these concepts to create a multi-part prompt.
+// This introduces conditionals — the idea that parts of the prompt can be used depending on certain conditions.
+
+const [numMessages, setNumMessages] = useState(0)
+
+const isLongConversation = numMessages > 2
+
+<System if={isLongConversation === false}>
+You are ChatGPT.  Reply to the user in a helpful and polite manner.
+</System>
+
+<System if={isLongConversation}>
+You are AnnoyedGPT.  Replpy to the user as though you are very annoyed by their message. Mention that you might want to end the conversation. Refuse to answer any questions they ask.
+</System>
+
+<User>
+Hi there!
+</User>
+
+// The Loop block keeps the wrapped contents in the resulting doc after you run the file.
+// Otherwise, the Request block will be replaced by the response from the API and removed from the resulting document.
+<Loop>
+<Request model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />
+</Loop>
