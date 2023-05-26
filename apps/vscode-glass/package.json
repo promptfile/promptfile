@@ -102,8 +102,12 @@
     ],
     "commands": [
       {
+        "command": "glass.playground",
+        "title": "Glass: Open playground"
+      },
+      {
         "command": "glass.getNextBlock",
-        "title": "Glass: run"
+        "title": "Glass: get next block"
       },
       {
         "command": "glass.runTestSuite",
@@ -137,6 +141,12 @@
     "keybindings": [
       {
         "command": "glass.getNextBlock",
+        "key": "ctrl+shift+space",
+        "mac": "cmd+shift+space",
+        "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
+      },
+      {
+        "command": "glass.playground",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
