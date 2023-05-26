@@ -18,7 +18,7 @@ export interface LanguageModel {
   maxTokens: number
 }
 
-export const languageModels: LanguageModel[] = [
+export const LANGUAGE_MODELS: LanguageModel[] = [
   {
     name: 'gpt-4',
     creator: LanguageModelCreator.openai,

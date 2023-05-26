@@ -1,6 +1,7 @@
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { interpolateGlass } from './interpolateGlass'
+import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
 import { replaceRequestNode, replaceStateNode, transformGlassDocument } from './transformGlassDocument'
 
@@ -86,11 +87,15 @@ export async function runGlass(
       rawResponse: '█',
     })
   }
+  const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
+  if (!languageModel) {
+    throw new Error(`Language model ${model} not found`)
+  }
   const res =
-    model === 'gpt-3.5-turbo' || model === 'gpt-4'
-      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, options)
-      : model.startsWith('claude')
+    languageModel.creator === LanguageModelCreator.anthropic
       ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, options)
+      : LanguageModelType.chat
+      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, options)
       : await runGlassCompletion(fileName, model as any, { originalDoc, interpolatedDoc }, options)
 
   let codeResponse: any = undefined

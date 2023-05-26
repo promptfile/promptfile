@@ -1,7 +1,11 @@
-import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
+import {
+  LANGUAGE_MODELS,
+  LanguageModelCreator,
+  LanguageModelType,
+  parseGlassTopLevelJsxElements,
+} from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { LanguageModelCreator, LanguageModelType, languageModels } from '../languageModels'
 
 export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
@@ -17,7 +21,7 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
     }
 
     const model = modelAttribute.stringValue
-    const languageModel = languageModels.find(m => m.name === model)
+    const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
 
     if (!languageModel) {
       const diagnostic: Diagnostic = {

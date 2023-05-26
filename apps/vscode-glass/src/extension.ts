@@ -1,5 +1,10 @@
 import { parseGlassMetadata, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
-import { parseGlassBlocks, parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
+import {
+  LANGUAGE_MODELS,
+  LanguageModelCreator,
+  parseGlassBlocks,
+  parseGlassTopLevelJsxElements,
+} from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
@@ -135,14 +140,15 @@ export async function activate(context: vscode.ExtensionContext) {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
         const chatElement = elements.find(element => element.tagName === 'Request')
         const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
-        if (model?.startsWith('claude')) {
+        const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
+        if (languageModel?.creator === LanguageModelCreator.anthropic) {
           const anthropicKey = getAnthropicKey()
           if (anthropicKey == null || anthropicKey === '') {
             await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
             await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
             return
           }
-        } else {
+        } else if (languageModel?.creator === LanguageModelCreator.openai) {
           const openaiKey = getOpenaiKey()
           if (openaiKey == null || openaiKey === '') {
             await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
@@ -245,14 +251,15 @@ export async function activate(context: vscode.ExtensionContext) {
           await vscode.window.showErrorMessage('No <Request /> found')
           return
         }
-        if (model.startsWith('claude')) {
+        const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
+        if (languageModel?.creator === LanguageModelCreator.anthropic) {
           const anthropicKey = getAnthropicKey()
           if (anthropicKey == null || anthropicKey === '') {
             await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
             await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
             return
           }
-        } else {
+        } else if (languageModel?.creator === LanguageModelCreator.openai) {
           const openaiKey = getOpenaiKey()
           if (openaiKey == null || openaiKey === '') {
             await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')

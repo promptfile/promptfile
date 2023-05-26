@@ -1,4 +1,4 @@
-import { languageModels } from './languageModels'
+import { LANGUAGE_MODELS } from '@glass-lang/glasslib'
 
 interface GlassElement {
   name: string
@@ -130,7 +130,7 @@ export const glassElements: GlassElement[] = [
         detail: 'model for inference',
         documentation: 'The `model` attribute determines which model to inference',
         type: 'enum',
-        values: languageModels,
+        values: LANGUAGE_MODELS,
       },
       {
         name: 'temperature',
