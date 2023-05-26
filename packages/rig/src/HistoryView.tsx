@@ -18,7 +18,7 @@ export const HistoryView = (props: HistoryViewProps) => {
         }}
       >
         <div style={{ width: '100%', height: '16px' }} />
-        <div style={{ whiteSpace: 'pre-line', paddingLeft: '16px', paddingRight: '16px', fontStyle: 'italic' }}>
+        <div style={{ whiteSpace: 'pre-line', paddingLeft: '24px', paddingRight: '24px', fontStyle: 'italic' }}>
           Coming soon!
         </div>
       </div>

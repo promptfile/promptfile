@@ -27,14 +27,14 @@ export const TopperView = (props: TopperViewProps) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          paddingLeft: '16px',
-          paddingRight: '16px',
+          paddingLeft: '24px',
+          paddingRight: '24px',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
           <LogoView dimension="20" />
           <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>
-            {filename}
+            {filename.replace('.glass', '')}
             <span style={{ fontWeight: 'medium', fontStyle: 'italic', opacity: 0.5 }}>.glass</span>
           </span>
         </div>
@@ -42,7 +42,7 @@ export const TopperView = (props: TopperViewProps) => {
           Reset
         </VSCodeButton>
       </div>
-      <div style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'row' }}>
+      <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'row' }}>
         {tabs.map(t => {
           const isCurrentTab = t === tab
           const opacity = isCurrentTab ? 1 : 0.5

@@ -44,7 +44,7 @@ function RigView() {
         case 'setFilename':
           const newFilename = message.data.filename
           if (newFilename && newFilename.includes('.glass')) {
-            setFilename(() => newFilename.replace('.glass', ''))
+            setFilename(() => newFilename)
           }
           break
         case 'setGlass':
@@ -101,7 +101,7 @@ function RigView() {
     >
       <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
       {tab === 'Chat' && <ChatView variables={variables} glass={glass} postMessage={postMessage} blocks={blocks} />}
-      {tab === 'Raw' && <RawView glass={glass} />}
+      {tab === 'Raw' && <RawView filename={filename} glass={glass} />}
       {tab === 'History' && <HistoryView glass={glass} />}
     </div>
   )

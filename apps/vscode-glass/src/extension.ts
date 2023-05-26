@@ -170,7 +170,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const filename = getDocumentFilename(activeEditor.document)
       const panel = vscode.window.createWebviewPanel(
         'glass.webView',
-        filename.replace('.glass', '.playground.glass'),
+        `${filename} (playground)`,
         vscode.ViewColumn.Beside,
         {
           enableScripts: true,

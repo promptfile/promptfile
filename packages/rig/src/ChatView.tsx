@@ -53,8 +53,8 @@ export const ChatView = (props: ChatViewProps) => {
               display: 'flex',
               flexDirection: 'column',
               paddingBottom: '24px',
-              paddingLeft: '16px',
-              paddingRight: '16px',
+              paddingLeft: '24px',
+              paddingRight: '24px',
             }}
           >
             <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>
@@ -74,8 +74,8 @@ export const ChatView = (props: ChatViewProps) => {
             alignItems: 'center',
             paddingTop: '16px',
             paddingBottom: '16px',
-            paddingLeft: '16px',
-            paddingRight: '16px',
+            paddingLeft: '24px',
+            paddingRight: '24px',
           }}
         >
           <div
