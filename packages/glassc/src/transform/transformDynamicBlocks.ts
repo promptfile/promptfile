@@ -62,7 +62,7 @@ export function transformDynamicBlocks(doc: string, next?: boolean) {
       const fragment = node.attrs.find(attr => attr.name === 'fragment')!
       const item = node.attrs.find(attr => attr.name === 'as')!
       checkOk(fragment || item, '<For> loop requires either "fragment" or "as" attribute')
-      checkOk(eachAttr, '<For> loop requires both "each" and "fragment" attributes')
+      checkOk(eachAttr, '<For> loop requires both "each" attribute')
 
       if (fragment != null) {
         if (ifAttr?.expressionValue != null) {
@@ -213,7 +213,7 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: glassl
       const fragment = node.attrs.find(attr => attr.name === 'fragment')!
       const item = node.attrs.find(attr => attr.name === 'as')!
       checkOk(fragment || item, '<For> loop requires either "fragment" or "as" attribute')
-      checkOk(eachAttr, '<For> loop requires both "each" and "fragment" attributes')
+      checkOk(eachAttr, '<For> loop requires both "each" attribute')
 
       if (fragment != null) {
         if (ifAttr?.expressionValue != null) {

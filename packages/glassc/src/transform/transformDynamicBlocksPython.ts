@@ -69,7 +69,7 @@ export function transformDynamicBlocksPython(doc: string) {
     if (node.tagName === 'For') {
       const eachAttr = node.attrs.find(attr => attr.name === 'each')!
       const item = node.attrs.find(attr => attr.name === 'as')!
-      checkOk(eachAttr, '<For> loop requires both "each" and "fragment" attributes')
+      checkOk(eachAttr && item, '<For> loop requires both "each" and "as" attributes')
 
       const transform = transformGlassDocumentToTemplateStringPython(nodeInsides)
       for (const s of transform.undeclaredSymbols) {
