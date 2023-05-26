@@ -1,7 +1,7 @@
 const userText = "Tell me a story."
 
 <System>
-You are a helpful assistant. 
+You are a helpful assistant.
 
 ${userText}
 </System>

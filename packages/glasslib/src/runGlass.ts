@@ -128,18 +128,9 @@ async function runGlassChat(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  console.log('interpolated doc is')
-  console.log('')
-  console.log('')
-  console.log('')
-  console.log(docs.interpolatedDoc)
-  console.log('')
-  console.log('')
-  console.log('')
   const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
 
-  console.log('RUNNINGGGG')
-  console.log(messages)
+  console.log('running glass chat', messages)
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
