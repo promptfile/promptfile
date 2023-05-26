@@ -2,8 +2,10 @@
 language: python
 ---
 
+userText = "I need help with my homework"
+
 <System>
-You are a helpful assistant. 
+You are a helpful assistant.
 
 ${userText}
 </System>

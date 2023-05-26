@@ -54,9 +54,9 @@ export function transformGlassDocumentToTemplateStringPython(input: string) {
       node.children.length === 0
         ? ''
         : input.substring(
-            node.children[0].position.start.offset,
-            node.children[node.children.length - 1].position.end.offset
-          )
+          node.children[0].position.start.offset,
+          node.children[node.children.length - 1].position.end.offset
+        )
     const transformedInsides = transformGlassDocumentToTemplateStringPython(insides)
     // const transformedInsides = transformGlassDocumentToTemplateStringPython(insides.replaceAll('"', '\\"'))
     for (const s of transformedInsides.undeclaredSymbols) {
@@ -64,7 +64,7 @@ export function transformGlassDocumentToTemplateStringPython(input: string) {
     }
 
     const replacement = `"""<${node.tagName}${node.attrs
-      .map(a => ` ${a.name}=${a.stringValue ? `"${a.stringValue}"` : `{{"{}"}}`}`)
+      .map(a => ` ${a.name}=${a.stringValue ? `"${a.stringValue}"` : a.expressionValue ? `{{"{}"}}` : `"True"`}`)
       .join('')}>
 {}
 </${node.tagName}>""".format(${attrInterpolations.concat(transformedInsides.newDocument).join(', ')})`

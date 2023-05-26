@@ -1,0 +1,5 @@
+<Prompt>
+Could you tell me a story?
+</Prompt>
+
+<Request model="text-davinci-003" />

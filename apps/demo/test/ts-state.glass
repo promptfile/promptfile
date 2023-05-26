@@ -1,14 +1,3 @@
-<State>
-{
-  "profile": {
-    "firstName": "",
-    "lastName": "",
-    "hasChatted": false
-  },
-  "moreState": "foo"
-}
-</State>
-
 const initProfile = { firstName: '', lastName: '', hasChatted: false }
 const [profile, setProfile] = useState(initProfile)
 const [moreState, setMoreState] = useState('')

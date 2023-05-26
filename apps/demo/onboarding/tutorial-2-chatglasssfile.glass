@@ -1,0 +1,5 @@
+<System>
+Could you tell me a story?
+</System>
+
+<Request model="gpt-3.5-turbo" />

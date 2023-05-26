@@ -1,0 +1,17 @@
+<System>
+You write the world's best TypeScript.
+</System>
+
+<User>
+How should I fix my function
+
+```ts
+function removePrefix(str: string, prefix?: string) {
+  return str.substring(prefix.length)
+}
+```
+
+I'm getting an error when I do `removePrefix('foo')`.
+</User>
+
+<Request model="gpt-3.5-turbo" />

@@ -177,6 +177,8 @@ ${toplevelCode}
     interpolationVarSet.add(symbol)
   }
 
+  interpolationVarSet.delete('') // TODO: figure out where/why this shows up
+
   const argsOverride = parseFrontmatter(frontmatter)?.args || {}
 
   const dynamicTransform = transformDynamicBlocks(doc, true)
@@ -190,6 +192,7 @@ ${toplevelCode}
   if (allInterpolationNames.length > 0) {
     fullArgString = language === 'typescript' ? `args: { ${argsString} }` : 'args'
   }
+
   // }
 
   let codeSanitizedDoc = doc

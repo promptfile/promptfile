@@ -17,6 +17,7 @@
     { "path": "gpt3" },
     { "path": "scratchpad" },
     { "path": "test" },
+    { "path": "onboarding" },
     { "path": "../../packages/glassc" }
   ]
 }

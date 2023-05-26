@@ -1,0 +1,25 @@
+<System>
+Respond with examples.
+</System>
+
+<User if={true}>
+Ice cream flavor
+</User>
+
+<Assistant if={true}>
+Vanilla
+</Assistant>
+
+<User if={false}>
+Ice cream flavor
+</User>
+
+<Assistant if={false}>
+Vanilla, matey
+</Assistant>
+
+<User>
+Color
+</User>
+
+<Request model="gpt-3.5-turbo" />
