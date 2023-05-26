@@ -1,0 +1,59 @@
+import { Guides } from '@/components/Guides'
+import { Resources } from '@/components/Resources'
+import { HeroPattern } from '@/components/HeroPattern'
+
+import chat from '@/images/screenshots/chat.png'
+import Image from 'next/image'
+
+export const description =
+  'Glass is a domain-specific language for prompting LLMs.'
+
+## What are Blocks?
+
+There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your models more readable and easier to maintain.
+
+All Glass files must include some block. If no block is present, on save, your file will be wrapped inside a `<Prompt>`
+
+## Completion Blocks
+
+If you are making a request to a completion endpoint, you can use the following blocks:
+
+### `<Prompt>` (default)
+
+Arguments: none
+
+### `<Completion>`
+
+Arguments:
+
+- **`model`**.Can be one of: `text-davinci-003` (default),
+  `text-curie-001`,
+  `text-babbage-001`,
+  `text-ada-001`,
+  `text-davinci-002`,
+  `text-davinci-001`,
+  `davinci-instruct-beta`,
+  `davinci`,
+  `curie`,
+  `babbage`,
+  `ada`,
+
+## Chat Role Blocks
+
+Glass can be especially helpful when writing prompts for chat interfaces, especially when it comes to cleanly handling different roles in chat prompts and building more dynamic conversation prompts.
+
+Glass comes with built-in support for chat prompt blocks:
+
+- `<System>` blocks allow you to designate a message with role="system"
+- `<User>` blocks allow you to designate a message with role="user"
+- `<Assistant>` blocks allow you to designate a message with role="assistant"
+
+Here's an example of a chat prompt that utilizes the `<System>` and `<User>` blocks:
+
+<Image src={chat} />
+
+## Text Blocks
+
+If you want to add normal text to your prompt and utilize [conditional logic](/logic), you can use the `<Text>` block. These are generally helpful only to add conditional logic, you can add text inside other blocks without
+
+- `<Text>` blocks allow you to add text to your prompt and utilize conditional logic.

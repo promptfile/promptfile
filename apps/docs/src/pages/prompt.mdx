@@ -1,0 +1,27 @@
+import { Guides } from '@/components/Guides'
+import { Resources } from '@/components/Resources'
+import { HeroPattern } from '@/components/HeroPattern'
+
+import chat from '@/images/screenshots/chat.png'
+import Image from 'next/image'
+
+export const description =
+  'Glass is a domain-specific language for prompting LLMs.'
+
+# Types of Prompts
+
+There are two kinds of prompts in Glass: completion prompts and chat prompts. Although they will share many capabilities
+
+
+
+Glass can be especially helpful when writing prompts for chat interfaces, especially when it comes to cleanly handling different roles in chat prompts and building more dynamic conversation prompts.
+
+Glass comes with built-in support for chat prompt blocks:
+
+- `<System>` blocks allow you to designate a message with role="system"
+- `<User>` blocks allow you to designate a message with role="user"
+- `<Assistant>` blocks allow you to designate a message with role="assistant"
+
+Here's an example of a chat prompt that utilizes the `<System>` and `<User>` blocks:
+
+<Image src={chat} />
