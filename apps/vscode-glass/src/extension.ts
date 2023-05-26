@@ -377,6 +377,7 @@ export async function activate(context: vscode.ExtensionContext) {
       if (workspaceFolders) {
         for (const workspaceFolder of workspaceFolders) {
           const outputDirectory: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+          const languageMode: string = vscode.workspace.getConfiguration('glass').get('defaultLanguageMode') as any
           const folderPath = workspaceFolder.uri.fsPath
           /* eslint no-template-curly-in-string: "off" */
           const outDir = outputDirectory.replace('${workspaceFolder}', folderPath)
@@ -386,9 +387,16 @@ export async function activate(context: vscode.ExtensionContext) {
           }
 
           try {
-            const output = transpileGlassNext(folderPath, folderPath, 'typescript', outDir)
+            let output: ''
+            if (languageMode === 'python') {
+              output = await transpileGlassPython(folderPath, folderPath, languageMode, outDir)
+            } else {
+              output = transpileGlassNext(folderPath, folderPath, languageMode, outDir)
+            }
 
-            fs.writeFileSync(path.join(outDir, 'glass.ts'), output)
+            const extension = languageMode === 'python' ? 'py' : languageMode === 'javascript' ? 'js' : 'ts'
+
+            fs.writeFileSync(path.join(outDir, `glass.${extension}`), output)
           } catch (error) {
             console.error(error)
           }
