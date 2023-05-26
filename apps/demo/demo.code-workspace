@@ -18,7 +18,8 @@
     { "path": "scratchpad" },
     { "path": "langchain" },
     { "path": "test" },
-    { "path": "onboarding" },
+    { "path": "language-features" },
+    { "path": "quickstart" },
     { "path": "../../packages/glassc" }
   ]
 }
