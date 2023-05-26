@@ -68,7 +68,7 @@ export function transformDynamicBlocksPython(doc: string) {
 
     if (node.tagName === 'For') {
       const eachAttr = node.attrs.find(attr => attr.name === 'each')!
-      const item = node.attrs.find(attr => attr.name === 'item')!
+      const item = node.attrs.find(attr => attr.name === 'as')!
       checkOk(eachAttr, '<For> loop requires both "each" and "fragment" attributes')
 
       const transform = transformGlassDocumentToTemplateStringPython(nodeInsides)
@@ -180,7 +180,7 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: glassl
 
     if (node.tagName === 'For') {
       const eachAttr = node.attrs.find(attr => attr.name === 'each')!
-      const item = node.attrs.find(attr => attr.name === 'item')!
+      const item = node.attrs.find(attr => attr.name === 'as')!
       checkOk(eachAttr, '<For> loop requires both "each" and "fragment" attributes')
 
       const transform = transformGlassDocumentToTemplateStringPython(nodeInsides)

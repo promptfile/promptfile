@@ -1,3 +1,7 @@
+---
+language: typescript
+---
+
 const conversation = await db.converation.findUniqueOrThrow({where: {id: conversationId}})
 const messages = await db.message.findMany({where: {conversationId: conversation.id}})
 
@@ -5,14 +9,12 @@ const messages = await db.message.findMany({where: {conversationId: conversation
 You are a helpful assistant.
 </System>
 
-<For each={messages} fragment={m => <Block role={m.role} content={m.text} />} />
+<For each={messages} as="message">
+<Block role={m.role}>
+${m.text}
+</Block>
+</For>
 
 <User>
-Hi
-</User>
-
-<User>
-asdfa
-${hello}
-asdfasdf
+${input}
 </User>

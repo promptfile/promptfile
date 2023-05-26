@@ -15,7 +15,7 @@ Respond with examples.
     "request": "Pet",
     "response": "Dog"
   }
-]} item="m">
+]} as="m">
 <User>
 ${m["request"]}
 </User>

@@ -54,7 +54,7 @@ const text = await a.text()
     { role: 'user', content: 'name an ice cream' },
     { role: "assistant", content: 'Vanilla' },
     { role: 'user', content: 'name a fruit' }
-]} item="m">
+]} as="m">
 <Block role={m.role}>
 \${content}
 </Block>
@@ -68,7 +68,7 @@ const text = await a.text()
     { role: 'user', content: 'name an ice cream' },
     { role: "assistant", content: 'Vanilla' },
     { role: 'user', content: 'name a fruit' }
-]} item="m">
+]} as="m">
 <Block role={m.role}>
 \${m.content}
 </Block>

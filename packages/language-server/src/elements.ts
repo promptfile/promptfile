@@ -53,7 +53,7 @@ export const glassElements: GlassElement[] = [
   },
   {
     name: 'Block',
-    insertText: 'Block role="$1" content="$2" />',
+    insertText: 'Block role="$1">',
     documentation: 'Creates a chat block',
     detail: '(block) chat block',
     attributes: [
@@ -81,12 +81,6 @@ export const glassElements: GlassElement[] = [
         type: 'enum',
       },
       {
-        name: 'content',
-        detail: 'content of the chat block',
-        documentation: 'The `content` attribute allows you to assign string content to a chat block.',
-        type: 'string',
-      },
-      {
         name: 'if',
         detail: 'conditional expression',
         documentation: 'The `if` attribute allows you to conditionally render a block.',
@@ -106,18 +100,10 @@ export const glassElements: GlassElement[] = [
         type: 'array',
       },
       {
-        name: 'item',
+        name: 'as',
         detail: 'name for each item in the array',
-        documentation: 'The `item` attribute defines the variable name for each item in the array.',
+        documentation: 'The `as` attribute defines the variable name for each item in the array.',
         type: 'string',
-        optional: true,
-      },
-      {
-        name: 'fragment',
-        detail: 'callback function, returns a JSX fragment',
-        documentation: 'The `fragment` attribute returns the JSX to render for each iteration of the loop.',
-        optional: true,
-        type: 'function',
       },
     ],
   },

@@ -128,15 +128,15 @@ export function transpileGlassFileNext(
     const jsxString = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
     const parsedJsx = parseJsxElement(jsxString)
     const attrs = parseJsxAttributes(jsxString)
-    const itemKey = attrs['item']
+    const asKey = attrs['as']
 
-    if (itemKey) {
-      interpolationVarSet.delete(itemKey) // sketchy removal, could cause problems if we have another variable defined with same name but fine for now
+    if (asKey) {
+      interpolationVarSet.delete(asKey) // sketchy removal, could cause problems if we have another variable defined with same name but fine for now
     }
 
     for (const s of parsedJsx.undeclaredVariables) {
-      if (s === itemKey) {
-        // <For each={messages} item="m"> puts "m" in scope
+      if (s === asKey) {
+        // <For each={messages} as="m"> puts "m" in scope
         continue
       }
       interpolationVarSet.add(s)
