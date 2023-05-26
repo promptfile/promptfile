@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
-import { ChatView } from './ChatView'
+import { BlocksView } from './BlocksView'
+import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
 import { RawView } from './RawView'
 import { TopperView } from './TopperView'
@@ -29,12 +30,11 @@ function RigView() {
   const [variables, setVariables] = useState<string[]>([])
   const [tab, setTab] = useState(tabs[0])
 
-  const postMessage = (action: string, data?: any) => {
+  useEffect(() => {
     vscode.postMessage({
-      action,
-      data: data ?? {},
+      action: 'getFilename',
     })
-  }
+  }, [])
 
   // register a callback for when the extension sends a message
   useEffect(() => {
@@ -82,12 +82,20 @@ function RigView() {
   }, [filename])
 
   const reset = () => {
-    postMessage('resetGlass')
+    vscode.postMessage({
+      action: 'resetGlass',
+    })
   }
 
-  useEffect(() => {
-    postMessage('getFilename')
-  }, [])
+  const send = (values: Record<string, string>) => {
+    vscode.postMessage({
+      action: 'runPlayground',
+      data: {
+        values,
+        glass,
+      },
+    })
+  }
 
   return (
     <div
@@ -100,9 +108,10 @@ function RigView() {
       }}
     >
       <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
-      {tab === 'Chat' && <ChatView variables={variables} glass={glass} postMessage={postMessage} blocks={blocks} />}
+      {tab === 'Chat' && <BlocksView blocks={blocks} />}
       {tab === 'Raw' && <RawView filename={filename} glass={glass} />}
       {tab === 'History' && <HistoryView glass={glass} />}
+      <ComposerView send={send} variables={variables} />
     </div>
   )
 }
