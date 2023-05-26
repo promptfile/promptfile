@@ -13,12 +13,11 @@
     "editor.formatOnSave": true
   },
   "folders": [
-    { "path": "chat" },
-    { "path": "scratchpad" },
-    { "path": "langchain" },
-    { "path": "test" },
-    { "path": "language-features" },
     { "path": "quickstart" },
+    { "path": "language-features" },
+    { "path": "test" },
+    { "path": "langchain" },
+    { "path": "scratchpad" },
     { "path": "../../packages/glassc" }
   ]
 }
