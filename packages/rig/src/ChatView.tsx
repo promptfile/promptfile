@@ -60,7 +60,7 @@ export const ChatView = (props: ChatViewProps) => {
             <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>
               {block.tag}
             </span>
-            {block.content}
+            <span style={{ whiteSpace: 'pre-line' }}>{block.content}</span>
           </span>
         ))}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
@@ -107,7 +107,7 @@ export const ChatView = (props: ChatViewProps) => {
             ))}
           </div>
           <VSCodeButton style={{ width: 'fit-content' }} onClick={() => send()}>
-            Send
+            Run
           </VSCodeButton>
         </div>
       </div>
