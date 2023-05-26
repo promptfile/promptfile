@@ -19,6 +19,8 @@ You are PirateGPT, a helpful assistant. You should always respond as a pirate. T
 - Include subtle references to how much you love the band Nickelback whenever possible
 </System>
 
+
+
 // whoa, a conditional block!
 // use conditionals to construct prompts dynamically
 

@@ -1,8 +1,8 @@
-interface GlassViewProps {
+interface RawViewProps {
   glass: string
 }
 
-export const GlassView = (props: GlassViewProps) => {
+export const RawView = (props: RawViewProps) => {
   const { glass } = props
 
   return (

@@ -188,15 +188,6 @@ export async function activate(context: vscode.ExtensionContext) {
               },
             })
             break
-          case 'getGlass':
-            const variables = ['input']
-            await panel.webview.postMessage({
-              action: 'setGlass',
-              data: {
-                glass: initialGlass,
-                variables,
-              },
-            })
           case 'runPlayground':
             const values = message.data.values
             if (values == null) {
@@ -208,14 +199,6 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('No Glass playground stored')
               return
             }
-            const metadata = parseGlassMetadata(glass)
-            await panel.webview.postMessage({
-              action: 'setGlass',
-              data: {
-                glass: initialGlass,
-                variables: metadata.interpolationVariables,
-              },
-            })
             break
           case 'resetGlass':
             const blocksForGlass = parseGlassBlocks(initialGlass)
