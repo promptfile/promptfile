@@ -1,8 +1,8 @@
-import { parseGlassMetadata, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
+import { transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
-  parseGlassBlocks,
+  getJSXNodeInsidesString,
   parseGlassTopLevelJsxElements,
 } from '@glass-lang/glasslib'
 import fs from 'fs'
@@ -12,10 +12,9 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeGlassFile } from './executeGlassFile'
 import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
-import { getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
+import { hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
-import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
 
@@ -167,76 +166,76 @@ export async function activate(context: vscode.ExtensionContext) {
       console.log('test results')
       console.log(JSON.stringify(resp, null, 2))
     }),
-    vscode.commands.registerCommand('glass.playground', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
-        return
-      }
-      const initialGlass = activeEditor.document.getText()
-      const filename = getDocumentFilename(activeEditor.document)
-      const panel = vscode.window.createWebviewPanel(
-        'glass.webView',
-        `${filename} (playground)`,
-        vscode.ViewColumn.Beside,
-        {
-          enableScripts: true,
-          retainContextWhenHidden: true,
-        }
-      )
-      panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
-      panel.webview.onDidReceiveMessage(async (message: any) => {
-        switch (message.action) {
-          case 'getFilename':
-            await panel.webview.postMessage({
-              action: 'setFilename',
-              data: {
-                filename,
-              },
-            })
-            break
-          case 'runPlayground':
-            const values = message.data.values
-            if (values == null) {
-              await vscode.window.showErrorMessage('No values provided')
-              return
-            }
-            const glass = message.data.glass
-            if (glass == null) {
-              await vscode.window.showErrorMessage('No Glass playground stored')
-              return
-            }
-            await vscode.window.showInformationMessage('Running Glass playground...')
+    // vscode.commands.registerCommand('glass.playground', async () => {
+    //   const activeEditor = vscode.window.activeTextEditor
+    //   if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
+    //     return
+    //   }
+    //   const initialGlass = activeEditor.document.getText()
+    //   const filename = getDocumentFilename(activeEditor.document)
+    //   const panel = vscode.window.createWebviewPanel(
+    //     'glass.webView',
+    //     `${filename} (playground)`,
+    //     vscode.ViewColumn.Beside,
+    //     {
+    //       enableScripts: true,
+    //       retainContextWhenHidden: true,
+    //     }
+    //   )
+    //   panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
+    //   panel.webview.onDidReceiveMessage(async (message: any) => {
+    //     switch (message.action) {
+    //       case 'getFilename':
+    //         await panel.webview.postMessage({
+    //           action: 'setFilename',
+    //           data: {
+    //             filename,
+    //           },
+    //         })
+    //         break
+    //       case 'runPlayground':
+    //         const values = message.data.values
+    //         if (values == null) {
+    //           await vscode.window.showErrorMessage('No values provided')
+    //           return
+    //         }
+    //         const glass = message.data.glass
+    //         if (glass == null) {
+    //           await vscode.window.showErrorMessage('No Glass playground stored')
+    //           return
+    //         }
+    //         await vscode.window.showInformationMessage('Running Glass playground...')
 
-            break
-          case 'resetGlass':
-            const blocksForGlass = parseGlassBlocks(initialGlass)
-            const metadataForGlass = parseGlassMetadata(initialGlass)
-            await panel.webview.postMessage({
-              action: 'setGlass',
-              data: {
-                filename,
-                glass: initialGlass,
-                blocks: blocksForGlass,
-                variables: metadataForGlass.interpolationVariables,
-              },
-            })
-            break
-          case 'showMessage':
-            const level = message.data.level
-            const text = message.data.text
-            if (level === 'error') {
-              await vscode.window.showErrorMessage(text)
-            } else if (level === 'warn') {
-              await vscode.window.showWarningMessage(text)
-            } else {
-              await vscode.window.showInformationMessage(text)
-            }
-            break
-          default:
-            break
-        }
-      })
-    }),
+    //         break
+    //       case 'resetGlass':
+    //         const blocksForGlass = parseGlassBlocks(initialGlass)
+    //         const metadataForGlass = parseGlassMetadata(initialGlass)
+    //         await panel.webview.postMessage({
+    //           action: 'setGlass',
+    //           data: {
+    //             filename,
+    //             glass: initialGlass,
+    //             blocks: blocksForGlass,
+    //             variables: metadataForGlass.interpolationVariables,
+    //           },
+    //         })
+    //         break
+    //       case 'showMessage':
+    //         const level = message.data.level
+    //         const text = message.data.text
+    //         if (level === 'error') {
+    //           await vscode.window.showErrorMessage(text)
+    //         } else if (level === 'warn') {
+    //           await vscode.window.showWarningMessage(text)
+    //         } else {
+    //           await vscode.window.showInformationMessage(text)
+    //         }
+    //         break
+    //       default:
+    //         break
+    //     }
+    //   })
+    // }),
     vscode.commands.registerCommand('glass.getNextBlock', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
@@ -245,7 +244,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
       try {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        const chatElement = elements.find(element => element.tagName === 'Request')
+        let chatElement = elements.find(element => element.tagName === 'Request')
+        if (chatElement == null) {
+          const loopElement = elements.find(element => element.tagName === 'Loop')
+          if (loopElement != null) {
+            const loopInsides = getJSXNodeInsidesString(loopElement, activeEditor.document.getText())
+            const loopInsideElements = parseGlassTopLevelJsxElements(loopInsides)
+            chatElement = loopInsideElements.find(element => element.tagName === 'Request')
+          }
+        }
         const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
         if (!model) {
           await vscode.window.showErrorMessage('No <Request /> found')

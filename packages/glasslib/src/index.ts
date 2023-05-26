@@ -12,6 +12,7 @@ export {
 export { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
 export { interpolateGlass } from './interpolateGlass'
 export { interpolateGlassChat } from './interpolateGlassChat'
+export { getJSXNodeInsidesString, getJSXNodeShellString, getJSXNodeString } from './jsxElementNode'
 export { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 export { parseGlassAST } from './parseGlassAST'
 export { parseGlassBlocks } from './parseGlassBlocks'

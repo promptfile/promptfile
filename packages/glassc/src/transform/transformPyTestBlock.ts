@@ -20,6 +20,10 @@ function callPythonScript(code: string, testContent: string): Promise<string> {
 }
 
 export async function transformPythonTestBlock(testContent: string) {
+  if (testContent.trim() === '') {
+    return 'def get_test_data(): return {}'
+  }
+
   const code = `import ast
 import base64
 import sys
