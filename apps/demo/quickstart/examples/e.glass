@@ -1,0 +1,45 @@
+// Cool! Let's try some few-shotting.
+
+// In this example, we're priming the model to follow our instructions by providing some examples of how the model should reply.
+
+<System>
+You are an AI community moderator. Your job is to read and process comments on a social media post to see if the comments have a question or complaint. If the comment has a question or complaint, return NEEDS_ATTENTION. Otherwise, return SKIP. Don't reply with any additional information — just reply NEEDS_ATTENTION or SKIP.
+</System>
+
+<User>
+ur product never works, def want my money back
+</User>
+
+<Assistant>
+NEEDS_ATTENTION
+</Assistant>
+
+<User>
+Love it! This saves so much time
+</User>
+
+<Assistant>
+SKIP
+</Assistant>
+
+<User>
+Does the product come in silver?
+</User>
+
+<Assistant>
+NEEDS_ATTENTION
+</Assistant>
+
+<User>
+would highly recommend not buying this product, I've had so many problems
+</User>
+
+<Assistant>
+NEEDS_ATTENTION
+</Assistant>
+
+<User>
+I'm not sure what's going on.
+</User>
+
+<Request model="gpt-3.5-turbo" />

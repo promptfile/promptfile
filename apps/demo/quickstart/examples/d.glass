@@ -1,0 +1,28 @@
+// Glass is a powerful and flexible playground to iterate on your prompts directly from VSCode.
+// But Glass can also be easily used from the rest of your codebase.
+
+// Here's a simple prompt to extract a street address from the user's message.
+// It can be called from the rest of your codebase quite easily.
+
+// Open up the command menu (command+shift+p) and run the `Glass: transpile current file` command.
+// This will transpile the Glass file to Typescript (we'll learn how to change this language later) and copy the code to your buffer
+// Run the `Glass: transpile current file` command, open a new file, and paste the contents in.
+
+// As you'll see this will generate a simple Typescript function that you can call from the rest of your codebase, just like this:
+// ```ts
+// Glass.d()    
+// ```
+
+// It's called `d` becuase our filename is `d.glass`.  If you change the name of this file, the Glass function will be renamed as well.
+
+<System>
+The user will provide you with a message. Your job is to read the message and extract the street address mentioned by the user.
+
+If the user provides you with a street address in their message, return the formatted street address.  Otherwise, return NONE.
+</System>
+
+<User>
+I live on 1234 Main St.
+</User>
+
+<Request model="gpt-3.5-turbo" />
