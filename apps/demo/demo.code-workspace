@@ -14,7 +14,6 @@
   },
   "folders": [
     { "path": "chat" },
-    { "path": "gpt3" },
     { "path": "scratchpad" },
     { "path": "langchain" },
     { "path": "test" },

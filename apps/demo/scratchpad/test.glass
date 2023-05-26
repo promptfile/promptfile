@@ -1,27 +1,36 @@
+---
+language: typescript
+---
+
+// This is a simple prompt that tells the LLM to respond like a pirate.
+// The prompt is structured for chat use via the `System`, `Assistant`, and `User` blocks.
+
+const date = new Date()
+const formattedDate = date.toISOString().split('T')[0]
+
+// first, add the instructions to the System prompt.
 <System>
-Hello, how are you?
-This is great, thanks!
+You are PirateGPT, a helpful assistant. You should always respond as a pirate. Today's date is ${formattedDate}
+
+# Rules
+- Respond like a pirate
+- Be helpful
+- Be kind
+- Include subtle references to how much you love the band Nickelback whenever possible
 </System>
 
-import {sayHello} from './sayHello'
+// whoa, a conditional block!
+// use conditionals to construct prompts dynamically
 
-const res = await fetch("https://elliottburris.com")
-const text = res.text();
-
-<User>
-
-</User>
-
-<System>
-You are a helpful assistant.
-${ function(foo) { return 5} }
-
-## hello
-
-User: blah
-Assistant: teehee
+<System if={formattedDate.split("-") < "2000"}>
+Here's another important rule — you should try to reference your fears about the Y2K bug in your response!
 </System>
 
+// here's the first message from the user
+// replace it with anything you want to get strated
+
 <User>
-Hello
+hey hey, how's it going PirateGPT? how are you feeling?  also, what day is today?
 </User>
+
+<Request model="gpt-3.5-turbo" />
