@@ -17,16 +17,12 @@ Router.events.on('routeChangeStart', onRouteChange)
 Router.events.on('hashChangeStart', onRouteChange)
 
 export default function App({ Component, pageProps }) {
-  let router = useRouter()
+  const router = useRouter()
 
   return (
     <>
       <Head>
-        {router.pathname === '/' ? (
-          <title>Glass</title>
-        ) : (
-          <title>{`${pageProps.title} - Glass`}</title>
-        )}
+        {router.pathname === '/' ? <title>Glass</title> : <title>{`${pageProps.title} - Glass`}</title>}
         <style>
           {`.link {
               color: #0077FF !important;
@@ -34,8 +30,7 @@ export default function App({ Component, pageProps }) {
         </style>
         <meta name="description" content={pageProps.description} />
       </Head>
-      {/* @ts-ignore - incremental adoption */}
-      <MDXProvider components={mdxComponents}>
+      <MDXProvider components={mdxComponents as any}>
         <Layout {...pageProps}>
           <Component {...pageProps} />
         </Layout>

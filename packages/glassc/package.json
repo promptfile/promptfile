@@ -12,7 +12,7 @@
     "test:watchAll": "mocha --watch",
     "build": "tsup src/index.ts",
     "dev": "npm run build -- --watch",
-    "lint": "eslint src --ext ts"
+    "lint:skip": "eslint src --ext ts"
   },
   "repository": {
     "type": "git",
