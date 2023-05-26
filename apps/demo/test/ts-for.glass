@@ -1,10 +1,14 @@
+---
+language: typescript
+---
+
 const messages = [
     { role: 'user', content: 'name an ice cream' },
     { role: "assistant", content: 'Vanilla' },
     { role: 'user', content: 'name a fruit' }
 ]
 
-<For each={messages} item="m">
+<For each={messages} as="m">
 
 <Block role={m.role}>
 ${m.content}

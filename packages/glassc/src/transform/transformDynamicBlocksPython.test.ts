@@ -56,7 +56,7 @@ And this is the end`
   it.skip('should transform document with dynamic for block with body', () => {
     const glass = `Hello world this is a document.
 
-<For each={messages} item="m">
+<For each={messages} as="m">
 <User>
 \${m.foo}
 </User>

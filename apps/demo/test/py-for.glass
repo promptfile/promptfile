@@ -8,7 +8,7 @@ messages = [
     { "role": 'user', "content": 'name a fruit', "show": True  }
 ]
 
-<For each={messages} item="m">
+<For each={messages} as="m">
 
 <Block role={m["role"]}>
 <Text if={m["show"]}>

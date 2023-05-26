@@ -19,7 +19,7 @@ const question = "Color"
 Respond with examples.
 </System>
 
-<For each={examples} item="m">
+<For each={examples} as="m">
 <User>
 ${m.request}
 </User>

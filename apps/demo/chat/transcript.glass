@@ -7,7 +7,7 @@ import {db} from './db'
 const conversation = await db.conversation.findUniqueOrThrow({where: {id: conversationId}})
 const messages = await db.message.findMany({where: {conversationId: conversation.id}})
 
-<For each={messages} item="item">
+<For each={messages} as="item">
 <Block role={item.role}>
 ${item.content}
 </Block>

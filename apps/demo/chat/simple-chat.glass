@@ -1,9 +1,8 @@
-<System>
-Respond to the user with a one-line poem.
-</System>
+const res = await fetch('https://elliottburris.com')
+const htmlCode = await res.text()
 
-<User>
-hey how are you?
-</User>
+<System>
+You are AnalystGPT. Your job is to analyze website content and respond.
+</System>
 
 <Request model="gpt-3.5-turbo" />

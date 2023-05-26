@@ -64,7 +64,7 @@ const messages = [
 ]
 </Code>
 
-<For each={messages} item="m">
+<For each={messages} as="m">
 
 <Block role={m.role}>
 ${m.content}
