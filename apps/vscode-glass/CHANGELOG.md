@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.10.0
+
+### Minor Changes
+
+- [`6bea961`](https://github.com/foundation-ui/glass/commit/6bea96163876b1ebedfefe514ce36272d2160420) Thanks [@rothfels](https://github.com/rothfels)! - remove code blocks, move args to frontmatter
+
 ## 0.9.1
 
 ### Patch Changes
