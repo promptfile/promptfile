@@ -48,6 +48,9 @@ function RigView() {
             )
             setValues(() => newValues)
           }
+          setTimeout(() => {
+            document.getElementById('composer-input-0')?.focus()
+          }, 500)
           break
         default:
           break
@@ -68,14 +71,14 @@ function RigView() {
 
   useEffect(() => {
     if (filename.length > 0) {
-      vscode.postMessage({
-        action: 'getGlass',
-      })
+      reset()
     }
   }, [filename])
 
   const reset = () => {
-    document.getElementById('composer-input-0')?.focus()
+    vscode.postMessage({
+      action: 'resetGlass',
+    })
   }
 
   const send = () => {

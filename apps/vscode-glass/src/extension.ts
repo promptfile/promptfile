@@ -1,4 +1,4 @@
-import { transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
+import { parseGlassMetadata, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
 import { parseGlassBlocks, parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
@@ -34,7 +34,7 @@ export async function activate(context: vscode.ExtensionContext) {
     },
     {
       documentSelector: [
-        { scheme: 'file', language: 'glass-py' },
+        { scheme: 'file', language: '`glass-py`' },
         { scheme: 'file', language: 'glass-ts' },
         { scheme: 'file', language: 'glass-js' },
       ],
@@ -208,23 +208,25 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('No Glass playground stored')
               return
             }
-            await vscode.window.showInformationMessage('Running!')
+            const metadata = parseGlassMetadata(glass)
             await panel.webview.postMessage({
               action: 'setGlass',
               data: {
                 glass: initialGlass,
-                variables: ['input'],
+                variables: metadata.interpolationVariables,
               },
             })
             break
-          case 'getGlass':
-            const blocks = parseGlassBlocks(activeEditor.document.getText())
+          case 'resetGlass':
+            const blocksForGlass = parseGlassBlocks(initialGlass)
+            const metadataForGlass = parseGlassMetadata(initialGlass)
             await panel.webview.postMessage({
-              action: 'setData',
+              action: 'setGlass',
               data: {
                 filename,
-                blocks: blocks,
-                variables: ['input'],
+                glass: initialGlass,
+                blocks: blocksForGlass,
+                variables: metadataForGlass.interpolationVariables,
               },
             })
             break

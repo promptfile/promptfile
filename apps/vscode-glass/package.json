@@ -140,15 +140,15 @@
     ],
     "keybindings": [
       {
-        "command": "glass.playground",
-        "key": "ctrl+enter",
-        "mac": "cmd+enter",
+        "command": "glass.getNextBlock",
+        "key": "ctrl+shift+enter",
+        "mac": "cmd+shift+enter",
         "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
       },
       {
-        "command": "glass.getNextBlock",
-        "key": "ctrl+shift+space",
-        "mac": "cmd+shift+space",
+        "command": "glass.playground",
+        "key": "ctrl+enter",
+        "mac": "cmd+enter",
         "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
       }
     ],

@@ -21,7 +21,6 @@ export function parseGlassMetadata(document: string) {
   const imports = glasslib.parseGlassImports(document)
   const toplevelCode = glasslib.parseGlassTopLevelCode(glasslib.removeGlassFrontmatter(document))
 
-  const codeBlocks = blocks.filter(block => block.tag === 'Code')
   const parsedCodeBlock = parseCodeBlock(`${imports.join('\n')}\n\n${toplevelCode}`)
 
   const finalVars = new Set(vars)
