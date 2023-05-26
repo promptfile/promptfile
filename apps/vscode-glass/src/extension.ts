@@ -1,16 +1,16 @@
-import { transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
-import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
+import { parseGlassMetadata, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
+import { parseGlassBlocks, parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
-import { LeftPanelWebview } from './LeftPanelWebview'
 import { executeGlassFile } from './executeGlassFile'
 import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
-import { hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
+import { getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
+import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
 
@@ -34,7 +34,7 @@ export async function activate(context: vscode.ExtensionContext) {
     },
     {
       documentSelector: [
-        { scheme: 'file', language: 'glass-py' },
+        { scheme: 'file', language: '`glass-py`' },
         { scheme: 'file', language: 'glass-ts' },
         { scheme: 'file', language: 'glass-js' },
       ],
@@ -42,8 +42,6 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   )
   await client.start()
-
-  const leftPanelWebViewProvider = new LeftPanelWebview(context?.extensionUri, {})
 
   let activeEditor = vscode.window.activeTextEditor
 
@@ -71,7 +69,6 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider('glass', leftPanelWebViewProvider),
     characterCount,
     vscode.window.onDidChangeActiveTextEditor(
       async editor => {
@@ -99,7 +96,7 @@ export async function activate(context: vscode.ExtensionContext) {
       context.subscriptions
     ),
     vscode.commands.registerCommand('glass.openSupportChat', async () => {
-      await vscode.commands.executeCommand('workbench.view.extension.glass')
+      await vscode.window.showInformationMessage('Opening support chat...')
     }),
     vscode.commands.registerCommand('glass.reset', async () => {
       const activeEditor = vscode.window.activeTextEditor
@@ -134,8 +131,6 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
 
-      console.log('checking keys')
-
       try {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
         const chatElement = elements.find(element => element.tagName === 'Request')
@@ -166,7 +161,77 @@ export async function activate(context: vscode.ExtensionContext) {
       console.log('test results')
       console.log(JSON.stringify(resp, null, 2))
     }),
-    vscode.commands.registerCommand('glass.run', async () => {
+    vscode.commands.registerCommand('glass.playground', async () => {
+      const activeEditor = vscode.window.activeTextEditor
+      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
+        return
+      }
+      const initialGlass = activeEditor.document.getText()
+      const filename = getDocumentFilename(activeEditor.document)
+      const panel = vscode.window.createWebviewPanel(
+        'glass.webView',
+        `${filename} (playground)`,
+        vscode.ViewColumn.Beside,
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+        }
+      )
+      panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
+      panel.webview.onDidReceiveMessage(async (message: any) => {
+        switch (message.action) {
+          case 'getFilename':
+            await panel.webview.postMessage({
+              action: 'setFilename',
+              data: {
+                filename,
+              },
+            })
+            break
+          case 'runPlayground':
+            const values = message.data.values
+            if (values == null) {
+              await vscode.window.showErrorMessage('No values provided')
+              return
+            }
+            const glass = message.data.glass
+            if (glass == null) {
+              await vscode.window.showErrorMessage('No Glass playground stored')
+              return
+            }
+            await vscode.window.showInformationMessage('Running Glass playground...')
+
+            break
+          case 'resetGlass':
+            const blocksForGlass = parseGlassBlocks(initialGlass)
+            const metadataForGlass = parseGlassMetadata(initialGlass)
+            await panel.webview.postMessage({
+              action: 'setGlass',
+              data: {
+                filename,
+                glass: initialGlass,
+                blocks: blocksForGlass,
+                variables: metadataForGlass.interpolationVariables,
+              },
+            })
+            break
+          case 'showMessage':
+            const level = message.data.level
+            const text = message.data.text
+            if (level === 'error') {
+              await vscode.window.showErrorMessage(text)
+            } else if (level === 'warn') {
+              await vscode.window.showWarningMessage(text)
+            } else {
+              await vscode.window.showInformationMessage(text)
+            }
+            break
+          default:
+            break
+        }
+      })
+    }),
+    vscode.commands.registerCommand('glass.getNextBlock', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
@@ -176,7 +241,11 @@ export async function activate(context: vscode.ExtensionContext) {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
         const chatElement = elements.find(element => element.tagName === 'Request')
         const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
-        if (model?.startsWith('claude')) {
+        if (!model) {
+          await vscode.window.showErrorMessage('No <Request /> found')
+          return
+        }
+        if (model.startsWith('claude')) {
           const anthropicKey = getAnthropicKey()
           if (anthropicKey == null || anthropicKey === '') {
             await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')

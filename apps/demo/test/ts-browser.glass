@@ -16,14 +16,6 @@ ${website}
 ###
 </System>
 
-<User>
-where did elliott go to school
-</User>
-
-<Assistant>
-According to the website code, Elliott went to Cambridge University where he earned a M.Phil. degree, and to the University of Virginia where he earned a B.A. degree.
-</Assistant>
-
 <Loop>
 <User>
 ${input}

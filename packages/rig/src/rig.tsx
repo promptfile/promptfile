@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import { BlocksView } from './BlocksView'
 import { ComposerView } from './ComposerView'
+import { HistoryView } from './HistoryView'
+import { RawView } from './RawView'
 import { TopperView } from './TopperView'
 
 export interface GlassBlock {
   content: string
-  role: 'user' | 'assistant' | 'system'
+  tag: 'User' | 'Assistant' | 'System'
 }
 
-export interface RigState {
-  blocks: GlassBlock[]
+interface RigState {
+  filename: string
+  tab: string
 }
 
 const vscode = acquireVsCodeApi<RigState>()
@@ -20,21 +23,47 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const initialBlocks: GlassBlock[] = [
-    {
-      role: 'assistant',
-      content: 'Welcome to Glass support. How can I help you today?',
-    },
-  ]
-  const [blocks, setBlocks] = useState<GlassBlock[]>(initialBlocks)
+  const tabs: string[] = ['Chat', 'Raw', 'History']
+  const [filename, setFilename] = useState('')
+  const [glass, setGlass] = useState('')
+  const [blocks, setBlocks] = useState<GlassBlock[]>([])
+  const [variables, setVariables] = useState<string[]>([])
+  const [tab, setTab] = useState(tabs[0])
+
+  useEffect(() => {
+    vscode.postMessage({
+      action: 'getFilename',
+    })
+  }, [])
 
   // register a callback for when the extension sends a message
   useEffect(() => {
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
       switch (message.action) {
-        case 'setBlocks':
-          setBlocks(() => message.data.blocks)
+        case 'setFilename':
+          const newFilename = message.data.filename
+          if (newFilename && newFilename.includes('.glass')) {
+            setFilename(() => newFilename)
+          }
+          break
+        case 'setGlass':
+          const newGlass = message.data.glass
+          if (newGlass) {
+            setGlass(() => newGlass)
+          }
+          const newVariables = message.data.variables
+          if (newVariables) {
+            setVariables(() => newVariables)
+          }
+          const newBlocks = message.data.blocks
+          if (newBlocks != null) {
+            setBlocks(() => newBlocks)
+          }
+          setTimeout(() => {
+            document.getElementById('composer-input-0')?.focus()
+          }, 500)
+          break
         default:
           break
       }
@@ -46,13 +75,26 @@ function RigView() {
     }
   }, [])
 
+  useEffect(() => {
+    if (filename.length > 0) {
+      reset()
+    }
+  }, [filename])
+
   const reset = () => {
-    setBlocks(initialBlocks)
-    document.getElementById('composer-input')?.focus()
+    vscode.postMessage({
+      action: 'resetGlass',
+    })
   }
 
-  const send = (text: string) => {
-    setBlocks([...blocks, { content: text, role: 'user' }])
+  const send = (values: Record<string, string>) => {
+    vscode.postMessage({
+      action: 'runPlayground',
+      data: {
+        values,
+        glass,
+      },
+    })
   }
 
   return (
@@ -65,9 +107,11 @@ function RigView() {
         overflow: 'hidden',
       }}
     >
-      <TopperView reset={reset} />
-      <BlocksView blocks={blocks} />
-      <ComposerView send={send} />
+      <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
+      {tab === 'Chat' && <BlocksView blocks={blocks} />}
+      {tab === 'Raw' && <RawView glass={glass} />}
+      {tab === 'History' && <HistoryView glass={glass} />}
+      <ComposerView send={send} variables={variables} />
     </div>
   )
 }

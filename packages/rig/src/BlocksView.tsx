@@ -8,8 +8,6 @@ interface BlocksViewProps {
 export const BlocksView = (props: BlocksViewProps) => {
   const { blocks } = props
 
-  const filteredBlocks = blocks.filter(block => block.role !== 'system')
-
   useEffect(() => {
     const element = document.getElementById(`end`)
     if (element) {
@@ -18,7 +16,7 @@ export const BlocksView = (props: BlocksViewProps) => {
   }, [blocks.length])
 
   return (
-    <div style={{ overflow: 'hidden', height: '100%' }}>
+    <div style={{ overflow: 'hidden', height: '100%', flexDirection: 'column', display: 'flex' }}>
       <div
         style={{
           alignItems: 'flex-start',
@@ -30,21 +28,21 @@ export const BlocksView = (props: BlocksViewProps) => {
         }}
       >
         <div style={{ width: '100%', height: '16px' }} />
-        {filteredBlocks.map((block, index) => (
+        {blocks.map((block, index) => (
           <span
             key={index}
             style={{
               display: 'flex',
               flexDirection: 'column',
               paddingBottom: '24px',
-              paddingLeft: '16px',
-              paddingRight: '16px',
+              paddingLeft: '24px',
+              paddingRight: '24px',
             }}
           >
             <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>
-              {block.role === 'user' ? 'Me' : 'Glass support'}
+              {block.tag}
             </span>
-            {block.content}
+            <span style={{ whiteSpace: 'pre-line' }}>{block.content}</span>
           </span>
         ))}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
