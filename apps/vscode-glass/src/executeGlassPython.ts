@@ -22,7 +22,7 @@ export async function executeGlassPython(
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
 
-  const transpiledFunction = transpileGlassFilePython(document.getText(), {
+  const transpiledFunction = await transpileGlassFilePython(document.getText(), {
     workspaceFolder: workspacePath,
     folderPath: document.uri.fsPath.split('/').slice(0, -1).join('/'),
     fileName,

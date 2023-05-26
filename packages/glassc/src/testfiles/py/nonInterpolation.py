@@ -1,6 +1,5 @@
 def getNonInterpolationPrompt():
-    def getTestData():
-        return {}
+    def get_test_data(): return {}
     
     def compile(opt = { "args": {} }):
         foo = opt["args"]["foo"]
@@ -17,4 +16,5 @@ def getNonInterpolationPrompt():
             "interpolatedDoc": """{}""".format(GLASSVAR[0]),
         }
     
-    return json.dumps(compile())
+    testData = get_test_data()
+    return json.dumps(compile({ "args": testData }))

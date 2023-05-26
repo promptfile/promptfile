@@ -337,7 +337,7 @@ export async function activate(context: vscode.ExtensionContext) {
         try {
           const code =
             document.languageId === 'glass-py'
-              ? transpileGlassPython(filePath, filePath, 'python', path.join(path.dirname(filePath)))
+              ? await transpileGlassPython(filePath, filePath, 'python', path.join(path.dirname(filePath)))
               : transpileGlassNext(workspacePath, filePath, 'typescript', outDir)
           await vscode.env.clipboard.writeText(code)
           await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)

@@ -1,6 +1,5 @@
 def getBasicPrompt():
-    def getTestData():
-        return {}
+    def get_test_data(): return {}
     
     def compile(opt = { "args": {} }):
         
@@ -17,4 +16,5 @@ def getBasicPrompt():
             "interpolatedDoc": """{}""".format(GLASSVAR[0]),
         }
     
-    return json.dumps(compile())
+    testData = get_test_data()
+    return json.dumps(compile({ "args": testData }))

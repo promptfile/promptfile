@@ -1,5 +1,4 @@
 import glasslib from '@glass-lang/glasslib'
-import { checkOk } from '@glass-lang/util'
 import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
@@ -7,6 +6,7 @@ import prettier from 'prettier'
 import { parseFrontmatter } from '../parse/parseFrontmatter.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
+import { parseTestData } from '../parse/parseTestData.js'
 import { parseCodeBlock, parseTsGlassImports } from '../parse/parseTypescript.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
 import { getUseStatePairs, transformSetState } from '../transform/transformSetState.js'
@@ -38,20 +38,7 @@ export function transpileGlassFileNext(
 
   const toplevelNodes = glasslib.parseGlassTopLevelJsxElements(originalDoc)
 
-  const testNodes = toplevelNodes.filter(node => node.tagName === 'Test')
-  checkOk(testNodes.length <= 1, 'Only one <Test> block is allowed per file')
-  const testData = testNodes.map(n => {
-    if (n.children.length === 0) {
-      return ''
-    }
-    // get the inside content of the node
-    return originalDoc.substring(
-      n.children[0].position.start.offset,
-      n.children[n.children.length - 1].position.end.offset
-    )
-  })
-
-  const testContent = testData[0] || ''
+  const testContent = parseTestData(toplevelNodes, originalDoc)
 
   const stateNode = toplevelNodes.find(node => node.tagName === 'State')
   let state = {} as any

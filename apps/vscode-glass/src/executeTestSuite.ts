@@ -1,11 +1,10 @@
 import { runGlass } from '@glass-lang/glasslib'
+import { UnwrapPromise } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassPython } from './executeGlassPython'
 import { executeGlassTypescript } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
-
-type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 
 export async function executeTestSuite(document: vscode.TextDocument, interpolationArgs: any, usePython: boolean) {
   const fileName = getDocumentFilename(document)

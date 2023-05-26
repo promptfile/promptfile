@@ -1,0 +1,13 @@
+---
+language: python
+---
+
+<Test>
+foo = "tell me a story"
+</Test>
+
+<System>
+${foo}
+</System>
+
+<Request model="gpt-3.5-turbo" />
