@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.10.1
+
+### Patch Changes
+
+- [`854ba98`](https://github.com/foundation-ui/glass/commit/854ba98819b4070b823e30c8968dc22c5a6783b4) Thanks [@rothfels](https://github.com/rothfels)! - python bugfixes
+
 ## 0.10.0
 
 ### Minor Changes
