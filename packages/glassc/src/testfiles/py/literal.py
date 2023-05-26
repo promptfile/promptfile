@@ -12,7 +12,7 @@ def getLiteralPrompt():
 </System>""".format("""your job is to answer questions based on the following website code:
 ###
 {}
-###""".format("""{}""".format("""<Text escapeHtml={{"{}"}}>
+###""".format("""{}""".format("""<Text escapeHtml="True">
 {}
 </Text>""".format("""{}""".format(response.text))))))
     }
