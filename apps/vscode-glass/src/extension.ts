@@ -131,8 +131,6 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
 
-      console.log('checking keys')
-
       try {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
         const chatElement = elements.find(element => element.tagName === 'Request')
@@ -168,6 +166,7 @@ export async function activate(context: vscode.ExtensionContext) {
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
       }
+      const initialGlass = activeEditor.document.getText()
       const filename = getDocumentFilename(activeEditor.document)
       const panel = vscode.window.createWebviewPanel(
         'glass.webView',
@@ -181,13 +180,51 @@ export async function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
       panel.webview.onDidReceiveMessage(async (message: any) => {
         switch (message.action) {
-          case 'getData':
+          case 'getFilename':
+            await panel.webview.postMessage({
+              action: 'setFilename',
+              data: {
+                filename,
+              },
+            })
+            break
+          case 'getGlass':
+            const variables = ['input']
+            await panel.webview.postMessage({
+              action: 'setGlass',
+              data: {
+                glass: initialGlass,
+                variables,
+              },
+            })
+          case 'runPlayground':
+            const values = message.data.values
+            if (values == null) {
+              await vscode.window.showErrorMessage('No values provided')
+              return
+            }
+            const glass = message.data.glass
+            if (glass == null) {
+              await vscode.window.showErrorMessage('No Glass playground stored')
+              return
+            }
+            await vscode.window.showInformationMessage('Running!')
+            await panel.webview.postMessage({
+              action: 'setGlass',
+              data: {
+                glass: initialGlass,
+                variables: ['input'],
+              },
+            })
+            break
+          case 'getGlass':
             const blocks = parseGlassBlocks(activeEditor.document.getText())
             await panel.webview.postMessage({
               action: 'setData',
               data: {
                 filename,
                 blocks: blocks,
+                variables: ['input'],
               },
             })
             break
@@ -207,7 +244,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       })
     }),
-    vscode.commands.registerCommand('glass.run', async () => {
+    vscode.commands.registerCommand('glass.getNextBlock', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
@@ -217,7 +254,11 @@ export async function activate(context: vscode.ExtensionContext) {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
         const chatElement = elements.find(element => element.tagName === 'Request')
         const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
-        if (model?.startsWith('claude')) {
+        if (!model) {
+          await vscode.window.showErrorMessage('No <Request /> found')
+          return
+        }
+        if (model.startsWith('claude')) {
           const anthropicKey = getAnthropicKey()
           if (anthropicKey == null || anthropicKey === '') {
             await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')

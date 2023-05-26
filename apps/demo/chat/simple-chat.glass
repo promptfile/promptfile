@@ -1,7 +1,3 @@
----
-language: typescript
----
-
 const res = await fetch("https://elliottburris.com")
 const website = await res.text()
 

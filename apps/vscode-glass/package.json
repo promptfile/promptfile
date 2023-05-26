@@ -106,8 +106,8 @@
         "title": "Glass: Open playground"
       },
       {
-        "command": "glass.run",
-        "title": "Glass: Run file"
+        "command": "glass.getNextBlock",
+        "title": "Glass: get next block"
       },
       {
         "command": "glass.runTestSuite",
@@ -140,21 +140,15 @@
     ],
     "keybindings": [
       {
-        "command": "glass.run",
+        "command": "glass.playground",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
       },
       {
-        "command": "glass.playground",
-        "key": "ctrl+shift+enter",
-        "mac": "cmd+shift+enter",
-        "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
-      },
-      {
-        "command": "glass.reset",
-        "key": "ctrl+shift+r",
-        "mac": "cmd+shift+r",
+        "command": "glass.getNextBlock",
+        "key": "ctrl+shift+space",
+        "mac": "cmd+shift+space",
         "when": "resourceLangId == glass-js || resourceLangId == glass-ts || resourceLangId == glass-py"
       }
     ],
