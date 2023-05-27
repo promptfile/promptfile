@@ -396,7 +396,7 @@ export async function activate(context: vscode.ExtensionContext) {
           }
 
           try {
-            let output: ''
+            let output = ''
             if (languageMode === 'python') {
               output = await transpileGlassPython(folderPath, folderPath, languageMode, outDir)
             } else {
