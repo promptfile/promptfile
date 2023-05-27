@@ -13,7 +13,7 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeGlassFile } from './executeGlassFile'
 import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
-import { getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
+import { getDocumentFilename, getNonce, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
 import { getHtmlForWebview } from './webview'
@@ -182,6 +182,9 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       const initialGlass = activeEditor.document.getText()
       const filename = getDocumentFilename(activeEditor.document)
+      // Get the directory of the current file
+      const currentDir = path.dirname(activeEditor.document.uri.fsPath)
+
       const panel = vscode.window.createWebviewPanel(
         'glass.webView',
         `${filename} (playground)`,
@@ -208,13 +211,55 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('No values provided')
               return
             }
-            const glass = message.data.glass
-            if (glass == null) {
-              await vscode.window.showErrorMessage('No Glass playground stored')
-              return
-            }
-            await vscode.window.showInformationMessage('Running Glass playground...')
 
+            // Define the new file's path. This places it in the same directory
+            // as the current file.
+            const playgroundId = getNonce()
+            const newFilePath = path.join(currentDir, filename.replace('.glass', `${playgroundId}.glass`))
+            fs.writeFileSync(newFilePath, initialGlass)
+
+            // load the textdocument from newFilePath
+            const playgroundDocument = await vscode.workspace.openTextDocument(newFilePath)
+
+            try {
+              const resp = await executeGlassFile(
+                playgroundDocument,
+                values,
+                playgroundDocument.languageId === 'glass-py',
+                async ({ nextDoc, rawResponse }) => {
+                  console.log(nextDoc)
+                  // const blocksForGlass = parseGlassBlocks(nextDoc)
+                  const metadataForGlass = parseGlassMetadata(nextDoc)
+                  await panel.webview.postMessage({
+                    action: 'setGlass',
+                    data: {
+                      filename,
+                      glass: nextDoc,
+                      blocks: [],
+                      variables: metadataForGlass.interpolationVariables,
+                    },
+                  })
+                  return true
+                }
+              )
+              console.log(resp)
+              const blocksForGlass = parseGlassBlocks(resp.finalInterpolatedDoc)
+              const metadataForGlass = parseGlassMetadata(resp.finalInterpolatedDoc)
+              await panel.webview.postMessage({
+                action: 'setGlass',
+                data: {
+                  filename,
+                  glass: resp.finalInterpolatedDoc,
+                  blocks: blocksForGlass,
+                  variables: metadataForGlass.interpolationVariables,
+                },
+              })
+            } catch (error) {
+              console.error(error)
+              void vscode.window.showErrorMessage(`ERROR: ${error}`)
+            } finally {
+              fs.unlinkSync(newFilePath)
+            }
             break
           case 'resetGlass':
             const blocksForGlass = parseGlassBlocks(initialGlass)

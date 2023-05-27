@@ -42,24 +42,12 @@ function RigView() {
       const message = event.data // The JSON data our extension sent
       switch (message.action) {
         case 'setFilename':
-          const newFilename = message.data.filename
-          if (newFilename && newFilename.includes('.glass')) {
-            setFilename(() => newFilename)
-          }
+          setFilename(() => message.data.filename)
           break
         case 'setGlass':
-          const newGlass = message.data.glass
-          if (newGlass) {
-            setGlass(() => newGlass)
-          }
-          const newVariables = message.data.variables
-          if (newVariables) {
-            setVariables(() => newVariables)
-          }
-          const newBlocks = message.data.blocks
-          if (newBlocks != null) {
-            setBlocks(() => newBlocks)
-          }
+          setGlass(() => message.data.glass)
+          setVariables(() => message.data.variables)
+          setBlocks(() => message.data.blocks)
           setTimeout(() => {
             document.getElementById('composer-input-0')?.focus()
           }, 500)
@@ -68,7 +56,6 @@ function RigView() {
           break
       }
     }
-
     window.addEventListener('message', cb)
     return () => {
       window.removeEventListener('message', cb)
