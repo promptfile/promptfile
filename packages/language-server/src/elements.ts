@@ -44,6 +44,13 @@ export const glassElements: GlassElement[] = [
         optional: true,
       },
       {
+        name: 'model',
+        detail: 'model used to generate the content',
+        documentation: 'The `model` attribute allows you to track which model generated the assistant text.',
+        type: 'string',
+        optional: true,
+      },
+      {
         name: 'if',
         detail: 'conditional expression',
         documentation: 'The `if` attribute allows you to conditionally render an Assistant block.',

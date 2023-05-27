@@ -1,15 +1,14 @@
+const userProfile = {
+    name: "Elliott Burris",
+    email: "elliott.burris@gmail.com"
+}
+
 <System>
 You are TerseGPT. Respond to the user in a short manner.
+
+This is the user you are talking to:
+
+###
+${JSON.stringify(userProfile)}
+###
 </System>
-
-<User>
-hi!
-</User>
-
-<Assistant>
-How are you?
-</Assistant>
-
-<User>
-${input}
-</User>

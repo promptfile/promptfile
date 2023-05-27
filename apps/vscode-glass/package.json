@@ -101,7 +101,7 @@
         "title": "Glass: Open playground"
       },
       {
-        "command": "glass.getNextBlock",
+        "command": "glass.copilot",
         "title": "Glass: get next block"
       },
       {
@@ -135,15 +135,15 @@
     ],
     "keybindings": [
       {
-        "command": "glass.getNextBlock",
-        "key": "ctrl+shift+space",
-        "mac": "cmd+shift+space",
+        "command": "glass.copilot",
+        "key": "ctrl+enter",
+        "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       },
       {
         "command": "glass.playground",
-        "key": "ctrl+enter",
-        "mac": "cmd+enter",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       }
     ],

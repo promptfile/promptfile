@@ -140,7 +140,9 @@ export async function activate(context: vscode.ExtensionContext) {
       try {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
         const chatElement = elements.find(element => element.tagName === 'Request')
-        const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
+        const model =
+          chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue ??
+          (vscode.workspace.getConfiguration('glass').get('defaultChatModel') as string)
         const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
         if (!languageModel) {
           await vscode.window.showErrorMessage(`Unable to find model ${model}`)
@@ -290,7 +292,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       })
     }),
-    vscode.commands.registerCommand('glass.getNextBlock', async () => {
+    vscode.commands.registerCommand('glass.copilot', async () => {
       const activeEditor = vscode.window.activeTextEditor
 
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
@@ -308,11 +310,10 @@ export async function activate(context: vscode.ExtensionContext) {
             requestElement = loopInsideElements.find(element => element.tagName === 'Request')
           }
         }
-        const model = requestElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
-        if (!model) {
-          await vscode.window.showErrorMessage('No <Request /> found')
-          return
-        }
+
+        const model =
+          requestElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue ??
+          (vscode.workspace.getConfiguration('glass').get('defaultChatModel') as string)
         const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
         if (!languageModel) {
           await vscode.window.showErrorMessage(`Unable to find model ${model}`)
@@ -351,14 +352,14 @@ export async function activate(context: vscode.ExtensionContext) {
           async ({ nextDoc, rawResponse }) => {
             const currentText = activeEditor.document.getText()
             if (firstLoad) {
-              const maxRange = activeEditor.document.validateRange(
+              const endOfFile = activeEditor.document.validateRange(
                 new vscode.Range(
-                  new vscode.Position(0, 0),
+                  new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER),
                   new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
                 )
               )
               await activeEditor.edit(editBuilder => {
-                editBuilder.replace(maxRange, nextDoc)
+                editBuilder.replace(endOfFile, `\n\n<Assistant>\n${rawResponse}\n</Assistant>`)
               })
               const lastLineIndex = activeEditor.document.lineCount
               const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
@@ -411,25 +412,20 @@ export async function activate(context: vscode.ExtensionContext) {
             )
           })
         }
-        const parsedExisting = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        const existingState = parsedExisting.find(tag => tag.tagName === 'State')
-        if (existingState) {
-          // extract <State> through </State> in the response
-          const regex = /<State>([\s\S]*?)<\/State>/g
-          const match = regex.exec(resp.finalDoc)
-          // replace the old state with the new state
-          if (match) {
-            await activeEditor.edit(editBuilder => {
-              editBuilder.replace(
-                new vscode.Range(
-                  activeEditor.document.positionAt(existingState.position.start.offset),
-                  activeEditor.document.positionAt(existingState.position.end.offset)
-                ),
-                `<State>${match[1]}</State>`
-              )
-            })
-          }
-        }
+
+        const endOfFile = activeEditor.document.validateRange(
+          new vscode.Range(
+            new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER),
+            new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
+          )
+        )
+        await activeEditor.edit(editBuilder => {
+          editBuilder.replace(endOfFile, `\n\n<User>\n\n</User>`)
+        })
+
+        const lastLineIndex = activeEditor.document.lineCount
+        const targetPosition = new vscode.Position(lastLineIndex - 2, 0)
+        activeEditor.selection = new vscode.Selection(targetPosition, targetPosition)
       } catch (error) {
         console.error(error)
         void vscode.window.showErrorMessage(`ERROR: ${error}`)
