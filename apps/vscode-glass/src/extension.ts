@@ -398,6 +398,10 @@ export async function activate(context: vscode.ExtensionContext) {
           }
         )
 
+        if (cancelled) {
+          return
+        }
+
         while (activeEditor.document.getText().includes('█')) {
           await activeEditor.edit(editBuilder => {
             const lines = activeEditor.document.getText().split('\n')

@@ -12,3 +12,5 @@ This is the user you are talking to:
 ${JSON.stringify(userProfile)}
 ###
 </System>
+
+<Request model="gpt-3.5-turbo" />
