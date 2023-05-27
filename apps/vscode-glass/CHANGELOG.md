@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.10.2
+
+### Patch Changes
+
+- [`9fb52cb`](https://github.com/foundation-ui/glass/commit/9fb52cb0579a8937af5b408a715e0717578267e6) Thanks [@elliottburris](https://github.com/elliottburris)! - fixing in-editor typeahead
+
 ## 0.10.1
 
 ### Patch Changes
