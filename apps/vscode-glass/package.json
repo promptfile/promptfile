@@ -30,11 +30,6 @@
     "llm"
   ],
   "icon": "assets/glass.png",
-  "activationEvents": [
-    "onLanguage:glass-js",
-    "onLanguage:glass-ts",
-    "onLanguage:glass-py"
-  ],
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "esbuild extension=./src/extension.ts language-server=../../packages/language-server/src/server.ts --bundle --platform=node --target=node16 --external:vscode --external:esbuild --external:@glass-lang/glasslib --outdir=out && npm run build:rig",

@@ -142,20 +142,27 @@ export async function activate(context: vscode.ExtensionContext) {
         const chatElement = elements.find(element => element.tagName === 'Request')
         const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
         const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
-        if (languageModel?.creator === LanguageModelCreator.anthropic) {
-          const anthropicKey = getAnthropicKey()
-          if (anthropicKey == null || anthropicKey === '') {
-            await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
-            await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
-            return
-          }
-        } else if (languageModel?.creator === LanguageModelCreator.openai) {
-          const openaiKey = getOpenaiKey()
-          if (openaiKey == null || openaiKey === '') {
-            await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
-            await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
-            return
-          }
+        if (!languageModel) {
+          await vscode.window.showErrorMessage(`Unable to find model ${model}`)
+          return
+        }
+        switch (languageModel.creator) {
+          case LanguageModelCreator.anthropic:
+            const anthropicKey = getAnthropicKey()
+            if (anthropicKey == null || anthropicKey === '') {
+              await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
+              await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
+              return
+            }
+            break
+          case LanguageModelCreator.openai:
+            const openaiKey = getOpenaiKey()
+            if (openaiKey == null || openaiKey === '') {
+              await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
+              await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
+              return
+            }
+            break
         }
       } catch (e) {
         console.error(e)
@@ -240,41 +247,49 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('glass.getNextBlock', async () => {
       const activeEditor = vscode.window.activeTextEditor
+
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
       }
 
       try {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        let chatElement = elements.find(element => element.tagName === 'Request')
-        if (chatElement == null) {
+        let requestElement = elements.find(element => element.tagName === 'Request')
+        if (requestElement == null) {
           const loopElement = elements.find(element => element.tagName === 'Loop')
           if (loopElement != null) {
             const loopInsides = getJSXNodeInsidesString(loopElement, activeEditor.document.getText())
             const loopInsideElements = parseGlassTopLevelJsxElements(loopInsides)
-            chatElement = loopInsideElements.find(element => element.tagName === 'Request')
+            requestElement = loopInsideElements.find(element => element.tagName === 'Request')
           }
         }
-        const model = chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
+        const model = requestElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue
         if (!model) {
           await vscode.window.showErrorMessage('No <Request /> found')
           return
         }
         const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
-        if (languageModel?.creator === LanguageModelCreator.anthropic) {
-          const anthropicKey = getAnthropicKey()
-          if (anthropicKey == null || anthropicKey === '') {
-            await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
-            await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
-            return
-          }
-        } else if (languageModel?.creator === LanguageModelCreator.openai) {
-          const openaiKey = getOpenaiKey()
-          if (openaiKey == null || openaiKey === '') {
-            await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
-            await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
-            return
-          }
+        if (!languageModel) {
+          await vscode.window.showErrorMessage(`Unable to find model ${model}`)
+          return
+        }
+        switch (languageModel.creator) {
+          case LanguageModelCreator.anthropic:
+            const anthropicKey = getAnthropicKey()
+            if (anthropicKey == null || anthropicKey === '') {
+              await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
+              await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
+              return
+            }
+            break
+          case LanguageModelCreator.openai:
+            const openaiKey = getOpenaiKey()
+            if (openaiKey == null || openaiKey === '') {
+              await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
+              await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
+              return
+            }
+            break
         }
       } catch (e) {
         console.error(e)
