@@ -292,7 +292,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       })
     }),
-    vscode.commands.registerCommand('glass.copilot', async () => {
+    vscode.commands.registerCommand('glass.typeahead', async () => {
       const activeEditor = vscode.window.activeTextEditor
 
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {

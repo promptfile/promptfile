@@ -101,8 +101,8 @@
         "title": "Glass: Open playground"
       },
       {
-        "command": "glass.copilot",
-        "title": "Glass: get next block"
+        "command": "glass.typeahead",
+        "title": "Glass: typeahead"
       },
       {
         "command": "glass.runTestSuite",
@@ -135,7 +135,7 @@
     ],
     "keybindings": [
       {
-        "command": "glass.copilot",
+        "command": "glass.typeahead",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
