@@ -38,7 +38,7 @@
     "compile": "tsc -p tsconfig.test.json",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts",
-    "syntax:gen": "tsc ./syntaxes/syntaxGenerator.ts && node ./syntaxes/syntaxGenerator.js"
+    "syntax:gen": "ts-node ./syntaxes/syntaxGenerator.ts"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -442,7 +442,7 @@
       {
         "language": "glass-py",
         "scopeName": "source.glass-py",
-        "path": "./syntaxes/glass-py.tmLanguage.json",
+        "path": "./syntaxes/generated/glass-py.tmLanguage.json",
         "embeddedLanguages": {
           "source.js": "javascript",
           "source.js.jsx": "javascriptreact",
