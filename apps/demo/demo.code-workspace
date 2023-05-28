@@ -17,6 +17,7 @@
     { "path": "language-features" },
     { "path": "test" },
     { "path": "langchain" },
+    { "path": "advanced" },
     { "path": "scratchpad" },
     { "path": "../../packages/glassc" }
   ]
