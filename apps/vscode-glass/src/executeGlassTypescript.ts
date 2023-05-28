@@ -85,11 +85,11 @@ context.response = ${getGlassExportName(fileName)}()`,
   const res: TranspilerOutput[] = []
   if (Array.isArray(t)) {
     for (const args of t) {
-      const c = await compile({ args })
+      const c = await compile({ args: { ...args, ...(interpolationArgs || {}) } })
       res.push(c)
     }
   } else {
-    res.push(await compile({ args: t }))
+    res.push(await compile({ args: { ...t, ...(interpolationArgs || {}) } }))
   }
   return res
 }

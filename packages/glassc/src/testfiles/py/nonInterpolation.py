@@ -1,4 +1,4 @@
-def getNonInterpolationPrompt():
+def getNonInterpolationPrompt(interpolationArgs = {}):
     def get_test_data(): return {}
     
     def compile(opt = { "args": {} }):
@@ -12,9 +12,12 @@ def getNonInterpolationPrompt():
             "fileName": "nonInterpolation",
             "model": "text-davinci-003",
             "state": {},
-            "originalDoc": "<Prompt>\n${foo} and {foo}\n</Prompt>",
-            "interpolatedDoc": """{}""".format(GLASSVAR[0]),
+            "originalDoc": "---\nlanguage: python\n---\n\n<Prompt>\n${foo} and {foo}\n</Prompt>",
+            "interpolatedDoc": """
+{}""".format(GLASSVAR[0]),
         }
     
     testData = get_test_data()
-    return json.dumps(compile({ "args": testData }))
+    args = { "args": testData }
+    args.update(interpolationArgs)
+    return json.dumps(compile(args))

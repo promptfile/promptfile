@@ -1,6 +1,6 @@
 import requests
 
-def getLiteralPrompt():
+def getLiteralPrompt(interpolationArgs = {}):
     def get_test_data(): return {}
     
     def compile(opt = { "args": {} }):
@@ -29,4 +29,6 @@ response = requests.get("https://elliottburris.com")
         }
     
     testData = get_test_data()
-    return json.dumps(compile({ "args": testData }))
+    args = { "args": testData }
+    args.update(interpolationArgs)
+    return json.dumps(compile(args))

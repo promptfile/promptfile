@@ -1,4 +1,4 @@
-def getMultipleInterpolationPrompt():
+def getMultipleInterpolationPrompt(interpolationArgs = {}):
     def get_test_data(): return {}
     
     def compile(opt = { "args": {} }):
@@ -13,9 +13,12 @@ def getMultipleInterpolationPrompt():
             "fileName": "multipleInterpolation",
             "model": "text-davinci-003",
             "state": {},
-            "originalDoc": "<Prompt>\n${foo} ${bar}\n</Prompt>",
-            "interpolatedDoc": """{}""".format(GLASSVAR[0]),
+            "originalDoc": "---\nlanguage: python\n---\n\n<Prompt>\n${foo} ${bar}\n</Prompt>",
+            "interpolatedDoc": """
+{}""".format(GLASSVAR[0]),
         }
     
     testData = get_test_data()
-    return json.dumps(compile({ "args": testData }))
+    args = { "args": testData }
+    args.update(interpolationArgs)
+    return json.dumps(compile(args))

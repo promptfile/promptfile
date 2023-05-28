@@ -1,4 +1,4 @@
-def getTestblockPrompt():
+def getTestblockPrompt(interpolationArgs = {}):
     def get_test_data():
         foo = 'tell me a story'
         return {'foo': foo}
@@ -30,4 +30,6 @@ def getTestblockPrompt():
         }
     
     testData = get_test_data()
-    return json.dumps(compile({ "args": testData }))
+    args = { "args": testData }
+    args.update(interpolationArgs)
+    return json.dumps(compile(args))

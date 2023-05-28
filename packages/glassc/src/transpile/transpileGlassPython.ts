@@ -190,7 +190,7 @@ export async function transpileGlassFilePython(
 
   const code = `${imports.join('\n')}
 
-def ${exportName}():
+def ${exportName}(interpolationArgs = {}):
 ${indentLines(await transformPythonTestBlock(testContent), 4)}
 ${'    '}
     def compile(opt = { "args": {} }):
@@ -205,7 +205,9 @@ ${indentLines(codeStart.trim(), 8)}
         }
 ${'    '}
     testData = get_test_data()
-    return json.dumps(compile({ "args": testData }))
+    args = { "args": testData }
+    args.update(interpolationArgs)
+    return json.dumps(compile(args))
 
 `
 

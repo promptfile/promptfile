@@ -1,3 +1,7 @@
+---
+language: python
+---
+
 <Prompt>
 foo
 </Prompt>

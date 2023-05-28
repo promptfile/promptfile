@@ -1,4 +1,4 @@
-def getInterstitialPrompt():
+def getInterstitialPrompt(interpolationArgs = {}):
     def get_test_data(): return {}
     
     def compile(opt = { "args": {} }):
@@ -23,4 +23,6 @@ print(foo)""".format(GLASSVAR[0]),
         }
     
     testData = get_test_data()
-    return json.dumps(compile({ "args": testData }))
+    args = { "args": testData }
+    args.update(interpolationArgs)
+    return json.dumps(compile(args))

@@ -40,7 +40,7 @@ export async function executeGlassPython(
     'code is',
     `${transpiledCode}
 
-print(${getGlassExportName(fileName)}())`
+print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))`
   )
   // console.log(
   //   'code is',
