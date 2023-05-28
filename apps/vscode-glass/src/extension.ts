@@ -177,7 +177,7 @@ export async function activate(context: vscode.ExtensionContext) {
       console.log('test results')
       console.log(JSON.stringify(resp, null, 2))
     }),
-    vscode.commands.registerCommand('glass.playground', async () => {
+    vscode.commands.registerCommand('glass.openPlayground', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
@@ -244,7 +244,7 @@ export async function activate(context: vscode.ExtensionContext) {
                   return true
                 }
               )
-              console.log(resp)
+
               const blocksForGlass = parseGlassBlocks(resp.finalInterpolatedDoc)
               const metadataForGlass = parseGlassMetadata(resp.finalInterpolatedDoc)
               await panel.webview.postMessage({
@@ -263,15 +263,32 @@ export async function activate(context: vscode.ExtensionContext) {
               fs.unlinkSync(newFilePath)
             }
             break
+          case 'getMetadata':
+            const glassToParse = message.data.glass
+            if (glassToParse == null) {
+              await vscode.window.showErrorMessage('No glass provided')
+              return
+            }
+            const metadata = parseGlassMetadata(glassToParse)
+            const blocks = parseGlassBlocks(glassToParse)
+            const originalBlocks = parseGlassBlocks(initialGlass)
+            const newBlocks = blocks.slice(originalBlocks.length)
+            await panel.webview.postMessage({
+              action: 'setMetadata',
+              data: {
+                variables: metadata.interpolationVariables,
+                blocks: newBlocks,
+              },
+            })
+            break
           case 'resetGlass':
-            const blocksForGlass = parseGlassBlocks(initialGlass)
             const metadataForGlass = parseGlassMetadata(initialGlass)
             await panel.webview.postMessage({
               action: 'setGlass',
               data: {
                 filename,
                 glass: initialGlass,
-                blocks: blocksForGlass,
+                blocks: [],
                 variables: metadataForGlass.interpolationVariables,
               },
             })

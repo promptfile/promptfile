@@ -99,7 +99,7 @@
     ],
     "commands": [
       {
-        "command": "glass.playground",
+        "command": "glass.openPlayground",
         "title": "Glass: Open playground"
       },
       {
@@ -143,7 +143,7 @@
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       },
       {
-        "command": "glass.playground",
+        "command": "glass.openPlayground",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"

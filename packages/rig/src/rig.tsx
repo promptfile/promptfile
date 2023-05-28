@@ -1,15 +1,9 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
-import { BlocksView } from './BlocksView'
-import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
-import { RawView } from './RawView'
+import { PlaygroundView } from './PlaygroundView'
+import { TestsView } from './TestsView'
 import { TopperView } from './TopperView'
-
-export interface GlassBlock {
-  content: string
-  tag: 'User' | 'Assistant' | 'System'
-}
 
 interface RigState {
   filename: string
@@ -23,11 +17,10 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Chat', 'Raw', 'History']
+  const tabs: string[] = ['Playground', 'Tests', 'History']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
-  const [blocks, setBlocks] = useState<GlassBlock[]>([])
-  const [variables, setVariables] = useState<string[]>([])
+
   const [tab, setTab] = useState(tabs[0])
 
   useEffect(() => {
@@ -46,11 +39,6 @@ function RigView() {
           break
         case 'setGlass':
           setGlass(() => message.data.glass)
-          setVariables(() => message.data.variables)
-          setBlocks(() => message.data.blocks)
-          setTimeout(() => {
-            document.getElementById('composer-input-0')?.focus()
-          }, 500)
           break
         default:
           break
@@ -95,10 +83,22 @@ function RigView() {
       }}
     >
       <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
-      {tab === 'Chat' && <BlocksView blocks={blocks} />}
-      {tab === 'Raw' && <RawView glass={glass} />}
+      {tab === 'Playground' && (
+        <PlaygroundView
+          glass={glass}
+          send={send}
+          getMetadata={() => {
+            vscode.postMessage({
+              action: 'getMetadata',
+              data: {
+                glass,
+              },
+            })
+          }}
+        />
+      )}
+      {tab === 'Tests' && <TestsView glass={glass} />}
       {tab === 'History' && <HistoryView glass={glass} />}
-      <ComposerView send={send} variables={variables} />
     </div>
   )
 }
