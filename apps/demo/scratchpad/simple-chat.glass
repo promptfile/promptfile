@@ -8,6 +8,10 @@ You are TerseGPT. Respond to the user in a short manner.
 
 This is the user you are talking to:
 
+hello how are you?
+
+Hello
+
 ###
 ${JSON.stringify(userProfile)}
 ###

@@ -61,21 +61,30 @@ export async function activate(context: vscode.ExtensionContext) {
     updateDecorations(activeEditor, codeDecorations)
   }
 
-  const characterCount = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000000)
-  characterCount.command = undefined
-  characterCount.show()
+  const tokenCount = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000000)
+  tokenCount.command = undefined
+  tokenCount.show()
 
   context.subscriptions.push(
-    characterCount,
+    tokenCount,
+    vscode.window.onDidChangeTextEditorSelection(
+      event => {
+        if (event.textEditor === vscode.window.activeTextEditor) {
+          updateTokenCount(tokenCount)
+        }
+      },
+      null,
+      context.subscriptions
+    ),
     vscode.window.onDidChangeActiveTextEditor(
       async editor => {
         activeEditor = editor
         if (editor && isGlassFile(editor.document)) {
+          updateTokenCount(tokenCount)
           updateDecorations(editor, codeDecorations)
-          updateTokenCount(characterCount)
           await updateLanguageMode(editor.document)
         } else {
-          characterCount.hide()
+          tokenCount.hide()
         }
       },
       null,
@@ -85,7 +94,7 @@ export async function activate(context: vscode.ExtensionContext) {
       async editor => {
         if (activeEditor && editor.document === activeEditor.document) {
           updateDecorations(activeEditor, codeDecorations)
-          updateTokenCount(characterCount)
+          updateTokenCount(tokenCount)
           await updateLanguageMode(editor.document)
         }
       },
