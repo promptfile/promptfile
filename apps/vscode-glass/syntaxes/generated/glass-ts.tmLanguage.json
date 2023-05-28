@@ -1,8 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/Septh/tmlanguage/master/tmlanguage.json",
-  "name": "glass",
+  "name": "Glass",
   "scopeName": "source.glass-ts",
-  "fileTypes": ["glass"],
   "patterns": [
     {
       "include": "#markdown-frontmatter"

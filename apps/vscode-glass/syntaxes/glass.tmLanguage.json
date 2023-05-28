@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/Septh/tmlanguage/master/tmlanguage.json",
-  "name": "Python (Glass)",
-  "scopeName": "source.glass-py",
+  "name": "Glass",
+  "scopeName": "source.SCOPE_NAME",
   "patterns": [
     {
       "include": "#markdown-frontmatter"
@@ -37,7 +37,7 @@
       "include": "#loop-element"
     },
     {
-      "include": "source.python"
+      "include": "SOURCE_LANGUAGE"
     }
   ],
   "repository": {
@@ -157,7 +157,7 @@
           "include": "#for-element"
         },
         {
-          "include": "source.python"
+          "include": "SOURCE_LANGUAGE"
         }
       ],
       "end": "(<\\/)(Loop)(>)",
@@ -424,7 +424,7 @@
       },
       "patterns": [
         {
-          "include": "source.python"
+          "include": "SOURCE_LANGUAGE"
         }
       ],
       "end": "(<\\/)(Test)(>)",
@@ -2913,7 +2913,7 @@
           "name": "markup.code.js.mdx",
           "patterns": [
             {
-              "include": "source.python"
+              "include": "SOURCE_LANGUAGE"
             }
           ]
         },
@@ -2949,7 +2949,7 @@
           "name": "markup.code.js.mdx",
           "patterns": [
             {
-              "include": "source.python"
+              "include": "SOURCE_LANGUAGE"
             }
           ]
         }
