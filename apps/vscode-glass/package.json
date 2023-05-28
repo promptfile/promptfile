@@ -53,10 +53,11 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@glass-lang/util": "*",
+    "@dqbd/tiktoken": "^1.0.7",
     "@glass-lang/glassc": "*",
     "@glass-lang/language-server": "*",
     "@glass-lang/rig": "*",
+    "@glass-lang/util": "*",
     "esbuild": "^0.17.18",
     "node-fetch": "^3.3.1",
     "vscode-languageclient": "^8.1.0"

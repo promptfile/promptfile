@@ -16,6 +16,7 @@ import { updateDecorations } from './util/decorations'
 import { getDocumentFilename, getNonce, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
+import { updateTokenCount } from './util/tokenCounter'
 import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
@@ -62,17 +63,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const characterCount = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000000)
   characterCount.command = undefined
-  // characterCount.show()
-
-  function updateCharacterCount() {
-    // const editor = vscode.window.activeTextEditor
-    // if (editor) {
-    //   const document = editor.document
-    //   const text = document.getText()
-    //   characterCount.text = `${text.length} token${text.length === 1 ? '' : 's'}`
-    //   characterCount.show()
-    // }
-  }
+  characterCount.show()
 
   context.subscriptions.push(
     characterCount,
@@ -81,7 +72,7 @@ export async function activate(context: vscode.ExtensionContext) {
         activeEditor = editor
         if (editor && isGlassFile(editor.document)) {
           updateDecorations(editor, codeDecorations)
-          updateCharacterCount()
+          updateTokenCount(characterCount)
           await updateLanguageMode(editor.document)
         } else {
           characterCount.hide()
@@ -94,7 +85,7 @@ export async function activate(context: vscode.ExtensionContext) {
       async editor => {
         if (activeEditor && editor.document === activeEditor.document) {
           updateDecorations(activeEditor, codeDecorations)
-          updateCharacterCount()
+          updateTokenCount(characterCount)
           await updateLanguageMode(editor.document)
         }
       },

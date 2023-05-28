@@ -13,4 +13,4 @@ ${JSON.stringify(userProfile)}
 ###
 </System>
 
-<Request model="claude-instant-v1" />
+<Request model="gpt-3.5-turbo" />
