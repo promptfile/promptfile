@@ -45,8 +45,8 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
           const diagnostic: Diagnostic = {
             severity: DiagnosticSeverity.Warning,
             range: {
-              start: textDocument.positionAt(tag.position.start.offset),
-              end: textDocument.positionAt(tag.position.end.offset),
+              start: textDocument.positionAt(tag.position.start.offset + 1),
+              end: textDocument.positionAt(tag.position.start.offset + 7),
             },
             message: `<System> blocks not supported by Anthropic — this will get converted to a <User> block.`,
             source: 'glass',
