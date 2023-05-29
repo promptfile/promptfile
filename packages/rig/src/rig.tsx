@@ -85,6 +85,7 @@ function RigView() {
       <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
       {tab === 'Playground' && (
         <PlaygroundView
+          reset={reset}
           glass={glass}
           send={send}
           getMetadata={() => {

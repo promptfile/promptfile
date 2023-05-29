@@ -1,4 +1,4 @@
-import { VSCodeDropdown, VSCodeOption } from '@vscode/webview-ui-toolkit/react'
+import { VSCodeButton, VSCodeDropdown, VSCodeOption } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useState } from 'react'
 import { BlocksView } from './BlocksView'
 import { ComposerView } from './ComposerView'
@@ -12,11 +12,12 @@ interface GlassBlock {
 interface PlaygroundViewProps {
   glass: string
   send: (values: Record<string, string>) => void
+  reset: () => void
   getMetadata: () => void
 }
 
 export const PlaygroundView = (props: PlaygroundViewProps) => {
-  const { glass, send, getMetadata } = props
+  const { glass, send, getMetadata, reset } = props
 
   const [viewStyle, setViewStyle] = useState<'chat' | 'glass'>('chat')
 
@@ -85,6 +86,9 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
               Glass editor
             </VSCodeOption>
           </VSCodeDropdown>
+          <VSCodeButton appearance="secondary" onClick={reset}>
+            Reset
+          </VSCodeButton>
         </div>
         {viewStyle === 'chat' && <BlocksView blocks={blocks} />}
         {viewStyle === 'glass' && <GlassView glass={glass} />}

@@ -1,4 +1,4 @@
-import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
+import { VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 import { LogoView } from './LogoView'
 
 interface TopperViewProps {
@@ -38,9 +38,6 @@ export const TopperView = (props: TopperViewProps) => {
             <span style={{ fontWeight: 'medium', fontStyle: 'italic', opacity: 0.5 }}>.glass</span>
           </span>
         </div>
-        <VSCodeButton appearance="secondary" onClick={reset}>
-          Reset
-        </VSCodeButton>
       </div>
       <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'row' }}>
         {tabs.map(t => {
