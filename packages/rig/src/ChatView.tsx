@@ -4,13 +4,13 @@ import { GlassBlock } from './rig'
 
 interface ChatViewProps {
   blocks: GlassBlock[]
-  playgroundId: string
-  send: (values: Record<string, string>) => void
+  sessionId: string
+  send: (text: string) => void
   variables: string[]
 }
 
 export const ChatView = (props: ChatViewProps) => {
-  const { blocks, playgroundId, send, variables } = props
+  const { blocks, sessionId, send, variables } = props
 
   useEffect(() => {
     document.getElementById('end')?.scrollIntoView()
@@ -39,7 +39,7 @@ export const ChatView = (props: ChatViewProps) => {
             textAlign: 'center',
           }}
         >
-          Playground created: {playgroundId}
+          created session {sessionId}
         </div>
         {blocks
           .filter(block => block.tag !== 'System' && !(block.content.startsWith('${') && block.content.endsWith('}')))
@@ -61,7 +61,7 @@ export const ChatView = (props: ChatViewProps) => {
           ))}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
-      <ComposerView send={send} variables={variables} />
+      <ComposerView send={send} />
     </div>
   )
 }

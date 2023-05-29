@@ -2,19 +2,19 @@ import { VSCodeButton, VSCodeDivider, VSCodeTextArea } from '@vscode/webview-ui-
 import { useEffect, useState } from 'react'
 
 interface ComposerViewProps {
-  variables: string[]
-  send: (values: Record<string, string>) => void
+  send: (text: string) => void
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { variables, send } = props
+  const { send } = props
 
-  const [values, setValues] = useState<Record<string, string>>({})
+  const [text, setText] = useState('')
 
   useEffect(() => {
-    const newValues = Object.fromEntries((variables as string[]).map(variable => [variable, values.variable ?? '']))
-    setValues(() => newValues)
-  }, [variables])
+    setTimeout(() => {
+      document.getElementById('composer-input')?.focus()
+    }, 500)
+  }, [])
 
   return (
     <div style={{ width: '100%', flexShrink: 0 }}>
@@ -38,29 +38,26 @@ export const ComposerView = (props: ComposerViewProps) => {
             paddingRight: '8px',
           }}
         >
-          {Object.keys(values).map((variable, index) => (
-            <div key={variable} style={{ flexDirection: 'column', display: 'flex' }}>
-              <VSCodeTextArea
-                style={{ width: '100%' }}
-                value={values[variable] ?? ''}
-                id={`composer-input-${index}`}
-                placeholder={variable}
-                onInput={e => {
-                  const value = (e.target as any).value
-                  setValues({ ...values, [variable]: value })
-                }}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    send(values)
-                  }
-                }}
-              />
-            </div>
-          ))}
+          <VSCodeTextArea
+            style={{ width: '100%' }}
+            value={text}
+            id={`composer-input`}
+            placeholder={'Say something'}
+            onInput={e => {
+              const value = (e.target as any).value
+              setText(value)
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                send(text)
+                setText('')
+              }
+            }}
+          />
         </div>
-        <VSCodeButton style={{ width: 'fit-content' }} onClick={() => send(values)}>
-          Run
+        <VSCodeButton style={{ width: 'fit-content' }} onClick={() => send(text)}>
+          Send
         </VSCodeButton>
       </div>
     </div>

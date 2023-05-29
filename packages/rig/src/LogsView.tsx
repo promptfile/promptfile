@@ -1,8 +1,8 @@
-interface LogsViewProps {
+interface ConsoleViewProps {
   glass: string
 }
 
-export const LogsView = (props: LogsViewProps) => {
+export const ConsoleView = (props: ConsoleViewProps) => {
   const { glass } = props
 
   return (

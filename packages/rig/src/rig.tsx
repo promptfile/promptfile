@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import { ChatView } from './ChatView'
-import { GlassView } from './GlassView'
-import { LogsView } from './LogsView'
+import { HistoryView } from './HistoryView'
+import { ConsoleView } from './LogsView'
+import { StorageView } from './StorageView'
 import { TopperView } from './TopperView'
 import { getNonce } from './nonce'
 
@@ -23,13 +24,12 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Chat', 'File', 'Tests', 'Logs']
+  const tabs: string[] = ['Chat', 'Storage', 'Console', 'History']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
   const [variables, setVariables] = useState<string[]>([])
-  const [didRun, setDidRun] = useState(false)
-  const [playgroundId, setPlaygroundId] = useState(getNonce())
+  const [sessionId, setsessionId] = useState(getNonce())
 
   const [tab, setTab] = useState(tabs[0])
 
@@ -51,11 +51,6 @@ function RigView() {
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           setVariables(() => message.data.variables)
-          if (message.data.variables.length > 0) {
-            setTimeout(() => {
-              document.getElementById('composer-input-0')?.focus()
-            }, 500)
-          }
           break
         default:
           break
@@ -74,7 +69,7 @@ function RigView() {
   }, [filename])
 
   const reset = () => {
-    setPlaygroundId(getNonce())
+    setsessionId(getNonce())
     vscode.postMessage({
       action: 'resetGlass',
     })
@@ -86,12 +81,11 @@ function RigView() {
     })
   }
 
-  const send = (values: Record<string, string>) => {
-    setDidRun(true)
+  const send = (text: string) => {
     vscode.postMessage({
-      action: 'runPlayground',
+      action: 'sendText',
       data: {
-        values,
+        text,
         glass,
       },
     })
@@ -108,11 +102,10 @@ function RigView() {
       }}
     >
       <TopperView transpile={transpile} tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
-      {tab === 'Chat' && (
-        <ChatView variables={variables} send={send} playgroundId={playgroundId} blocks={didRun ? blocks : []} />
-      )}
-      {tab === 'File' && <GlassView glass={glass} />}
-      {tab === 'Logs' && <LogsView glass={glass} />}
+      {tab === 'Chat' && <ChatView variables={variables} send={send} sessionId={sessionId} blocks={blocks} />}
+      {tab === 'Storage' && <StorageView glass={glass} />}
+      {tab === 'Console' && <ConsoleView glass={glass} />}
+      {tab === 'History' && <HistoryView glass={glass} />}
     </div>
   )
 }

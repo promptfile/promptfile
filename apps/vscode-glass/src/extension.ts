@@ -227,10 +227,10 @@ export async function activate(context: vscode.ExtensionContext) {
               },
             })
             break
-          case 'runPlayground':
-            const values = message.data.values
-            if (values == null) {
-              await vscode.window.showErrorMessage('No values provided')
+          case 'sendText':
+            const messageText = message.data.text
+            if (messageText == null) {
+              await vscode.window.showErrorMessage('No text provided')
               return
             }
             const glass = message.data.glass
@@ -241,8 +241,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
             // Define the new file's path. This places it in the same directory
             // as the current file.
-            const playgroundId = getNonce()
-            const newFilePath = path.join(currentDir, filename.replace('.glass', `${playgroundId}.glass`))
+            const sessionId = getNonce()
+            const newFilePath = path.join(currentDir, filename.replace('.glass', `${sessionId}.glass`))
             fs.writeFileSync(newFilePath, glass)
 
             // load the textdocument from newFilePath
@@ -251,16 +251,16 @@ export async function activate(context: vscode.ExtensionContext) {
             try {
               const resp = await executeGlassFile(
                 playgroundDocument,
-                values,
+                { input: messageText },
                 playgroundDocument.languageId === 'glass-py',
                 async ({ nextDoc, nextInterpolatedDoc, rawResponse }) => {
-                  const blocksForGlass = parseGlassBlocks(nextInterpolatedDoc)
-                  const metadataForGlass = parseGlassMetadata(nextInterpolatedDoc)
+                  const blocksForGlass = parseGlassBlocks(nextDoc)
+                  const metadataForGlass = parseGlassMetadata(nextDoc)
                   await panel.webview.postMessage({
                     action: 'setGlass',
                     data: {
                       filename,
-                      glass: nextInterpolatedDoc,
+                      glass: nextDoc,
                       blocks: blocksForGlass,
                       variables: metadataForGlass.interpolationVariables,
                     },
@@ -275,7 +275,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 action: 'setGlass',
                 data: {
                   filename,
-                  glass: resp.finalInterpolatedDoc,
+                  glass: resp.finalDoc,
                   blocks: blocksForGlass,
                   variables: metadataForGlass.interpolationVariables,
                 },
