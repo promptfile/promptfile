@@ -133,15 +133,22 @@ export function removeReturnStatements(code: string): string {
 export function parseCodeBlockUndeclaredSymbols(code: string) {
   const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
   const undeclaredValues = new Set<string>()
+  const scopes = [new Set<string>()]
 
   function visit(node: ts.Node) {
+    if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node)) {
+      scopes.push(new Set())
+    }
+
     if (ts.isIdentifier(node)) {
       // If the identifier is part of a variable declaration on the left side,
       // it should not be considered as an undeclared symbol.
       if (
         (ts.isVariableDeclaration(node.parent) && node.parent.initializer !== node) ||
-        (ts.isBindingElement(node.parent) && node.parent.initializer !== node)
+        (ts.isBindingElement(node.parent) && node.parent.initializer !== node) ||
+        ts.isParameter(node.parent)
       ) {
+        scopes[scopes.length - 1].add(node.text)
         return
       }
 
@@ -151,28 +158,41 @@ export function parseCodeBlockUndeclaredSymbols(code: string) {
         !(ts.isPropertyAssignment(node.parent) && node.parent.name === node) &&
         !(ts.isPropertySignature(node.parent) && node.parent.name === node)
       ) {
-        const symbol = checker.getSymbolAtLocation(node)
-        const declarations = symbol?.getDeclarations() || []
-
         let isDeclared = false
-        for (const declaration of declarations) {
-          if (
-            ts.isVariableDeclaration(declaration) ||
-            ts.isFunctionDeclaration(declaration) ||
-            ts.isImportSpecifier(declaration) ||
-            ts.isImportClause(declaration)
-          ) {
+        for (const scope of scopes) {
+          if (scope.has(node.text)) {
             isDeclared = true
             break
           }
         }
 
         if (!isDeclared) {
-          undeclaredValues.add(node.text)
+          const symbol = checker.getSymbolAtLocation(node)
+          const declarations = symbol?.getDeclarations() || []
+          for (const declaration of declarations) {
+            if (
+              ts.isVariableDeclaration(declaration) ||
+              ts.isFunctionDeclaration(declaration) ||
+              ts.isImportSpecifier(declaration) ||
+              ts.isImportClause(declaration)
+            ) {
+              isDeclared = true
+              break
+            }
+          }
+
+          if (!isDeclared) {
+            undeclaredValues.add(node.text)
+          }
         }
       }
     }
+
     ts.forEachChild(node, visit)
+
+    if (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node)) {
+      scopes.pop()
+    }
   }
 
   const compilerOptions = ts.getDefaultCompilerOptions()

@@ -1,5 +1,6 @@
 import { constructGlassOutputFileNext, getGlassExportName, transpileGlassFileNext } from '@glass-lang/glassc'
 import { TranspilerOutput } from '@glass-lang/glasslib'
+import { spawn } from 'child_process'
 import * as esbuild from 'esbuild'
 import fs from 'fs'
 import fetch from 'node-fetch'
@@ -22,10 +23,11 @@ export async function executeGlassTypescript(
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
+  const folderPath = document.uri.fsPath.split('/').slice(0, -1).join('/')
 
   const transpiledFunction = transpileGlassFileNext(document.getText(), {
     workspaceFolder: workspacePath,
-    folderPath: document.uri.fsPath.split('/').slice(0, -1).join('/'),
+    folderPath,
     fileName,
     language: 'typescript',
     outputDirectory: outDir,
@@ -73,6 +75,7 @@ context.response = ${getGlassExportName(fileName)}()`,
     module: { exports: {} },
     require: require,
     __filename: 'outputFile.js',
+    __dirname: folderPath,
     fetch,
   }
 
@@ -92,4 +95,112 @@ context.response = ${getGlassExportName(fileName)}()`,
     res.push(await compile({ args: { ...t, ...(interpolationArgs || {}) } }))
   }
   return res
+}
+
+export async function executeGlassTypescriptNew(
+  document: vscode.TextDocument,
+  fileName: string,
+  interpolationArgs: any
+): Promise<TranspilerOutput[]> {
+  const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
+  if (!activeEditorWorkspaceFolder) {
+    throw new Error('Could not find active editor workspace folder')
+  }
+
+  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+
+  const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
+  const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
+  const folderPath = document.uri.fsPath.split('/').slice(0, -1).join('/')
+
+  const transpiledFunction = transpileGlassFileNext(document.getText(), {
+    workspaceFolder: workspacePath,
+    folderPath,
+    fileName,
+    language: 'typescript',
+    outputDirectory: outDir,
+  })
+  const transpiledCode = constructGlassOutputFileNext([transpiledFunction])
+
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir)
+  }
+  const tmpFilePath = path.join(outDir, 'glass-tmp.ts')
+
+  fs.writeFileSync(
+    tmpFilePath,
+    `${transpiledCode}
+const { getTestData, compile } = ${getGlassExportName(fileName)}()
+
+;(async function run() {
+  const t = getTestData()
+  const res: any[] = []
+  if (Array.isArray(t)) {
+    for (const args of t) {
+      const c: any = await compile({ args: { ...args, ...(${JSON.stringify(interpolationArgs || {})}) } })
+      res.push(c)
+    }
+  } else {
+    const c: any = await compile({ args: { ...t, ...(${JSON.stringify(interpolationArgs || {})}) } })
+    res.push(c)
+  }
+  const ret = JSON.stringify(res)
+  console.log(ret)
+  return ret
+})()
+`,
+    {
+      encoding: 'utf-8',
+    }
+  )
+
+  // bundle the code so that it can be executed in a vm with resolved imports
+  const result = await esbuild.build({
+    entryPoints: [tmpFilePath],
+    bundle: true,
+    platform: 'node',
+    write: false,
+    format: 'cjs',
+    target: 'es2020',
+    external: ['@glass-lang/glasslib', 'hnswlib-node', 'openai'],
+  })
+
+  const bundledCode = new TextDecoder().decode(result.outputFiles[0].contents)
+
+  fs.unlinkSync(tmpFilePath)
+
+  const bundledCodeFilePath = path.join(folderPath, 'glass-bundle.js')
+
+  fs.writeFileSync(bundledCodeFilePath, bundledCode, {
+    encoding: 'utf-8',
+  })
+
+  return new Promise((resolve, reject) => {
+    console.log('running', bundledCodeFilePath)
+    const p = spawn('node', [bundledCodeFilePath], {
+      env: process.env,
+    })
+
+    let data = ''
+    let error = ''
+
+    p.stdout.on('data', chunk => {
+      data += chunk.toString()
+    })
+
+    p.stderr.on('data', chunk => {
+      error += chunk.toString()
+    })
+
+    p.on('exit', code => {
+      fs.unlinkSync(bundledCodeFilePath)
+
+      if (code !== 0) {
+        reject(new Error(`Process exited with code ${code}: ${error}`))
+      } else {
+        const lines = data.split('\n').filter(l => Boolean(l))
+        resolve(JSON.parse(lines[lines.length - 1]))
+      }
+    })
+  })
 }

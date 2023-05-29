@@ -2,7 +2,7 @@ import { runGlass } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassPython } from './executeGlassPython'
-import { executeGlassTypescript } from './executeGlassTypescript'
+import { executeGlassTypescriptNew } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
@@ -19,7 +19,7 @@ export async function executeGlassFile(
 
   const c = usePython
     ? await executeGlassPython(document, interpolationArgs)
-    : await executeGlassTypescript(document, fileName, interpolationArgs)
+    : await executeGlassTypescriptNew(document, fileName, interpolationArgs)
 
   checkOk(c.length >= 0, 'No transpiler output generated')
 

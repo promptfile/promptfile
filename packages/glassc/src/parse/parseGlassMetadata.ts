@@ -1,4 +1,5 @@
 import glasslib from '@glass-lang/glasslib'
+import { TYPESCRIPT_GLOBALS } from '../transpile/typescriptGlobals'
 import { parseCodeBlock } from './parseTypescript'
 
 const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block', 'Prompt'])
@@ -34,6 +35,11 @@ export function parseGlassMetadata(document: string) {
   for (const symbol of parsedCodeBlock.undeclaredValuesNeededInScope) {
     finalVars.add(symbol)
   }
+
+  TYPESCRIPT_GLOBALS.forEach(globalValue =>
+    // remove all the globally defined values
+    finalVars.delete(globalValue)
+  )
 
   return {
     interpolationVariables: Array.from(finalVars),

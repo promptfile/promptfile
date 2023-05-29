@@ -130,11 +130,6 @@ export function transpileGlassFileNext(
     }
   }
 
-  TYPESCRIPT_GLOBALS.forEach(globalValue =>
-    // remove all the globally defined values
-    interpolationVarSet.delete(globalValue)
-  )
-
   // remove frontmatter after parsing the AST
   doc = glasslib.removeGlassFrontmatter(doc)
 
@@ -163,6 +158,11 @@ ${toplevelCode}
     }
     interpolationVarSet.add(symbol)
   }
+
+  TYPESCRIPT_GLOBALS.forEach(globalValue =>
+    // remove all the globally defined values
+    interpolationVarSet.delete(globalValue)
+  )
 
   interpolationVarSet.delete('') // TODO: figure out where/why this shows up
 
