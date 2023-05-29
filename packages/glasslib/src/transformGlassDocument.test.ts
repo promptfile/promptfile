@@ -127,7 +127,7 @@ hello world
 
     const res = transformGlassDocument(initDocument, initInterplatedDoc)
 
-    expect(res.transformedInit).to.equal(`<User>
+    expect(res.transformedOriginalDoc).to.equal(`<User>
 \${input}
 </User>
 
@@ -141,7 +141,7 @@ hello world
 <Request model="gpt-4" />
 </Loop>`)
 
-    expect(res.transformedInterp).to.equal(`<User>
+    expect(res.transformedInterpolatedDoc).to.equal(`<User>
 hello world
 </User>
 
@@ -153,6 +153,70 @@ hello world
 </User>
 
 <Request model="gpt-4" />
+</Loop>`)
+  })
+
+  it('should trafnsform document loop2', () => {
+    const initDocument = `<System>
+You are a helpful assistant.
+</System>
+
+<Loop>
+<User>
+\${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+</Loop>`
+
+    const initInterplatedDoc = `<System>
+You are a helpful assistant.
+</System>
+
+<Loop>
+<User>
+how are you?
+</User>
+
+<Request model="gpt-3.5-turbo" />
+</Loop>`
+
+    const res = transformGlassDocument(initDocument, initInterplatedDoc)
+
+    expect(res.transformedOriginalDoc).to.equal(`<System>
+You are a helpful assistant.
+</System>
+
+<User>
+\${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+
+<Loop>
+<User>
+\${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+</Loop>`)
+
+    expect(res.transformedInterpolatedDoc).to.equal(`<System>
+You are a helpful assistant.
+</System>
+
+<User>
+how are you?
+</User>
+
+<Request model="gpt-3.5-turbo" />
+
+<Loop>
+<User>
+\${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
 </Loop>`)
   })
 

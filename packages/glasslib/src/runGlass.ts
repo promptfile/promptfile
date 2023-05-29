@@ -70,20 +70,20 @@ export async function runGlass(
   // </User>
 
   // eslint-disable-next-line prefer-const
-  let { transformedInit, transformedInterp } = transformGlassDocument(originalDoc, interpolatedDoc)
+  let { transformedOriginalDoc, transformedInterpolatedDoc } = transformGlassDocument(originalDoc, interpolatedDoc)
 
   const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
 
   if (Object.keys(state).length > 0) {
-    transformedInit = replaceStateNode(newStateNode, transformedInit)
-    transformedInterp = replaceStateNode(newStateNode, transformedInterp)
+    transformedOriginalDoc = replaceStateNode(newStateNode, transformedOriginalDoc)
+    transformedInterpolatedDoc = replaceStateNode(newStateNode, transformedInterpolatedDoc)
   }
 
   if (options?.progress) {
     const newRequestNode = requestNodeReplacement('', true)
     options.progress({
-      nextDoc: replaceRequestNode(newRequestNode, transformedInit),
-      nextInterpolatedDoc: replaceRequestNode(newRequestNode, transformedInterp),
+      nextDoc: replaceRequestNode(newRequestNode, transformedOriginalDoc),
+      nextInterpolatedDoc: replaceRequestNode(newRequestNode, transformedInterpolatedDoc),
       rawResponse: '█',
     })
   }
@@ -93,10 +93,25 @@ export async function runGlass(
   }
   const res =
     languageModel.creator === LanguageModelCreator.anthropic
-      ? await runGlassChatAnthropic(fileName, model, { originalDoc, interpolatedDoc }, options)
+      ? await runGlassChatAnthropic(
+          fileName,
+          model,
+          { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+          options
+        )
       : LanguageModelType.chat
-      ? await runGlassChat(fileName, model, { originalDoc, interpolatedDoc }, options)
-      : await runGlassCompletion(fileName, model as any, { originalDoc, interpolatedDoc }, options)
+      ? await runGlassChat(
+          fileName,
+          model,
+          { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+          options
+        )
+      : await runGlassCompletion(
+          fileName,
+          model as any,
+          { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+          options
+        )
 
   let codeResponse: any = undefined
   if (onResponse) {
@@ -107,7 +122,7 @@ export async function runGlass(
     }
   }
 
-  return { ...res, initDoc: transformedInit, initInterpolatedDoc: transformedInterp, codeResponse }
+  return { ...res, initDoc: transformedOriginalDoc, initInterpolatedDoc: transformedInterpolatedDoc, codeResponse }
 }
 
 const requestNodeReplacement = (message: string, streaming: boolean) => {

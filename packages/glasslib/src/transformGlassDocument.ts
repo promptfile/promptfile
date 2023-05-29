@@ -4,66 +4,64 @@ import { getJSXNodeInsidesString, getJSXNodeString } from './jsxElementNode'
 import { parseGlassTopLevelNodes } from './parseGlassTopLevelNodes'
 import { addNodeToDocument, parseGlassTopLevelNodesNext, replaceDocumentNode } from './parseGlassTopLevelNodesNext'
 
-export function transformGlassDocument(initDocument: string, interpolatedDocument: string) {
-  const initWithoutLiterals = removeEscapedHtml(initDocument)
-  const interpWithoutLiterals = removeEscapedHtml(interpolatedDocument)
+export function transformGlassDocument(originalDoc: string, interpolatedDoc: string) {
+  const originalWithoutEscape = removeEscapedHtml(originalDoc)
+  const interpolatedWithoutEscape = removeEscapedHtml(interpolatedDoc)
 
-  initDocument = initWithoutLiterals.output
-  interpolatedDocument = initWithoutLiterals.output
+  originalDoc = originalWithoutEscape.output
+  interpolatedDoc = interpolatedWithoutEscape.output
 
-  const parsedInit = parseGlassTopLevelNodesNext(initDocument)
-  const parsedInterp = parseGlassTopLevelNodesNext(interpolatedDocument)
+  const parsedOriginal = parseGlassTopLevelNodesNext(originalDoc)
+  const parsedInterpolated = parseGlassTopLevelNodesNext(interpolatedDoc)
 
-  let transformedInit = initDocument
-  let transformedInterp = interpolatedDocument
+  let transformedOriginal = originalDoc
+  let transformedInterpolated = interpolatedDoc
 
-  const loopNode = parsedInit.find(node => (node as any).tagName === 'Loop')
-  let loopIndex = -1
-  if (loopNode) {
-    loopIndex = parsedInit.indexOf(loopNode)
+  const originalLoopNode = parsedOriginal.find(node => (node as any).tagName === 'Loop')
+  let originalLoopIndex = -1
+  if (originalLoopNode) {
+    originalLoopIndex = parsedOriginal.indexOf(originalLoopNode)
 
-    const newInitDoc = replaceDocumentNode(
-      getJSXNodeInsidesString(loopNode as JSXNode, initDocument),
-      loopIndex,
-      initDocument
+    const newOriginalDoc = replaceDocumentNode(
+      getJSXNodeInsidesString(originalLoopNode as JSXNode, originalDoc),
+      originalLoopIndex,
+      originalDoc
     )
 
-    const newDocNodes = parseGlassTopLevelNodes(newInitDoc)
+    const newDocNodes = parseGlassTopLevelNodes(newOriginalDoc)
+    const nodesLengthDiff = newDocNodes.length - parsedOriginal.length
 
-    const nodesLengthDiff = newDocNodes.length - parsedInit.length
-
-    transformedInit = addNodeToDocument(
-      '\n' + getJSXNodeString(loopNode as JSXNode, initDocument),
-      nodesLengthDiff + loopIndex + 1,
-      newInitDoc
+    transformedOriginal = addNodeToDocument(
+      '\n' + getJSXNodeString(originalLoopNode as JSXNode, originalDoc),
+      nodesLengthDiff + originalLoopIndex + 1,
+      newOriginalDoc
     )
   }
 
-  const interpLoopNode = parsedInterp.find(node => (node as any).tagName === 'Loop')
-  let interpLoopIndex = -1
-  if (interpLoopNode) {
-    interpLoopIndex = parsedInterp.indexOf(interpLoopNode)
+  const interpolatedLoopNode = parsedInterpolated.find(node => (node as any).tagName === 'Loop')
+  let interpolatedLoopIndex = -1
+  if (interpolatedLoopNode) {
+    interpolatedLoopIndex = parsedInterpolated.indexOf(interpolatedLoopNode)
 
-    const newInterpDoc = replaceDocumentNode(
-      getJSXNodeInsidesString(interpLoopNode as JSXNode, interpolatedDocument),
-      interpLoopIndex,
-      interpolatedDocument
+    const newInterpolatedDoc = replaceDocumentNode(
+      getJSXNodeInsidesString(interpolatedLoopNode as JSXNode, interpolatedDoc),
+      interpolatedLoopIndex,
+      interpolatedDoc
     )
 
-    const newDocNodes = parseGlassTopLevelNodes(newInterpDoc)
+    const newDocNodes = parseGlassTopLevelNodes(newInterpolatedDoc)
+    const nodesLengthDiff = newDocNodes.length - parsedInterpolated.length
 
-    const nodesLengthDiff = newDocNodes.length - parsedInterp.length
-
-    transformedInterp = addNodeToDocument(
-      '\n' + getJSXNodeString(loopNode as JSXNode, initDocument),
-      nodesLengthDiff + loopIndex + 1,
-      newInterpDoc
+    transformedInterpolated = addNodeToDocument(
+      '\n' + getJSXNodeString(originalLoopNode as JSXNode, originalDoc),
+      nodesLengthDiff + originalLoopIndex + 1,
+      newInterpolatedDoc
     )
   }
 
   return {
-    transformedInit: restoreEscapedHtml(transformedInit, initWithoutLiterals.replacements),
-    transformedInterp: restoreEscapedHtml(transformedInterp, interpWithoutLiterals.replacements),
+    transformedOriginalDoc: restoreEscapedHtml(transformedOriginal, originalWithoutEscape.replacements),
+    transformedInterpolatedDoc: restoreEscapedHtml(transformedInterpolated, interpolatedWithoutEscape.replacements),
   }
 }
 
