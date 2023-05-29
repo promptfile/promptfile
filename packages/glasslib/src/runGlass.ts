@@ -138,7 +138,7 @@ ${message}${streaming ? '█' : ''}
 </Assistant>
 
 <User>
-\${userFollowup}
+\${input}
 </User>`
   }
   return `<Assistant>

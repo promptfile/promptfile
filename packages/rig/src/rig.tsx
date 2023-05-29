@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import { ChatView } from './ChatView'
-import { ComposerView } from './ComposerView'
 import { GlassView } from './GlassView'
 import { LogsView } from './LogsView'
-import { TestsView } from './TestsView'
 import { TopperView } from './TopperView'
 import { getNonce } from './nonce'
 
@@ -25,7 +23,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Playground', 'File', 'Tests', 'Logs']
+  const tabs: string[] = ['Chat', 'File', 'Tests', 'Logs']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
@@ -110,11 +108,11 @@ function RigView() {
       }}
     >
       <TopperView transpile={transpile} tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
-      {tab === 'Playground' && <ChatView playgroundId={playgroundId} blocks={didRun ? blocks : []} />}
+      {tab === 'Chat' && (
+        <ChatView variables={variables} send={send} playgroundId={playgroundId} blocks={didRun ? blocks : []} />
+      )}
       {tab === 'File' && <GlassView glass={glass} />}
-      {tab === 'Tests' && <TestsView glass={glass} />}
       {tab === 'Logs' && <LogsView glass={glass} />}
-      {['Playground', 'File'].includes(tab) && <ComposerView send={send} variables={variables} />}
     </div>
   )
 }

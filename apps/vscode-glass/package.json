@@ -137,15 +137,9 @@
     ],
     "keybindings": [
       {
-        "command": "glass.typeahead",
+        "command": "glass.openPlayground",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
-      },
-      {
-        "command": "glass.openPlayground",
-        "key": "ctrl+shift+r",
-        "mac": "cmd+shift+r",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       }
     ],

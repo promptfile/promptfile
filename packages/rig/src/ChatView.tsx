@@ -1,12 +1,20 @@
+import { useEffect } from 'react'
+import { ComposerView } from './ComposerView'
 import { GlassBlock } from './rig'
 
 interface ChatViewProps {
   blocks: GlassBlock[]
   playgroundId: string
+  send: (values: Record<string, string>) => void
+  variables: string[]
 }
 
 export const ChatView = (props: ChatViewProps) => {
-  const { blocks, playgroundId } = props
+  const { blocks, playgroundId, send, variables } = props
+
+  useEffect(() => {
+    document.getElementById('end')?.scrollIntoView()
+  }, [blocks.length])
 
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -53,6 +61,7 @@ export const ChatView = (props: ChatViewProps) => {
           ))}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
+      <ComposerView send={send} variables={variables} />
     </div>
   )
 }
