@@ -4,8 +4,8 @@ import { BlocksView } from './BlocksView'
 import { ComposerView } from './ComposerView'
 import { GlassView } from './GlassView'
 
-interface GlassBlock {
-  role: string
+export interface GlassBlock {
+  tag: string
   content: string
 }
 
@@ -89,7 +89,13 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
               Glass editor
             </VSCodeOption>
           </VSCodeDropdown>
-          <VSCodeButton appearance="secondary" onClick={reset}>
+          <VSCodeButton
+            appearance="secondary"
+            onClick={() => {
+              setDidRun(false)
+              reset()
+            }}
+          >
             Reset
           </VSCodeButton>
         </div>

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { GlassBlock } from './rig'
+import { GlassBlock } from './PlaygroundView'
 
 interface BlocksViewProps {
   blocks: GlassBlock[]
@@ -24,6 +24,7 @@ export const BlocksView = (props: BlocksViewProps) => {
             display: 'flex',
             flexDirection: 'column',
             paddingBottom: '24px',
+            fontStyle: block.tag === 'System' ? 'italic' : 'normal',
           }}
         >
           <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>{block.tag}</span>
