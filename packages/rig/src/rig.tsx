@@ -27,6 +27,7 @@ render(<RigView />, container)
 
 function RigView() {
   const tabs: string[] = ['Playground', 'File', 'Tests', 'Logs', 'Transpiled code']
+  const [transpiledCode, setTranspiledCode] = useState('')
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
   const [languageId, setLanguageId] = useState('')
@@ -51,6 +52,7 @@ function RigView() {
         case 'setFilename':
           setFilename(() => message.data.filename)
           setLanguageId(() => message.data.languageId)
+          setTranspiledCode(() => message.data.transpiledCode)
           break
         case 'setGlass':
           setGlass(() => message.data.glass)
@@ -111,7 +113,7 @@ function RigView() {
       {tab === 'File' && <GlassView glass={glass} />}
       {tab === 'Tests' && <TestsView glass={glass} />}
       {tab === 'Logs' && <LogsView glass={glass} />}
-      {tab === 'Transpiled' && <TranspiledView glass={glass} languageId={languageId} />}
+      {tab === 'Transpiled code' && <TranspiledView code={transpiledCode} languageId={languageId} />}
       {['Playground', 'File'].includes(tab) && <ComposerView send={send} variables={variables} />}
     </div>
   )

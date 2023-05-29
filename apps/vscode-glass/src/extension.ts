@@ -17,6 +17,7 @@ import { getDocumentFilename, getNonce, hasGlassFileOpen, isGlassFile } from './
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
 import { updateTokenCount } from './util/tokenCounter'
+import { transpileCurrentFile } from './util/transpile'
 import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
@@ -188,6 +189,8 @@ export async function activate(context: vscode.ExtensionContext) {
       // Get the directory of the current file
       const currentDir = path.dirname(activeEditor.document.uri.fsPath)
 
+      const transpiledCode = await transpileCurrentFile(activeEditor.document)
+
       const panel = vscode.window.createWebviewPanel(
         'glass.webView',
         `${filename} (playground)`,
@@ -206,6 +209,7 @@ export async function activate(context: vscode.ExtensionContext) {
               data: {
                 filename,
                 languageId,
+                transpiledCode,
               },
             })
             break
@@ -479,22 +483,10 @@ export async function activate(context: vscode.ExtensionContext) {
       const editor = vscode.window.activeTextEditor
 
       if (editor) {
-        const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri)!
-        const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
-        const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
-        const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
-
-        const document = editor.document
-        const filePath = document.uri.fsPath
-        const file = filePath.split('/').slice(-1)[0]
-
         try {
-          const code =
-            document.languageId === 'glass-py'
-              ? await transpileGlassPython(filePath, filePath, 'python', path.join(path.dirname(filePath)))
-              : transpileGlassNext(workspacePath, filePath, 'typescript', outDir)
+          const code = await transpileCurrentFile(editor.document)
           await vscode.env.clipboard.writeText(code)
-          await vscode.window.showInformationMessage(`Transpiled ${file} to clipboard.`)
+          await vscode.window.showInformationMessage(`Transpiled to clipboard.`)
         } catch (error) {
           console.error(error)
           throw error
