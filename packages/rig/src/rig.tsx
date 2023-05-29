@@ -82,7 +82,7 @@ function RigView() {
         overflow: 'hidden',
       }}
     >
-      <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
+      <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} />
       {tab === 'Playground' && (
         <PlaygroundView
           reset={reset}

@@ -1,8 +1,9 @@
 import { VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
+import { useState } from 'react'
 import { LogoView } from './LogoView'
+import { getNonce } from './nonce'
 
 interface TopperViewProps {
-  reset: () => void
   filename: string
   tabs: string[]
   tab: string
@@ -10,7 +11,9 @@ interface TopperViewProps {
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { reset, filename, tabs, tab, setTab } = props
+  const { filename, tabs, tab, setTab } = props
+
+  const [playgroundId, setPlaygroundId] = useState(getNonce())
 
   return (
     <div
@@ -38,6 +41,7 @@ export const TopperView = (props: TopperViewProps) => {
             <span style={{ fontWeight: 'medium', fontStyle: 'italic', opacity: 0.5 }}>.glass</span>
           </span>
         </div>
+        <span style={{ opacity: 0.5, fontSize: '12px', fontFamily: 'monospace' }}>{playgroundId}</span>
       </div>
       <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'row' }}>
         {tabs.map(t => {

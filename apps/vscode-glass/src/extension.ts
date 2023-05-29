@@ -271,13 +271,11 @@ export async function activate(context: vscode.ExtensionContext) {
             }
             const metadata = parseGlassMetadata(glassToParse)
             const blocks = parseGlassBlocks(glassToParse)
-            const originalBlocks = parseGlassBlocks(initialGlass)
-            const newBlocks = blocks.slice(originalBlocks.length)
             await panel.webview.postMessage({
               action: 'setMetadata',
               data: {
                 variables: metadata.interpolationVariables,
-                blocks: newBlocks,
+                blocks: blocks,
               },
             })
             break

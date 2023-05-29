@@ -23,6 +23,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
 
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
   const [variables, setVariables] = useState<string[]>([])
+  const [didRun, setDidRun] = useState(false)
 
   // register a callback for when the extension sends a message
   useEffect(() => {
@@ -32,9 +33,11 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
         case 'setMetadata':
           setBlocks(() => message.data.blocks)
           setVariables(() => message.data.variables)
-          setTimeout(() => {
-            document.getElementById('composer-input-0')?.focus()
-          }, 500)
+          if (message.data.variables.length > 0) {
+            setTimeout(() => {
+              document.getElementById('composer-input-0')?.focus()
+            }, 500)
+          }
           break
         default:
           break
@@ -90,10 +93,16 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
             Reset
           </VSCodeButton>
         </div>
-        {viewStyle === 'chat' && <BlocksView blocks={blocks} />}
+        {viewStyle === 'chat' && <BlocksView blocks={didRun ? blocks : []} />}
         {viewStyle === 'glass' && <GlassView glass={glass} />}
       </div>
-      <ComposerView send={send} variables={variables} />
+      <ComposerView
+        send={values => {
+          setDidRun(true)
+          send(values)
+        }}
+        variables={variables}
+      />
     </div>
   )
 }
