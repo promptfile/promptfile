@@ -233,12 +233,17 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('No values provided')
               return
             }
+            const glass = message.data.glass
+            if (glass == null) {
+              await vscode.window.showErrorMessage('No glass provided')
+              return
+            }
 
             // Define the new file's path. This places it in the same directory
             // as the current file.
             const playgroundId = getNonce()
             const newFilePath = path.join(currentDir, filename.replace('.glass', `${playgroundId}.glass`))
-            fs.writeFileSync(newFilePath, initialGlass)
+            fs.writeFileSync(newFilePath, glass)
 
             // load the textdocument from newFilePath
             const playgroundDocument = await vscode.workspace.openTextDocument(newFilePath)
