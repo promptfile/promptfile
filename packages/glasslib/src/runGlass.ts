@@ -3,7 +3,8 @@ import { Readable } from 'stream'
 import { interpolateGlass } from './interpolateGlass'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
-import { replaceRequestNode, replaceStateNode, transformGlassDocument } from './transformGlassDocument'
+import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
+import { replaceStateNode, transformGlassDocument, updateRequestOrChatNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
@@ -69,6 +70,9 @@ export async function runGlass(
   // (content)
   // </User>
 
+  const toplevelNodes = parseGlassTopLevelJsxElements(interpolatedDoc)
+  const isChatRequest = toplevelNodes.some(node => node.tagName === 'Chat')
+
   // eslint-disable-next-line prefer-const
   let { transformedOriginalDoc, transformedInterpolatedDoc } = transformGlassDocument(originalDoc, interpolatedDoc)
 
@@ -80,10 +84,10 @@ export async function runGlass(
   }
 
   if (options?.progress) {
-    const newRequestNode = requestNodeReplacement('', true)
+    const newRequestNode = requestNodeReplacement('', true, isChatRequest)
     options.progress({
-      nextDoc: replaceRequestNode(newRequestNode, transformedOriginalDoc),
-      nextInterpolatedDoc: replaceRequestNode(newRequestNode, transformedInterpolatedDoc),
+      nextDoc: updateRequestOrChatNode(newRequestNode, transformedOriginalDoc),
+      nextInterpolatedDoc: updateRequestOrChatNode(newRequestNode, transformedInterpolatedDoc),
       rawResponse: '█',
     })
   }
@@ -97,6 +101,7 @@ export async function runGlass(
           fileName,
           model,
           { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+          isChatRequest,
           options
         )
       : LanguageModelType.chat
@@ -104,6 +109,7 @@ export async function runGlass(
           fileName,
           model,
           { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+          isChatRequest,
           options
         )
       : await runGlassCompletion(
@@ -125,7 +131,16 @@ export async function runGlass(
   return { ...res, initDoc: transformedOriginalDoc, initInterpolatedDoc: transformedInterpolatedDoc, codeResponse }
 }
 
-const requestNodeReplacement = (message: string, streaming: boolean) => {
+const requestNodeReplacement = (message: string, streaming: boolean, isChat: boolean) => {
+  if (isChat) {
+    return `<Assistant>
+${message}${streaming ? '█' : ''}
+</Assistant>
+
+<User>
+\${userFollowup}
+</User>`
+  }
   return `<Assistant>
 ${message}${streaming ? '█' : ''}
 </Assistant>`
@@ -138,6 +153,7 @@ async function runGlassChat(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
+  isChatRequest: boolean,
   options?: {
     args?: any
     openaiKey?: string
@@ -169,9 +185,9 @@ async function runGlassChat(
   const response = await handleStream(r, handleChatChunk, next => {
     // right now claude has a leading whitespace character
     // we need to remove that!
-    const updatedRequestNode = requestNodeReplacement(next.trim(), options?.progress != null)
-    const nextDoc = replaceRequestNode(updatedRequestNode, docs.originalDoc)
-    const nextInterpolatedDoc = replaceRequestNode(updatedRequestNode, docs.interpolatedDoc)
+    const updatedRequestNode = requestNodeReplacement(next.trim(), options?.progress != null, isChatRequest)
+    const nextDoc = updateRequestOrChatNode(updatedRequestNode, docs.originalDoc)
+    const nextInterpolatedDoc = updateRequestOrChatNode(updatedRequestNode, docs.interpolatedDoc)
     if (options?.progress) {
       return options.progress({
         nextDoc: nextDoc,
@@ -181,10 +197,10 @@ async function runGlassChat(
     }
   })
 
-  const updatedRequestNode = requestNodeReplacement(response, false)
+  const updatedRequestNode = requestNodeReplacement(response, false, isChatRequest)
   return {
-    finalDoc: replaceRequestNode(updatedRequestNode, docs.originalDoc),
-    finalInterpolatedDoc: replaceRequestNode(updatedRequestNode, docs.interpolatedDoc),
+    finalDoc: updateRequestOrChatNode(updatedRequestNode, docs.originalDoc),
+    finalInterpolatedDoc: updateRequestOrChatNode(updatedRequestNode, docs.interpolatedDoc),
     rawResponse: response,
   }
 }
@@ -196,6 +212,7 @@ async function runGlassChatAnthropic(
   fileName: string,
   model: ModelName,
   docs: { interpolatedDoc: string; originalDoc: string },
+  isChatRequest: boolean,
   options?: {
     args?: any
     openaiKey?: string
@@ -241,9 +258,9 @@ async function runGlassChatAnthropic(
   })
 
   const response = await handleStream(r, handleAnthropicChunk, next => {
-    const updatedRequestNode = requestNodeReplacement(next, options?.progress != null)
-    const nextDoc = replaceRequestNode(updatedRequestNode, docs.originalDoc)
-    const nextInterpolatedDoc = replaceRequestNode(updatedRequestNode, docs.interpolatedDoc)
+    const updatedRequestNode = requestNodeReplacement(next, options?.progress != null, isChatRequest)
+    const nextDoc = updateRequestOrChatNode(updatedRequestNode, docs.originalDoc)
+    const nextInterpolatedDoc = updateRequestOrChatNode(updatedRequestNode, docs.interpolatedDoc)
     if (options?.progress) {
       return options.progress({
         nextDoc: nextDoc,
@@ -253,10 +270,10 @@ async function runGlassChatAnthropic(
     }
   })
 
-  const updatedRequestNode = requestNodeReplacement(response.trim(), false)
+  const updatedRequestNode = requestNodeReplacement(response.trim(), false, isChatRequest)
   return {
-    finalDoc: replaceRequestNode(updatedRequestNode, docs.originalDoc),
-    finalInterpolatedDoc: replaceRequestNode(updatedRequestNode, docs.interpolatedDoc),
+    finalDoc: updateRequestOrChatNode(updatedRequestNode, docs.originalDoc),
+    finalInterpolatedDoc: updateRequestOrChatNode(updatedRequestNode, docs.interpolatedDoc),
     rawResponse: response.trim(),
   }
 }

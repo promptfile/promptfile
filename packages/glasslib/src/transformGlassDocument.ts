@@ -92,6 +92,11 @@ export function replaceStateNode(newStateNode: string, doc: string) {
   return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
 }
 
+export function updateRequestOrChatNode(substitution: string, doc: string) {
+  const res = replaceRequestNode(substitution, doc)
+  return updateChatNode(substitution + '\n', res)
+}
+
 export function replaceRequestNode(newRequestNode: string, doc: string) {
   const docWithoutLiterals = removeEscapedHtml(doc)
   doc = docWithoutLiterals.output
@@ -103,7 +108,23 @@ export function replaceRequestNode(newRequestNode: string, doc: string) {
     return doc
   }
 
-  const stateIndex = parsed.indexOf(requestNode)
-  const newDoc = replaceDocumentNode(newRequestNode, stateIndex, doc)
+  const idx = parsed.indexOf(requestNode)
+  const newDoc = replaceDocumentNode(newRequestNode, idx, doc)
+  return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
+}
+
+export function updateChatNode(chatNodeSubstitution: string, doc: string) {
+  const docWithoutLiterals = removeEscapedHtml(doc)
+  doc = docWithoutLiterals.output
+
+  const parsed = parseGlassTopLevelNodesNext(doc)
+
+  const chatNode = parsed.find(node => (node as any).tagName === 'Chat')
+  if (!chatNode) {
+    return doc
+  }
+
+  const idx = parsed.indexOf(chatNode)
+  const newDoc = addNodeToDocument(chatNodeSubstitution, idx, doc)
   return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
 }

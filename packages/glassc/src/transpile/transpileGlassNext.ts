@@ -99,7 +99,7 @@ export function transpileGlassFileNext(
     if (jsxNode.tagName === 'State') {
       continue
     }
-    if (jsxNode.tagName === 'Request') {
+    if (jsxNode.tagName === 'Request' || jsxNode.tagName === 'Chat') {
       const modelAttr = jsxNode.attrs.find(a => a.name === 'model')
       // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
       // we don't currently support dynamic model values
