@@ -17,8 +17,4 @@ You are AnnoyedGPT.  Replpy to the user as though you are very annoyed by their 
 Hi there!
 </User>
 
-// The Loop block keeps the wrapped contents in the resulting doc after you run the file.
-// Otherwise, the Request block will be replaced by the response from the API and removed from the resulting document.
-<Loop>
-<Request model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />
-</Loop>
+<Chat model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />

@@ -115,12 +115,6 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'Loop',
-    documentation: 'Loops the inner content',
-    detail: '(element) loop over inner content',
-    attributes: [],
-  },
-  {
     name: 'Prompt',
     documentation: 'Creates a Prompt tag with inner content',
     detail: '(element) raw Glass prompt block',

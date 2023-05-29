@@ -12,8 +12,7 @@ You are a helpful assistant.
 How are you?
 </User>
 
-<Loop>
-<Request model="gpt-3.5-turbo" onResponse={({ message }) => {
+
+<Chat model="gpt-3.5-turbo" onResponse={({ message }) => {
     setProfile({ hasChatted: true })
 }} />
-</Loop>

@@ -2,7 +2,6 @@ import { parseGlassMetadata, transpileGlassNext, transpileGlassPython } from '@g
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
-  getJSXNodeInsidesString,
   parseGlassBlocks,
   parseGlassTopLevelJsxElements,
 } from '@glass-lang/glasslib'
@@ -320,16 +319,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
       try {
         const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        let requestElement = elements.find(element => element.tagName === 'Request')
-        if (requestElement == null) {
-          const loopElement = elements.find(element => element.tagName === 'Loop')
-          if (loopElement != null) {
-            const loopInsides = getJSXNodeInsidesString(loopElement, activeEditor.document.getText())
-            const loopInsideElements = parseGlassTopLevelJsxElements(loopInsides)
-            requestElement = loopInsideElements.find(element => element.tagName === 'Request')
-          }
-        }
-
+        const requestElement = elements.find(
+          element => element.tagName && ['Request', 'Chat'].includes(element.tagName)
+        )
         const model =
           requestElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue ??
           (vscode.workspace.getConfiguration('glass').get('defaultChatModel') as string)

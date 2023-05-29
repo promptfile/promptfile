@@ -29,6 +29,5 @@ ${website}
 ${question}
 </User>
 
-<Loop>
-<Request model="gpt-3.5-turbo" />
-</Loop>
+
+<Chat model="gpt-3.5-turbo" />

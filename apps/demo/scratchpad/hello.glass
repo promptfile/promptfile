@@ -8,10 +8,6 @@ foo = "bar"
 ${foo}
 </Prompt>
 
-<Loop>
-
-<Request model="claude-instant-v1" />
-
-</Loop>
+<Chat model="claude-instant-v1" />
 
 print(foo)
