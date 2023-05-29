@@ -6,7 +6,6 @@ import { GlassView } from './GlassView'
 import { LogsView } from './LogsView'
 import { TestsView } from './TestsView'
 import { TopperView } from './TopperView'
-import { TranspiledView } from './TranspiledView'
 import { getNonce } from './nonce'
 
 export interface GlassBlock {
@@ -26,11 +25,9 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Playground', 'File', 'Tests', 'Logs', 'Transpiled code']
-  const [transpiledCode, setTranspiledCode] = useState('')
+  const tabs: string[] = ['Playground', 'File', 'Tests', 'Logs']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
-  const [languageId, setLanguageId] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
   const [variables, setVariables] = useState<string[]>([])
   const [didRun, setDidRun] = useState(false)
@@ -51,8 +48,6 @@ function RigView() {
       switch (message.action) {
         case 'setFilename':
           setFilename(() => message.data.filename)
-          setLanguageId(() => message.data.languageId)
-          setTranspiledCode(() => message.data.transpiledCode)
           break
         case 'setGlass':
           setGlass(() => message.data.glass)
@@ -87,6 +82,12 @@ function RigView() {
     })
   }
 
+  const transpile = () => {
+    vscode.postMessage({
+      action: 'transpileGlass',
+    })
+  }
+
   const send = (values: Record<string, string>) => {
     setDidRun(true)
     vscode.postMessage({
@@ -108,12 +109,11 @@ function RigView() {
         overflow: 'hidden',
       }}
     >
-      <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
+      <TopperView transpile={transpile} tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
       {tab === 'Playground' && <ChatView playgroundId={playgroundId} blocks={didRun ? blocks : []} />}
       {tab === 'File' && <GlassView glass={glass} />}
       {tab === 'Tests' && <TestsView glass={glass} />}
       {tab === 'Logs' && <LogsView glass={glass} />}
-      {tab === 'Transpiled code' && <TranspiledView code={transpiledCode} languageId={languageId} />}
       {['Playground', 'File'].includes(tab) && <ComposerView send={send} variables={variables} />}
     </div>
   )

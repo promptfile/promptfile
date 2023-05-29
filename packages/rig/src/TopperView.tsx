@@ -7,10 +7,11 @@ interface TopperViewProps {
   tab: string
   setTab: (tab: string) => void
   reset: () => void
+  transpile: () => void
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { filename, tabs, tab, setTab, reset } = props
+  const { filename, tabs, tab, setTab, reset, transpile } = props
 
   return (
     <div
@@ -38,9 +39,14 @@ export const TopperView = (props: TopperViewProps) => {
             <span style={{ fontWeight: 'medium', fontStyle: 'italic', opacity: 0.5 }}>.glass</span>
           </span>
         </div>
-        <VSCodeButton appearance="secondary" onClick={reset}>
-          Reset
-        </VSCodeButton>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <div style={{ paddingRight: '8px' }}>
+            <VSCodeButton appearance="secondary" onClick={reset}>
+              Reset
+            </VSCodeButton>
+          </div>
+          <VSCodeButton onClick={transpile}>Transpile</VSCodeButton>
+        </div>
       </div>
       <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'row' }}>
         {tabs.map(t => {

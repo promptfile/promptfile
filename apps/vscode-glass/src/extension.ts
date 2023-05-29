@@ -203,13 +203,28 @@ export async function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
       panel.webview.onDidReceiveMessage(async (message: any) => {
         switch (message.action) {
+          case 'transpileGlass':
+            const lookup: Record<string, string> = {
+              'glass-py': 'python',
+              'glass-js': 'javascript',
+              'glass-ts': 'typescript',
+            }
+            try {
+              // open the code string in a new editor
+              const newFile = await vscode.workspace.openTextDocument({
+                language: lookup[languageId],
+                content: transpiledCode,
+              })
+              await vscode.window.showTextDocument(newFile)
+            } catch {
+              await vscode.window.showErrorMessage('Unable to transpile Glass file')
+            }
           case 'getFilename':
             await panel.webview.postMessage({
               action: 'setFilename',
               data: {
                 filename,
                 languageId,
-                transpiledCode,
               },
             })
             break
