@@ -25,7 +25,7 @@ export const ComposerView = (props: ComposerViewProps) => {
           justifyContent: 'space-between',
           alignItems: 'center',
           paddingTop: '16px',
-          paddingBottom: '16px',
+          paddingBottom: '8px',
           paddingLeft: '24px',
           paddingRight: '24px',
         }}
@@ -40,12 +40,11 @@ export const ComposerView = (props: ComposerViewProps) => {
         >
           {Object.keys(values).map((variable, index) => (
             <div key={variable} style={{ flexDirection: 'column', display: 'flex' }}>
-              <span style={{ paddingBottom: '4px' }}>{variable}</span>
               <VSCodeTextArea
                 style={{ width: '100%' }}
                 value={values[variable] ?? ''}
                 id={`composer-input-${index}`}
-                placeholder={''}
+                placeholder={variable}
                 onInput={e => {
                   const value = (e.target as any).value
                   setValues({ ...values, [variable]: value })

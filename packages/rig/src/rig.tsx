@@ -20,6 +20,7 @@ function RigView() {
   const tabs: string[] = ['Playground', 'Tests', 'History']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
+  const [languageId, setLanguageId] = useState('')
 
   const [tab, setTab] = useState(tabs[0])
 
@@ -36,6 +37,7 @@ function RigView() {
       switch (message.action) {
         case 'setFilename':
           setFilename(() => message.data.filename)
+          setLanguageId(() => message.data.languageId)
           break
         case 'setGlass':
           setGlass(() => message.data.glass)
@@ -82,7 +84,7 @@ function RigView() {
         overflow: 'hidden',
       }}
     >
-      <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} />
+      <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} languageId={languageId} />
       {tab === 'Playground' && (
         <PlaygroundView
           reset={reset}

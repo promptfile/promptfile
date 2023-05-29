@@ -183,6 +183,7 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
       const initialGlass = activeEditor.document.getText()
+      const languageId = activeEditor.document.languageId
       const filename = getDocumentFilename(activeEditor.document)
       // Get the directory of the current file
       const currentDir = path.dirname(activeEditor.document.uri.fsPath)
@@ -204,6 +205,7 @@ export async function activate(context: vscode.ExtensionContext) {
               action: 'setFilename',
               data: {
                 filename,
+                languageId,
               },
             })
             break

@@ -86,7 +86,7 @@ export const PlaygroundView = (props: PlaygroundViewProps) => {
               Chat
             </VSCodeOption>
             <VSCodeOption value={'glass'} selected={viewStyle === 'glass'}>
-              Glass editor
+              Glass file
             </VSCodeOption>
           </VSCodeDropdown>
           <VSCodeButton

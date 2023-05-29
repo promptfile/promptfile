@@ -138,14 +138,14 @@
     "keybindings": [
       {
         "command": "glass.typeahead",
-        "key": "ctrl+enter",
-        "mac": "cmd+enter",
+        "key": "ctrl+shift+space",
+        "mac": "cmd+shift+space",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       },
       {
         "command": "glass.openPlayground",
-        "key": "ctrl+shift+r",
-        "mac": "cmd+shift+r",
+        "key": "ctrl+enter",
+        "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       }
     ],
