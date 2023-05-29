@@ -249,15 +249,15 @@ export async function activate(context: vscode.ExtensionContext) {
                 playgroundDocument,
                 values,
                 playgroundDocument.languageId === 'glass-py',
-                async ({ nextDoc, rawResponse }) => {
-                  console.log(nextDoc)
-                  const blocksForGlass = parseGlassBlocks(nextDoc)
-                  const metadataForGlass = parseGlassMetadata(nextDoc)
+                async ({ nextDoc, nextInterpolatedDoc, rawResponse }) => {
+                  console.log(nextInterpolatedDoc)
+                  const blocksForGlass = parseGlassBlocks(nextInterpolatedDoc)
+                  const metadataForGlass = parseGlassMetadata(nextInterpolatedDoc)
                   await panel.webview.postMessage({
                     action: 'setGlass',
                     data: {
                       filename,
-                      glass: nextDoc,
+                      glass: nextInterpolatedDoc,
                       blocks: blocksForGlass,
                       variables: metadataForGlass.interpolationVariables,
                     },

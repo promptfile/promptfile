@@ -10,7 +10,7 @@ export async function executeGlassFile(
   document: vscode.TextDocument,
   interpolationArgs: any,
   usePython: boolean,
-  progress?: (data: { nextDoc: string; rawResponse?: string }) => void
+  progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
 ) {
   const fileName = getDocumentFilename(document)
 
