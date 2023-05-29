@@ -1,4 +1,4 @@
-import { LANGUAGE_MODELS } from '@glass-lang/glasslib'
+import { LANGUAGE_MODELS, LanguageModelType } from '@glass-lang/glasslib'
 
 interface GlassElement {
   name: string
@@ -125,6 +125,42 @@ export const glassElements: GlassElement[] = [
     documentation: 'Creates a Prompt tag with inner content',
     detail: '(element) raw Glass prompt block',
     attributes: [],
+  },
+  {
+    name: 'Chat',
+    documentation: 'Creates a model inference',
+    detail: '(inference) API request to a model',
+    selfClosing: true,
+    attributes: [
+      {
+        name: 'model',
+        detail: 'model for inference',
+        documentation: 'The `model` attribute determines which model to inference',
+        type: 'enum',
+        values: LANGUAGE_MODELS.filter(m => m.type === LanguageModelType.chat),
+      },
+      {
+        name: 'temperature',
+        detail: 'temperature for inference',
+        documentation: 'The `temperature` attribute determines the temperature for inference',
+        type: 'number',
+        optional: true,
+      },
+      {
+        name: 'maxTokens',
+        detail: 'max tokens for inference',
+        documentation: 'The `maxTokens` attribute determines the max tokens for inference',
+        type: 'number',
+        optional: true,
+      },
+      {
+        name: 'onResponse',
+        detail: 'callback for response',
+        documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
+        type: 'function',
+        optional: true,
+      },
+    ],
   },
   {
     name: 'Request',

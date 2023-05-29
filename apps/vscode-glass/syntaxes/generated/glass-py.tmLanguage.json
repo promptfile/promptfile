@@ -367,7 +367,7 @@
       ]
     },
     "request-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Request)(?=[\\s\\/\\>\\{])",
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Request|Chat)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
