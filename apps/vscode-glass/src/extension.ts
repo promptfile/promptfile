@@ -232,14 +232,14 @@ export async function activate(context: vscode.ExtensionContext) {
                 playgroundDocument.languageId === 'glass-py',
                 async ({ nextDoc, rawResponse }) => {
                   console.log(nextDoc)
-                  // const blocksForGlass = parseGlassBlocks(nextDoc)
+                  const blocksForGlass = parseGlassBlocks(nextDoc)
                   const metadataForGlass = parseGlassMetadata(nextDoc)
                   await panel.webview.postMessage({
                     action: 'setGlass',
                     data: {
                       filename,
                       glass: nextDoc,
-                      blocks: [],
+                      blocks: blocksForGlass,
                       variables: metadataForGlass.interpolationVariables,
                     },
                   })
@@ -264,22 +264,6 @@ export async function activate(context: vscode.ExtensionContext) {
             } finally {
               fs.unlinkSync(newFilePath)
             }
-            break
-          case 'getMetadata':
-            const glassToParse = message.data.glass
-            if (glassToParse == null) {
-              await vscode.window.showErrorMessage('No glass provided')
-              return
-            }
-            const metadata = parseGlassMetadata(glassToParse)
-            const blocks = parseGlassBlocks(glassToParse)
-            await panel.webview.postMessage({
-              action: 'setMetadata',
-              data: {
-                variables: metadata.interpolationVariables,
-                blocks: blocks,
-              },
-            })
             break
           case 'resetGlass':
             const metadataForGlass = parseGlassMetadata(initialGlass)

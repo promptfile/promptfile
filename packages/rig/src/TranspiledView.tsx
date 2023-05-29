@@ -1,9 +1,10 @@
-interface HistoryViewProps {
+interface TranspiledViewProps {
   glass: string
+  languageId: string
 }
 
-export const HistoryView = (props: HistoryViewProps) => {
-  const { glass } = props
+export const TranspiledView = (props: TranspiledViewProps) => {
+  const { glass, languageId } = props
 
   return (
     <div style={{ overflow: 'hidden', height: '100%' }}>
