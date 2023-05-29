@@ -2,7 +2,7 @@
 
 ![main](https://github.com/foundation-ui/glass/actions/workflows/main.yml/badge.svg)
 
-Looking for an overview? Check out the [quickstart repository](https://github.com/foundation-ui/quickstart).
+Looking for an overview? Check out the [quickstart folder](https://github.com/foundation-ui/glass/tree/main/apps/demo/quickstart).
 
 If you are using Glass, have questions, or want to stay up to date: feel free to join our [Discord](https://discord.gg/Bq67MZF3uT). 
 
