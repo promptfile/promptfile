@@ -34,7 +34,7 @@ export const ChatView = (props: ChatViewProps) => {
           Playground created: {playgroundId}
         </div>
         {blocks
-          .filter(block => block.tag !== 'System')
+          .filter(block => block.tag !== 'System' && !(block.content.startsWith('${') && block.content.endsWith('}')))
           .map((block, index) => (
             <span
               key={index}
