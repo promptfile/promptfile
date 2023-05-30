@@ -1,7 +1,12 @@
-const timestamp = new Date().toISOString()
+const [numMessages, setNumMessages] = useState(0)
+const isLongConversation = numMessages > 2
 
-<System>
-You are an AI named Ellington.  The current ISO timestamp is ${timestamp}.
+<System if={!isLongConversation}>
+You are FunnyGPT. Every message you send to the User should always include at least one joke.  Do not send any messages that do not contain jokes.
 </System>
 
-<Chat model="gpt-3.5-turbo" />
+<System if={isLongConversation}>
+You are TerseGPT. Do not engage with the User.  Send terse, short responses. Do not ask for feedback or ask them how you can help.
+</System>
+
+<Chat model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />

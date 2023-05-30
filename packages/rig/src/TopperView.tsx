@@ -8,10 +8,11 @@ interface TopperViewProps {
   setTab: (tab: string) => void
   openOutput: () => void
   reset: () => void
+  dirty: boolean
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { filename, tabs, tab, setTab, reset, openOutput } = props
+  const { dirty, filename, tabs, tab, setTab, reset, openOutput } = props
 
   return (
     <div
@@ -34,10 +35,15 @@ export const TopperView = (props: TopperViewProps) => {
       >
         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
           <LogoView dimension="20" />
-          <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px' }}>
+          <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px', paddingRight: '8px' }}>
             {filename.replace('.glass', '')}
             <span style={{ fontWeight: 'medium', fontStyle: 'italic', opacity: 0.5 }}>.glass</span>
           </span>
+          {dirty && (
+            <svg height="8" width="8">
+              <circle cx="4" cy="4" r="4" fill={'#CE9178'} />
+            </svg>
+          )}
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           <div

@@ -36,6 +36,8 @@ function RigView() {
   const tabs: string[] = ['Chat', 'Raw', 'History']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
+  const [liveSource, setLiveSource] = useState('')
+  const [runningSource, setRunningSource] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
   const [variables, setVariables] = useState<string[]>([])
   const [session, setSession] = useState(getNonce())
@@ -48,9 +50,18 @@ function RigView() {
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
       switch (message.action) {
+        case 'setLiveSource':
+          setLiveSource(() => message.data.liveSource)
+          break
         case 'setGlass':
           if (message.data.session && message.data.session !== session) {
             return
+          }
+          if (message.data.liveSource) {
+            setLiveSource(() => message.data.liveSource.trim())
+          }
+          if (message.data.runningSource) {
+            setRunningSource(() => message.data.runningSource.trim())
           }
           if (message.data.filename) {
             setFilename(() => message.data.filename)
@@ -127,6 +138,9 @@ function RigView() {
     })
   }
 
+  console.log(liveSource)
+  console.log(runningSource)
+
   return (
     <div
       style={{
@@ -137,7 +151,15 @@ function RigView() {
         overflow: 'hidden',
       }}
     >
-      <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} openOutput={openOutput} />
+      <TopperView
+        dirty={runningSource !== liveSource}
+        tab={tab}
+        setTab={setTab}
+        tabs={tabs}
+        filename={filename}
+        reset={reset}
+        openOutput={openOutput}
+      />
       {tab === 'Chat' && <ChatView stop={stop} send={send} session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView session={session} glass={glass} onOpenGlass={onOpenGlass} />}
       {tab === 'History' && <HistoryView logs={logs} onOpenGlass={onOpenGlass} />}

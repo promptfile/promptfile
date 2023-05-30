@@ -100,6 +100,15 @@ export async function activate(context: vscode.ExtensionContext) {
           updateDecorations(activeEditor, codeDecorations)
           updateTokenCount(tokenCount)
           await updateLanguageMode(editor.document)
+          const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
+          if (existingPanel) {
+            await existingPanel.webview.postMessage({
+              action: 'setLiveSource',
+              data: {
+                liveSource: editor.document.getText(),
+              },
+            })
+          }
         }
       },
       null,
@@ -182,6 +191,8 @@ export async function activate(context: vscode.ExtensionContext) {
         await existingPanel.webview.postMessage({
           action: 'setGlass',
           data: {
+            liveSource: fileContents,
+            runningSource: fileContents,
             filename,
             glass: fileContents,
             blocks: blocks,
@@ -256,6 +267,8 @@ export async function activate(context: vscode.ExtensionContext) {
               action: 'setGlass',
               data: {
                 filename,
+                liveSource: initialGlass,
+                runningSource: initialGlass,
                 glass: initialGlass,
                 blocks: initialBlocks,
                 variables: initialMetadata.interpolationVariables,
