@@ -4,4 +4,4 @@ const timestamp = new Date().toISOString()
 You are an AI named John.  The current ISO timestamp is ${timestamp}.
 </System>
 
-<Chat model="gpt-3.5-turbo" />
+<Chat model="claude-instant-v1" />

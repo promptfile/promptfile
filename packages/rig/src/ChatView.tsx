@@ -6,15 +6,14 @@ interface ChatViewProps {
   blocks: GlassBlock[]
   session: string
   send: (text: string) => void
-  variables: string[]
 }
 
 export const ChatView = (props: ChatViewProps) => {
-  const { blocks, session, send, variables } = props
+  const { blocks, session, send } = props
 
   useEffect(() => {
     document.getElementById('end')?.scrollIntoView()
-  }, [blocks.length])
+  }, [blocks])
 
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
