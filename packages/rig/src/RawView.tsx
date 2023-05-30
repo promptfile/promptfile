@@ -3,10 +3,11 @@ import { VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 interface RawViewProps {
   glass: string
   session: string
+  onOpenGlass: (glass: string) => void
 }
 
 export const RawView = (props: RawViewProps) => {
-  const { glass, session } = props
+  const { glass, session, onOpenGlass } = props
 
   return (
     <div
@@ -19,7 +20,7 @@ export const RawView = (props: RawViewProps) => {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: '24px', paddingRight: '24px' }}>
-        <div style={{ opacity: 0.5 }}>
+        <div style={{ fontWeight: 'bolder', opacity: 0.8 }}>
           Session: <span style={{ fontFamily: 'monospace' }}>{session}</span>
         </div>
         <div
@@ -30,7 +31,10 @@ export const RawView = (props: RawViewProps) => {
             event.target.style.opacity = '0.5'
           }}
           style={{ fontSize: '12px', paddingRight: '16px', opacity: 0.5, cursor: 'pointer' }}
-        ></div>
+          onClick={() => onOpenGlass(glass)}
+        >
+          Open in editor
+        </div>
       </div>
       <div style={{ paddingTop: '16px', paddingBottom: '16px', paddingLeft: '24px', paddingRight: '24px' }}>
         <VSCodeDivider />

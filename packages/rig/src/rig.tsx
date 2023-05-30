@@ -139,7 +139,7 @@ function RigView() {
     >
       <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} openOutput={openOutput} />
       {tab === 'Chat' && <ChatView stop={stop} send={send} session={session} blocks={blocks} />}
-      {tab === 'Raw' && <RawView session={session} glass={glass} />}
+      {tab === 'Raw' && <RawView session={session} glass={glass} onOpenGlass={onOpenGlass} />}
       {tab === 'History' && <HistoryView logs={logs} onOpenGlass={onOpenGlass} />}
     </div>
   )
