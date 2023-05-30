@@ -103,10 +103,6 @@
         "title": "Glass: Open Playground"
       },
       {
-        "command": "glass.typeahead",
-        "title": "Glass: Typeahead"
-      },
-      {
         "command": "glass.showGlassOutput",
         "title": "Glass: Show Glass Output"
       },
@@ -140,12 +136,6 @@
         "command": "glass.openPlayground",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
-      },
-      {
-        "command": "glass.typeahead",
-        "key": "ctrl+shift+space",
-        "mac": "cmd+shift+space",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       }
     ],

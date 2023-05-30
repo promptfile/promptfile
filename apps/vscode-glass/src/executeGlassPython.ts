@@ -7,10 +7,7 @@ import * as vscode from 'vscode'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
-export async function executeGlassPython(
-  document: vscode.TextDocument,
-  interpolationArgs: any
-): Promise<TranspilerOutput[]> {
+export async function executeGlassPython(document: vscode.TextDocument, inputs: any): Promise<TranspilerOutput[]> {
   const fileName = getDocumentFilename(document)
 
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
@@ -40,7 +37,7 @@ export async function executeGlassPython(
     'code is',
     `${transpiledCode}
 
-print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))`
+print(${getGlassExportName(fileName)}(${jsonToPython(inputs || {})}))`
   )
   // console.log(
   //   'code is',

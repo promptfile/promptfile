@@ -5,12 +5,12 @@ import { GlassBlock } from './rig'
 interface ChatViewProps {
   blocks: GlassBlock[]
   session: string
-  send: (text: string) => void
+  run: (inputs: Record<string, string>) => void
   stop: () => void
 }
 
 export const ChatView = (props: ChatViewProps) => {
-  const { blocks, session, send } = props
+  const { blocks, session, run } = props
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
 
@@ -90,7 +90,7 @@ export const ChatView = (props: ChatViewProps) => {
           ))}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
-      <ComposerView streaming={streaming} stop={stop} send={send} />
+      <ComposerView streaming={streaming} stop={stop} run={run} />
     </div>
   )
 }

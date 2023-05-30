@@ -11,11 +11,7 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 
 // Now add some text below between <User> and </User>.
 
-<User>
-Hey, how are you?
-</User>
-
-<Request model="gpt-3.5-turbo" />
+<Chat model="gpt-3.5-turbo" />
 
 
 

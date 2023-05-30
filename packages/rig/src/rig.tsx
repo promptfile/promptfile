@@ -103,11 +103,11 @@ function RigView() {
     })
   }
 
-  const send = (text: string) => {
+  const run = (inputs: Record<string, string>) => {
     vscode.postMessage({
-      action: 'sendText',
+      action: 'runGlass',
       data: {
-        text,
+        inputs,
         glass,
         session,
       },
@@ -158,8 +158,8 @@ function RigView() {
         reset={reset}
         openOutput={openOutput}
       />
-      {tab === 'Chat' && <ChatView stop={stop} send={send} session={session} blocks={blocks} />}
-      {tab === 'Request' && <RequestView stop={stop} send={send} session={session} blocks={blocks} />}
+      {tab === 'Chat' && <ChatView stop={stop} run={run} session={session} blocks={blocks} />}
+      {tab === 'Request' && <RequestView stop={stop} run={run} session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
     </div>

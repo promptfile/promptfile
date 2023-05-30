@@ -9,7 +9,7 @@ import * as vscode from 'vscode'
 export async function executeGlassTypescriptNew(
   document: vscode.TextDocument,
   fileName: string,
-  interpolationArgs: any,
+  inputs: any,
   progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
 ): Promise<{
   rawResponse: string
@@ -18,6 +18,9 @@ export async function executeGlassTypescriptNew(
   initInterpolatedDoc: string
   finalDoc: string
   finalInterpolatedDoc: string
+  continued: boolean
+  setText: string | null
+  setNextUserText: string | null
 }> {
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
   if (!activeEditorWorkspaceFolder) {
@@ -54,11 +57,11 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
   const res: any[] = []
   if (Array.isArray(t)) {
     for (const args of t) {
-      const c: any = await compile({ args: { ...args, ...(${JSON.stringify(interpolationArgs || {})}) } })
+      const c: any = await compile({ args: { ...args, ...(${JSON.stringify(inputs || {})}) } })
       res.push(c)
     }
   } else {
-    const c: any = await compile({ args: { ...t, ...(${JSON.stringify(interpolationArgs || {})}) } })
+    const c: any = await compile({ args: { ...t, ...(${JSON.stringify(inputs || {})}) } })
     res.push(c)
   }
   const ret = await runGlass(res[0], { progress: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => {

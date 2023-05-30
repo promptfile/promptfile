@@ -2,13 +2,13 @@ import { VSCodeButton, VSCodeDivider, VSCodeTextArea } from '@vscode/webview-ui-
 import { useEffect, useState } from 'react'
 
 interface ComposerViewProps {
-  send: (text: string) => void
+  run: (inputs: Record<string, string>) => void
   stop: () => void
   streaming: boolean
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { send, streaming, stop } = props
+  const { run, streaming, stop } = props
 
   const [text, setText] = useState('')
 
@@ -52,7 +52,7 @@ export const ComposerView = (props: ComposerViewProps) => {
             onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault()
-                send(text)
+                run({ input: text })
                 setText('')
               }
             }}
@@ -63,8 +63,8 @@ export const ComposerView = (props: ComposerViewProps) => {
             Stop
           </VSCodeButton>
         ) : (
-          <VSCodeButton style={{ width: 'fit-content' }} appearance="primary" onClick={() => send(text)}>
-            Send
+          <VSCodeButton style={{ width: 'fit-content' }} appearance="primary" onClick={() => run({ input: text })}>
+            Run
           </VSCodeButton>
         )}
       </div>

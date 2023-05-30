@@ -8,8 +8,7 @@ import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
 export async function executeGlassFile(
   document: vscode.TextDocument,
-  interpolationArgs: any,
-  usePython: boolean,
+  inputs: any,
   progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
 ) {
   const fileName = getDocumentFilename(document)
@@ -17,11 +16,13 @@ export async function executeGlassFile(
   const openaiKey = getOpenaiKey()
   const anthropicKey = getAnthropicKey()
 
-  if (usePython) {
-    const c = await executeGlassPython(document, interpolationArgs)
+  const isDocumentPython = document.languageId === 'glass-py'
+
+  if (isDocumentPython) {
+    const c = await executeGlassPython(document, inputs)
     checkOk(c.length >= 0, 'No transpiler output generated')
     return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
   }
 
-  return await executeGlassTypescriptNew(document, fileName, interpolationArgs, progress)
+  return await executeGlassTypescriptNew(document, fileName, inputs, progress)
 }
