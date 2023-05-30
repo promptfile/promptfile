@@ -5,6 +5,8 @@ const response = await request.text()
 
 const timestamp = new Date().toISOString()
 
+
+
 <System>
 You are working on the support team for Apple, the hardware manufacturer based in Silicon Valley. 
 
@@ -13,7 +15,3 @@ The current time is ${timestamp}.
 
 
 <Chat model="gpt-3.5-turbo" />
-
-
-
-setNumMessages(numMessages + 1)

@@ -270,10 +270,26 @@ export async function activate(context: vscode.ExtensionContext) {
               return
             }
 
-            // Define the new file's path. This places it in the same directory
-            // as the current file.
+            // Ensure a workspace is opened
+            if (!vscode.workspace.workspaceFolders) {
+              await vscode.window.showErrorMessage('No workspace opened')
+              return
+            }
+
+            // Get the workspace root path
+            const workspaceRoot = vscode.workspace.workspaceFolders[0].uri.fsPath
+
+            // Define the temporary directory path
+            const tempDir = path.join(workspaceRoot, '.temp')
+
+            // Create the temporary directory if it doesn't exist
+            if (!fs.existsSync(tempDir)) {
+              fs.mkdirSync(tempDir)
+            }
+
+            // Define the new file's path. This places it in the '.temp' directory in the workspace root.
             const sessionId = getNonce()
-            const newFilePath = path.join(currentDir, filename.replace('.glass', `${sessionId}.glass`))
+            const newFilePath = path.join(tempDir, filename.replace('.glass', `${sessionId}.glass`))
             fs.writeFileSync(newFilePath, glass)
 
             // load the textdocument from newFilePath
