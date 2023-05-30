@@ -357,6 +357,7 @@ export async function activate(context: vscode.ExtensionContext) {
                   return true
                 }
               )
+
               const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
               if (!existingPanel) {
                 return false
@@ -373,6 +374,7 @@ export async function activate(context: vscode.ExtensionContext) {
                   session,
                   model,
                   input: messageText,
+                  output: resp.rawResponse,
                   done: true,
                 },
               })
