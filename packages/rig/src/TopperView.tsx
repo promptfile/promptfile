@@ -40,7 +40,16 @@ export const TopperView = (props: TopperViewProps) => {
           </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <div onClick={openOutput} style={{ fontSize: '12px', paddingRight: '16px', opacity: 0.3, cursor: 'pointer' }}>
+          <div
+            onMouseEnter={(event: any) => {
+              event.target.style.opacity = '1.0'
+            }}
+            onMouseLeave={(event: any) => {
+              event.target.style.opacity = '0.5'
+            }}
+            onClick={openOutput}
+            style={{ fontSize: '12px', paddingRight: '16px', opacity: 0.5, cursor: 'pointer' }}
+          >
             Logs
           </div>
           <VSCodeButton appearance="secondary" onClick={reset}>
