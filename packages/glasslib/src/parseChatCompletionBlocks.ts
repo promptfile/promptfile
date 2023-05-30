@@ -46,7 +46,10 @@ export function interpolateGlassChat(
   return res
 }
 
-export function parseChatCompletionBlocks(content: string): ChatCompletionRequestMessage[] {
+export function parseChatCompletionBlocks(
+  content: string,
+  interpolationArgs: any = {}
+): ChatCompletionRequestMessage[] {
   const removedLiterals = removeEscapedHtml(content)
 
   const doc = removeGlassComments(removedLiterals.output)
@@ -59,6 +62,10 @@ export function parseChatCompletionBlocks(content: string): ChatCompletionReques
   for (const node of nodes) {
     let role = node.tagName?.toLowerCase()
     let blockContent = restoreEscapedHtml(getJSXNodeInsidesString(node, doc), removedLiterals.replacements)
+    if (role == 'chat') {
+      res.push({ role: 'user', content: interpolationArgs.input })
+      continue
+    }
     if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
       continue // ignore
     }

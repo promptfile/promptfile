@@ -268,6 +268,7 @@ export function ${exportName}() {
       interpolatedDoc: TEMPLATE,
       originalDoc: ${JSON.stringify(originalDoc)},
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: ${onResponse ? onResponse : 'undefined'}
     }
   }
