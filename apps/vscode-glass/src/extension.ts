@@ -185,6 +185,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       const initialGlass = activeEditor.document.getText()
       const languageId = activeEditor.document.languageId
+      const fileLocation = activeEditor.document.uri.fsPath
       const filename = getDocumentFilename(activeEditor.document)
       // Get the directory of the current file
       const currentDir = path.dirname(activeEditor.document.uri.fsPath)
@@ -192,18 +193,35 @@ export async function activate(context: vscode.ExtensionContext) {
       const transpiledCode = await transpileCurrentFile(activeEditor.document)
 
       // Check if there is an existing panel for this file
-      let panel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
-      if (panel) {
+      const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
+      if (existingPanel) {
         // open this panel in vscode
-        panel.reveal(vscode.ViewColumn.Beside)
+        const fileContents = fs.readFileSync(fileLocation, 'utf-8')
+        const blocks = parseGlassBlocks(fileContents)
+        const metadata = parseGlassMetadata(fileContents)
+        await existingPanel.webview.postMessage({
+          action: 'setGlass',
+          data: {
+            filename,
+            glass: fileContents,
+            blocks: blocks,
+            variables: metadata.interpolationVariables,
+          },
+        })
+        existingPanel.reveal(vscode.ViewColumn.Beside)
         return
       }
 
       // If there's no existing panel, create a new one
-      panel = vscode.window.createWebviewPanel('glass.webView', `${filename} (playground)`, vscode.ViewColumn.Beside, {
-        enableScripts: true,
-        retainContextWhenHidden: true,
-      })
+      const panel = vscode.window.createWebviewPanel(
+        'glass.webView',
+        `${filename} (playground)`,
+        vscode.ViewColumn.Beside,
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+        }
+      )
       // Store the new panel in the map
       activePlaygrounds.set(activeEditor.document.uri.fsPath, panel)
 
@@ -301,14 +319,17 @@ export async function activate(context: vscode.ExtensionContext) {
             }
             break
           case 'resetGlass':
-            const metadataForGlass = parseGlassMetadata(initialGlass)
+            // get the file contents from fileLocation
+            const fileContents = fs.readFileSync(fileLocation, 'utf-8')
+            const blocks = parseGlassBlocks(fileContents)
+            const metadata = parseGlassMetadata(fileContents)
             await panel.webview.postMessage({
               action: 'setGlass',
               data: {
                 filename,
-                glass: initialGlass,
-                blocks: [],
-                variables: metadataForGlass.interpolationVariables,
+                glass: fileContents,
+                blocks: blocks,
+                variables: metadata.interpolationVariables,
               },
             })
             break
