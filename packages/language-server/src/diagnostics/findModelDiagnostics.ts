@@ -75,21 +75,6 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
             })
           )
         }
-        const chatBlocks = parsed.filter(tag => ['System', 'User', 'Assistant', 'Block'].includes(tag.tagName ?? ''))
-        diagnostics.push(
-          ...chatBlocks.map(tag => {
-            const diagnostic: Diagnostic = {
-              severity: DiagnosticSeverity.Warning,
-              range: {
-                start: textDocument.positionAt(tag.position.start.offset + 1),
-                end: textDocument.positionAt(tag.position.start.offset + (tag.tagName ?? '').length + 1),
-              },
-              message: `Chat blocks not natively supported by completion model ${languageModel.name}.`,
-              source: 'glass',
-            }
-            return diagnostic
-          })
-        )
         break
 
       default:

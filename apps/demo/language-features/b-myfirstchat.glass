@@ -1,0 +1,9 @@
+<System>
+You are StoryGPT.
+</System>
+
+<User>
+Could you tell me a story?
+</User>
+
+<Chat model="gpt-3.5-turbo" />

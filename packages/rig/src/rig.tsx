@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { ChatView } from './ChatView'
 import { HistoryView } from './HistoryView'
 import { RawView } from './RawView'
+import { RequestView } from './RequestView'
 import { TopperView } from './TopperView'
 import { getNonce } from './nonce'
 
@@ -34,7 +35,6 @@ render(<RigView />, container)
 
 function RigView() {
   const [type, setType] = useState('Chat')
-  const tabs: string[] = [type, 'Raw', 'History']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
   const [currentSource, setCurrentSource] = useState('')
@@ -44,7 +44,7 @@ function RigView() {
   const [session, setSession] = useState(getNonce())
   const [logs, setLogs] = useState<GlassLog[]>([])
 
-  const [tab, setTab] = useState('')
+  const [tab, setTab] = useState(type)
 
   // register a callback for when the extension sends a message
   useEffect(() => {
@@ -55,7 +55,6 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'onOpen':
-          setType(() => message.data.type)
           setOriginalSource(() => message.data.originalSource)
           setCurrentSource(() => message.data.currentSource)
           setFilename(() => message.data.filename)
@@ -154,7 +153,7 @@ function RigView() {
         reloadable={glass !== originalSource || originalSource !== currentSource}
         tab={tab}
         setTab={setTab}
-        tabs={tabs}
+        tabs={[type, 'Raw', 'History']}
         filename={filename}
         reset={reset}
         openOutput={openOutput}
