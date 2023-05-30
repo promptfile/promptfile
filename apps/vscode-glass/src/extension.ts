@@ -20,6 +20,7 @@ import { transpileCurrentFile } from './util/transpile'
 import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
+const activePlaygrounds = new Map<string, vscode.WebviewPanel>()
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -190,15 +191,27 @@ export async function activate(context: vscode.ExtensionContext) {
 
       const transpiledCode = await transpileCurrentFile(activeEditor.document)
 
-      const panel = vscode.window.createWebviewPanel(
-        'glass.webView',
-        `${filename} (playground)`,
-        vscode.ViewColumn.Beside,
-        {
-          enableScripts: true,
-          retainContextWhenHidden: true,
-        }
-      )
+      // Check if there is an existing panel for this file
+      let panel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
+      if (panel) {
+        // open this panel in vscode
+        panel.reveal(vscode.ViewColumn.Beside)
+        return
+      }
+
+      // If there's no existing panel, create a new one
+      panel = vscode.window.createWebviewPanel('glass.webView', `${filename} (playground)`, vscode.ViewColumn.Beside, {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+      })
+      // Store the new panel in the map
+      activePlaygrounds.set(activeEditor.document.uri.fsPath, panel)
+
+      // When the panel is disposed, remove it from the map
+      panel.onDidDispose(() => {
+        activePlaygrounds.delete(activeEditor.document.uri.fsPath)
+      })
+
       panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
       panel.webview.onDidReceiveMessage(async (message: any) => {
         switch (message.action) {
