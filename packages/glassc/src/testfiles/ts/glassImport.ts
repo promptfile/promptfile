@@ -1,3 +1,5 @@
+import { runGlass, useState } from '@glass-lang/glasslib'
+
 export function getQuestionAnswerPrompt() {
   function getTestData() {
     return {}
@@ -24,6 +26,7 @@ ${question}
       originalDoc:
         '<System>\nYou are a helpful assistant.\n</System>\n\n<User>\n${question}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: undefined,
     }
   }
@@ -72,6 +75,7 @@ Make a question about United States history.
       originalDoc:
         "import questionAnswer from './questionAnswer.glass'\n\nconst [field, setField] = useState('')\n\n<Assistant>\nYou are an assistant that creates questions for Jeopardy.\n</Assistant>\n\n<User>\nMake a question about United States history.\n</User>\n\n<Request model=\"gpt-3.5-turbo\" onResponse={async ({ message }) => {\n    const answer = await questionAnswer({question: message})\n    setField(answer)\n}} />",
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: async ({ message }) => {
         const answer = await questionAnswer({ question: message })
         setField(answer)

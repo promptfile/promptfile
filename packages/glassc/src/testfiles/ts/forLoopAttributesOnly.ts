@@ -22,6 +22,7 @@ export function getForLoopAttributesOnlyPrompt() {
       originalDoc:
         "<For each={[{role: 'user', content: 'who was gandhi?'}]} fragment={item => <Block role={item.role} content={item.content} />}  />",
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: undefined,
     }
   }

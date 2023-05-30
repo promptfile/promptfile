@@ -18,6 +18,7 @@ ${foo} ${bar}
       originalDoc:
         '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n<Prompt>\n${foo} ${bar}\n</Prompt>',
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: undefined,
     }
   }

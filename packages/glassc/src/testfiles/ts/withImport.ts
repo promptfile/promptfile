@@ -23,6 +23,7 @@ ${a} ${b} ${c}
       interpolatedDoc: TEMPLATE,
       originalDoc: 'import c from "c"\n\nconst a = "3"\n<Prompt>\n${a} ${b} ${c}\n</Prompt>',
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: undefined,
     }
   }

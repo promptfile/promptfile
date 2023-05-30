@@ -17,6 +17,7 @@ ${foo} and {foo}
       interpolatedDoc: TEMPLATE,
       originalDoc: '<Prompt>\n${foo} and {foo}\n</Prompt>',
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: undefined,
     }
   }

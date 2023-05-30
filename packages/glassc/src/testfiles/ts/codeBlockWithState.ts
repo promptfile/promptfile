@@ -25,6 +25,7 @@ hello world
       originalDoc:
         "const initProfile = { firstName: '', lastName: '', hasChatted: false }\nconst [profile, setProfile] = useState(initProfile)\nconst [moreState, setMoreState] = useState('')\n\n<Request model=\"gpt-4\" onResponse={() => setProfile({ hasChatted: true})}>\nhello world\n</Request>",
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: () => setProfile({ hasChatted: true }),
     }
   }

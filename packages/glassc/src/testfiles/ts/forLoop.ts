@@ -27,6 +27,7 @@ ${m.content}
       originalDoc:
         "<For each={[\n    { role: 'user', content: 'name an ice cream' },\n    { role: \"assistant\", content: 'Vanilla' },\n    { role: 'user', content: 'name a fruit' }\n]} as=\"m\">\n<Block role={m.role}>\n${m.content}\n</Block>\n</For>",
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: undefined,
     }
   }

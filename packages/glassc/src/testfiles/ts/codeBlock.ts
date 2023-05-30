@@ -19,6 +19,7 @@ ${a}
       interpolatedDoc: TEMPLATE,
       originalDoc: 'const a = "3"\n<Prompt>\n${a}\n</Prompt>',
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: undefined,
     }
   }

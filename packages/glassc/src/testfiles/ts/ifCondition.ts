@@ -24,6 +24,7 @@ ${GLASSVAR[0]}`
       interpolatedDoc: TEMPLATE,
       originalDoc: '<System>\nHello world\n</System>\n\n<User if={true}>\nGoodbye world\n</User>',
       state: GLASS_STATE,
+      interpolationArgs: opt.args || {},
       onResponse: undefined,
     }
   }
