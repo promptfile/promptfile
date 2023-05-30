@@ -1,1 +1,10 @@
-export const TYPESCRIPT_GLOBALS = ['fetch', 'Math', 'JSON', '__dirname', 'Boolean']
+export const TYPESCRIPT_GLOBALS = [
+  'fetch',
+  'Math',
+  'JSON',
+  '__dirname',
+  'Boolean',
+  'encodeURIComponent',
+  'process',
+  'eval',
+]

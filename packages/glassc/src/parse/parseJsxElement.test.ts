@@ -18,6 +18,14 @@ describe('parseJsxElement', () => {
     })
   })
 
+  it('should parse complex JSX', () => {
+    const code = `<Assistant>\${tools.map((tool) => \`\${tool.name}: \${tool.description}\`).join('\\n')}</Assistant>`
+    expect(parseJsxElement(code)).to.deep.equal({
+      tagNames: ['Assistant'],
+      undeclaredVariables: ['tools'],
+    })
+  })
+
   it('should parse JSX', () => {
     const code = `<For each={messages} />`
     expect(parseJsxElement(code)).to.deep.equal({

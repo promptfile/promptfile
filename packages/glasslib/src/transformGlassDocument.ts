@@ -126,5 +126,11 @@ export function updateChatNode(chatNodeSubstitution: string, doc: string) {
 
   const idx = parsed.indexOf(chatNode)
   const newDoc = addNodeToDocument(chatNodeSubstitution, idx, doc)
-  return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
+  const res = restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
+  // remove all instances of initialRole="assistant"
+  return res
+    .replace(/initialRole="(assistant|user|Assistant|User)"/g, '')
+    .replace(/initialRole={"(assistant|user|Assistant|User)"}/g, '')
+    .replace(/initialRole={'(assistant|user|Assistant|User)'}/g, '')
+    .replace(/initialRole={`(assistant|user|Assistant|User)`}/g, '')
 }

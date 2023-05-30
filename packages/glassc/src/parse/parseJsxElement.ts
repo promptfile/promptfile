@@ -48,7 +48,8 @@ export function parseJsxElement(code: string) {
         ts.isJsxOpeningElement(node.parent) ||
         ts.isJsxSelfClosingElement(node.parent) ||
         ts.isJsxClosingElement(node.parent) ||
-        ts.isPropertyAssignment(node.parent)
+        ts.isPropertyAssignment(node.parent) ||
+        (ts.isCallExpression(node.parent) && node.parent.expression !== node)
       ) {
         return
       }
@@ -57,10 +58,20 @@ export function parseJsxElement(code: string) {
         result.undeclaredVariables.add(node.text)
       }
     } else if (ts.isPropertyAccessExpression(node)) {
-      const name = node.expression.getText()
-      const inCurrentScope = scopes.some(scope => scope.has(name))
-      if (!inCurrentScope) {
-        result.undeclaredVariables.add(name)
+      if (ts.isIdentifier(node.expression)) {
+        const name = node.expression.text
+        const inCurrentScope = scopes.some(scope => scope.has(name))
+        if (!inCurrentScope) {
+          result.undeclaredVariables.add(name)
+        }
+      }
+    } else if (ts.isCallExpression(node)) {
+      if (ts.isIdentifier(node.expression)) {
+        const name = node.expression.text
+        const inCurrentScope = scopes.some(scope => scope.has(name))
+        if (!inCurrentScope) {
+          result.undeclaredVariables.add(name)
+        }
       }
     }
 

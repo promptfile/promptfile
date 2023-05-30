@@ -379,6 +379,8 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
               )
 
+              console.log('execute glass file returned', JSON.stringify(resp, null, 2))
+
               const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
               if (!existingPanel) {
                 return false
