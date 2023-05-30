@@ -1,8 +1,8 @@
-interface StorageViewProps {
+interface RawViewProps {
   glass: string
 }
 
-export const StorageView = (props: StorageViewProps) => {
+export const RawView = (props: RawViewProps) => {
   const { glass } = props
 
   return (

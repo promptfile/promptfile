@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import { ChatView } from './ChatView'
 import { HistoryView } from './HistoryView'
-import { ConsoleView } from './LogsView'
-import { StorageView } from './StorageView'
+import { RawView } from './RawView'
 import { TopperView } from './TopperView'
 import { getNonce } from './nonce'
 
@@ -34,7 +33,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Chat', 'Storage', 'Console', 'History']
+  const tabs: string[] = ['Chat', 'Raw', 'History']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
@@ -118,8 +117,7 @@ function RigView() {
     >
       <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
       {tab === 'Chat' && <ChatView variables={variables} send={send} session={session} blocks={blocks} />}
-      {tab === 'Storage' && <StorageView glass={glass} />}
-      {tab === 'Console' && <ConsoleView session={session} />}
+      {tab === 'Raw' && <RawView glass={glass} />}
       {tab === 'History' && <HistoryView logs={logs} onOpenGlass={onOpenGlass} />}
     </div>
   )
