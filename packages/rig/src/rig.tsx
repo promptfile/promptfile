@@ -58,7 +58,7 @@ function RigView() {
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           setVariables(() => message.data.variables)
-          if (message.data.session && message.data.done) {
+          if (message.data.session && message.data.output) {
             setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
           }
           break
@@ -118,6 +118,15 @@ function RigView() {
     })
   }
 
+  const stop = () => {
+    vscode.postMessage({
+      action: 'stopGlass',
+      data: {
+        session,
+      },
+    })
+  }
+
   return (
     <div
       style={{
@@ -129,7 +138,7 @@ function RigView() {
       }}
     >
       <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} openOutput={openOutput} />
-      {tab === 'Chat' && <ChatView send={send} session={session} blocks={blocks} />}
+      {tab === 'Chat' && <ChatView stop={stop} send={send} session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView glass={glass} />}
       {tab === 'History' && <HistoryView logs={logs} onOpenGlass={onOpenGlass} />}
     </div>

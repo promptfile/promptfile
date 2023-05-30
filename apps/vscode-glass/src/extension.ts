@@ -21,6 +21,7 @@ import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
 const activePlaygrounds = new Map<string, vscode.WebviewPanel>()
+const stoppedSessions = new Set<string>()
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -212,6 +213,10 @@ export async function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
       panel.webview.onDidReceiveMessage(async (message: any) => {
         switch (message.action) {
+          case 'stopGlass':
+            const stopSession = message.data.session
+            stoppedSessions.add(stopSession)
+            break
           case 'openGlass':
             try {
               const newGlassFile = await vscode.workspace.openTextDocument({
@@ -263,6 +268,7 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('No session provided')
               return
             }
+            stoppedSessions.delete(session)
             const messageText = message.data.text
             if (messageText == null) {
               await vscode.window.showErrorMessage('No text provided')
@@ -339,7 +345,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 playgroundDocument.languageId === 'glass-py',
                 async ({ nextDoc, nextInterpolatedDoc, rawResponse }) => {
                   const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
-                  if (!existingPanel) {
+                  if (!existingPanel || stoppedSessions.has(session)) {
                     return false
                   }
                   const blocksForGlass = parseGlassBlocks(nextDoc)
@@ -352,6 +358,7 @@ export async function activate(context: vscode.ExtensionContext) {
                       blocks: blocksForGlass,
                       variables: metadataForGlass.interpolationVariables,
                       session,
+                      streaming: true,
                     },
                   })
                   return true
@@ -375,7 +382,6 @@ export async function activate(context: vscode.ExtensionContext) {
                   model,
                   input: messageText,
                   output: resp.rawResponse,
-                  done: true,
                 },
               })
             } catch (error) {

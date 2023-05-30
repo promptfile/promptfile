@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react'
 
 interface ComposerViewProps {
   send: (text: string) => void
+  stop: () => void
+  streaming: boolean
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { send } = props
+  const { send, streaming, stop } = props
 
   const [text, setText] = useState('')
 
@@ -56,9 +58,15 @@ export const ComposerView = (props: ComposerViewProps) => {
             }}
           />
         </div>
-        <VSCodeButton style={{ width: 'fit-content' }} onClick={() => send(text)}>
-          Send
-        </VSCodeButton>
+        {streaming ? (
+          <VSCodeButton style={{ width: 'fit-content' }} appearance="secondary" onClick={stop}>
+            Stop
+          </VSCodeButton>
+        ) : (
+          <VSCodeButton style={{ width: 'fit-content' }} appearance="primary" onClick={() => send(text)}>
+            Send
+          </VSCodeButton>
+        )}
       </div>
     </div>
   )

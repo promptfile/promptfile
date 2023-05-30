@@ -6,6 +6,7 @@ interface ChatViewProps {
   blocks: GlassBlock[]
   session: string
   send: (text: string) => void
+  stop: () => void
 }
 
 export const ChatView = (props: ChatViewProps) => {
@@ -14,6 +15,9 @@ export const ChatView = (props: ChatViewProps) => {
   useEffect(() => {
     document.getElementById('end')?.scrollIntoView()
   }, [blocks])
+
+  const lastBlock = blocks.length > 0 ? blocks[blocks.length - 1] : null
+  const streaming = lastBlock?.content.includes('█') === true
 
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -60,7 +64,7 @@ export const ChatView = (props: ChatViewProps) => {
           ))}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
-      <ComposerView send={send} />
+      <ComposerView streaming={streaming} stop={stop} send={send} />
     </div>
   )
 }
