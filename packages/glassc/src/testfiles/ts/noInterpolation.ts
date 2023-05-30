@@ -12,7 +12,7 @@ foo
 </User>`
     return {
       fileName: 'noInterpolation',
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: '<User>\nfoo\n</User>',
       state: GLASS_STATE,

@@ -220,12 +220,6 @@ async function runGlassChat(
 
   console.log('running glass chat', messages)
 
-  for (const m of messages) {
-    if (m.role === 'prompt') {
-      m.role = 'user'
-    }
-  }
-
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -298,8 +292,6 @@ async function runGlassChatAnthropic(
       anthropicQuery += `\n\nHuman: ${msg.content}`
     } else if (msg.role === 'system') {
       anthropicQuery += `\n\nHuman: ${msg.content}`
-    } else if (msg.role === 'prompt') {
-      anthropicQuery += `\n\nUser: ${msg.content}`
     } else {
       throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
     }
@@ -354,7 +346,7 @@ async function runGlassChatAnthropic(
  */
 async function runGlassCompletion(
   fileName: string,
-  model: 'text-davinci-003',
+  model: 'gpt-3.5-turbo',
   interpolationArgs: any,
   docs: { interpolatedDoc: string; originalDoc: string },
   isChatUserFirst: boolean,
@@ -369,12 +361,12 @@ async function runGlassCompletion(
   rawResponse: string
 }> {
   const messages = parseChatCompletionBlocks(docs.interpolatedDoc, interpolationArgs, isChatUserFirst)
-  const hasPromptBlock = messages.length === 1 && messages.find(m => m.role === 'prompt')
+  const useChat = messages.length > 1
 
   let prompt = ''
   let stopSequence: string | null = null
-  if (hasPromptBlock) {
-    prompt = hasPromptBlock.content
+  if (!useChat) {
+    prompt = messages[0].content
   } else {
     stopSequence = '\n\nHuman:'
     for (const msg of messages) {
@@ -384,8 +376,6 @@ async function runGlassCompletion(
         prompt += `\n\nHuman: ${msg.content}`
       } else if (msg.role === 'system') {
         prompt += `\n\nHuman: ${msg.content}`
-      } else if (msg.role === 'prompt') {
-        prompt += `\n\nUser: ${msg.content}`
       } else {
         throw new Error(`Unknown role for completion query: ${msg.role}`)
       }

@@ -10,7 +10,6 @@ export {
   updateDocumentAst,
 } from './ast'
 export { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
-export { interpolateGlass } from './interpolateGlass'
 export { getJSXNodeInsidesString, getJSXNodeShellString, getJSXNodeString } from './jsxElementNode'
 export { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 export { ChatCompletionRequestMessage, parseChatCompletionBlocks } from './parseChatCompletionBlocks'

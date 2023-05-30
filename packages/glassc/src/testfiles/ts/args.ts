@@ -13,7 +13,7 @@ ${foo} ${bar}
 </User>`
     return {
       fileName: 'args',
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc:
         '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n<User>\n${foo} ${bar}\n</User>',

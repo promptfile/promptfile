@@ -14,7 +14,7 @@ ${bar}
 </User>`
     return {
       fileName: 'duplicateInterpolation',
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: '<User>\n${foo} ${bar} ${foo}\n${bar}\n</User>',
       state: GLASS_STATE,

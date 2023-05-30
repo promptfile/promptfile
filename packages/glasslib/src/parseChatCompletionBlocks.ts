@@ -4,7 +4,7 @@ import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 import { removeGlassComments } from './removeGlassComments'
 
 export interface ChatCompletionRequestMessage {
-  role: 'system' | 'user' | 'assistant' | 'prompt'
+  role: 'system' | 'user' | 'assistant'
   content: string
   name?: string
 }
@@ -30,7 +30,7 @@ export function parseChatCompletionBlocks(
       res.push({ role: 'user', content: interpolationArgs.input })
       continue
     }
-    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block' && role !== 'prompt') {
+    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
       continue // ignore
     }
     if (role === 'block') {

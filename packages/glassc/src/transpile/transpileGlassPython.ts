@@ -37,9 +37,6 @@ export async function transpileGlassFilePython(
   const functionName = camelcase(fileName)
   const exportName = getGlassExportName(fileName)
 
-  const hasPrompt = toplevelNodes.filter(node => node.tagName === 'Prompt').length > 0
-  const isChat = !hasPrompt
-
   const { imports, jsxExpressions } = glasslib.parseGlassAST(doc, {
     workspaceFolder,
     folderPath,
@@ -52,7 +49,7 @@ export async function transpileGlassFilePython(
 
   // const interpolationVarNames = Array.from(new Set<string>(allInterpolationVars.map(arg => arg.split('.')[0])))
 
-  let model = isChat ? 'gpt-3.5-turbo' : 'text-davinci-003'
+  let model = 'gpt-3.5-turbo'
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of toplevelNodes) {
@@ -183,10 +180,10 @@ export async function transpileGlassFilePython(
     Object.keys(codeInterpolationMap).length === 0
       ? 'GLASSVAR = {}'
       : 'GLASSVAR = {\n            ' +
-      Object.keys(codeInterpolationMap)
-        .map(k => `${k}: ${codeInterpolationMap[k]}`)
-        .join(',\n            ') +
-      '\n    }'
+        Object.keys(codeInterpolationMap)
+          .map(k => `${k}: ${codeInterpolationMap[k]}`)
+          .join(',\n            ') +
+        '\n    }'
 
   const code = `${imports.join('\n')}
 

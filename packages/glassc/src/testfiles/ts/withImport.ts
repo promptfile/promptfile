@@ -19,7 +19,7 @@ ${a} ${b} ${c}
 </User>`
     return {
       fileName: 'withImport',
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: 'import c from "c"\n\nconst a = "3"\n<User>\n${a} ${b} ${c}\n</User>',
       state: GLASS_STATE,

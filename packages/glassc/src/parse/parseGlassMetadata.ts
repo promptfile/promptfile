@@ -2,7 +2,7 @@ import glasslib from '@glass-lang/glasslib'
 import { TYPESCRIPT_GLOBALS } from '../transpile/typescriptGlobals'
 import { parseCodeBlock } from './parseTypescript'
 
-const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block', 'Prompt'])
+const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block'])
 
 export function parseGlassMetadata(document: string) {
   const blocks = glasslib.parseGlassBlocks(document)

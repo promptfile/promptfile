@@ -13,7 +13,7 @@ ${foo}
 </User>`
     return {
       fileName: 'withInterpolation',
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: '<User>\n${foo}\n</User>',
       state: GLASS_STATE,

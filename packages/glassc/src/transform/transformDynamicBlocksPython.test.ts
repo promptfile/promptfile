@@ -37,7 +37,7 @@ And this is the end`
   })
 
   it('should do simple doc with if condition', () => {
-    const glass = `<Prompt if={bar}>
+    const glass = `<User if={bar}>
 \${foo}
 </User>`
 
@@ -45,7 +45,7 @@ And this is the end`
       undeclaredSymbols: ['bar', 'foo'],
       nestedInterpolations: {},
       jsxInterpolations: {
-        0: `"""{}""".format("""<Prompt if={{"{}"}}>
+        0: `"""{}""".format("""<User if={{"{}"}}>
 {}
 </User>""".format(bar, """{}""".format(foo))) if bar else ''`,
       },

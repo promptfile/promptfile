@@ -1,10 +1,10 @@
 def getInterstitialPrompt(interpolationArgs = {}):
     def get_test_data(): return {}
-
+    
     def compile(opt = { "args": {} }):
         foo = "bar"
-
-
+        
+        
         print(foo)
         GLASSVAR = {
             0: """{}""".format("""<User>
@@ -13,7 +13,7 @@ def getInterstitialPrompt(interpolationArgs = {}):
     }
         return {
             "fileName": "interstitial",
-            "model": "text-davinci-003",
+            "model": "gpt-3.5-turbo",
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\nfoo = \"bar\"\n<User>\n${foo}\n</User>\nprint(foo)",
             "interpolationArgs": opt["args"],
@@ -22,7 +22,7 @@ foo = "bar"
 {}
 print(foo)""".format(GLASSVAR[0]),
         }
-
+    
     testData = get_test_data()
     args = { "args": testData }
     args.update(interpolationArgs)

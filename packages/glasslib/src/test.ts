@@ -1,5 +1,4 @@
 import './escapeHtml.test'
-import './interpolateGlass.test'
 import './jsxElementNode.test'
 import './parseGlassBlocks.test'
 import './parseGlassTopLevelJsxElements.test'

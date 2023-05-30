@@ -13,7 +13,7 @@ ${foo} ${bar}
 </User>`
     return {
       fileName: 'multipleInterpolation',
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: '<User>\n${foo} ${bar}\n</User>',
       state: GLASS_STATE,

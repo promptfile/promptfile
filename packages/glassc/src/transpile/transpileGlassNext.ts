@@ -62,9 +62,6 @@ export function transpileGlassFileNext(
   const functionName = camelcase(fileName)
   const exportName = getGlassExportName(fileName)
 
-  const hasPrompt = toplevelNodes.filter(node => node.tagName === 'Prompt').length > 0
-  const isChat = !hasPrompt
-
   const { imports, interpolationArgs, jsxExpressions, frontmatter } = glasslib.parseGlassAST(doc, {
     workspaceFolder,
     folderPath,
@@ -85,7 +82,7 @@ export function transpileGlassFileNext(
 
   const interpolationVarSet = new Set(interpolationVarNames)
 
-  let model = isChat ? 'gpt-3.5-turbo' : 'text-davinci-003'
+  let model = 'gpt-3.5-turbo'
 
   let onResponse = ''
 

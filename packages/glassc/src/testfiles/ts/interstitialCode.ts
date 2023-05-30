@@ -17,7 +17,7 @@ ${foo}
 const baz = "bar"`
     return {
       fileName: 'interstitialCode',
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: 'const foo = "bar"\n<User>\n${foo}\n</User>\nconst baz = "bar"',
       state: GLASS_STATE,

@@ -15,7 +15,7 @@ ${a}
 </User>`
     return {
       fileName: 'codeBlock',
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: 'const a = "3"\n<User>\n${a}\n</User>',
       state: GLASS_STATE,
