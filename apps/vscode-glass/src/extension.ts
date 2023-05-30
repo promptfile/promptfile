@@ -12,7 +12,7 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeGlassFile } from './executeGlassFile'
 import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
-import { getDocumentFilename, getNonce, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
+import { getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
 import { updateTokenCount } from './util/tokenCounter'
@@ -187,8 +187,6 @@ export async function activate(context: vscode.ExtensionContext) {
       const languageId = activeEditor.document.languageId
       const fileLocation = activeEditor.document.uri.fsPath
       const filename = getDocumentFilename(activeEditor.document)
-      // Get the directory of the current file
-      const currentDir = path.dirname(activeEditor.document.uri.fsPath)
 
       const transpiledCode = await transpileCurrentFile(activeEditor.document)
 
@@ -249,16 +247,25 @@ export async function activate(context: vscode.ExtensionContext) {
             } catch {
               await vscode.window.showErrorMessage('Unable to transpile Glass file')
             }
-          case 'getFilename':
+          case 'getGlass':
+            const initialBlocks = parseGlassBlocks(initialGlass)
+            const initialMetadata = parseGlassMetadata(initialGlass)
             await panel.webview.postMessage({
-              action: 'setFilename',
+              action: 'setGlass',
               data: {
                 filename,
-                languageId,
+                glass: initialGlass,
+                blocks: initialBlocks,
+                variables: initialMetadata.interpolationVariables,
               },
             })
             break
           case 'sendText':
+            const session = message.data.session
+            if (session == null) {
+              await vscode.window.showErrorMessage('No session provided')
+              return
+            }
             const messageText = message.data.text
             if (messageText == null) {
               await vscode.window.showErrorMessage('No text provided')
@@ -280,20 +287,31 @@ export async function activate(context: vscode.ExtensionContext) {
             const workspaceRoot = vscode.workspace.workspaceFolders[0].uri.fsPath
 
             // Define the temporary directory path
-            const tempDir = path.join(workspaceRoot, '.temp')
+            const tempDir = path.join(workspaceRoot, '.glasslog')
 
             // Create the temporary directory if it doesn't exist
             if (!fs.existsSync(tempDir)) {
               fs.mkdirSync(tempDir)
             }
 
-            // Define the new file's path. This places it in the '.temp' directory in the workspace root.
-            const sessionId = getNonce()
-            const newFilePath = path.join(tempDir, filename.replace('.glass', `${sessionId}.glass`))
+            // Define the session directory path inside the temporary directory
+            const sessionDir = path.join(tempDir, session)
+
+            // Create the session directory if it doesn't exist
+            if (!fs.existsSync(sessionDir)) {
+              fs.mkdirSync(sessionDir)
+            }
+
+            // Define the new file's path. This places it in the '.glasslog' directory in the workspace root.
+            const timestamp = new Date().getTime()
+            const newFilePath = path.join(sessionDir, filename.replace('.glass', `.${timestamp}.glass`))
             fs.writeFileSync(newFilePath, glass)
 
             // load the textdocument from newFilePath
             const playgroundDocument = await vscode.workspace.openTextDocument(newFilePath)
+            console.log(session)
+            console.log(playgroundDocument.getText())
+            console.log(glass)
 
             try {
               const resp = await executeGlassFile(
@@ -310,6 +328,7 @@ export async function activate(context: vscode.ExtensionContext) {
                       glass: nextDoc,
                       blocks: blocksForGlass,
                       variables: metadataForGlass.interpolationVariables,
+                      session,
                     },
                   })
                   return true
@@ -325,6 +344,7 @@ export async function activate(context: vscode.ExtensionContext) {
                   glass: resp.finalDoc,
                   blocks: blocksForGlass,
                   variables: metadataForGlass.interpolationVariables,
+                  session,
                 },
               })
             } catch (error) {

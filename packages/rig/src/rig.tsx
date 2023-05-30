@@ -29,25 +29,22 @@ function RigView() {
   const [glass, setGlass] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
   const [variables, setVariables] = useState<string[]>([])
-  const [sessionId, setsessionId] = useState(getNonce())
+  const [session, setSession] = useState(getNonce())
 
   const [tab, setTab] = useState(tabs[0])
-
-  useEffect(() => {
-    vscode.postMessage({
-      action: 'getFilename',
-    })
-  }, [])
 
   // register a callback for when the extension sends a message
   useEffect(() => {
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
       switch (message.action) {
-        case 'setFilename':
-          setFilename(() => message.data.filename)
-          break
         case 'setGlass':
+          if (message.data.session && message.data.session !== session) {
+            return
+          }
+          if (message.data.filename) {
+            setFilename(() => message.data.filename)
+          }
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           setVariables(() => message.data.variables)
@@ -60,24 +57,18 @@ function RigView() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [])
+  }, [session])
 
   useEffect(() => {
-    if (filename.length > 0) {
-      reset()
-    }
-  }, [filename])
+    vscode.postMessage({
+      action: 'getGlass',
+    })
+  }, [])
 
   const reset = () => {
-    setsessionId(getNonce())
+    setSession(getNonce())
     vscode.postMessage({
       action: 'resetGlass',
-    })
-  }
-
-  const transpile = () => {
-    vscode.postMessage({
-      action: 'transpileGlass',
     })
   }
 
@@ -87,6 +78,7 @@ function RigView() {
       data: {
         text,
         glass,
+        session,
       },
     })
   }
@@ -101,10 +93,10 @@ function RigView() {
         overflow: 'hidden',
       }}
     >
-      <TopperView transpile={transpile} tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
-      {tab === 'Chat' && <ChatView variables={variables} send={send} sessionId={sessionId} blocks={blocks} />}
+      <TopperView tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
+      {tab === 'Chat' && <ChatView variables={variables} send={send} session={session} blocks={blocks} />}
       {tab === 'Storage' && <StorageView glass={glass} />}
-      {tab === 'Console' && <ConsoleView sessionId={sessionId} />}
+      {tab === 'Console' && <ConsoleView session={session} />}
       {tab === 'History' && <HistoryView glass={glass} />}
     </div>
   )

@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
 interface ConsoleViewProps {
-  sessionId: string
+  session: string
 }
 
 export const ConsoleView = (props: ConsoleViewProps) => {
-  const { sessionId } = props
+  const { session } = props
 
   const [timestamp, setTimestamp] = useState(new Date().toISOString())
 
@@ -29,7 +29,7 @@ export const ConsoleView = (props: ConsoleViewProps) => {
         <span>
           <span style={{ opacity: 0.5 }}>{timestamp.replace('Z', '')}</span>
           <span style={{ paddingLeft: '12px' }}>
-            New session created: <span style={{ color: '#4AF626' }}>{sessionId}</span>
+            New session created: <span style={{ color: '#4AF626' }}>{session}</span>
           </span>
         </span>
       </div>

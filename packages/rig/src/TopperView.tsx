@@ -7,11 +7,10 @@ interface TopperViewProps {
   tab: string
   setTab: (tab: string) => void
   reset: () => void
-  transpile: () => void
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { filename, tabs, tab, setTab, reset, transpile } = props
+  const { filename, tabs, tab, setTab, reset } = props
 
   return (
     <div
