@@ -6,11 +6,12 @@ interface TopperViewProps {
   tabs: string[]
   tab: string
   setTab: (tab: string) => void
+  openOutput: () => void
   reset: () => void
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { filename, tabs, tab, setTab, reset } = props
+  const { filename, tabs, tab, setTab, reset, openOutput } = props
 
   return (
     <div
@@ -39,6 +40,9 @@ export const TopperView = (props: TopperViewProps) => {
           </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <div onClick={openOutput} style={{ fontSize: '12px', paddingRight: '16px', opacity: 0.3, cursor: 'pointer' }}>
+            Logs
+          </div>
           <VSCodeButton appearance="secondary" onClick={reset}>
             Reload
           </VSCodeButton>

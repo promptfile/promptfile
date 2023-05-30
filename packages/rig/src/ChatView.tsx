@@ -39,7 +39,7 @@ export const ChatView = (props: ChatViewProps) => {
             textAlign: 'center',
           }}
         >
-          created session {session}
+          session {session}
         </div>
         {blocks
           .filter(block => block.tag !== 'System' && !(block.content.startsWith('${') && block.content.endsWith('}')))

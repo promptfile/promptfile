@@ -100,19 +100,19 @@
     "commands": [
       {
         "command": "glass.openPlayground",
-        "title": "Glass: Open playground"
+        "title": "Glass: Open Playground"
       },
       {
         "command": "glass.typeahead",
-        "title": "Glass: typeahead"
+        "title": "Glass: Typeahead"
+      },
+      {
+        "command": "glass.showGlassOutput",
+        "title": "Glass: Show Glass Output"
       },
       {
         "command": "glass.runTestSuite",
         "title": "Glass: Run tests"
-      },
-      {
-        "command": "glass.reset",
-        "title": "Glass: Reset file"
       },
       {
         "command": "glass.openSupportChat",
@@ -120,11 +120,11 @@
       },
       {
         "command": "glass.openSettings",
-        "title": "Glass: Open settings"
+        "title": "Glass: Open Settings (UI)"
       },
       {
         "command": "glass.openDocs",
-        "title": "Glass: Open documentation"
+        "title": "Glass: Open Documentation"
       },
       {
         "command": "glass.transpileCurrentFile",

@@ -107,32 +107,6 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('glass.openSupportChat', async () => {
       await vscode.window.showInformationMessage('Opening support chat...')
     }),
-    vscode.commands.registerCommand('glass.reset', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !isGlassFile(activeEditor.document)) {
-        return
-      }
-      try {
-        let parsed: any[] = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        const generatedTags = parsed.filter(tag => tag.tagName === 'State')
-        while (generatedTags.length > 0) {
-          const tag = generatedTags[0]
-          await activeEditor.edit(editBuilder => {
-            editBuilder.delete(
-              new vscode.Range(
-                activeEditor.document.positionAt(tag.position.start.offset),
-                activeEditor.document.positionAt(tag.position.end.offset)
-              )
-            )
-          })
-          parsed = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        }
-      } catch {
-        await vscode.window.showErrorMessage('Unable to parse this Glass file')
-      }
-      // call the document formatter
-      await vscode.commands.executeCommand('editor.action.formatDocument')
-    }),
     vscode.commands.registerCommand('glass.runTestSuite', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
@@ -180,12 +154,14 @@ export async function activate(context: vscode.ExtensionContext) {
       console.log('test results')
       console.log(JSON.stringify(resp, null, 2))
     }),
+    vscode.commands.registerCommand('glass.showGlassOutput', async () => {
+      outputChannel.show()
+    }),
     vscode.commands.registerCommand('glass.openPlayground', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
       }
-      outputChannel.show()
       const initialGlass = activeEditor.document.getText()
       const languageId = activeEditor.document.languageId
       const fileLocation = activeEditor.document.uri.fsPath
@@ -263,6 +239,9 @@ export async function activate(context: vscode.ExtensionContext) {
             } catch {
               await vscode.window.showErrorMessage('Unable to transpile Glass file')
             }
+          case 'openOutput':
+            outputChannel.show()
+            break
           case 'getGlass':
             const glassSession = message.data.session
             const initialBlocks = parseGlassBlocks(initialGlass)
