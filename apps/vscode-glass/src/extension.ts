@@ -309,9 +309,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
             // load the textdocument from newFilePath
             const playgroundDocument = await vscode.workspace.openTextDocument(newFilePath)
-            console.log(session)
-            console.log(playgroundDocument.getText())
-            console.log(glass)
 
             try {
               const resp = await executeGlassFile(
