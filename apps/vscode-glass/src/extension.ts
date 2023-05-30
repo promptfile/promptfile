@@ -66,6 +66,8 @@ export async function activate(context: vscode.ExtensionContext) {
   tokenCount.command = undefined
   tokenCount.show()
 
+  const outputChannel = vscode.window.createOutputChannel('Glass')
+
   context.subscriptions.push(
     tokenCount,
     vscode.window.onDidChangeTextEditorSelection(
@@ -183,10 +185,13 @@ export async function activate(context: vscode.ExtensionContext) {
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
       }
+      outputChannel.show()
       const initialGlass = activeEditor.document.getText()
       const languageId = activeEditor.document.languageId
       const fileLocation = activeEditor.document.uri.fsPath
       const filename = getDocumentFilename(activeEditor.document)
+
+      outputChannel.appendLine(`${filename} — launching Glass playground`)
 
       const transpiledCode = await transpileCurrentFile(activeEditor.document)
 
@@ -259,8 +264,10 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('Unable to transpile Glass file')
             }
           case 'getGlass':
+            const glassSession = message.data.session
             const initialBlocks = parseGlassBlocks(initialGlass)
             const initialMetadata = parseGlassMetadata(initialGlass)
+            outputChannel.appendLine(`${filename} — created session ${glassSession}`)
             await panel.webview.postMessage({
               action: 'setGlass',
               data: {
@@ -287,6 +294,8 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('No glass provided')
               return
             }
+
+            outputChannel.appendLine(`${filename} — sending content: ${messageText}`)
 
             const elements = parseGlassTopLevelJsxElements(glass)
             const requestElement = elements.find(
@@ -397,10 +406,12 @@ export async function activate(context: vscode.ExtensionContext) {
             }
             break
           case 'resetGlass':
+            const resetSession = message.data.session
             // get the file contents from fileLocation
             const fileContents = fs.readFileSync(fileLocation, 'utf-8')
             const blocks = parseGlassBlocks(fileContents)
             const metadata = parseGlassMetadata(fileContents)
+            outputChannel.appendLine(`${filename} — created session ${resetSession}`)
             await panel.webview.postMessage({
               action: 'setGlass',
               data: {

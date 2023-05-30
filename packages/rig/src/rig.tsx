@@ -75,13 +75,20 @@ function RigView() {
   useEffect(() => {
     vscode.postMessage({
       action: 'getGlass',
+      data: {
+        session,
+      },
     })
   }, [])
 
   const reset = () => {
-    setSession(getNonce())
+    const newSession = getNonce()
+    setSession(newSession)
     vscode.postMessage({
       action: 'resetGlass',
+      data: {
+        session: newSession,
+      },
     })
   }
 
