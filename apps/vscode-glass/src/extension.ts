@@ -319,11 +319,15 @@ export async function activate(context: vscode.ExtensionContext) {
               return
             }
 
-            // Get the workspace root path
-            const workspaceRoot = vscode.workspace.workspaceFolders[0].uri.fsPath
+            // Get the current workspace root where the file is located
+            const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri)
+            if (!activeEditorWorkspaceFolder) {
+              await vscode.window.showErrorMessage('No workspace opened')
+              return
+            }
 
             // Define the temporary directory path
-            const tempDir = path.join(workspaceRoot, '.glasslog')
+            const tempDir = path.join(activeEditorWorkspaceFolder.uri.fsPath, '.glasslog')
 
             // Create the temporary directory if it doesn't exist
             if (!fs.existsSync(tempDir)) {
