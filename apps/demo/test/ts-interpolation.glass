@@ -1,9 +1,13 @@
-const userText = "Tell me a story."
+const userText = "Tell me a storyyyy."
 
-<System>
+<Prompt>
 You are a helpful assistant.
 
 ${userText}
-</System>
+</Prompt>
 
-<Request model="gpt-3.5-turbo" />
+<Assistant>
+What would you like it to be about?
+</Assistant>
+
+<Chat model="text-davinci-003" />

@@ -1,6 +1,5 @@
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
-import { interpolateGlass } from './interpolateGlass'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
 import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
@@ -106,7 +105,7 @@ export async function runGlass(
           isChatRequest,
           options
         )
-      : LanguageModelType.chat
+      : languageModel.type === LanguageModelType.chat
       ? await runGlassChat(
           fileName,
           model,
@@ -118,7 +117,9 @@ export async function runGlass(
       : await runGlassCompletion(
           fileName,
           model as any,
+          interpolationArgs,
           { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+          isChatRequest,
           options
         )
 
@@ -170,6 +171,12 @@ async function runGlassChat(
   const messages = parseChatCompletionBlocks(docs.interpolatedDoc, interpolationArgs)
 
   console.log('running glass chat', messages)
+
+  for (const m of messages) {
+    if (m.role === 'prompt') {
+      m.role = 'user'
+    }
+  }
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -243,6 +250,8 @@ async function runGlassChatAnthropic(
       anthropicQuery += `\n\nHuman: ${msg.content}`
     } else if (msg.role === 'system') {
       anthropicQuery += `\n\nHuman: ${msg.content}`
+    } else if (msg.role === 'prompt') {
+      anthropicQuery += `\n\nUser: ${msg.content}`
     } else {
       throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
     }
@@ -298,7 +307,9 @@ async function runGlassChatAnthropic(
 async function runGlassCompletion(
   fileName: string,
   model: 'text-davinci-003',
+  interpolationArgs: any,
   docs: { interpolatedDoc: string; originalDoc: string },
+  isChatRequest: boolean,
   options?: {
     args?: any
     openaiKey?: string
@@ -309,7 +320,32 @@ async function runGlassCompletion(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const prompt = interpolateGlass(fileName, docs.interpolatedDoc)
+  const messages = parseChatCompletionBlocks(docs.interpolatedDoc, interpolationArgs)
+  const hasPromptBlock = messages.length === 1 && messages.find(m => m.role === 'prompt')
+
+  let prompt = ''
+  let stopSequence: string | null = null
+  if (hasPromptBlock) {
+    prompt = hasPromptBlock.content
+  } else {
+    stopSequence = '\n\nHuman:'
+    for (const msg of messages) {
+      if (msg.role === 'assistant') {
+        prompt += `\n\nAssistant: ${msg.content}`
+      } else if (msg.role === 'user') {
+        prompt += `\n\nHuman: ${msg.content}`
+      } else if (msg.role === 'system') {
+        prompt += `\n\nHuman: ${msg.content}`
+      } else if (msg.role === 'prompt') {
+        prompt += `\n\nUser: ${msg.content}`
+      } else {
+        throw new Error(`Unknown role for completion query: ${msg.role}`)
+      }
+    }
+    prompt += '\n\nAssistant: '
+  }
+
+  console.log('completion conversion query', prompt)
 
   const r = await fetch('https://api.openai.com/v1/completions', {
     method: 'POST',
@@ -322,22 +358,33 @@ async function runGlassCompletion(
       prompt,
       model: model,
       stream: true,
+      stop: stopSequence,
     }),
   })
 
   const response = await handleStream(r, handleCompletionChunk, next => {
+    const updatedRequestNode = requestNodeReplacement(
+      interpolationArgs.input,
+      next,
+      options?.progress != null,
+      isChatRequest
+    )
+    const nextDoc = updateRequestOrChatNode(updatedRequestNode, docs.originalDoc)
+    const nextInterpolatedDoc = updateRequestOrChatNode(updatedRequestNode, docs.interpolatedDoc)
     if (options?.progress) {
-      options.progress({
-        nextDoc: `${docs.originalDoc}${next}<Completion model="${model}" />`,
-        nextInterpolatedDoc: `${docs.interpolatedDoc}${next}<Completion model="${model}" />`,
+      return options.progress({
+        nextDoc: nextDoc,
+        nextInterpolatedDoc,
         rawResponse: next,
       })
     }
   })
 
+  const updatedRequestNode = requestNodeReplacement(interpolationArgs.input, response, false, isChatRequest)
+
   return {
-    finalDoc: `${docs.originalDoc}${response}<Completion model="${model}" />`,
-    finalInterpolatedDoc: `${docs.interpolatedDoc}${response}<Completion model="${model}" />`,
+    finalDoc: updateRequestOrChatNode(updatedRequestNode, docs.originalDoc),
+    finalInterpolatedDoc: updateRequestOrChatNode(updatedRequestNode, docs.interpolatedDoc),
     rawResponse: response,
   }
 }

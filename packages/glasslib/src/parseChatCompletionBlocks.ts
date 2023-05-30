@@ -66,7 +66,7 @@ export function parseChatCompletionBlocks(
       res.push({ role: 'user', content: interpolationArgs.input })
       continue
     }
-    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
+    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block' && role !== 'prompt') {
       continue // ignore
     }
     if (role === 'block') {

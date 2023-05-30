@@ -7,7 +7,7 @@ describe('parseGlassMetadata', () => {
       parseGlassMetadata(`<Prompt>
 hello world
 </Prompt>`)
-    ).to.deep.equal({ interpolationVariables: [], isChat: false })
+    ).to.deep.equal({ interpolationVariables: [] })
   })
 
   it('should parse chat document with no vars', () => {
@@ -15,7 +15,7 @@ hello world
       parseGlassMetadata(`<System>
 hello world
 </System>`)
-    ).to.deep.equal({ interpolationVariables: [], isChat: true })
+    ).to.deep.equal({ interpolationVariables: [] })
   })
 
   it('should parse non-chat document with vars', () => {
@@ -23,7 +23,7 @@ hello world
       parseGlassMetadata(`<Prompt>
 \${foo}
 </Prompt>`)
-    ).to.deep.equal({ interpolationVariables: ['foo'], isChat: false })
+    ).to.deep.equal({ interpolationVariables: ['foo'] })
   })
 
   it('should parse chat document with vars', () => {
@@ -45,7 +45,7 @@ const text = await a.text()
 <Assistant>
 \${foo}
 </Assistant>`)
-    ).to.deep.equal({ interpolationVariables: ['foo', 'bar', 'url'], isChat: true })
+    ).to.deep.equal({ interpolationVariables: ['foo', 'bar', 'url'] })
   })
 
   it('should parse another', () => {
@@ -71,7 +71,7 @@ Helpful Answer:
 </User>
 
 <Request model="gpt-3.5-turbo" />`)
-    ).to.deep.equal({ interpolationVariables: [], isChat: true })
+    ).to.deep.equal({ interpolationVariables: [] })
   })
 
   it('should parse another glass document', () => {
@@ -85,7 +85,7 @@ Helpful Answer:
 \${content}
 </Block>
 </For>`)
-    ).to.deep.equal({ interpolationVariables: ['content'], isChat: true })
+    ).to.deep.equal({ interpolationVariables: ['content'] })
   })
 
   it('should parse another glass document', () => {
@@ -99,6 +99,6 @@ Helpful Answer:
 \${m.content}
 </Block>
 </For>`)
-    ).to.deep.equal({ interpolationVariables: [], isChat: true })
+    ).to.deep.equal({ interpolationVariables: [] })
   })
 })
