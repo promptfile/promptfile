@@ -14,23 +14,23 @@ export const ChatView = (props: ChatViewProps) => {
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
 
-  // Scroll event handler
   const handleScroll = () => {
     if (!chatContainer.current) return
 
     const { scrollTop, scrollHeight, clientHeight } = chatContainer.current
-    const atBottom = scrollHeight - scrollTop === clientHeight
+    const atBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 5
 
     setAutoScroll(atBottom)
   }
 
   useEffect(() => {
     // Attach the scroll event handler
+    const current = chatContainer.current
     chatContainer.current?.addEventListener('scroll', handleScroll)
 
     // Detach the handler when the component unmounts
     return () => {
-      chatContainer.current?.removeEventListener('scroll', handleScroll)
+      current?.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
