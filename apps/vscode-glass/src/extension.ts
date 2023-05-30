@@ -338,6 +338,10 @@ export async function activate(context: vscode.ExtensionContext) {
                 { input: messageText },
                 playgroundDocument.languageId === 'glass-py',
                 async ({ nextDoc, nextInterpolatedDoc, rawResponse }) => {
+                  const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
+                  if (!existingPanel) {
+                    return false
+                  }
                   const blocksForGlass = parseGlassBlocks(nextDoc)
                   const metadataForGlass = parseGlassMetadata(nextDoc)
                   await panel.webview.postMessage({
@@ -353,7 +357,10 @@ export async function activate(context: vscode.ExtensionContext) {
                   return true
                 }
               )
-
+              const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
+              if (!existingPanel) {
+                return false
+              }
               const blocksForGlass = parseGlassBlocks(resp.finalInterpolatedDoc)
               const metadataForGlass = parseGlassMetadata(resp.finalInterpolatedDoc)
               await panel.webview.postMessage({

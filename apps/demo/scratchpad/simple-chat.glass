@@ -1,8 +1,3 @@
-// const [numMessages, setNumMessages] = useState(0)
-
-// const request = await fetch("https://dummyjson.com/products/1")
-// const response = await request.text()
-
 const timestamp = new Date().toISOString()
 
 <System>

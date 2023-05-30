@@ -19,7 +19,9 @@ export const HistoryView = (props: HistoryViewProps) => {
       }}
     >
       {logs.length === 0 ? (
-        <div style={{ fontStyle: 'italic', width: '100%', textAlign: 'center', opacity: 0.5 }}>No history yet</div>
+        <div style={{ fontStyle: 'italic', fontWeight: 'bold', width: '100%', textAlign: 'center', opacity: 0.5 }}>
+          No history yet
+        </div>
       ) : (
         <VSCodeDataGrid>
           <VSCodeDataGridRow row-type="header">
