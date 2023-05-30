@@ -15,6 +15,7 @@ def getDuplicateInterpolationPrompt(interpolationArgs = {}):
             "model": "text-davinci-003",
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\n<Prompt>\n${foo} ${bar} ${foo}\n${bar}\n</Prompt>",
+            "interpolationArgs": opt["args"],
             "interpolatedDoc": """
 {}""".format(GLASSVAR[0]),
         }

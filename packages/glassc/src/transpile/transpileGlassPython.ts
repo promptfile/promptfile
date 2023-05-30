@@ -183,10 +183,10 @@ export async function transpileGlassFilePython(
     Object.keys(codeInterpolationMap).length === 0
       ? 'GLASSVAR = {}'
       : 'GLASSVAR = {\n            ' +
-        Object.keys(codeInterpolationMap)
-          .map(k => `${k}: ${codeInterpolationMap[k]}`)
-          .join(',\n            ') +
-        '\n    }'
+      Object.keys(codeInterpolationMap)
+        .map(k => `${k}: ${codeInterpolationMap[k]}`)
+        .join(',\n            ') +
+      '\n    }'
 
   const code = `${imports.join('\n')}
 
@@ -201,6 +201,7 @@ ${indentLines(codeStart.trim(), 8)}
             "model": "${model}",
             "state": {},
             "originalDoc": ${JSON.stringify(originalDoc)},
+            "interpolationArgs": opt["args"],
             "interpolatedDoc": """${finalDoc}""".format(${formatArgs.join(', ')}),
         }
 ${'    '}

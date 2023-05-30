@@ -13,6 +13,7 @@ def getBasicPrompt(interpolationArgs = {}):
             "model": "text-davinci-003",
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\n<Prompt>\nfoo\n</Prompt>",
+            "interpolationArgs": opt["args"],
             "interpolatedDoc": """
 {}""".format(GLASSVAR[0]),
         }

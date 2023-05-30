@@ -21,6 +21,7 @@ def getTestblockPrompt(interpolationArgs = {}):
             "model": "gpt-3.5-turbo",
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\n<Test>\nfoo = \"tell me a story\"\n</Test>\n\n<System>\n${foo}\n</System>\n\n<Request model=\"gpt-3.5-turbo\" />",
+            "interpolationArgs": opt["args"],
             "interpolatedDoc": """
 {}
 

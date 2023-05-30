@@ -16,6 +16,7 @@ def getInterstitialPrompt(interpolationArgs = {}):
             "model": "text-davinci-003",
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\nfoo = \"bar\"\n<Prompt>\n${foo}\n</Prompt>\nprint(foo)",
+            "interpolationArgs": opt["args"],
             "interpolatedDoc": """
 foo = "bar"
 {}
