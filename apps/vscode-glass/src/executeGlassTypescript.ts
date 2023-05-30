@@ -62,7 +62,7 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
     res.push(c)
   }
   const ret = await runGlass(res[0], { progress: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => {
-    // console.log('glass-progress: ' + JSON.stringify(data))
+    console.log('glass-progress: ' + JSON.stringify(data))
   } })
   console.log('glass-result: ' +  JSON.stringify(ret))
 })()
@@ -101,35 +101,31 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
     let data = ''
     let error = ''
 
-    const numLogged = 0
+    let buffer = ''
 
     p.stdout.on('data', chunk => {
-      // if (chunk.toString().startsWith('glass-progress: ')) {
-      //   const progressData = JSON.parse(chunk.slice('glass-progress: '.length))
-      //   progress?.(progressData)
-      // } else {
-      //   console.log(chunk.toString())
-      // }
-      data += chunk.toString()
-      console.log(chunk.toString())
+      buffer += chunk.toString()
 
-      // const lines = data.split('\n').filter(l => Boolean(l))
-      // // console.log('got lines', lines.length)
-      // if (++numLogged < 7) {
-      //   console.log(JSON.stringify(lines, null, 2))
-      // }
-      // // look through all but the last line for progress update
-      // for (const line of lines.slice(0, -1)) {
-      //   if (line.startsWith('glass-progress: ')) {
-      //     const progressData = JSON.parse(line.slice('glass-progress: '.length))
-      //     progress?.(progressData)
-      //   } else {
-      //     console.log(line)
-      //   }
-      // }
+      let lineEndIndex = buffer.indexOf('\n')
+      while (lineEndIndex !== -1) {
+        const line = buffer.substring(0, lineEndIndex)
+        console.log(line.substring(0, 10))
+        if (line.startsWith('glass-progress: ')) {
+          try {
+            const progressData = JSON.parse(line.slice('glass-progress: '.length))
+            progress?.(progressData)
+          } catch (e: any) {
+            console.error('failed parsing progress line', line, e)
+          }
+        } else {
+          console.log(line)
+        }
 
-      // // set data to the last line
-      // data = lines[lines.length - 1]
+        data += line + '\n'
+
+        buffer = buffer.substring(lineEndIndex + 1)
+        lineEndIndex = buffer.indexOf('\n')
+      }
     })
 
     p.stderr.on('data', chunk => {
