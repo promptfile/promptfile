@@ -9,6 +9,13 @@ interface HistoryViewProps {
 export const HistoryView = (props: HistoryViewProps) => {
   const { logs, onOpenGlass } = props
 
+  function truncate(str: string, max = 36): string {
+    if (str.length > max) {
+      return str.substring(0, max) + '...'
+    }
+    return str
+  }
+
   return (
     <div
       style={{
@@ -53,8 +60,8 @@ export const HistoryView = (props: HistoryViewProps) => {
                 </VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="2">{log.session}</VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="3">{log.model}</VSCodeDataGridCell>
-                <VSCodeDataGridCell grid-column="4">{log.input}</VSCodeDataGridCell>
-                <VSCodeDataGridCell grid-column="5">{log.output}</VSCodeDataGridCell>
+                <VSCodeDataGridCell grid-column="4">{truncate(log.input)}</VSCodeDataGridCell>
+                <VSCodeDataGridCell grid-column="5">{truncate(log.output)}</VSCodeDataGridCell>
               </VSCodeDataGridRow>
             ))}
         </VSCodeDataGrid>
