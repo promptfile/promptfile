@@ -96,12 +96,12 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
         diagnostics.push(
           ...chatBlocks.map(tag => {
             const diagnostic: Diagnostic = {
-              severity: DiagnosticSeverity.Error,
+              severity: DiagnosticSeverity.Warning,
               range: {
-                start: textDocument.positionAt(tag.position.start.offset),
-                end: textDocument.positionAt(tag.position.end.offset),
+                start: textDocument.positionAt(tag.position.start.offset + 1),
+                end: textDocument.positionAt(tag.position.start.offset + (tag.tagName ?? '').length + 1),
               },
-              message: `Chat blocks not allowed with completion models.`,
+              message: `Chat blocks not natively supported by completion model ${languageModel.name}.`,
               source: 'glass',
             }
             return diagnostic
