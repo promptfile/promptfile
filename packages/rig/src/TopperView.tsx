@@ -82,6 +82,12 @@ export const TopperView = (props: TopperViewProps) => {
                   paddingRight: '8px',
                 }}
                 onClick={() => setTab(t)}
+                onMouseEnter={(event: any) => {
+                  event.target.style.opacity = '1.0'
+                }}
+                onMouseLeave={(event: any) => {
+                  event.target.style.opacity = opacity
+                }}
               >
                 {t}
               </div>
