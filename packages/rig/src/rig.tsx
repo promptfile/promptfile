@@ -12,6 +12,16 @@ export interface GlassBlock {
   content: string
 }
 
+export interface GlassLog {
+  id: string
+  session: string
+  timestamp?: string
+  model?: string
+  input?: string
+  output?: string
+  glass: string
+}
+
 interface RigState {
   filename: string
   tab: string
@@ -30,6 +40,7 @@ function RigView() {
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
   const [variables, setVariables] = useState<string[]>([])
   const [session, setSession] = useState(getNonce())
+  const [logs, setLogs] = useState<GlassLog[]>([])
 
   const [tab, setTab] = useState(tabs[0])
 
@@ -48,6 +59,9 @@ function RigView() {
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           setVariables(() => message.data.variables)
+          if (message.data.session && message.data.done) {
+            setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
+          }
           break
         default:
           break
@@ -57,7 +71,7 @@ function RigView() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [session])
+  }, [session, logs])
 
   useEffect(() => {
     vscode.postMessage({
@@ -83,6 +97,15 @@ function RigView() {
     })
   }
 
+  const onOpenGlass = (glass: string) => {
+    vscode.postMessage({
+      action: 'openGlass',
+      data: {
+        glass,
+      },
+    })
+  }
+
   return (
     <div
       style={{
@@ -97,7 +120,7 @@ function RigView() {
       {tab === 'Chat' && <ChatView variables={variables} send={send} session={session} blocks={blocks} />}
       {tab === 'Storage' && <StorageView glass={glass} />}
       {tab === 'Console' && <ConsoleView session={session} />}
-      {tab === 'History' && <HistoryView glass={glass} />}
+      {tab === 'History' && <HistoryView logs={logs} onOpenGlass={onOpenGlass} />}
     </div>
   )
 }
