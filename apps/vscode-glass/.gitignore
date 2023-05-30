@@ -3,4 +3,4 @@ dist
 .env
 .vscode-test/
 *.vsix
-.glasslog*
+**/.glasslog*
