@@ -1,12 +1,16 @@
+import { useState } from 'react'
+
 interface ConsoleViewProps {
-  glass: string
+  sessionId: string
 }
 
 export const ConsoleView = (props: ConsoleViewProps) => {
-  const { glass } = props
+  const { sessionId } = props
+
+  const [timestamp, setTimestamp] = useState(new Date().toISOString())
 
   return (
-    <div style={{ overflow: 'hidden', height: '100%' }}>
+    <div style={{ overflow: 'hidden', height: '100%', background: 'black' }}>
       <div
         style={{
           alignItems: 'flex-start',
@@ -15,12 +19,19 @@ export const ConsoleView = (props: ConsoleViewProps) => {
           overflowY: 'scroll',
           overflowX: 'hidden',
           height: '100%',
+          fontFamily: 'monospace',
+          paddingLeft: '8px',
+          paddingRight: '8px',
+          paddingTop: '8px',
+          paddingBottom: '8px',
         }}
       >
-        <div style={{ width: '100%', height: '16px' }} />
-        <div style={{ whiteSpace: 'pre-line', paddingLeft: '24px', paddingRight: '24px', fontStyle: 'italic' }}>
-          Coming soon!
-        </div>
+        <span>
+          <span style={{ opacity: 0.5 }}>{timestamp.replace('Z', '')}</span>
+          <span style={{ paddingLeft: '12px' }}>
+            New session created: <span style={{ color: '#4AF626' }}>{sessionId}</span>
+          </span>
+        </span>
       </div>
     </div>
   )

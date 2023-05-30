@@ -104,7 +104,7 @@ function RigView() {
       <TopperView transpile={transpile} tab={tab} setTab={setTab} tabs={tabs} filename={filename} reset={reset} />
       {tab === 'Chat' && <ChatView variables={variables} send={send} sessionId={sessionId} blocks={blocks} />}
       {tab === 'Storage' && <StorageView glass={glass} />}
-      {tab === 'Console' && <ConsoleView glass={glass} />}
+      {tab === 'Console' && <ConsoleView sessionId={sessionId} />}
       {tab === 'History' && <HistoryView glass={glass} />}
     </div>
   )
