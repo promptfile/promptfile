@@ -20,4 +20,4 @@ You shouldn't mention that you are an AI language model unless asked directly.  
 </System>
 
 
-<Chat model="gpt-3.5-turbo" />
+<Chat model="claude-instant-v1" />

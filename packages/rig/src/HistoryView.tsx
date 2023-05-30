@@ -27,15 +27,12 @@ export const HistoryView = (props: HistoryViewProps) => {
             Session
           </VSCodeDataGridCell>
           <VSCodeDataGridCell cell-type="columnheader" grid-column="3">
-            Timestamp
-          </VSCodeDataGridCell>
-          <VSCodeDataGridCell cell-type="columnheader" grid-column="4">
             Model
           </VSCodeDataGridCell>
-          <VSCodeDataGridCell cell-type="columnheader" grid-column="5">
+          <VSCodeDataGridCell cell-type="columnheader" grid-column="4">
             Input
           </VSCodeDataGridCell>
-          <VSCodeDataGridCell cell-type="columnheader" grid-column="6">
+          <VSCodeDataGridCell cell-type="columnheader" grid-column="5">
             Output
           </VSCodeDataGridCell>
         </VSCodeDataGridRow>
@@ -50,10 +47,9 @@ export const HistoryView = (props: HistoryViewProps) => {
                 </VSCodeLink>
               </VSCodeDataGridCell>
               <VSCodeDataGridCell grid-column="2">{log.session}</VSCodeDataGridCell>
-              <VSCodeDataGridCell grid-column="3">{log.timestamp}</VSCodeDataGridCell>
-              <VSCodeDataGridCell grid-column="4">{log.model}</VSCodeDataGridCell>
-              <VSCodeDataGridCell grid-column="5">{log.input}</VSCodeDataGridCell>
-              <VSCodeDataGridCell grid-column="6">{log.output}</VSCodeDataGridCell>
+              <VSCodeDataGridCell grid-column="3">{log.model}</VSCodeDataGridCell>
+              <VSCodeDataGridCell grid-column="4">{log.input}</VSCodeDataGridCell>
+              <VSCodeDataGridCell grid-column="5">{log.output}</VSCodeDataGridCell>
             </VSCodeDataGridRow>
           ))}
       </VSCodeDataGrid>
