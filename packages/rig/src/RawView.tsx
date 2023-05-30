@@ -3,11 +3,11 @@ import { VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 interface RawViewProps {
   glass: string
   session: string
-  onOpenGlass: (glass: string) => void
+  openGlass: (glass: string) => void
 }
 
 export const RawView = (props: RawViewProps) => {
-  const { glass, session, onOpenGlass } = props
+  const { glass, session, openGlass } = props
 
   return (
     <div
@@ -31,7 +31,7 @@ export const RawView = (props: RawViewProps) => {
             event.target.style.opacity = '0.5'
           }}
           style={{ fontSize: '12px', paddingRight: '16px', opacity: 0.5, cursor: 'pointer' }}
-          onClick={() => onOpenGlass(glass)}
+          onClick={() => openGlass(glass)}
         >
           Open in editor
         </div>

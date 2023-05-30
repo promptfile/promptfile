@@ -36,8 +36,8 @@ function RigView() {
   const tabs: string[] = ['Chat', 'Raw', 'History']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
-  const [liveSource, setLiveSource] = useState('')
-  const [runningSource, setRunningSource] = useState('')
+  const [currentSource, setCurrentSource] = useState('')
+  const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
   const [variables, setVariables] = useState<string[]>([])
   const [session, setSession] = useState(getNonce())
@@ -50,28 +50,27 @@ function RigView() {
     const cb = async (event: any) => {
       const message = event.data // The JSON data our extension sent
       switch (message.action) {
-        case 'setLiveSource':
-          setLiveSource(() => message.data.liveSource)
+        case 'onDidChangeTextDocument':
+          setCurrentSource(() => message.data.currentSource)
           break
-        case 'setGlass':
-          if (message.data.session && message.data.session !== session) {
-            return
-          }
-          if (message.data.liveSource) {
-            setLiveSource(() => message.data.liveSource.trim())
-          }
-          if (message.data.runningSource) {
-            setRunningSource(() => message.data.runningSource.trim())
-          }
-          if (message.data.filename) {
-            setFilename(() => message.data.filename)
-          }
+        case 'onOpen':
+          setOriginalSource(() => message.data.originalSource)
+          setCurrentSource(() => message.data.currentSource)
+          setFilename(() => message.data.filename)
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           setVariables(() => message.data.variables)
-          if (message.data.session && message.data.output) {
-            setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
-          }
+          break
+        case 'onStream':
+          setGlass(() => message.data.glass)
+          setBlocks(() => message.data.blocks)
+          setVariables(() => message.data.variables)
+          break
+        case 'onResponse':
+          setGlass(() => message.data.glass)
+          setBlocks(() => message.data.blocks)
+          setVariables(() => message.data.variables)
+          setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
           break
         default:
           break
@@ -96,7 +95,7 @@ function RigView() {
     const newSession = getNonce()
     setSession(newSession)
     vscode.postMessage({
-      action: 'resetGlass',
+      action: 'onReset',
       data: {
         session: newSession,
       },
@@ -114,7 +113,7 @@ function RigView() {
     })
   }
 
-  const onOpenGlass = (glass: string) => {
+  const openGlass = (glass: string) => {
     vscode.postMessage({
       action: 'openGlass',
       data: {
@@ -138,9 +137,6 @@ function RigView() {
     })
   }
 
-  console.log(liveSource)
-  console.log(runningSource)
-
   return (
     <div
       style={{
@@ -152,8 +148,8 @@ function RigView() {
       }}
     >
       <TopperView
-        dirty={runningSource !== liveSource}
-        reloadable={glass !== runningSource || runningSource !== liveSource}
+        dirty={originalSource !== currentSource}
+        reloadable={glass !== originalSource || originalSource !== currentSource}
         tab={tab}
         setTab={setTab}
         tabs={tabs}
@@ -162,8 +158,8 @@ function RigView() {
         openOutput={openOutput}
       />
       {tab === 'Chat' && <ChatView stop={stop} send={send} session={session} blocks={blocks} />}
-      {tab === 'Raw' && <RawView session={session} glass={glass} onOpenGlass={onOpenGlass} />}
-      {tab === 'History' && <HistoryView logs={logs} onOpenGlass={onOpenGlass} />}
+      {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
+      {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
     </div>
   )
 }

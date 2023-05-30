@@ -3,11 +3,11 @@ import { GlassLog } from './rig'
 
 interface HistoryViewProps {
   logs: GlassLog[]
-  onOpenGlass: (glass: string) => void
+  openGlass: (glass: string) => void
 }
 
 export const HistoryView = (props: HistoryViewProps) => {
-  const { logs, onOpenGlass } = props
+  const { logs, openGlass } = props
 
   function truncate(str: string, max = 36): string {
     if (str.length > max) {
@@ -54,7 +54,7 @@ export const HistoryView = (props: HistoryViewProps) => {
             .map(log => (
               <VSCodeDataGridRow key={log.id}>
                 <VSCodeDataGridCell grid-column="1">
-                  <VSCodeLink href={'#'} onClick={() => onOpenGlass(log.glass)}>
+                  <VSCodeLink href={'#'} onClick={() => openGlass(log.glass)}>
                     {log.id}
                   </VSCodeLink>
                 </VSCodeDataGridCell>

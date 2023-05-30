@@ -103,9 +103,9 @@ export async function activate(context: vscode.ExtensionContext) {
           const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
           if (existingPanel) {
             await existingPanel.webview.postMessage({
-              action: 'setLiveSource',
+              action: 'onDidChangeTextDocument',
               data: {
-                liveSource: editor.document.getText(),
+                currentSource: editor.document.getText(),
               },
             })
           }
@@ -189,10 +189,10 @@ export async function activate(context: vscode.ExtensionContext) {
         const blocks = parseGlassBlocks(fileContents)
         const metadata = parseGlassMetadata(fileContents)
         await existingPanel.webview.postMessage({
-          action: 'setGlass',
+          action: 'onOpen',
           data: {
-            liveSource: fileContents,
-            runningSource: fileContents,
+            currentSource: fileContents,
+            originalSource: fileContents,
             filename,
             glass: fileContents,
             blocks: blocks,
@@ -267,8 +267,8 @@ export async function activate(context: vscode.ExtensionContext) {
               action: 'setGlass',
               data: {
                 filename,
-                liveSource: initialGlass,
-                runningSource: initialGlass,
+                currentSource: initialGlass,
+                originalSource: initialGlass,
                 glass: initialGlass,
                 blocks: initialBlocks,
                 variables: initialMetadata.interpolationVariables,
@@ -368,14 +368,11 @@ export async function activate(context: vscode.ExtensionContext) {
                   const blocksForGlass = parseGlassBlocks(nextDoc)
                   const metadataForGlass = parseGlassMetadata(nextDoc)
                   await panel.webview.postMessage({
-                    action: 'setGlass',
+                    action: 'onStream',
                     data: {
-                      filename,
                       glass: nextDoc,
                       blocks: blocksForGlass,
                       variables: metadataForGlass.interpolationVariables,
-                      session,
-                      streaming: true,
                     },
                   })
                   return true
@@ -389,13 +386,11 @@ export async function activate(context: vscode.ExtensionContext) {
               const blocksForGlass = parseGlassBlocks(resp.finalInterpolatedDoc)
               const metadataForGlass = parseGlassMetadata(resp.finalInterpolatedDoc)
               await panel.webview.postMessage({
-                action: 'setGlass',
+                action: 'onResponse',
                 data: {
-                  filename,
                   glass: resp.finalDoc,
                   blocks: blocksForGlass,
                   variables: metadataForGlass.interpolationVariables,
-                  session,
                   model,
                   input: messageText,
                   output: resp.rawResponse,
@@ -408,7 +403,7 @@ export async function activate(context: vscode.ExtensionContext) {
               fs.unlinkSync(newFilePath)
             }
             break
-          case 'resetGlass':
+          case 'onReset':
             const resetSession = message.data.session
             // get the file contents from fileLocation
             const fileContents = fs.readFileSync(fileLocation, 'utf-8')
@@ -416,10 +411,10 @@ export async function activate(context: vscode.ExtensionContext) {
             const metadata = parseGlassMetadata(fileContents)
             outputChannel.appendLine(`${filename} — created session ${resetSession}`)
             await panel.webview.postMessage({
-              action: 'setGlass',
+              action: 'onOpen',
               data: {
-                liveSource: fileContents,
-                runningSource: fileContents,
+                currentSource: fileContents,
+                originalSource: fileContents,
                 filename,
                 glass: fileContents,
                 blocks: blocks,
