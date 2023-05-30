@@ -43,9 +43,9 @@ export const TopperView = (props: TopperViewProps) => {
           <VSCodeButton appearance="secondary" onClick={reset}>
             Reset
           </VSCodeButton>
-          <div style={{ paddingLeft: '8px' }}>
+          {/* <div style={{ paddingLeft: '8px' }}>
             <VSCodeButton onClick={transpile}>Deploy</VSCodeButton>
-          </div>
+          </div> */}
         </div>
       </div>
       <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'row' }}>
