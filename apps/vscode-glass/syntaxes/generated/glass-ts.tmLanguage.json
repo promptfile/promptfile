@@ -10,9 +10,6 @@
       "include": "#request-element"
     },
     {
-      "include": "#prompt-element"
-    },
-    {
       "include": "#test-element"
     },
     {
@@ -77,37 +74,6 @@
           "name": "punctuation.definition.tag.self-closing.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
-    },
-    "prompt-element": {
-      "begin": "(<)(Prompt)(>)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.glass.prompt.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#markdown-sections"
-        }
-      ],
-      "end": "(<\\/)(Prompt)(>)",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.glass.prompt.name"
-        },
-        "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }

@@ -57,25 +57,8 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
     }
 
     switch (languageModel.type) {
-      case LanguageModelType.chat:
-        const promptBlocks = parsed.filter(tag => tag.tagName === 'Prompt')
-        diagnostics.push(
-          ...promptBlocks.map(tag => {
-            const diagnostic: Diagnostic = {
-              severity: DiagnosticSeverity.Error,
-              range: {
-                start: textDocument.positionAt(tag.position.start.offset),
-                end: textDocument.positionAt(tag.position.end.offset),
-              },
-              message: `<User> blocks not allowed with chat models.`,
-              source: 'glass',
-            }
-            return diagnostic
-          })
-        )
-        break
       case LanguageModelType.completion:
-        const multiplePromptBlocks = parsed.filter(tag => tag.tagName === 'Prompt')
+        const multiplePromptBlocks = parsed.filter(tag => tag.tagName === 'User')
         if (multiplePromptBlocks.length > 1) {
           diagnostics.push(
             ...multiplePromptBlocks.slice(1).map(tag => {
