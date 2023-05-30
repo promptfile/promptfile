@@ -324,17 +324,9 @@ export async function activate(context: vscode.ExtensionContext) {
               fs.mkdirSync(tempDir)
             }
 
-            // Define the session directory path inside the temporary directory
-            const sessionDir = path.join(tempDir, session)
-
-            // Create the session directory if it doesn't exist
-            if (!fs.existsSync(sessionDir)) {
-              fs.mkdirSync(sessionDir)
-            }
-
             // Define the new file's path. This places it in the '.glasslog' directory in the workspace root.
             const timestamp = new Date().getTime()
-            const newFilePath = path.join(sessionDir, filename.replace('.glass', `.${timestamp}.glass`))
+            const newFilePath = path.join(tempDir, filename.replace('.glass', `.${timestamp}.glass`))
             fs.writeFileSync(newFilePath, glass)
 
             // load the textdocument from newFilePath
