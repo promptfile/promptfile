@@ -418,6 +418,8 @@ export async function activate(context: vscode.ExtensionContext) {
             await panel.webview.postMessage({
               action: 'setGlass',
               data: {
+                liveSource: fileContents,
+                runningSource: fileContents,
                 filename,
                 glass: fileContents,
                 blocks: blocks,

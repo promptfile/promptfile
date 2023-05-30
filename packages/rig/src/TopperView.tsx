@@ -9,10 +9,11 @@ interface TopperViewProps {
   openOutput: () => void
   reset: () => void
   dirty: boolean
+  reloadable: boolean
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { dirty, filename, tabs, tab, setTab, reset, openOutput } = props
+  const { dirty, reloadable, filename, tabs, tab, setTab, reset, openOutput } = props
 
   return (
     <div
@@ -41,7 +42,7 @@ export const TopperView = (props: TopperViewProps) => {
           </span>
           {dirty && (
             <svg height="8" width="8">
-              <circle cx="4" cy="4" r="4" fill={'#CE9178'} />
+              <circle cx="4" cy="4" r="4" fill={'#FFB454'} />
             </svg>
           )}
         </div>
@@ -58,7 +59,7 @@ export const TopperView = (props: TopperViewProps) => {
           >
             Logs
           </div>
-          <VSCodeButton appearance="secondary" onClick={reset}>
+          <VSCodeButton appearance="secondary" onClick={reset} disabled={!reloadable}>
             Reload
           </VSCodeButton>
           {/* <div style={{ paddingLeft: '8px' }}>

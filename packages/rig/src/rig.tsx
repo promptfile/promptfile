@@ -153,6 +153,7 @@ function RigView() {
     >
       <TopperView
         dirty={runningSource !== liveSource}
+        reloadable={glass !== runningSource || runningSource !== liveSource}
         tab={tab}
         setTab={setTab}
         tabs={tabs}
