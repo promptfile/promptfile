@@ -1,9 +1,7 @@
 const [numMessages, setNumMessages] = useState(0)
 
-
 <System>
 You are a helpful assistant.
-${numMessages}
 </System>
 
 <Chat model="gpt-3.5-turbo" onResponse={response => {

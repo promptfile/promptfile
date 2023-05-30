@@ -17,11 +17,11 @@ export async function executeGlassFile(
   const openaiKey = getOpenaiKey()
   const anthropicKey = getAnthropicKey()
 
-  const c = usePython
-    ? await executeGlassPython(document, interpolationArgs)
-    : await executeGlassTypescriptNew(document, fileName, interpolationArgs)
+  if (usePython) {
+    const c = await executeGlassPython(document, interpolationArgs)
+    checkOk(c.length >= 0, 'No transpiler output generated')
+    return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
+  }
 
-  checkOk(c.length >= 0, 'No transpiler output generated')
-
-  return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
+  return await executeGlassTypescriptNew(document, fileName, interpolationArgs, progress)
 }

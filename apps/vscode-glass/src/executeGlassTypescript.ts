@@ -100,7 +100,8 @@ context.response = ${getGlassExportName(fileName)}()`,
 export async function executeGlassTypescriptNew(
   document: vscode.TextDocument,
   fileName: string,
-  interpolationArgs: any
+  interpolationArgs: any,
+  progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
 ): Promise<TranspilerOutput[]> {
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
   if (!activeEditorWorkspaceFolder) {
@@ -144,9 +145,10 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
     const c: any = await compile({ args: { ...t, ...(${JSON.stringify(interpolationArgs || {})}) } })
     res.push(c)
   }
-  const ret = JSON.stringify(res)
-  console.log(ret)
-  return ret
+  const ret = await runGlass(res[0], { progress: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => {
+    console.log('glass-progress: ' + JSON.stringify(data))
+  } })
+  console.log('glass-result: ' +  JSON.stringify(ret))
 })()
 `,
     {
@@ -176,7 +178,6 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
   })
 
   return new Promise((resolve, reject) => {
-    console.log('running', bundledCodeFilePath)
     const p = spawn('node', [bundledCodeFilePath], {
       env: process.env,
     })
@@ -185,6 +186,10 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
     let error = ''
 
     p.stdout.on('data', chunk => {
+      if (chunk.toString().startsWith('glass-progress: ')) {
+        const progressData = JSON.parse(chunk.slice('glass-progress: '.length))
+        progress?.(progressData)
+      }
       data += chunk.toString()
     })
 
@@ -199,7 +204,12 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
         reject(new Error(`Process exited with code ${code}: ${error}`))
       } else {
         const lines = data.split('\n').filter(l => Boolean(l))
-        resolve(JSON.parse(lines[lines.length - 1]))
+        const lastLine = lines[lines.length - 1]
+        if (lastLine.startsWith('glass-result: ')) {
+          resolve(JSON.parse(lastLine.slice('glass-result: '.length)))
+        } else {
+          reject(new Error(`Unexpected output: ${data}`))
+        }
       }
     })
   })
