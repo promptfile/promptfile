@@ -33,7 +33,8 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Chat', 'Raw', 'History']
+  const [type, setType] = useState('Chat')
+  const tabs: string[] = [type, 'Raw', 'History']
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
   const [currentSource, setCurrentSource] = useState('')
@@ -43,7 +44,7 @@ function RigView() {
   const [session, setSession] = useState(getNonce())
   const [logs, setLogs] = useState<GlassLog[]>([])
 
-  const [tab, setTab] = useState(tabs[0])
+  const [tab, setTab] = useState('')
 
   // register a callback for when the extension sends a message
   useEffect(() => {
@@ -54,6 +55,7 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'onOpen':
+          setType(() => message.data.type)
           setOriginalSource(() => message.data.originalSource)
           setCurrentSource(() => message.data.currentSource)
           setFilename(() => message.data.filename)
@@ -158,6 +160,7 @@ function RigView() {
         openOutput={openOutput}
       />
       {tab === 'Chat' && <ChatView stop={stop} send={send} session={session} blocks={blocks} />}
+      {tab === 'Request' && <RequestView stop={stop} send={send} session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
     </div>

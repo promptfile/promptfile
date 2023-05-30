@@ -8,15 +8,15 @@ export function getDuplicateInterpolationPrompt() {
     const { foo, bar } = opt.args
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Prompt>
+    const TEMPLATE = `<User>
 ${foo} ${bar} ${foo}
 ${bar}
-</Prompt>`
+</User>`
     return {
       fileName: 'duplicateInterpolation',
       model: 'text-davinci-003',
       interpolatedDoc: TEMPLATE,
-      originalDoc: '<Prompt>\n${foo} ${bar} ${foo}\n${bar}\n</Prompt>',
+      originalDoc: '<User>\n${foo} ${bar} ${foo}\n${bar}\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       onResponse: undefined,

@@ -8,14 +8,14 @@ export function getNonInterpolationSequencePrompt() {
     const { foo } = opt.args
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Prompt>
+    const TEMPLATE = `<User>
 ${foo} and {foo}
-</Prompt>`
+</User>`
     return {
       fileName: 'nonInterpolationSequence',
       model: 'text-davinci-003',
       interpolatedDoc: TEMPLATE,
-      originalDoc: '<Prompt>\n${foo} and {foo}\n</Prompt>',
+      originalDoc: '<User>\n${foo} and {foo}\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       onResponse: undefined,

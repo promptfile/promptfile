@@ -22,15 +22,15 @@ And this is the end`
   })
 
   it('should do simple doc', () => {
-    const glass = `<Prompt>
+    const glass = `<User>
 \${foo}
-</Prompt>`
+</User>`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: ['foo'],
       nestedInterpolations: {},
       jsxInterpolations: {
-        '0': '"""{}""".format("""<Prompt>\n{}\n</Prompt>""".format("""{}""".format(foo)))',
+        '0': '"""{}""".format("""<User>\n{}\n</User>""".format("""{}""".format(foo)))',
       },
       doc: '${GLASSVAR[0]}',
     })
@@ -39,7 +39,7 @@ And this is the end`
   it('should do simple doc with if condition', () => {
     const glass = `<Prompt if={bar}>
 \${foo}
-</Prompt>`
+</User>`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: ['bar', 'foo'],
@@ -47,7 +47,7 @@ And this is the end`
       jsxInterpolations: {
         0: `"""{}""".format("""<Prompt if={{"{}"}}>
 {}
-</Prompt>""".format(bar, """{}""".format(foo))) if bar else ''`,
+</User>""".format(bar, """{}""".format(foo))) if bar else ''`,
       },
       doc: '${GLASSVAR[0]}',
     })

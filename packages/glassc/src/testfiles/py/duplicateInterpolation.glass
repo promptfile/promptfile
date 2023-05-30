@@ -2,7 +2,7 @@
 language: python
 ---
 
-<Prompt>
+<User>
 ${foo} ${bar} ${foo}
 ${bar}
-</Prompt>
+</User>

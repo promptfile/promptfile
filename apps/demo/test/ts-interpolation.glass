@@ -1,10 +1,10 @@
 const userText = "Tell me a storyyyy."
 
-<Prompt>
+<User>
 You are a helpful assistant.
 
 ${userText}
-</Prompt>
+</User>
 
 <Assistant>
 What would you like it to be about?

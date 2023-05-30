@@ -67,7 +67,7 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
                 start: textDocument.positionAt(tag.position.start.offset),
                 end: textDocument.positionAt(tag.position.end.offset),
               },
-              message: `<Prompt> blocks not allowed with chat models.`,
+              message: `<User> blocks not allowed with chat models.`,
               source: 'glass',
             }
             return diagnostic
@@ -85,7 +85,7 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
                   start: textDocument.positionAt(tag.position.start.offset),
                   end: textDocument.positionAt(tag.position.end.offset),
                 },
-                message: `Only one <Prompt> block allowed per file.`,
+                message: `Only one <User> block allowed per file.`,
                 source: 'glass',
               }
               return diagnostic

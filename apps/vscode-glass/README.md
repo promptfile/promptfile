@@ -73,7 +73,7 @@ ${m.content}
 </For>
 ```
 
-- If you do not want to use the Chat API / blocks, you must wrap your prompt with `<Prompt>`.
+- If you do not want to use the Chat API / blocks, you must wrap your prompt with `<User>`.
   In the previous version, we allowed you to have files which declared no blocks at all, and the whole file was interpreted
   to be the prompt. We plan to support this again soon.
 

@@ -11,15 +11,15 @@ export function getInterstitialCodePrompt() {
 
     const GLASSVAR = {}
     const TEMPLATE = `const foo = "bar"
-<Prompt>
+<User>
 ${foo}
-</Prompt>
+</User>
 const baz = "bar"`
     return {
       fileName: 'interstitialCode',
       model: 'text-davinci-003',
       interpolatedDoc: TEMPLATE,
-      originalDoc: 'const foo = "bar"\n<Prompt>\n${foo}\n</Prompt>\nconst baz = "bar"',
+      originalDoc: 'const foo = "bar"\n<User>\n${foo}\n</User>\nconst baz = "bar"',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       onResponse: undefined,

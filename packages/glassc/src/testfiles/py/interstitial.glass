@@ -3,7 +3,7 @@ language: python
 ---
 
 foo = "bar"
-<Prompt>
+<User>
 ${foo}
-</Prompt>
+</User>
 print(foo)

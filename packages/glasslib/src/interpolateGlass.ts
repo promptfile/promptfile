@@ -17,7 +17,7 @@ export function interpolateGlass(fnName: string, content: string, variables: any
   const blocks = parseGlassBlocks(doc)
   const promptBlocks = blocks.filter(b => b.tag === 'Prompt')
   if (promptBlocks.length !== 1) {
-    throw new Error(`expected exactly one <Prompt> block in ${fnName}.glass (got ${promptBlocks.length})`)
+    throw new Error(`expected exactly one <User> block in ${fnName}.glass (got ${promptBlocks.length})`)
   }
   return interpolateBlock(fnName, promptBlocks[0].content, variables)
 }

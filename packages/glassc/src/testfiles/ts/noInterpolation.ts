@@ -7,14 +7,14 @@ export function getNoInterpolationPrompt() {
     const GLASS_STATE = {}
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Prompt>
+    const TEMPLATE = `<User>
 foo
-</Prompt>`
+</User>`
     return {
       fileName: 'noInterpolation',
       model: 'text-davinci-003',
       interpolatedDoc: TEMPLATE,
-      originalDoc: '<Prompt>\nfoo\n</Prompt>',
+      originalDoc: '<User>\nfoo\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       onResponse: undefined,

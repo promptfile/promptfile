@@ -14,14 +14,14 @@ export function getWithImportPrompt() {
     const TEMPLATE = `import c from "c"
 
 const a = "3"
-<Prompt>
+<User>
 ${a} ${b} ${c}
-</Prompt>`
+</User>`
     return {
       fileName: 'withImport',
       model: 'text-davinci-003',
       interpolatedDoc: TEMPLATE,
-      originalDoc: 'import c from "c"\n\nconst a = "3"\n<Prompt>\n${a} ${b} ${c}\n</Prompt>',
+      originalDoc: 'import c from "c"\n\nconst a = "3"\n<User>\n${a} ${b} ${c}\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       onResponse: undefined,

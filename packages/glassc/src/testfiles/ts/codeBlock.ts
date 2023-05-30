@@ -10,14 +10,14 @@ export function getCodeBlockPrompt() {
 
     const GLASSVAR = {}
     const TEMPLATE = `const a = "3"
-<Prompt>
+<User>
 ${a}
-</Prompt>`
+</User>`
     return {
       fileName: 'codeBlock',
       model: 'text-davinci-003',
       interpolatedDoc: TEMPLATE,
-      originalDoc: 'const a = "3"\n<Prompt>\n${a}\n</Prompt>',
+      originalDoc: 'const a = "3"\n<User>\n${a}\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       onResponse: undefined,

@@ -10,9 +10,9 @@ export function formatDocument(text: string) {
   const tagNames = glassElements.map(e => e.name).join('|')
   const hasTags = new RegExp(`<(${tagNames})`).test(text)
 
-  // If no tags are present, wrap the entire content in <Prompt> </Prompt> tags
+  // If no tags are present, wrap the entire content in <User> </User> tags
   if (!hasTags) {
-    text = `<Prompt>\n${text}\n</Prompt>`
+    text = `<User>\n${text}\n</User>`
   }
   const lines = text.split('\n')
   const formattedLines: string[] = []

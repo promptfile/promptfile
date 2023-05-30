@@ -27,11 +27,6 @@ interface GlassAttributeValue {
 
 export const glassElements: GlassElement[] = [
   {
-    name: 'Args',
-    attributes: [],
-    selfClosing: true,
-  },
-  {
     name: 'Assistant',
     detail: '(block) chat block with role="assistant"',
     documentation: 'Creates an Assistant chat block with inner content',
@@ -96,31 +91,6 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'For',
-    documentation: 'Creates a for loop',
-    detail: '(element) loop over elements in an array',
-    attributes: [
-      {
-        name: 'each',
-        detail: 'array to iterate over',
-        documentation: 'The `each` attribute defines the array you want to iterate over.',
-        type: 'array',
-      },
-      {
-        name: 'as',
-        detail: 'name for each item in the array',
-        documentation: 'The `as` attribute defines the variable name for each item in the array.',
-        type: 'string',
-      },
-    ],
-  },
-  {
-    name: 'Prompt',
-    documentation: 'Creates a Prompt tag with inner content',
-    detail: '(element) raw Glass prompt block',
-    attributes: [],
-  },
-  {
     name: 'Chat',
     documentation: 'Creates a model inference',
     detail: '(inference) API request to a model',
@@ -153,6 +123,25 @@ export const glassElements: GlassElement[] = [
         documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
         type: 'function',
         optional: true,
+      },
+    ],
+  },
+  {
+    name: 'For',
+    documentation: 'Creates a for loop',
+    detail: '(element) loop over elements in an array',
+    attributes: [
+      {
+        name: 'each',
+        detail: 'array to iterate over',
+        documentation: 'The `each` attribute defines the array you want to iterate over.',
+        type: 'array',
+      },
+      {
+        name: 'as',
+        detail: 'name for each item in the array',
+        documentation: 'The `as` attribute defines the variable name for each item in the array.',
+        type: 'string',
       },
     ],
   },

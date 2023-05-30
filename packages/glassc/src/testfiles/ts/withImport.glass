@@ -1,6 +1,6 @@
 import c from "c"
 
 const a = "3"
-<Prompt>
+<User>
 ${a} ${b} ${c}
-</Prompt>
+</User>

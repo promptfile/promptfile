@@ -19,9 +19,9 @@ describe('transpileGlassTypescript', () => {
 
   //   it('should transpile with get-prefixed named', () => {
   //     const transpiled = transpileGlassFileNext(
-  //       `<Prompt>
+  //       `<User>
   // foo
-  // </Prompt>`,
+  // </User>`,
   //       {
   //         workspaceFolder: '/Users/me/glassc',
   //         folderPath: '/Users/me/glassc',
@@ -37,9 +37,9 @@ describe('transpileGlassTypescript', () => {
   //   const GLASS_STATE = {}
 
   //   const GLASSVAR = {}
-  //   const TEMPLATE = \`<Prompt>
+  //   const TEMPLATE = \`<User>
   // foo
-  // </Prompt>\`
+  // </User>\`
   //   return await runGlass(
   //     'get-foo',
   //     'text-davinci-003',
@@ -66,9 +66,9 @@ describe('transpileGlassTypescript', () => {
 
   it.skip('should transpile into javascript', () => {
     const transpiled = transpileGlassFileNext(
-      `<Prompt>
+      `<User>
 \${foo}
-</Prompt>`,
+</User>`,
       {
         workspaceFolder: '/Users/me/glassc',
         folderPath: '/Users/me/glassc',
@@ -84,9 +84,9 @@ describe('transpileGlassTypescript', () => {
   const { foo } = opt.args
 
   const GLASSVAR = {}
-  const TEMPLATE = \`<Prompt>
+  const TEMPLATE = \`<User>
 \${foo}
-</Prompt>\`
+</User>\`
   return await runGlass(
     'foo',
     'text-davinci-003',

@@ -4,6 +4,6 @@ args:
     foo: number
     bar: string
 ---
-<Prompt>
+<User>
 ${foo} ${bar}
-</Prompt>
+</User>

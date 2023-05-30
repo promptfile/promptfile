@@ -1,5 +1,5 @@
 const foo = "bar"
-<Prompt>
+<User>
 ${foo}
-</Prompt>
+</User>
 const baz = "bar"

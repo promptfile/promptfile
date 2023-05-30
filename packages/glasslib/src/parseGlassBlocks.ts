@@ -50,7 +50,7 @@ export function parseGlassBlocks(template: string) {
       line === '</Assistant>' ||
       line === '</User>' ||
       line === '</System>' ||
-      line === '</Prompt>' ||
+      line === '</User>' ||
       line === '</Block>' ||
       line.endsWith('/>')
     ) {

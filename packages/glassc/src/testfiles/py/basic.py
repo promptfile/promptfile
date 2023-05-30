@@ -1,23 +1,23 @@
 def getBasicPrompt(interpolationArgs = {}):
     def get_test_data(): return {}
-    
+
     def compile(opt = { "args": {} }):
-        
+
         GLASSVAR = {
-            0: """{}""".format("""<Prompt>
+            0: """{}""".format("""<User>
 {}
-</Prompt>""".format("""foo""".format()))
+</User>""".format("""foo""".format()))
     }
         return {
             "fileName": "basic",
             "model": "text-davinci-003",
             "state": {},
-            "originalDoc": "---\nlanguage: python\n---\n\n<Prompt>\nfoo\n</Prompt>",
+            "originalDoc": "---\nlanguage: python\n---\n\n<User>\nfoo\n</User>",
             "interpolationArgs": opt["args"],
             "interpolatedDoc": """
 {}""".format(GLASSVAR[0]),
         }
-    
+
     testData = get_test_data()
     args = { "args": testData }
     args.update(interpolationArgs)

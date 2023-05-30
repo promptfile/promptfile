@@ -4,9 +4,9 @@ import { parseGlassMetadata } from './parseGlassMetadata'
 describe('parseGlassMetadata', () => {
   it('should parse non-chat document with no vars', () => {
     expect(
-      parseGlassMetadata(`<Prompt>
+      parseGlassMetadata(`<User>
 hello world
-</Prompt>`)
+</User>`)
     ).to.deep.equal({ interpolationVariables: [] })
   })
 
@@ -20,9 +20,9 @@ hello world
 
   it('should parse non-chat document with vars', () => {
     expect(
-      parseGlassMetadata(`<Prompt>
+      parseGlassMetadata(`<User>
 \${foo}
-</Prompt>`)
+</User>`)
     ).to.deep.equal({ interpolationVariables: ['foo'] })
   })
 

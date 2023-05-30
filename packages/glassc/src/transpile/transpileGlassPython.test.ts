@@ -25,9 +25,9 @@ describe('transpileGlassPython', () => {
 
   it.skip('should transpile with get-prefixed named', async () => {
     const transpiled = await transpileGlassFilePython(
-      `<Prompt>
+      `<User>
 foo
-</Prompt>`,
+</User>`,
       {
         workspaceFolder: '/Users/me/glassc',
         folderPath: '/Users/me/glassc',
@@ -39,9 +39,9 @@ foo
 
     expect(transpiled.code).to.equal(`def getFooPrompt(opt = { "args": {} }):
     GLASSVAR = {
-        0: """{}""".format("""<Prompt>
+        0: """{}""".format("""<User>
 {}
-</Prompt>""".format("""foo""".format()))
+</User>""".format("""foo""".format()))
     }
     return """{}""".format(GLASSVAR[0])`)
   })

@@ -4,9 +4,9 @@ language: python
 
 foo = "bar"
 
-<Prompt>
+<User>
 ${foo}
-</Prompt>
+</User>
 
 <Chat model="claude-instant-v1" />
 

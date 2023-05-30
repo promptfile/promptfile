@@ -5,20 +5,19 @@ import { HeroPattern } from '@/components/HeroPattern'
 import chat from '@/images/screenshots/chat.png'
 import Image from 'next/image'
 
-export const description =
-  'Glass is a domain-specific language for prompting LLMs.'
+export const description = 'Glass is a domain-specific language for prompting LLMs.'
 
 ## What are Blocks?
 
 There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your models more readable and easier to maintain.
 
-All Glass files must include some block. If no block is present, on save, your file will be wrapped inside a `<Prompt>`
+All Glass files must include some block. If no block is present, on save, your file will be wrapped inside a `<User>`
 
 ## Completion Blocks
 
 If you are making a request to a completion endpoint, you can use the following blocks:
 
-### `<Prompt>` (default)
+### `<User>` (default)
 
 Arguments: none
 

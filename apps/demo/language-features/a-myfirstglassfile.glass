@@ -1,5 +1,5 @@
-<Prompt>
+<User>
 Could you tell me a story?
-</Prompt>
+</User>
 
 <Request model="text-davinci-003" />

@@ -6,8 +6,8 @@ describe('interpolateGlass', () => {
     expect(
       interpolateGlass(
         'test',
-        `<Prompt>
-</Prompt>`,
+        `<User>
+</User>`,
         {}
       )
     ).to.equal('')
@@ -17,9 +17,9 @@ describe('interpolateGlass', () => {
     expect(
       interpolateGlass(
         'test',
-        `<Prompt>
+        `<User>
 Hello \${foo}
-</Prompt>`,
+</User>`,
         { foo: 'world' }
       )
     ).to.equal('Hello world')
@@ -29,9 +29,9 @@ Hello \${foo}
     expect(
       interpolateGlass(
         'test',
-        `<Prompt>
+        `<User>
 Hello \${foo} \${foo}
-</Prompt>`,
+</User>`,
         { foo: 'world' }
       )
     ).to.equal('Hello world world')
@@ -41,9 +41,9 @@ Hello \${foo} \${foo}
     expect(
       interpolateGlass(
         'test',
-        `<Prompt>
+        `<User>
 Hello \${foo} \${bar}
-</Prompt>`,
+</User>`,
         { foo: 'world', bar: 'bar' }
       )
     ).to.equal('Hello world bar')
@@ -53,9 +53,9 @@ Hello \${foo} \${bar}
     expect(
       interpolateGlass(
         'test',
-        `<Prompt>
+        `<User>
 Hello \${foo} { foo: "bar" } {foo}
-</Prompt>`,
+</User>`,
         { foo: 'world' }
       )
     ).to.equal('Hello world { foo: "bar" } {foo}')
@@ -65,9 +65,9 @@ Hello \${foo} { foo: "bar" } {foo}
     expect(
       interpolateGlass(
         'test',
-        `<Prompt>
+        `<User>
 Hello \${1} \${2} \${1}
-</Prompt>`,
+</User>`,
         { 1: 'world', 2: '2' }
       )
     ).to.equal('Hello world 2 world')
@@ -83,9 +83,9 @@ ignore me
 
 also ignore me
 
-<Prompt>
+<User>
 Hello world
-</Prompt>`,
+</User>`,
         {}
       )
     ).to.equal('Hello world')
@@ -95,9 +95,9 @@ Hello world
     expect(() =>
       interpolateGlass(
         'test',
-        `<Prompt>
+        `<User>
 Hello \${foo}
-</Prompt>`,
+</User>`,
         {}
       )
     ).throws('un-interpolated variables in test.glass: ${foo}')
@@ -105,7 +105,7 @@ Hello \${foo}
 
   it('should throw if there are no prompt blocks', () => {
     expect(() => interpolateGlass('test', `missing prompt blocks`, {})).throws(
-      'expected exactly one <Prompt> block in test.glass (got 0)'
+      'expected exactly one <User> block in test.glass (got 0)'
     )
   })
 
@@ -113,15 +113,15 @@ Hello \${foo}
     expect(() =>
       interpolateGlass(
         'test',
-        `<Prompt>
+        `<User>
 prompt block 1
-</Prompt>
+</User>
 
-<Prompt>
+<User>
 prompt block 2
-</Prompt>`,
+</User>`,
         {}
       )
-    ).throws('expected exactly one <Prompt> block in test.glass (got 2)')
+    ).throws('expected exactly one <User> block in test.glass (got 2)')
   })
 })
