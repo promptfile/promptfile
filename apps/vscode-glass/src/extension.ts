@@ -258,13 +258,13 @@ export async function activate(context: vscode.ExtensionContext) {
           case 'openOutput':
             outputChannel.show()
             break
-          case 'getGlass':
+          case 'onOpen':
             const glassSession = message.data.session
             const initialBlocks = parseGlassBlocks(initialGlass)
             const initialMetadata = parseGlassMetadata(initialGlass)
             outputChannel.appendLine(`${filename} — created session ${glassSession}`)
             await panel.webview.postMessage({
-              action: 'setGlass',
+              action: 'onOpen',
               data: {
                 filename,
                 currentSource: initialGlass,
@@ -402,25 +402,6 @@ export async function activate(context: vscode.ExtensionContext) {
             } finally {
               fs.unlinkSync(newFilePath)
             }
-            break
-          case 'onReset':
-            const resetSession = message.data.session
-            // get the file contents from fileLocation
-            const fileContents = fs.readFileSync(fileLocation, 'utf-8')
-            const blocks = parseGlassBlocks(fileContents)
-            const metadata = parseGlassMetadata(fileContents)
-            outputChannel.appendLine(`${filename} — created session ${resetSession}`)
-            await panel.webview.postMessage({
-              action: 'onOpen',
-              data: {
-                currentSource: fileContents,
-                originalSource: fileContents,
-                filename,
-                glass: fileContents,
-                blocks: blocks,
-                variables: metadata.interpolationVariables,
-              },
-            })
             break
           case 'showMessage':
             const level = message.data.level

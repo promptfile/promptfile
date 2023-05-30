@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ComposerView } from './ComposerView'
 import { GlassBlock } from './rig'
 
@@ -11,10 +11,35 @@ interface ChatViewProps {
 
 export const ChatView = (props: ChatViewProps) => {
   const { blocks, session, send } = props
+  const [autoScroll, setAutoScroll] = useState(true)
+  const chatContainer = useRef<HTMLDivElement | null>(null)
+
+  // Scroll event handler
+  const handleScroll = () => {
+    if (!chatContainer.current) return
+
+    const { scrollTop, scrollHeight, clientHeight } = chatContainer.current
+    const atBottom = scrollHeight - scrollTop === clientHeight
+
+    setAutoScroll(atBottom)
+  }
 
   useEffect(() => {
-    document.getElementById('end')?.scrollIntoView()
-  }, [blocks])
+    // Attach the scroll event handler
+    chatContainer.current?.addEventListener('scroll', handleScroll)
+
+    // Detach the handler when the component unmounts
+    return () => {
+      chatContainer.current?.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  useEffect(() => {
+    // Only scroll automatically if the user is at the bottom of the chat
+    if (autoScroll) {
+      document.getElementById('end')?.scrollIntoView()
+    }
+  }, [blocks, autoScroll])
 
   const lastBlock = blocks.length > 0 ? blocks[blocks.length - 1] : null
   const streaming = lastBlock?.content.includes('█') === true
@@ -22,6 +47,7 @@ export const ChatView = (props: ChatViewProps) => {
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div
+        ref={chatContainer}
         style={{
           flexDirection: 'column',
           overflowY: 'auto',

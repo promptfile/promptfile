@@ -84,7 +84,7 @@ function RigView() {
 
   useEffect(() => {
     vscode.postMessage({
-      action: 'getGlass',
+      action: 'onOpen',
       data: {
         session,
       },
@@ -95,7 +95,7 @@ function RigView() {
     const newSession = getNonce()
     setSession(newSession)
     vscode.postMessage({
-      action: 'onReset',
+      action: 'onOpen',
       data: {
         session: newSession,
       },
