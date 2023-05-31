@@ -45,7 +45,17 @@ export const RequestView = (props: RequestViewProps) => {
   const streaming = lastBlock?.content.includes('█') === true
 
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div
+      style={{
+        paddingLeft: '12px',
+        paddingRight: '12px',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}
+    >
       <div
         ref={chatContainer}
         style={{
@@ -53,8 +63,6 @@ export const RequestView = (props: RequestViewProps) => {
           overflowY: 'auto',
           overflowX: 'hidden',
           height: '100%',
-          paddingLeft: '24px',
-          paddingRight: '24px',
         }}
       >
         <div

@@ -53,8 +53,8 @@ export const ChatView = (props: ChatViewProps) => {
           overflowY: 'auto',
           overflowX: 'hidden',
           height: '100%',
-          paddingLeft: '24px',
-          paddingRight: '24px',
+          paddingLeft: '12px',
+          paddingRight: '12px',
         }}
       >
         <div

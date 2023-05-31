@@ -28,8 +28,8 @@ export const ComposerView = (props: ComposerViewProps) => {
           alignItems: 'center',
           paddingTop: '16px',
           paddingBottom: '8px',
-          paddingLeft: '24px',
-          paddingRight: '24px',
+          paddingLeft: '12px',
+          paddingRight: '12px',
         }}
       >
         <div
