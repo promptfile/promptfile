@@ -403,6 +403,9 @@
     "markdown-sections": {
       "patterns": [
         {
+          "include": "#extension-mdx-expression-text"
+        },
+        {
           "include": "#text-element"
         },
         {
@@ -1867,7 +1870,7 @@
       },
       "patterns": [
         {
-          "include": "source.tsx#expression"
+          "include": "source.js"
         }
       ]
     },
@@ -1887,7 +1890,7 @@
       },
       "patterns": [
         {
-          "include": "source.tsx#expression"
+          "include": "source.js"
         }
       ]
     },

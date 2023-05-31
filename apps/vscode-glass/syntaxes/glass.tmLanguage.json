@@ -403,6 +403,9 @@
     "markdown-sections": {
       "patterns": [
         {
+          "include": "#extension-mdx-expression-text"
+        },
+        {
           "include": "#text-element"
         },
         {
@@ -1867,7 +1870,7 @@
       },
       "patterns": [
         {
-          "include": "source.tsx#expression"
+          "include": "SOURCE_LANGUAGE"
         }
       ]
     },
@@ -1887,7 +1890,7 @@
       },
       "patterns": [
         {
-          "include": "source.tsx#expression"
+          "include": "SOURCE_LANGUAGE"
         }
       ]
     },
@@ -2866,7 +2869,7 @@
           "name": "markup.code.js.mdx",
           "patterns": [
             {
-              "include": "SOURCE_LANGUAGE"
+              "include": "source.js"
             }
           ]
         },
@@ -2902,7 +2905,7 @@
           "name": "markup.code.js.mdx",
           "patterns": [
             {
-              "include": "SOURCE_LANGUAGE"
+              "include": "source.js"
             }
           ]
         }
