@@ -10,33 +10,30 @@ export const RawView = (props: RawViewProps) => {
   const { glass, session, openGlass } = props
 
   return (
-    <div
-      style={{
-        width: '100%',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          paddingTop: '16px',
-          paddingBottom: '16px',
-          display: 'flex',
-          paddingLeft: '12px',
-          paddingRight: '12px',
-          flexDirection: 'column',
-        }}
-      >
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ width: '100%', flexShrink: 0 }}>
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingTop: '16px',
+            paddingBottom: '16px',
+            paddingLeft: '12px',
+            paddingRight: '12px',
           }}
         >
-          <div style={{ fontWeight: 'bolder', opacity: 0.8 }}>
-            Session: <span style={{ fontFamily: 'monospace' }}>{session}</span>
-          </div>
           <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <div style={{ fontWeight: 'bolder', opacity: 0.8 }}>
+              Session: <span style={{ fontFamily: 'monospace' }}>{session}</span>
+            </div>
+          </div>
+          <span
             onMouseEnter={(event: any) => {
               event.target.style.opacity = '1.0'
             }}
@@ -47,20 +44,28 @@ export const RawView = (props: RawViewProps) => {
             onClick={() => openGlass(glass)}
           >
             Open in editor
-          </div>
+          </span>
         </div>
-        <div style={{ paddingTop: '16px', paddingBottom: '16px' }}>
-          <VSCodeDivider />
-        </div>
+        <VSCodeDivider style={{ margin: 0, padding: 0 }} />
+      </div>
+      <div
+        style={{
+          flexDirection: 'column',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          height: '100%',
+          paddingLeft: '12px',
+          paddingRight: '12px',
+        }}
+      >
         <div
           style={{
-            height: '100%',
-            overflowX: 'hidden',
-            overflowY: 'auto',
-            display: 'flex',
+            whiteSpace: 'pre-line',
+            paddingTop: '16px',
+            paddingBottom: '16px',
           }}
         >
-          <span style={{ whiteSpace: 'pre-line' }}>{glass}</span>
+          {glass}
         </div>
       </div>
     </div>
