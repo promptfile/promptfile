@@ -2,7 +2,6 @@ import * as vscode from 'vscode'
 
 export function updateDecorations(activeEditor: vscode.TextEditor, decorations: vscode.TextEditorDecorationType) {
   if (!activeEditor) {
-    console.log('no active editor')
     return
   }
 

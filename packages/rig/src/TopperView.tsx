@@ -30,8 +30,8 @@ export const TopperView = (props: TopperViewProps) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          paddingLeft: '12px',
-          paddingRight: '12px',
+          paddingLeft: '16px',
+          paddingRight: '16px',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>

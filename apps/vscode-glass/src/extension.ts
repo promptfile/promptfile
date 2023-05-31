@@ -120,7 +120,6 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('glass.runTestSuite', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
-        console.log('no active editor with glassfile')
         return
       }
 
@@ -157,12 +156,7 @@ export async function activate(context: vscode.ExtensionContext) {
         console.error(e)
       }
 
-      console.log('about to run test suite')
-
       const resp = await executeTestSuite(activeEditor.document, {}, activeEditor.document.languageId === 'glass-py')
-
-      console.log('test results')
-      console.log(JSON.stringify(resp, null, 2))
     }),
     vscode.commands.registerCommand('glass.showGlassOutput', async () => {
       outputChannel.show()
@@ -364,8 +358,6 @@ export async function activate(context: vscode.ExtensionContext) {
                     return true
                   }
                 )
-
-                console.log('execute glass file returned', JSON.stringify(resp, null, 2))
 
                 const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
                 if (!existingPanel) {

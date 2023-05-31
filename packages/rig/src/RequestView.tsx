@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { ComposerView } from './ComposerView'
 import { GlassBlock } from './rig'
 
 interface RequestViewProps {
@@ -45,17 +44,7 @@ export const RequestView = (props: RequestViewProps) => {
   const streaming = lastBlock?.content.includes('█') === true
 
   return (
-    <div
-      style={{
-        paddingLeft: '24px',
-        paddingRight: '24px',
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div
         ref={chatContainer}
         style={{
@@ -63,6 +52,8 @@ export const RequestView = (props: RequestViewProps) => {
           overflowY: 'auto',
           overflowX: 'hidden',
           height: '100%',
+          paddingLeft: '24px',
+          paddingRight: '24px',
         }}
       >
         <div
@@ -98,7 +89,6 @@ export const RequestView = (props: RequestViewProps) => {
           ))}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
-      <ComposerView streaming={streaming} stop={stop} run={run} />
     </div>
   )
 }

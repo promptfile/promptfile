@@ -22,7 +22,6 @@ if (!fs.existsSync('./syntaxes/generated')) {
 
 // loop over all languages
 for (const language of languages) {
-  console.log('writing ' + language.scopeName)
   const result = currentJson.replace(/SOURCE_LANGUAGE/g, language.source).replace(/SCOPE_NAME/g, language.scopeName)
 
   // Define the path for the output file
@@ -31,5 +30,3 @@ for (const language of languages) {
   // Write the resulting text to the output file
   fs.writeFileSync(outputPath, result)
 }
-
-console.log('done')
