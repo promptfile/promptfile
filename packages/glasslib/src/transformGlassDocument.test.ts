@@ -1,11 +1,7 @@
 import { expect } from 'chai'
-import {
-  addNodeToDocument,
-  parseGlassTopLevelNodesNext,
-  reconstructDocFromNodes,
-  replaceDocumentNode,
-} from './parseGlassTopLevelNodesNext'
-import { replaceStateNode, transformGlassDocument } from './transformGlassDocument'
+
+import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
+import { addNodeToDocument, replaceDocumentNode, replaceStateNode } from './transformGlassDocument'
 
 describe('transformGlassDocument', () => {
   it('should parse document nodes and recreate document', () => {
@@ -14,24 +10,24 @@ language: typescript
 ---
 hello world`
 
-    expect(reconstructDocFromNodes(parseGlassTopLevelNodesNext(doc), doc)).to.equal(doc)
-    expect(parseGlassTopLevelNodesNext(doc)).to.have.length(1)
+    expect(reconstructGlassDocument(parseGlassDocument(doc, false))).to.equal(doc)
+    expect(parseGlassDocument(doc, false)).to.have.length(1)
   })
 
   it('should count toplevel nodes correctly and replace document', () => {
-    const doc = `<Foo>
+    const doc = `<Assistant>
 bar
-</Foo>
+</Assistant>
 
-<Hello>
+<User>
 world
-</Hello>
+</User>
 
-<Goodbye>
+<Assistant>
 world
-</Goodbye>`
-    expect(reconstructDocFromNodes(parseGlassTopLevelNodesNext(doc), doc)).to.equal(doc)
-    expect(parseGlassTopLevelNodesNext(doc)).to.have.length(5)
+</Assistant>`
+    expect(reconstructGlassDocument(parseGlassDocument(doc, false))).to.equal(doc)
+    expect(parseGlassDocument(doc, false)).to.have.length(5)
   })
 
   it('should parse document nodes and recreate document', () => {
@@ -40,8 +36,8 @@ language: typescript
 ---
 hello world`
 
-    expect(reconstructDocFromNodes(parseGlassTopLevelNodesNext(doc), doc)).to.equal(doc)
-    expect(parseGlassTopLevelNodesNext(doc)).to.have.length(1)
+    expect(reconstructGlassDocument(parseGlassDocument(doc, false))).to.equal(doc)
+    expect(parseGlassDocument(doc, false)).to.have.length(1)
   })
 
   it('should parse document nodes and recreate document', () => {
@@ -59,7 +55,7 @@ interstitial
 
 done`
 
-    expect(reconstructDocFromNodes(parseGlassTopLevelNodesNext(doc), doc)).to.equal(doc)
+    expect(reconstructGlassDocument(parseGlassDocument(doc, false))).to.equal(doc)
   })
 
   it('should add node to document', () => {
@@ -68,7 +64,7 @@ language: typescript
 ---
 hello world`
 
-    expect(addNodeToDocument('<User>\nuser\n</User>', 0, doc)).to.equal(`<User>
+    expect(addNodeToDocument('<User>\nuser\n</User>\n', 0, doc)).to.equal(`<User>
 user
 </User>
 ---
@@ -76,7 +72,7 @@ language: typescript
 ---
 hello world`)
 
-    expect(addNodeToDocument('<User>\nuser\n</User>', 1, doc)).to.equal(`---
+    expect(addNodeToDocument('\n<User>\nuser\n</User>', 1, doc)).to.equal(`---
 language: typescript
 ---
 hello world
@@ -91,133 +87,22 @@ language: typescript
 ---
 hello world
 
-<Foo />`
+<User />`
 
-    expect(replaceDocumentNode('<User>\nuser\n</User>', 0, doc)).to.equal(`<User>
+    expect(replaceDocumentNode('<User>\nuser\n</User>\n', 0, doc)).to.equal(`<User>
 user
 </User>
-<Foo />`)
+hello world
 
-    expect(replaceDocumentNode('<User>\nuser\n</User>', 1, doc)).to.equal(`---
+<User />`)
+
+    expect(replaceDocumentNode('<User>\nuser\n</User>\n', 1, doc)).to.equal(`---
 language: typescript
 ---
-hello world
-
 <User>
 user
-</User>`)
-  })
-
-  it('should trafnsform document loop', () => {
-    const initDocument = `<Loop>
-<User>
-\${input}
 </User>
-
-<Request model="gpt-4" />
-</Loop>`
-
-    const initInterplatedDoc = `<Loop>
-<User>
-hello world
-</User>
-
-<Request model="gpt-4" />
-</Loop>`
-
-    const res = transformGlassDocument(initDocument, initInterplatedDoc)
-
-    expect(res.transformedOriginalDoc).to.equal(`<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />
-
-<Loop>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />
-</Loop>`)
-
-    expect(res.transformedInterpolatedDoc).to.equal(`<User>
-hello world
-</User>
-
-<Request model="gpt-4" />
-
-<Loop>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />
-</Loop>`)
-  })
-
-  it('should trafnsform document loop2', () => {
-    const initDocument = `<System>
-You are a helpful assistant.
-</System>
-
-<Loop>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-</Loop>`
-
-    const initInterplatedDoc = `<System>
-You are a helpful assistant.
-</System>
-
-<Loop>
-<User>
-how are you?
-</User>
-
-<Request model="gpt-3.5-turbo" />
-</Loop>`
-
-    const res = transformGlassDocument(initDocument, initInterplatedDoc)
-
-    expect(res.transformedOriginalDoc).to.equal(`<System>
-You are a helpful assistant.
-</System>
-
-<User>
-\${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-
-<Loop>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-</Loop>`)
-
-    expect(res.transformedInterpolatedDoc).to.equal(`<System>
-You are a helpful assistant.
-</System>
-
-<User>
-how are you?
-</User>
-
-<Request model="gpt-3.5-turbo" />
-
-<Loop>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-</Loop>`)
+<User />`)
   })
 
   describe('replaceStateNode', () => {
@@ -250,7 +135,7 @@ hello
     })
 
     it('should transform document without frontmatter', () => {
-      const newState = `<State>\nstate\n</State>`
+      const newState = '<State>\nstate\n</State>'
 
       const doc = `const a = "foo"
 

@@ -1,38 +1,48 @@
-import { JSXNode } from './ast'
-import { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
-import { getJSXNodeInsidesString, getJSXNodeString } from './jsxElementNode'
-import { parseGlassTopLevelNodes } from './parseGlassTopLevelNodes'
-import { addNodeToDocument, parseGlassTopLevelNodesNext, replaceDocumentNode } from './parseGlassTopLevelNodesNext'
+import { getJSXNodeInsidesString } from './jsxElementNode'
+import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
+
+export function addNodeToDocument(content: string, index: number, doc: string) {
+  const parsed: { content: string }[] = parseGlassDocument(doc, false)
+  const nodes = parsed.slice(0, index).concat({ content }).concat(parsed.slice(index))
+  return reconstructGlassDocument(nodes)
+}
+
+export function replaceDocumentNode(content: string, index: number, doc: string) {
+  const parsed: { content: string }[] = parseGlassDocument(doc, false)
+  const nodes = parsed
+    .slice(0, index)
+    .concat({ content })
+    .concat(parsed.slice(index + 1))
+  return reconstructGlassDocument(nodes)
+}
 
 export function transformGlassDocument(originalDoc: string, interpolatedDoc: string) {
-  const originalWithoutEscape = removeEscapedHtml(originalDoc)
-  const interpolatedWithoutEscape = removeEscapedHtml(interpolatedDoc)
+  // const originalWithoutEscape = removeEscapedHtml(originalDoc)
+  // const interpolatedWithoutEscape = removeEscapedHtml(interpolatedDoc)
+  // const originalWithoutEscape = originalDoc
+  // const interpolatedWithoutEscape = interpolatedDoc
 
-  originalDoc = originalWithoutEscape.output
-  interpolatedDoc = interpolatedWithoutEscape.output
+  // originalDoc = originalWithoutEscape.output
+  // interpolatedDoc = interpolatedWithoutEscape.output
 
-  const parsedOriginal = parseGlassTopLevelNodesNext(originalDoc)
-  const parsedInterpolated = parseGlassTopLevelNodesNext(interpolatedDoc)
+  const parsedOriginal = parseGlassDocument(originalDoc, false)
+  const parsedInterpolated = parseGlassDocument(interpolatedDoc, false)
 
   let transformedOriginal = originalDoc
   let transformedInterpolated = interpolatedDoc
 
-  const originalLoopNode = parsedOriginal.find(node => (node as any).tagName === 'Loop')
+  const originalLoopNode = parsedOriginal.find(node => (node as any).tag === 'Loop')
   let originalLoopIndex = -1
   if (originalLoopNode) {
     originalLoopIndex = parsedOriginal.indexOf(originalLoopNode)
 
-    const newOriginalDoc = replaceDocumentNode(
-      getJSXNodeInsidesString(originalLoopNode as JSXNode, originalDoc),
-      originalLoopIndex,
-      originalDoc
-    )
+    const newOriginalDoc = replaceDocumentNode((originalLoopNode as any).child.content, originalLoopIndex, originalDoc)
 
-    const newDocNodes = parseGlassTopLevelNodes(newOriginalDoc)
+    const newDocNodes = parseGlassDocument(newOriginalDoc, false)
     const nodesLengthDiff = newDocNodes.length - parsedOriginal.length
 
     transformedOriginal = addNodeToDocument(
-      '\n' + getJSXNodeString(originalLoopNode as JSXNode, originalDoc),
+      '\n' + originalLoopNode.content,
       nodesLengthDiff + originalLoopIndex + 1,
       newOriginalDoc
     )
@@ -44,34 +54,33 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
     interpolatedLoopIndex = parsedInterpolated.indexOf(interpolatedLoopNode)
 
     const newInterpolatedDoc = replaceDocumentNode(
-      getJSXNodeInsidesString(interpolatedLoopNode as JSXNode, interpolatedDoc),
+      getJSXNodeInsidesString((interpolatedLoopNode as any).child.content, interpolatedDoc),
       interpolatedLoopIndex,
       interpolatedDoc
     )
 
-    const newDocNodes = parseGlassTopLevelNodes(newInterpolatedDoc)
+    const newDocNodes = parseGlassDocument(newInterpolatedDoc, false)
     const nodesLengthDiff = newDocNodes.length - parsedInterpolated.length
 
     transformedInterpolated = addNodeToDocument(
-      '\n' + getJSXNodeString(originalLoopNode as JSXNode, originalDoc),
+      '\n' + originalLoopNode!.content,
       nodesLengthDiff + originalLoopIndex + 1,
       newInterpolatedDoc
     )
   }
 
   return {
-    transformedOriginalDoc: restoreEscapedHtml(transformedOriginal, originalWithoutEscape.replacements),
-    transformedInterpolatedDoc: restoreEscapedHtml(transformedInterpolated, interpolatedWithoutEscape.replacements),
+    transformedOriginalDoc: transformedOriginal,
+    transformedInterpolatedDoc: transformedInterpolated,
+    // transformedOriginalDoc: restoreEscapedHtml(transformedOriginal, originalWithoutEscape.replacements),
+    // transformedInterpolatedDoc: restoreEscapedHtml(transformedInterpolated, interpolatedWithoutEscape.replacements),
   }
 }
 
 export function replaceStateNode(newStateNode: string, doc: string) {
-  const docWithoutLiterals = removeEscapedHtml(doc)
-  doc = docWithoutLiterals.output
+  const parsed = parseGlassDocument(doc, false)
 
-  const parsed = parseGlassTopLevelNodesNext(doc)
-
-  const stateNode = parsed.find(node => (node as any).tagName === 'State')
+  const stateNode = parsed.find(node => (node as any).tag === 'State')
   if (!stateNode) {
     // see if the first node is a text node, if so, insert the state node after its frontmatter
     const existingFrontmatter = /---\n?([\s\S]*?)\n?---/.exec(doc)?.[1] ?? ''
@@ -83,13 +92,12 @@ export function replaceStateNode(newStateNode: string, doc: string) {
         ? doc.slice(0, secondFrontmatterIndex + 4) + '\n' + newStateNode + '\n' + doc.slice(secondFrontmatterIndex + 4)
         : doc
     } else {
-      return addNodeToDocument(newStateNode + '\n', 0, doc)
+      return addNodeToDocument(newStateNode + '\n' + '\n', 0, doc)
     }
   }
 
   const stateIndex = parsed.indexOf(stateNode)
-  const newDoc = replaceDocumentNode(newStateNode, stateIndex, doc)
-  return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
+  return replaceDocumentNode(newStateNode, stateIndex, doc)
 }
 
 export function updateRequestOrChatNode(substitution: string, doc: string) {
@@ -98,37 +106,29 @@ export function updateRequestOrChatNode(substitution: string, doc: string) {
 }
 
 export function replaceRequestNode(newRequestNode: string, doc: string) {
-  const docWithoutLiterals = removeEscapedHtml(doc)
-  doc = docWithoutLiterals.output
+  const parsed = parseGlassDocument(doc, false)
 
-  const parsed = parseGlassTopLevelNodesNext(doc)
-
-  const requestNode = parsed.find(node => (node as any).tagName === 'Request')
+  const requestNode = parsed.find(node => (node as any).tag === 'Request')
   if (!requestNode) {
     return doc
   }
 
   const idx = parsed.indexOf(requestNode)
-  const newDoc = replaceDocumentNode(newRequestNode, idx, doc)
-  return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
+  return replaceDocumentNode(newRequestNode, idx, doc)
 }
 
 export function updateChatNode(chatNodeSubstitution: string, doc: string) {
-  const docWithoutLiterals = removeEscapedHtml(doc)
-  doc = docWithoutLiterals.output
+  const parsed = parseGlassDocument(doc, false)
 
-  const parsed = parseGlassTopLevelNodesNext(doc)
-
-  const chatNode = parsed.find(node => (node as any).tagName === 'Chat')
+  const chatNode = parsed.find(node => (node as any).tag === 'Chat')
   if (!chatNode) {
     return doc
   }
 
   const idx = parsed.indexOf(chatNode)
   const newDoc = addNodeToDocument(chatNodeSubstitution, idx, doc)
-  const res = restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
   // remove all instances of initialRole="assistant"
-  return res
+  return newDoc
     .replace(/initialRole="(assistant|user|Assistant|User)"/g, '')
     .replace(/initialRole={"(assistant|user|Assistant|User)"}/g, '')
     .replace(/initialRole={'(assistant|user|Assistant|User)'}/g, '')

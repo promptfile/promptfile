@@ -1,7 +1,6 @@
 import { expect } from 'chai'
-import { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
 import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
-import { parseGlassTopLevelNodesNext, reconstructDocFromNodes } from './parseGlassTopLevelNodesNext'
+
 describe('parseGlassTopLevelJsxElements', () => {
   it('should parse glass document', () => {
     const mdx = `Hello world this is a document.
@@ -255,87 +254,5 @@ hello
 asdofin
 </System>`)
     ).to.not.throw('')
-  })
-
-  it('shoudl parse python output', () => {
-    const doc = `import requests from "requests"
-
-response = requests.get("https://elliottburris.com")
-
-<System>
-your job is to answer questions based on the following website code:
-###
-<Text escapeHtml>
-<html lang="en">
-<head>
-        <meta charset="UTF-8">
-        <title>Elliott Burris</title>
-</head>
-<body>
-        <div class="main" style="padding-left:10px;">
-                <h1>Elliott Burris</h1>
-
-                <h3>Current</h3>
-                Co-founder & CEO at stealth AI startup<br>
-                Chairman at stealth real estate startup<br>
-
-
-                <h3>Past</h3>
-                Founder and CEO of <a href="https://dynasty.com" target="_blank">Dynasty.com</a> (acquired by <a
-                        href="https://www.appfolio.com/">AppFolio</a>)<br>
-                <a href="http://www.twosigma.com/" target="_blank">Two Sigma Investments</a><br>
-                <a href="http://www.twosigmasecurities.com/" target="_blank">Two Sigma Securities</a><br>
-
-                <h3>Education</h3>
-                <a href="http://www.cam.ac.uk/" target="_blank">Cambridge, M.Phil.</a><br>
-                <a href="http://virginia.edu/" target="_blank">UVA, B.A.</a>    <br>    <br>
-
-                <h3>Online</h3>
-                <a href="https://github.com/elliottburris" target="_blank">GitHub</a><br>
-                <a href="https://www.linkedin.com/in/elliottburris" target="_blank">LinkedIn</a><br>
-                <a href="https://twitter.com/elliott_burris" target="_blank">Twitter</a><br>
-
-        </div>
-        <script>
-                console.log("Contact me at e l l i o t t . b u r r i s [at] g m a i l [dot] c o m");
-        </script>
-
-</body>
-
-</html>
-</Text>
-###
-</System>
-
-<User>
-hey where did elliott go to grad school?
-</User>
-
-<Assistant>
-Elliott Burris went to graduate school at Cambridge, where he received an M.Phil.
-</Assistant>
-
-<User>
-what is elliott's favorite color?
-</User>
-
-<Assistant>
-Sorry, we cannot determine Elliott's favorite color from the provided website code.
-</Assistant>
-
-<User>
-what is elliott's last name?
-</User>
-
-<Request model="gpt-3.5-turbo">
-
-</Request>`
-
-    const replaced = removeEscapedHtml(doc)
-
-    const parsed = parseGlassTopLevelNodesNext(replaced.output)
-
-    const reconstructed = reconstructDocFromNodes(parsed, replaced.output)
-    expect(restoreEscapedHtml(reconstructed, replaced.replacements)).to.equal(doc)
   })
 })

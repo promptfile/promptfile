@@ -1,6 +1,4 @@
-import { removeEscapedHtml, restoreEscapedHtml } from './escapeHtml'
-import { getJSXNodeInsidesString } from './jsxElementNode'
-import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
+import { parseGlassBlocks } from './parseGlassBlocks'
 import { removeGlassComments } from './removeGlassComments'
 
 export interface ChatCompletionRequestMessage {
@@ -14,18 +12,16 @@ export function parseChatCompletionBlocks(
   interpolationArgs: any = {},
   isChatUserFirst = true
 ): ChatCompletionRequestMessage[] {
-  const removedLiterals = removeEscapedHtml(content)
-
-  const doc = removeGlassComments(removedLiterals.output)
+  const doc = removeGlassComments(content)
 
   // first interpolate the jsx interpolations
-  const nodes = parseGlassTopLevelJsxElements(doc)
+  const nodes = parseGlassBlocks(doc)
 
   const res: ChatCompletionRequestMessage[] = []
 
   for (const node of nodes) {
-    let role = node.tagName?.toLowerCase()
-    let blockContent = restoreEscapedHtml(getJSXNodeInsidesString(node, doc), removedLiterals.replacements)
+    let role = node.tag?.toLowerCase()
+    let blockContent = node.child.content
     if (role == 'chat' && isChatUserFirst) {
       res.push({ role: 'user', content: interpolationArgs.input })
       continue

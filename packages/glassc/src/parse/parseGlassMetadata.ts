@@ -7,6 +7,11 @@ const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block'])
 export function parseGlassMetadata(document: string) {
   const blocks = glasslib.parseGlassBlocks(document)
 
+  const toplevelCode = glasslib
+    .parseGlassDocument(document, false)
+    .filter(t => t.type === 'code')
+    .join('\n')
+
   const relevantBlocks = blocks.filter(block => contentBlocks.has(block.tag))
 
   const vars = relevantBlocks.flatMap(block => {
@@ -20,7 +25,6 @@ export function parseGlassMetadata(document: string) {
   })
 
   const imports = glasslib.parseGlassImports(document)
-  const toplevelCode = glasslib.parseGlassTopLevelCode(glasslib.removeGlassFrontmatter(document))
 
   const parsedCodeBlock = parseCodeBlock(`${imports.join('\n')}\n\n${toplevelCode}`)
 

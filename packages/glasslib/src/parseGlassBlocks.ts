@@ -89,8 +89,12 @@ const tags = [
 ]
 
 export function parseGlassBlocks(str: string): BlockContent[] {
-  const regex =
-    /<(Assistant|User|System|For|Block|Request|Chat|Test|Text|Transcript|State|Args)\s*[^>]*\/>|<(Assistant|User|System|For|Block|Request|Chat|Test|Text|Transcript|State|Args)\s*[^>]*>([\s\S]*?)<\/\2>/g
+  const tagsPattern = tags.join('|')
+  const regex = new RegExp(
+    `<(${tagsPattern})\\s*[^\\n]*\\/?>|<(${tagsPattern})\\s*[^\\n]*>((?:(?!<\\/\\2>)[\\s\\S])*?)<\\/\\2>`,
+    'g'
+  )
+
   let match
   const blocks: BlockContent[] = []
 
@@ -101,8 +105,14 @@ export function parseGlassBlocks(str: string): BlockContent[] {
     const end = start + match[0].length
 
     // calculate the child position
-    const childStart = childContent !== '' ? str.indexOf(childContent, start) : 0
-    const childEnd = childContent !== '' ? childStart + childContent.length : 0
+    let childStart, childEnd
+    if (childContent !== '') {
+      childStart = str.indexOf(childContent, start)
+      childEnd = childStart + childContent.length
+    } else {
+      childStart = end - 2 // '/>' position
+      childEnd = end - 2 // '/>' position
+    }
 
     blocks.push({
       type: 'block',
@@ -117,7 +127,8 @@ export function parseGlassBlocks(str: string): BlockContent[] {
     })
   }
 
-  return parseAttributes(str, blocks)
+  return blocks
+  // return parseAttributes(str, blocks)
 }
 
 export function parseGlassBlocksStrict(str: string): BlockContent[] {
@@ -125,7 +136,7 @@ export function parseGlassBlocksStrict(str: string): BlockContent[] {
   const tagsPattern = tags.join('|')
 
   const regex = new RegExp(
-    `(^<(${tagsPattern})[^>]*\\/>)|(^<(${tagsPattern})[^>]*>([\\s\\S]*?)<\\/\\4>)|(\\n<(${tagsPattern})[^>]*\\/>)|([\\n\\r]<(${tagsPattern})[^>]*>([\\s\\S]*?)<\\/\\8>)`,
+    `(^<(${tagsPattern})\\s*[^\\n]*\\/>)|(^<(${tagsPattern})\\s*[^\\n]*>\\n?([\\s\\S]*?)<\\/\\4>)|(\\n<(${tagsPattern})\\s*[^\\n]*\\/>)|([\\n\\r]<(${tagsPattern})\\s*[^\\n]*>\\n?([\\s\\S]*?)<\\/\\8>)`,
     'gm'
   )
 
@@ -155,7 +166,8 @@ export function parseGlassBlocksStrict(str: string): BlockContent[] {
     })
   }
 
-  return parseAttributes(str, blocks)
+  return blocks
+  // return parseAttributes(str, blocks)
 }
 
 function parseAttributes(origDoc: string, blocks: BlockContent[]) {
@@ -170,4 +182,8 @@ function parseAttributes(origDoc: string, blocks: BlockContent[]) {
     checkOk(parsedJsx.length === 1, `Expected exactly one top level JSX element in block ${b.content}`)
     return { ...b, attrs: parsedJsx[0].attrs }
   })
+}
+
+export function reconstructGlassDocument(nodes: { content: string }[]): string {
+  return nodes.map(c => c.content).join('')
 }
