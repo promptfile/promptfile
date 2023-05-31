@@ -221,6 +221,17 @@ export async function activate(context: vscode.ExtensionContext) {
           case 'stopGlass':
             const stopSession = message.data.session
             stoppedSessions.add(stopSession)
+            const stoppedGlass = message.data.glass.replace('█', '')
+            const stoppedBlocks = parseGlassBlocks(stoppedGlass)
+            const stoppedMetadata = parseGlassMetadata(stoppedGlass)
+            await panel.webview.postMessage({
+              action: 'onStream',
+              data: {
+                glass: stoppedGlass,
+                blocks: stoppedBlocks,
+                variables: stoppedMetadata.interpolationVariables,
+              },
+            })
             break
           case 'openGlass':
             try {
@@ -360,7 +371,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 )
 
                 const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
-                if (!existingPanel) {
+                if (!existingPanel || stoppedSessions.has(session)) {
                   return false
                 }
                 const blocksForGlass = parseGlassBlocks(resp.finalInterpolatedDoc)

@@ -147,6 +147,7 @@ function RigView() {
       action: 'stopGlass',
       data: {
         session,
+        glass,
       },
     })
   }
@@ -177,7 +178,7 @@ function RigView() {
       {tab === 'View' && <BlocksView session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {['View', 'Raw'].includes(tab) && glass.includes('<Request') && (
+      {['View', 'Raw'].includes(tab) && (
         <ComposerView run={run} stop={stop} streaming={streaming} variables={variables} />
       )}
     </div>
