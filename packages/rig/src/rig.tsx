@@ -17,7 +17,7 @@ export interface GlassLog {
   session: string
   timestamp?: string
   model: string
-  input: string
+  inputs: Record<string, string>
   output: string
   glass: string
 }

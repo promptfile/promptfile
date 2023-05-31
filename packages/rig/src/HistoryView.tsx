@@ -19,6 +19,17 @@ export const HistoryView = (props: HistoryViewProps) => {
     return str
   }
 
+  const inputSummary = (inputs: Record<string, string>) => {
+    const keys = Object.keys(inputs)
+    if (keys.length === 0) {
+      return ''
+    }
+    if (keys.length === 1) {
+      return inputs[keys[0]]
+    }
+    return keys.map(key => `${key}: ${inputs[key]}`).join(', ')
+  }
+
   return (
     <div
       style={{
@@ -62,7 +73,7 @@ export const HistoryView = (props: HistoryViewProps) => {
                 </VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="2">{log.session}</VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="3">{log.model}</VSCodeDataGridCell>
-                <VSCodeDataGridCell grid-column="4">{truncate(log.input)}</VSCodeDataGridCell>
+                <VSCodeDataGridCell grid-column="4">{inputSummary(log.inputs)}</VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="5">{truncate(log.output)}</VSCodeDataGridCell>
               </VSCodeDataGridRow>
             ))}
