@@ -1,9 +1,15 @@
 <System>
-You are VerboseGPT. Respond to every message with a long reply.
+You are TerseGPT. Respond with a short message.
 </System>
+
+
+
+<Repeat>
 
 <User>
 ${input}
 </User>
 
 <Request model="gpt-3.5-turbo" />
+
+</Repeat>

@@ -118,11 +118,11 @@ Goodbye world
 Hello world
 </System>
 
-<Loop>
+<Repeat>
 <User>
 Goodbye world
 </User>
-</Loop>`
+</Repeat>`
       )
     ).to.deep.equal([{ role: 'system', content: 'Hello world' }])
   })

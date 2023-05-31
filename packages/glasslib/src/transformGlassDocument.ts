@@ -17,7 +17,7 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
   let transformedOriginal = originalDoc
   let transformedInterpolated = interpolatedDoc
 
-  const originalLoopNode = parsedOriginal.find(node => (node as any).tagName === 'Loop')
+  const originalLoopNode = parsedOriginal.find(node => (node as any).tagName === 'Repeat')
   let originalLoopIndex = -1
   if (originalLoopNode) {
     originalLoopIndex = parsedOriginal.indexOf(originalLoopNode)
@@ -38,7 +38,7 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
     )
   }
 
-  const interpolatedLoopNode = parsedInterpolated.find(node => (node as any).tagName === 'Loop')
+  const interpolatedLoopNode = parsedInterpolated.find(node => (node as any).tagName === 'Repeat')
   let interpolatedLoopIndex = -1
   if (interpolatedLoopNode) {
     interpolatedLoopIndex = parsedInterpolated.indexOf(interpolatedLoopNode)

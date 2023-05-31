@@ -41,10 +41,14 @@ function RigView() {
   const [currentSource, setCurrentSource] = useState('')
   const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
-  const [variables, setVariables] = useState<string[]>([])
+  const [inputs, setInputs] = useState<Record<string, string>>({})
   const [session, setSession] = useState(getNonce())
   const [logs, setLogs] = useState<GlassLog[]>([])
   const [tab, setTab] = useState(tabs[0])
+
+  const updateInputsWithVariables = (variables: string[], clearAllValues?: boolean) => {
+    setInputs(Object.fromEntries(variables.map(v => [v, clearAllValues ? '' : inputs[v] || ''])))
+  }
 
   // register a callback for when the extension sends a message
   useEffect(() => {
@@ -61,7 +65,7 @@ function RigView() {
           setFilename(() => message.data.filename)
           setGlass(() => initialGlass)
           setBlocks(() => message.data.blocks)
-          setVariables(() => message.data.variables)
+          updateInputsWithVariables(message.data.variables)
           if (message.data.variables.length > 0) {
             document.getElementById('composer-input-0')?.focus()
           } else {
@@ -78,12 +82,12 @@ function RigView() {
         case 'onStream':
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
-          setVariables(() => message.data.variables)
+          updateInputsWithVariables(message.data.variables)
           break
         case 'onResponse':
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
-          setVariables(() => message.data.variables)
+          updateInputsWithVariables(message.data.variables, true)
           setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
           break
         default:
@@ -179,7 +183,7 @@ function RigView() {
       {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
       {['View', 'Raw'].includes(tab) && (
-        <ComposerView run={run} stop={stop} streaming={streaming} variables={variables} />
+        <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
       )}
     </div>
   )

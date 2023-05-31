@@ -47,7 +47,7 @@ hello world`
   it('should parse document nodes and recreate document', () => {
     const doc = `hello world
 
-<Loop>
+<Repeat>
 <User>
 \${input}
 </User>
@@ -55,7 +55,7 @@ hello world`
 interstitial
 
 <Request model="gpt-4" />
-</Loop>
+</Repeat>
 
 done`
 
@@ -109,21 +109,21 @@ user
   })
 
   it('should trafnsform document loop', () => {
-    const initDocument = `<Loop>
+    const initDocument = `<Repeat>
 <User>
 \${input}
 </User>
 
 <Request model="gpt-4" />
-</Loop>`
+</Repeat>`
 
-    const initInterplatedDoc = `<Loop>
+    const initInterplatedDoc = `<Repeat>
 <User>
 hello world
 </User>
 
 <Request model="gpt-4" />
-</Loop>`
+</Repeat>`
 
     const res = transformGlassDocument(initDocument, initInterplatedDoc)
 
@@ -133,13 +133,13 @@ hello world
 
 <Request model="gpt-4" />
 
-<Loop>
+<Repeat>
 <User>
 \${input}
 </User>
 
 <Request model="gpt-4" />
-</Loop>`)
+</Repeat>`)
 
     expect(res.transformedInterpolatedDoc).to.equal(`<User>
 hello world
@@ -147,13 +147,13 @@ hello world
 
 <Request model="gpt-4" />
 
-<Loop>
+<Repeat>
 <User>
 \${input}
 </User>
 
 <Request model="gpt-4" />
-</Loop>`)
+</Repeat>`)
   })
 
   it('should trafnsform document loop2', () => {
@@ -161,25 +161,25 @@ hello world
 You are a helpful assistant.
 </System>
 
-<Loop>
+<Repeat>
 <User>
 \${input}
 </User>
 
 <Request model="gpt-3.5-turbo" />
-</Loop>`
+</Repeat>`
 
     const initInterplatedDoc = `<System>
 You are a helpful assistant.
 </System>
 
-<Loop>
+<Repeat>
 <User>
 how are you?
 </User>
 
 <Request model="gpt-3.5-turbo" />
-</Loop>`
+</Repeat>`
 
     const res = transformGlassDocument(initDocument, initInterplatedDoc)
 
@@ -193,13 +193,13 @@ You are a helpful assistant.
 
 <Request model="gpt-3.5-turbo" />
 
-<Loop>
+<Repeat>
 <User>
 \${input}
 </User>
 
 <Request model="gpt-3.5-turbo" />
-</Loop>`)
+</Repeat>`)
 
     expect(res.transformedInterpolatedDoc).to.equal(`<System>
 You are a helpful assistant.
@@ -211,13 +211,13 @@ how are you?
 
 <Request model="gpt-3.5-turbo" />
 
-<Loop>
+<Repeat>
 <User>
 \${input}
 </User>
 
 <Request model="gpt-3.5-turbo" />
-</Loop>`)
+</Repeat>`)
   })
 
   describe('replaceStateNode', () => {
