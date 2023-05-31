@@ -16,13 +16,13 @@ export const sections = [
 
 # Glass
 
-Glass is an open-source templating language built for prompting large language models (LLMs). {{ className: 'lead' }}
+Glass is an open-source, declarative framework to build applications using large language models (LLMs). {{ className: 'lead' }}
 
 Glass has a number of features purpose-built for working with language models:
 
 - **Developer-first experience for prompting** — Syntax highlighting, commenting, diagnostics, and IntelliSense for your prompts.
-- **Built-in VSCode playground** - Bring the playground to where you build, securing prompts and API keys locally.
-- **Simple chaining of prompts** - Chain prompts together to ma
+- **Built-in VSCode playground** - Bring the playground to where you build, securing prompts and API keys locally. Iterate quickly and test as you build.
+- **More complex, dynamic prompts** - Execute code in your prompt, chain prompts together, variable interpolation, conditional logic, manage state in a chat, and more.
 
 The fastest way to learn about Glass is to follow the [Quickstart](/quickstart) and installing the VSCode extension.
 
@@ -33,11 +33,19 @@ The fastest way to learn about Glass is to follow the [Quickstart](/quickstart) 
 
 ## Why Glass?
 
-{/* Feel like this example isn't the best anymore, most people are using Markdown or YAML to write prompts. Would be great to have one of those codegroup animations that have a slider to go from old code to new code. Think the below section seems redundant */}
+When we were building things in production for LLM, we were writing prompts that looked like this mixed in with our application logic.
 
-We created Glass because conventional programming languages like Python and Typescript aren't well-suited for writing and managing prompts. Markdown like YAML or MDX are much better suited, but don't have the power features that developers need to write prompts. {{ className: 'lead' }}
 
-Most developers end up storing prompts as large strings that look like this: {{className: 'lead'}}
+We separated it into a separate MDX file and then it looked like this:
+
+
+We wanted to extend MDX to make it even more powerful, so we created Glass. Glass is a superset of MDX that adds a number of features that make it easier to write prompts for LLMs. As we started digging deeper, we realized there was even more that we could do to make it easier to write prompts.
+
+Now, here's what the same prompt looks like in Glass:
+
+
+
+{/* Most developers end up storing prompts as large strings that look like this: {{className: 'lead'}}
 
 <CodeGroup title="The old way of writing and storing prompts">
 
@@ -113,4 +121,4 @@ Glass also fully supports chat block prompt formats (used by `gpt-4` and `gpt-3.
 
 <Image src={indexChat} />
 
-This is just the start — the language also supports much more complicated concepts including conditionals, importing, fragments, code execution, and more. {{ className: 'lead' }}
+This is just the start — the language also supports much more complicated concepts including conditionals, importing, fragments, code execution, and more. {{ className: 'lead' }} */}
