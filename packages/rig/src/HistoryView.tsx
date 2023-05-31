@@ -9,7 +9,10 @@ interface HistoryViewProps {
 export const HistoryView = (props: HistoryViewProps) => {
   const { logs, openGlass } = props
 
-  function truncate(str: string, max = 36): string {
+  function truncate(str: string | undefined, max = 36): string {
+    if (!str) {
+      return ''
+    }
     if (str.length > max) {
       return str.substring(0, max) + '...'
     }
@@ -20,9 +23,8 @@ export const HistoryView = (props: HistoryViewProps) => {
     <div
       style={{
         paddingTop: '16px',
-        paddingLeft: '24px',
-        paddingRight: '24px',
         height: '100%',
+        overflow: 'auto',
       }}
     >
       {logs.length === 0 ? (
