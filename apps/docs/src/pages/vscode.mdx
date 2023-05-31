@@ -10,38 +10,16 @@ Glass is designed to work seamlessly within [Visual Studio Code](https://code.vi
   <Col>
     <Properties>
       <Property name="glass.defaultModel" type="string">
-        Default model for prompts. Can be one of `gpt-3.5-turbo` (default),
-        `gpt-4`,
-        `gpt-4-0314`,
-        `gpt-3.5-turbo-0301`,
-        `claude-v1`,
-        `claude-v1-100k`,
-        `claude-instant-v1`,
-        `claude-instant-v1-100k`,
-        `claude-v1.3`,
-        `claude-v1.3-100k`,
-        `claude-v1.2`,
-        `claude-v1.0`,
-        `claude-instant-v1.1`,
-        `claude-instant-v1.1-100k`,
-        `claude-instant-v1.0`,
-        `text-davinci-003`,
-        `text-curie-001`,
-        `text-babbage-001`,
-        `text-ada-001`,
-        `text-davinci-002`,
-        `text-davinci-001`,
-        `davinci-instruct-beta`,
-        `davinci`,
-        `curie`,
-        `babbage`,
-        `ada`
+        Default model for prompts.
       </Property>
-      <Property name="glass.language" type="string">
+      <Property name="glass.defaultLanguageMode" type="string">
         The language to transpile to. Can be one of `typescript` (default), `javascript`, or `python`.
       </Property>
       <Property name="glass.openaiKey" type="string">
         Your OpenAI API key. You can create one on your [OpenAI dashboard](https://platform.openai.com/account/api-keys).
+      </Property>
+      <Property name="glass.anthropicKey" type="string">
+        Your Anthropic API key. You can create one on your [Anthropic dashboard](https://console.anthropic.com/account/keys).
       </Property>
       <Property name="glass.outputDirectory" type="string">
         Where to output transpiled code. Defaults to `${workspaceFolder}/src`.
