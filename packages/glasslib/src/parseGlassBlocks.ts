@@ -30,7 +30,7 @@ export function parseGlassBlocks(template: string) {
   let currContent: string | null = null
   let currAttributes: Record<string, string> = {}
 
-  const tagRegex = /^<(Assistant|User|System|Prompt|Block|Text).*>$/
+  const tagRegex = /^<(Assistant|User|System|Block|Text).*>$/
   const startingTagRegex = /^<([A-Za-z0-9_]+).*$/
 
   for (let i = 0; i < lines.length; i++) {
