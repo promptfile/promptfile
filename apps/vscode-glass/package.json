@@ -281,7 +281,7 @@
             }
           },
           {
-            "scope": "source.glass.loop.name",
+            "scope": "source.glass.repeat.name",
             "settings": {
               "foreground": "#E5C75E",
               "fontStyle": "italic"

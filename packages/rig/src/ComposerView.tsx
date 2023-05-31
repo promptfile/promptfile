@@ -1,16 +1,18 @@
-import { VSCodeButton, VSCodeDivider, VSCodeTextArea } from '@vscode/webview-ui-toolkit/react'
+import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useState } from 'react'
 
 interface ComposerViewProps {
   run: (inputs: Record<string, string>) => void
   stop: () => void
   streaming: boolean
+  variables: string[]
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { run, streaming, stop } = props
+  const { variables, run, streaming, stop } = props
 
-  const [text, setText] = useState('')
+  const initialInputs: Record<string, string> = Object.fromEntries(variables.map(v => [v, '']))
+  const [inputs, setInputs] = useState<Record<string, string>>(initialInputs)
 
   useEffect(() => {
     setTimeout(() => {
@@ -39,25 +41,7 @@ export const ComposerView = (props: ComposerViewProps) => {
             flexDirection: 'column',
             paddingRight: '8px',
           }}
-        >
-          <VSCodeTextArea
-            style={{ width: '100%' }}
-            value={text}
-            id={`composer-input`}
-            placeholder={'Say something'}
-            onInput={e => {
-              const value = (e.target as any).value
-              setText(value)
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                run({ input: text })
-                setText('')
-              }
-            }}
-          />
-        </div>
+        ></div>
         {streaming ? (
           <VSCodeButton style={{ width: 'fit-content' }} appearance="secondary" onClick={stop}>
             Stop

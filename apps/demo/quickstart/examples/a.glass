@@ -9,16 +9,10 @@
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-// Now add some text below between <User> and </User>.
+<Repeat>
+<User>
+${input}
+</User>
 
 <Request model="gpt-3.5-turbo" />
-
-
-
-// Then, run the `Glass: run file` command to generate a completion.
-// You can do this by opening up the VSCode command menu `command+shift+P`
-// and selecting the `Glass: run file` command.
-
-// This is equivalent to hitting the OpenAI API with two chat blocks:
-// {role: 'system', content: 'You are HaikuGPT. Always respond to the user in the form of a haiku.'}
-// {role: 'user', content: 'Hey, how are you?'}
+</Repeat>

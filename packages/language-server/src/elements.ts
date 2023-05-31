@@ -150,6 +150,12 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
+    name: 'Repeat',
+    documentation: 'Repeats the inner content in the resulting Glass document',
+    detail: '(element) repeats inner content',
+    attributes: [],
+  },
+  {
     name: 'Request',
     documentation: 'Creates a model inference',
     detail: '(inference) API request to a model',
