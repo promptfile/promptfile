@@ -30,4 +30,4 @@ ${question}
 </User>
 
 
-<Chat model="gpt-3.5-turbo" />
+<Request model="gpt-3.5-turbo" />

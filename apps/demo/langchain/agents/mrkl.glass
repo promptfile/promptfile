@@ -94,7 +94,7 @@ Here is the user's input (remember to respond with a markdown code snippet of a 
 ${input}
 </User>
 
-<Chat
+<Request
     model="gpt-3.5-turbo"
     onResponse={async res => {
         console.log('got response', JSON.stringify(res))

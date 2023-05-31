@@ -13,6 +13,6 @@ How are you?
 </User>
 
 
-<Chat model="gpt-3.5-turbo" onResponse={({ message }) => {
+<Request model="gpt-3.5-turbo" onResponse={({ message }) => {
     setProfile({ hasChatted: true })
 }} />

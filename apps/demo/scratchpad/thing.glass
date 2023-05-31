@@ -24,4 +24,4 @@ How should I fix my function?
 
 
 
-<Chat model="gpt-4" />
+<Request model="gpt-4" />

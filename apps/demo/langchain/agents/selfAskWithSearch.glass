@@ -59,4 +59,4 @@ Intermediate answer: New Zealand.
 So the final answer is: No
 </Assistant>
 
-<Chat model="gpt-3.5-turbo" />
+<Request model="gpt-3.5-turbo" />

@@ -91,46 +91,6 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'Chat',
-    documentation: 'Creates a model inference',
-    detail: '(inference) API request to a model',
-    selfClosing: true,
-    attributes: [
-      {
-        name: 'model',
-        detail: 'model for inference',
-        documentation: 'The `model` attribute determines which model to inference',
-        type: 'enum',
-        values: LANGUAGE_MODELS.map(model => ({
-          name: model.name,
-          detail: model.creator,
-          documentation: model.description,
-        })),
-      },
-      {
-        name: 'temperature',
-        detail: 'temperature for inference',
-        documentation: 'The `temperature` attribute determines the temperature for inference',
-        type: 'number',
-        optional: true,
-      },
-      {
-        name: 'maxTokens',
-        detail: 'max tokens for inference',
-        documentation: 'The `maxTokens` attribute determines the max tokens for inference',
-        type: 'number',
-        optional: true,
-      },
-      {
-        name: 'onResponse',
-        detail: 'callback for response',
-        documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
-        type: 'function',
-        optional: true,
-      },
-    ],
-  },
-  {
     name: 'For',
     documentation: 'Creates a for loop',
     detail: '(element) loop over elements in an array',
