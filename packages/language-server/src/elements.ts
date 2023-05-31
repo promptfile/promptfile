@@ -101,7 +101,11 @@ export const glassElements: GlassElement[] = [
         detail: 'model for inference',
         documentation: 'The `model` attribute determines which model to inference',
         type: 'enum',
-        values: LANGUAGE_MODELS,
+        values: LANGUAGE_MODELS.map(model => ({
+          name: model.name,
+          detail: model.creator,
+          documentation: model.description,
+        })),
       },
       {
         name: 'temperature',
@@ -156,7 +160,11 @@ export const glassElements: GlassElement[] = [
         detail: 'model for inference',
         documentation: 'The `model` attribute determines which model to inference',
         type: 'enum',
-        values: LANGUAGE_MODELS,
+        values: LANGUAGE_MODELS.map(model => ({
+          name: model.name,
+          detail: model.creator,
+          documentation: model.description,
+        })),
       },
       {
         name: 'temperature',
