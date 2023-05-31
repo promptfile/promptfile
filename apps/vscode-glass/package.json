@@ -143,29 +143,37 @@
       {
         "title": "Glass",
         "properties": {
-          "glass.defaultChatModel": {
+          "glass.defaultModel": {
             "type": "string",
             "default": "gpt-3.5-turbo",
-            "description": "Default model for chat prompts",
+            "description": "Default model for execution",
             "enum": [
               "gpt-3.5-turbo",
               "gpt-4",
-              "gpt-4-32k",
+              "gpt-4-0314",
+              "gpt-3.5-turbo-0301",
               "claude-v1",
               "claude-v1-100k",
               "claude-instant-v1",
-              "claude-instant-v1-100k"
-            ]
-          },
-          "glass.defaultCompletionModel": {
-            "type": "string",
-            "default": "text-davinci-003",
-            "description": "Default model for completion prompts",
-            "enum": [
+              "claude-instant-v1-100k",
+              "claude-v1.3",
+              "claude-v1.3-100k",
+              "claude-v1.2",
+              "claude-v1.0",
+              "claude-instant-v1.1",
+              "claude-instant-v1.1-100k",
+              "claude-instant-v1.0",
               "text-davinci-003",
               "text-curie-001",
               "text-babbage-001",
-              "text-ada-001"
+              "text-ada-001",
+              "text-davinci-002",
+              "text-davinci-001",
+              "davinci-instruct-beta",
+              "davinci",
+              "curie",
+              "babbage",
+              "ada"
             ]
           },
           "glass.defaultLanguageMode": {

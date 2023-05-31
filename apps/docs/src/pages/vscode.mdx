@@ -1,5 +1,4 @@
-export const description =
-  'In this guide, we will look at how to use Glass within Visual Studio Code.'
+export const description = 'In this guide, we will look at how to use Glass within Visual Studio Code.'
 
 # Visual Studio Code integration
 
@@ -10,24 +9,33 @@ Glass is designed to work seamlessly within [Visual Studio Code](https://code.vi
 <Row>
   <Col>
     <Properties>
-      <Property name="glass.defaultChatModel" type="string">
-        Default model for chat prompts. Can be one of `gpt-3.5-turbo` (default), `gpt-4`,`gpt-4-0314`,`gpt-3.5-turbo-0301`,`claude-v1`, `claude-v1-100k`, `claude-instant-v1`,`claude-instant-v1-100k`,`claude-v1.3`,`claude-v1.3-100k`,`claude-v1.2`,`claude-v1.0`,`claude-instant-v1.1`,`claude-instant-v1.1-100k`,`claude-instant-v1.0`.
-
-
-
-      </Property>
-      <Property name="glass.defaultCompletionModel" type="string">
-        Default model for completion prompts. Can be one of `text-davinci-003` (default),
-          `text-curie-001`,
-          `text-babbage-001`,
-          `text-ada-001`,
-          `text-davinci-002`,
-          `text-davinci-001`,
-          `davinci-instruct-beta`,
-          `davinci`,
-          `curie`,
-          `babbage`,
-          `ada`,
+      <Property name="glass.defaultModel" type="string">
+        Default model for prompts. Can be one of `gpt-3.5-turbo` (default),
+        `gpt-4`,
+        `gpt-4-0314`,
+        `gpt-3.5-turbo-0301`,
+        `claude-v1`,
+        `claude-v1-100k`,
+        `claude-instant-v1`,
+        `claude-instant-v1-100k`,
+        `claude-v1.3`,
+        `claude-v1.3-100k`,
+        `claude-v1.2`,
+        `claude-v1.0`,
+        `claude-instant-v1.1`,
+        `claude-instant-v1.1-100k`,
+        `claude-instant-v1.0`,
+        `text-davinci-003`,
+        `text-curie-001`,
+        `text-babbage-001`,
+        `text-ada-001`,
+        `text-davinci-002`,
+        `text-davinci-001`,
+        `davinci-instruct-beta`,
+        `davinci`,
+        `curie`,
+        `babbage`,
+        `ada`
       </Property>
       <Property name="glass.language" type="string">
         The language to transpile to. Can be one of `typescript` (default), `javascript`, or `python`.
@@ -41,11 +49,9 @@ Glass is designed to work seamlessly within [Visual Studio Code](https://code.vi
     </Properties>
   </Col>
   <Col sticky>
-
     ```json {{ 'title': '.vscode/settings.json' }}
     {
-      "glass.defaultChatModel": "gpt-3.5-turbo",
-      "glass.defaultCompletionModel": "text-davinci-003",
+      "glass.defaultModel": "gpt-3.5-turbo",
       "glass.language": "typescript",
       "glass.openaiKey": "sk-...",
       "glass.outputDirectory": "${workspaceFolder}/src/generated"

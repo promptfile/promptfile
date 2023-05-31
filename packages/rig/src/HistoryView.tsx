@@ -44,7 +44,7 @@ export const HistoryView = (props: HistoryViewProps) => {
               Model
             </VSCodeDataGridCell>
             <VSCodeDataGridCell cell-type="columnheader" grid-column="4">
-              Input
+              Inputs
             </VSCodeDataGridCell>
             <VSCodeDataGridCell cell-type="columnheader" grid-column="5">
               Output

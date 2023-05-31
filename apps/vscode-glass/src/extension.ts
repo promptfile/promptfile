@@ -128,7 +128,7 @@ export async function activate(context: vscode.ExtensionContext) {
         const chatElement = elements.find(element => element.tagName === 'Request')
         const model =
           chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue ??
-          (vscode.workspace.getConfiguration('glass').get('defaultChatModel') as string)
+          (vscode.workspace.getConfiguration('glass').get('defaultModel') as string)
         const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
         if (!languageModel) {
           await vscode.window.showErrorMessage(`Unable to find model ${model}`)
@@ -282,7 +282,7 @@ export async function activate(context: vscode.ExtensionContext) {
               )
               const model =
                 requestElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue ??
-                (vscode.workspace.getConfiguration('glass').get('defaultChatModel') as string)
+                (vscode.workspace.getConfiguration('glass').get('defaultModel') as string)
               const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
               if (!languageModel) {
                 await vscode.window.showErrorMessage(`Unable to find model ${model}`)
