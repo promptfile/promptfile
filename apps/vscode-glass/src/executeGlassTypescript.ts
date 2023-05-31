@@ -88,7 +88,7 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
 
   const bundledCode = new TextDecoder().decode(result.outputFiles[0].contents)
 
-  // fs.unlinkSync(tmpFilePath)
+  fs.unlinkSync(tmpFilePath)
 
   const bundledCodeFilePath = path.join(folderPath, 'glass-bundle.js')
 
