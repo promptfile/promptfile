@@ -4,22 +4,22 @@ import { HeroPattern } from '@/components/HeroPattern'
 
 import chat from '@/images/screenshots/chat.png'
 import Image from 'next/image'
+import forLoop from '@/images/screenshots/SimpleFor.png'
+import conditional from '@/images/screenshots/conditional.png'
 
 export const description = 'Glass is a domain-specific language for prompting LLMs.'
 
-## What are Blocks?
+# What are Blocks?
 
-There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your models more readable and easier to maintain.
+There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your prompts more readable and easier to maintain. Blocks also help avoid common mistakes when making requests to different models.
 
-## Blocks Available in Glass
+<Note>Anything not inside a block will be treated as code </Note>
 
-If you are making a request, you can use the following blocks:
+## What Blocks are Available?
 
 ### `<User>` (default)
 
 In both OpenAI and Anthropic models, the user block is used to designate the text coming from the user/human. If no block is present, on save, your file will be wrapped inside a `<User>` block.
-
-Arguments:
 
 - **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to a user.
 - **if** <i>(optional)</i> <br/> Allows you to add conditional logic to the block
@@ -27,8 +27,6 @@ Arguments:
 ### `<Assistant>`
 
 In both OpenAI and Anthropic models, the assistant block is used to designate the text coming from the model.
-
-Arguments:
 
 - **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to the assistant.
 - **model** <i>(optional)</i> <br/> _String_: Allows you to track which model generated the assistant text
@@ -47,15 +45,14 @@ This block allows you to create a API request to the model.
 
 This block is used to repeat over elements in an array.
 
-Arguments:
-
-- **each** <i>(required)</i> <br/> _Arrayg_: The array you want to iterate over
+- **each** <i>(required)</i> <br/> _Array_: The array you want to iterate over
 - **as** <i>(required)</i><br/> _String_: The variable name for each item in the array
+  <Image src={forLoop} />
 
 ### `<Text>`
 
-This block allows you to add text conditionally to your prompt.
-
-Arguments:
+This block is used to add text inside another block. This is useful for adding text to the assistant block only if a condition is met.
 
 - **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block
+
+<Image src={conditional} />

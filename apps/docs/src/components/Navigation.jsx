@@ -192,7 +192,7 @@ export const navigation = [
       { title: 'Languages supported', href: '/languages' },
       { title: 'Models supported', href: '/models' },
       { title: 'Types of Blocks', href: '/blocks' },
-      { title: 'Control Logic', href: '/logic' },
+      // { title: 'Control Logic', href: '/logic' },
       { title: 'Code inside Prompt', href: '/code' },
       { title: 'Commenting', href: '/comments' },
       // { title: 'Token Counter', href: '/tokens' },
