@@ -11,49 +11,51 @@ export const description = 'Glass is a domain-specific language for prompting LL
 
 There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your models more readable and easier to maintain.
 
-All Glass files must include some block. If no block is present, on save, your file will be wrapped inside a `<User>`
+## Blocks Available in Glass
 
-## Completion Blocks
-
-If you are making a request to a completion endpoint, you can use the following blocks:
+If you are making a request, you can use the following blocks:
 
 ### `<User>` (default)
 
-Arguments: none
-
-### `<Completion>`
+In both OpenAI and Anthropic models, the user block is used to designate the text coming from the user/human. If no block is present, on save, your file will be wrapped inside a `<User>` block.
 
 Arguments:
 
-- **`model`**. Can be one of:
-  - `text-davinci-003` (default),
-  - `text-curie-001`,
-  - `text-babbage-001`,
-  - `text-ada-001`,
-  - `text-davinci-002`,
-  - `text-davinci-001`,
-  - `davinci-instruct-beta`,
-  - `davinci`,
-  - `curie`,
-  - `babbage`,
-  - `ada`,
+- **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to a user.
+- **if** <i>(optional)</i> <br/> Allows you to add conditional logic to the block
 
-## Chat Role Blocks
+### `<Assistant>`
 
-Glass can be especially helpful when writing prompts for chat interfaces, especially when it comes to cleanly handling different roles in chat prompts and building more dynamic conversation prompts.
+In both OpenAI and Anthropic models, the assistant block is used to designate the text coming from the model.
 
-Glass comes with built-in support for chat prompt blocks:
+Arguments:
 
-- `<System>` blocks allow you to designate a message with role="system"
-- `<User>` blocks allow you to designate a message with role="user"
-- `<Assistant>` blocks allow you to designate a message with role="assistant"
+- **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to the assistant.
+- **model** <i>(optional)</i> <br/> _String_: Allows you to track which model generated the assistant text
+- **if** <i>(optional)</i> <br/> _function_:Allows you to add conditional logic to the block
 
-Here's an example of a chat prompt that utilizes the `<System>` and `<User>` blocks:
+### `<Request>`
 
-<Image src={chat} />
+This block allows you to create a API request to the model.
 
-## Text Blocks
+- **model** <i>(optional)</i> <br/> _enum_: The name of the model you want to inference. Defaults to `gpt-3.5-turbo`
+- **temperature** <i>(optional)</i> <br/> _enum_: The temperance of the inference to the model. Defaults to `0.0`
+- **max_tokens** <i>(optional)</i> <br/> _enum_: The maximum number of tokens to generate. Defaults to `64`
+- **onResponse** <i>(optional)</i> <br/> _function_: The name of the function to call when the response is received.
 
-If you want to add normal text to your prompt and utilize [conditional logic](/logic), you can use the `<Text>` block. These are generally helpful only to add conditional logic, you can add text inside other blocks without
+### `<For>`
 
-- `<Text>` blocks allow you to add text to your prompt and utilize conditional logic.
+This block is used to repeat over elements in an array.
+
+Arguments:
+
+- **each** <i>(required)</i> <br/> _Arrayg_: The array you want to iterate over
+- **as** <i>(required)</i><br/> _String_: The variable name for each item in the array
+
+### `<Text>`
+
+This block allows you to add text conditionally to your prompt.
+
+Arguments:
+
+- **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block
