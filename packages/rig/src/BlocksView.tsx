@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { ComposerView } from './ComposerView'
 import { GlassBlock } from './rig'
 
-interface ChatViewProps {
+interface BlocksViewProps {
   blocks: GlassBlock[]
   session: string
   run: (inputs: Record<string, string>) => void
   stop: () => void
 }
 
-export const ChatView = (props: ChatViewProps) => {
+export const BlocksView = (props: BlocksViewProps) => {
   const { blocks, session, run } = props
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
