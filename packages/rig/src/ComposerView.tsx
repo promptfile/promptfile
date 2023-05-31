@@ -15,13 +15,10 @@ export const ComposerView = (props: ComposerViewProps) => {
 
   useEffect(() => {
     setInputs(Object.fromEntries(variables.map(v => [v, inputs[v] ?? ''])))
-  }, [variables])
-
-  useEffect(() => {
     setTimeout(() => {
       document.getElementById('composer-input-0')?.focus()
     }, 500)
-  }, [])
+  }, [variables])
 
   return (
     <div style={{ width: '100%', flexShrink: 0 }}>
