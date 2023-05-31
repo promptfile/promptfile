@@ -1,4 +1,4 @@
-import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
+import { VSCodeButton, VSCodeDivider, VSCodeTextArea } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useState } from 'react'
 
 interface ComposerViewProps {
@@ -11,12 +11,15 @@ interface ComposerViewProps {
 export const ComposerView = (props: ComposerViewProps) => {
   const { variables, run, streaming, stop } = props
 
-  const initialInputs: Record<string, string> = Object.fromEntries(variables.map(v => [v, '']))
-  const [inputs, setInputs] = useState<Record<string, string>>(initialInputs)
+  const [inputs, setInputs] = useState<Record<string, string>>(Object.fromEntries(variables.map(v => [v, ''])))
+
+  useEffect(() => {
+    setInputs(Object.fromEntries(variables.map(v => [v, inputs[v] ?? ''])))
+  }, [variables])
 
   useEffect(() => {
     setTimeout(() => {
-      document.getElementById('composer-input')?.focus()
+      document.getElementById('composer-input-0')?.focus()
     }, 500)
   }, [])
 
@@ -41,13 +44,33 @@ export const ComposerView = (props: ComposerViewProps) => {
             flexDirection: 'column',
             paddingRight: '8px',
           }}
-        ></div>
+        >
+          {Object.keys(inputs).map((key, index) => (
+            <VSCodeTextArea
+              key={key}
+              style={{ width: '100%' }}
+              value={inputs[key]}
+              id={`composer-input-${index}`}
+              placeholder={key}
+              onInput={e => {
+                const value = (e.target as any).value
+                setInputs({ ...inputs, [key]: value })
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  run(inputs)
+                }
+              }}
+            />
+          ))}
+        </div>
         {streaming ? (
-          <VSCodeButton style={{ width: 'fit-content' }} appearance="secondary" onClick={stop}>
+          <VSCodeButton appearance="secondary" onClick={stop}>
             Stop
           </VSCodeButton>
         ) : (
-          <VSCodeButton style={{ width: 'fit-content' }} appearance="primary" onClick={() => run({ input: text })}>
+          <VSCodeButton appearance="primary" onClick={() => run(inputs)}>
             Run
           </VSCodeButton>
         )}

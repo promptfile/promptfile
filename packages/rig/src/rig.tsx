@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import { BlocksView } from './BlocksView'
+import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
 import { RawView } from './RawView'
 import { TopperView } from './TopperView'
@@ -60,6 +61,7 @@ function RigView() {
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           setVariables(() => message.data.variables)
+          document.getElementById('composer-input-0')?.focus()
           break
         case 'onStream':
           setGlass(() => message.data.glass)
@@ -137,6 +139,9 @@ function RigView() {
     })
   }
 
+  const lastBlock = blocks.length > 0 ? blocks[blocks.length - 1] : null
+  const streaming = lastBlock?.content.includes('█') === true
+
   return (
     <div
       style={{
@@ -157,9 +162,12 @@ function RigView() {
         reset={reset}
         openOutput={openOutput}
       />
-      {tab === 'View' && <BlocksView stop={stop} run={run} session={session} blocks={blocks} />}
+      {tab === 'View' && <BlocksView session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
+      {['View', 'Raw'].includes(tab) && (
+        <ComposerView run={run} stop={stop} streaming={streaming} variables={variables} />
+      )}
     </div>
   )
 }
