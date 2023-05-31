@@ -1,5 +1,8 @@
-<User>
-Hello
-</User>
+const date = new Date()
+const formattedDate = date.toISOString().split('T')[0]
 
-<Request model="ada" />
+<System>
+It is ${formattedDate} , calculate the amount of seconds until 2024.
+</System>
+
+<Request model="gpt-4" />
