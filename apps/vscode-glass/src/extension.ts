@@ -402,7 +402,6 @@ export async function activate(context: vscode.ExtensionContext) {
               await vscode.window.showErrorMessage('No glass provided')
               return
             }
-            outputChannel.appendLine('running glass extension....')
             await runGlassExtension(activeEditor, glass, session, inputs)
             break
           case 'showMessage':
