@@ -20,9 +20,9 @@ Glass is an open-source, declarative framework to build applications using large
 
 Glass has a number of features purpose-built for working with language models:
 
-- **Developer-first experience for prompting** — Syntax highlighting, commenting, diagnostics, and IntelliSense for your prompts.
-- **Built-in VSCode playground** - Bring the playground to where you build, securing prompts and API keys locally. Iterate quickly and test as you build.
-- **More complex, dynamic prompts** - Execute code in your prompt, chain prompts together, variable interpolation, conditional logic, manage state in a chat, and more.
+- **Playground in VSCode** - Iterate and test your prompts where you work... in VSCode.
+- **Create more complex, dynamic prompts** - Execute code in your prompt, create templates, add conditional logic, and chain prompts together
+- **Developer-first features** -Count tokens, switch models quickly, create test cases, import logic from your codebase, and call your prompts as a typesafe function
 
 The fastest way to learn about Glass is to follow the [Quickstart](/quickstart) and installing the VSCode extension.
 
@@ -35,90 +35,14 @@ The fastest way to learn about Glass is to follow the [Quickstart](/quickstart) 
 
 When we were building things in production for LLM, we were writing prompts that looked like this mixed in with our application logic.
 
+<Image src={indexCompletion} />
 
 We separated it into a separate MDX file and then it looked like this:
 
+<Image src={indexCompletion} />
 
 We wanted to extend MDX to make it even more powerful, so we created Glass. Glass is a superset of MDX that adds a number of features that make it easier to write prompts for LLMs. As we started digging deeper, we realized there was even more that we could do to make it easier to write prompts.
 
-Now, here's what the same prompt looks like in Glass:
-
-
-
-{/* Most developers end up storing prompts as large strings that look like this: {{className: 'lead'}}
-
-<CodeGroup title="The old way of writing and storing prompts">
-
-```ts
-export function myAwesomePrompt(task: string) {
-  return `You are a highly-intelligent AI that writes amazing Javascript code.  Write JavaScript code to complete the tasks below given the following schema:
-
-### Row Schema
-{
-  firstName: string
-  lastName: string
-  age: number
-}
-###
-
-Task: delete the firstName field
-Code:
-
-\`\`\`javascript
-context.rows = context.rows.map((r) => {
-  const newRow = Object.assign({}, r);
-  delete newRow.firstName;
-  return newRow;
-});
-\`\`\`
-
-Task: ${task}
-Code:
-\`\`\`javascript
-context.rows =`
-}
-```
-
-````python
-def generate_prompt(task):
-  return f"""You are a highly-intelligent AI that writes amazing Javascript code.  Write JavaScript code to complete the tasks below given the following schema:
-
-### Schema
-\{
-  firstName: string
-  lastName: string
-  age: number
-\}
-###
-
-Task: delete the firstName field
-Code:
-```javascript
-context.rows = context.rows.map((r) => {{
-  const newRow = Object.assign({}, r);
-  delete newRow.firstName;
-  return newRow;
-}});
-```
-
-Task: {query}
-Code:
-```javascript
-context.rows ="""
-````
-
-</CodeGroup>
-
-These large strings can be hard to read, write, and maintain. They also don't provide functionality for comments, IntelliSense, or syntax highlighting. And you often need to do character escaping. {{ className: 'lead' }}
-
-Glass files are written in a Markdown-like with a special syntax for interpolating code. This syntax is designed to be easy to read and write, and to be familiar to anyone who has used Markdown before. {{ className: 'lead' }}
-
-This is how the same prompt looks as `myAwesomePrompt.glass`: {{ className: 'lead' }}
-
 <Image src={indexCompletion} />
 
-Glass also fully supports chat block prompt formats (used by `gpt-4` and `gpt-3.5-turbo`, among others). Here's `myAwesomePrompt.glass` rewritten to use the chat inference format and documented with comments.{{ className: 'lead' }}
-
-<Image src={indexChat} />
-
-This is just the start — the language also supports much more complicated concepts including conditionals, importing, fragments, code execution, and more. {{ className: 'lead' }} */}
+Now, here's what the same prompt looks like in Glass:
