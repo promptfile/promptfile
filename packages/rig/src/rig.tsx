@@ -55,13 +55,25 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'onOpen':
+          const initialGlass = message.data.glass
           setOriginalSource(() => message.data.originalSource)
           setCurrentSource(() => message.data.currentSource)
           setFilename(() => message.data.filename)
-          setGlass(() => message.data.glass)
+          setGlass(() => initialGlass)
           setBlocks(() => message.data.blocks)
           setVariables(() => message.data.variables)
-          document.getElementById('composer-input-0')?.focus()
+          if (message.data.variables.length > 0) {
+            document.getElementById('composer-input-0')?.focus()
+          } else {
+            vscode.postMessage({
+              action: 'runGlass',
+              data: {
+                inputs: {},
+                glass: initialGlass,
+                session,
+              },
+            })
+          }
           break
         case 'onStream':
           setGlass(() => message.data.glass)
