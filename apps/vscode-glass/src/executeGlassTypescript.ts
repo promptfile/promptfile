@@ -14,6 +14,8 @@ export async function executeGlassTypescriptNew(
 ): Promise<{
   rawResponse: string
   codeResponse?: any
+  continued: boolean
+  setNextUserText: string | null
   initDoc: string
   initInterpolatedDoc: string
   finalDoc: string
@@ -112,7 +114,6 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
       let lineEndIndex = buffer.indexOf('\n')
       while (lineEndIndex !== -1) {
         const line = buffer.substring(0, lineEndIndex)
-        console.log(line.substring(0, 10))
         if (line.startsWith('glass-progress: ')) {
           try {
             const progressData = JSON.parse(line.slice('glass-progress: '.length))

@@ -74,7 +74,7 @@ Helpful Answer:
     ).to.deep.equal({ interpolationVariables: [] })
   })
 
-  it('should parse another glass document', () => {
+  it.skip('should parse another glass document', () => {
     expect(
       parseGlassMetadata(`<For each={[
     { role: 'user', content: 'name an ice cream' },

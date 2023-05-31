@@ -15,7 +15,7 @@ export { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './lang
 export { ChatCompletionRequestMessage, parseChatCompletionBlocks } from './parseChatCompletionBlocks'
 export { parseGlassAST } from './parseGlassAST'
 export { constructGlassArgsNode, parseGlassArgs } from './parseGlassArgs'
-export { parseGlassBlocks } from './parseGlassBlocks'
+export { parseGlassBlocks, parseGlassBlocksStrict, parseGlassDocument } from './parseGlassBlocks'
 export { parseGlassImports } from './parseGlassImports'
 export { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 export { parseGlassTopLevelCode, parseGlassTopLevelNodes } from './parseGlassTopLevelNodes'

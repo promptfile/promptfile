@@ -1,158 +1,197 @@
 import { expect } from 'chai'
-import { parseGlassBlocks } from './parseGlassBlocks'
+import { parseGlassBlocks, parseGlassBlocksStrict, parseGlassDocument } from './parseGlassBlocks'
 
 describe('parseGlassBlocks', () => {
-  it('should parse empty document', () => {
-    expect(parseGlassBlocks('')).to.deep.equal([])
+  it('should parse block', () => {
+    const doc = `<Assistant>
+inside assistant
+</Assistant>`
+
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed[0].content).to.equal(doc)
+    expect(parsed[0].child.content).to.equal('inside assistant')
+  })
+
+  it('should parse multiple block', () => {
+    const doc = `<Assistant>
+inside assistant
+</Assistant>
+
+<User>
+inside user
+</User>`
+
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed).to.have.length(2)
   })
 
   it('should parse empty block', () => {
-    expect(
-      parseGlassBlocks(`<System>
-</System>`)
-    ).to.deep.equal([{ tag: 'System', content: '' }])
+    const doc = `<Assistant>
+</Assistant>`
+
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed[0].content).to.equal(doc)
+    expect(parsed[0].child.content).to.equal('')
   })
 
-  it('should parse normal blocks', () => {
-    expect(
-      parseGlassBlocks(`<System>
-Hello world
-</System>
+  it('should parse block that doesnt start at beginning of line (except in strict mode', () => {
+    const doc = ` <Assistant>
+inside assistant
+</Assistant>`
 
-<User>
-Goodbye world
-</User>
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed[0].content).to.equal(doc.trim()) // removes newline
+    expect(parsed[0].child.content).to.equal('inside assistant')
+    const strictParsed = parseGlassBlocksStrict(doc)
+    expect(strictParsed).to.deep.equal([])
+  })
+
+  it('should parse block with other text', () => {
+    const doc = `blah blah blah
+aksdjfnasjdkfn
 
 <Assistant>
+inside assistant
+</Assistant>
 
-assistant
+outside of block`
 
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed[0].content).to.equal(`<Assistant>
+inside assistant
 </Assistant>`)
-    ).to.deep.equal([
-      {
-        tag: 'System',
-        content: 'Hello world',
-      },
-      {
-        tag: 'User',
-        content: 'Goodbye world',
-      },
-      {
-        tag: 'Assistant',
-        content: '\nassistant\n',
-      },
-    ])
+    expect(parsed[0].child.content).to.equal('inside assistant')
   })
 
-  it('should ignore interstitial space', () => {
-    expect(
-      parseGlassBlocks(`ignore me
-<System>
-Hello world
-</System>
-
-ignore me too
-
+  it('should parse block with <User> block inside', () => {
+    const doc = `<Assistant>
+inside assistant
 <User>
-Goodbye world
-</User>`)
-    ).to.deep.equal([
-      {
-        tag: 'System',
-        content: 'Hello world',
-      },
-      {
-        tag: 'User',
-        content: 'Goodbye world',
-      },
-    ])
-  })
-
-  it('should parse string attributes', () => {
-    expect(
-      parseGlassBlocks(`<User name="foo" bar={"baz"}>
-Goodbye world
-</User>`)
-    ).to.deep.equal([
-      {
-        tag: 'User',
-        content: 'Goodbye world',
-        attrs: {
-          name: 'foo',
-          bar: 'baz',
-        },
-      },
-    ])
-  })
-
-  it('should ignore unknown tags', () => {
-    expect(
-      parseGlassBlocks(`<User>
-Hello world
+doSomething
 </User>
+</Assistant>`
 
-<IgnoreMe>
-ignore
-</IgnoreMe>`)
-    ).to.deep.equal([
-      {
-        tag: 'User',
-        content: 'Hello world',
-      },
-    ])
-  })
-
-  it('should allow self-closing tags', () => {
-    expect(
-      parseGlassBlocks(`<User>
-Hello world
-</User>
-
-<For each="" fragment=""  />`)
-    ).to.deep.equal([
-      {
-        tag: 'User',
-        content: 'Hello world',
-      },
-    ])
-  })
-
-  it('should allow single-line <For> document', () => {
-    expect(
-      parseGlassBlocks(
-        `<For each={[{role: 'user', content: 'who was gandhi?'}]} fragment={item => <Block role={item.role} content={item.content} />}  />`
-      )
-    ).to.deep.equal([])
-  })
-
-  it('should throw exception on unbalanced closing tag', () => {
-    expect(() =>
-      parseGlassBlocks(`</System>
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed).to.have.length(1) // doesn't parse inner tag
+    expect(parsed[0].content).to.equal(doc)
+    expect(parsed[0].child.content).to.equal(
+      `inside assistant
 <User>
-Goodbye world
-</User>`)
-    ).to.throw('Unbalanced closing tag </System> (line 1)')
+doSomething
+</User>`
+    )
   })
 
-  it('should throw exception on nested tags', () => {
-    expect(() =>
-      parseGlassBlocks(`<System>
+  it('should parse block with attributes', () => {
+    const doc = `<Assistant foo="bar" if={function doSomething() { return "hello world" }}>
+inside assistant
+</Assistant>`
+
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed[0].content).to.equal(doc)
+    expect(parsed[0].child.content).to.equal(`inside assistant`)
+    expect(parsed[0].attrs).to.deep.equal([
+      {
+        name: 'foo',
+        stringValue: 'bar',
+      },
+      {
+        name: 'if',
+        expressionValue: `function doSomething() { return "hello world" }`,
+      },
+    ])
+  })
+
+  it('should parse block with attributes and invalid jsx inside', () => {
+    const doc = `<Assistant foo="bar" if={function doSomething() { return "hello world" }}>
+<br>
+</Assistant>`
+
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed[0].content).to.equal(doc)
+    expect(parsed[0].child.content).to.equal(`<br>`)
+    expect(parsed[0].attrs).to.deep.equal([
+      {
+        name: 'foo',
+        stringValue: 'bar',
+      },
+      {
+        name: 'if',
+        expressionValue: `function doSomething() { return "hello world" }`,
+      },
+    ])
+  })
+
+  it('should handle self closing tag', () => {
+    const doc = `<Assistant model="gpt-4" />`
+
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed[0].content).to.equal(doc)
+    expect(parsed[0].child.content).to.equal(``)
+  })
+
+  it('should handle inline tags', () => {
+    const doc = `<Assistant>content</Assistant>`
+
+    const parsed = parseGlassBlocks(doc)
+    expect(parsed).to.deep.equal(parseGlassBlocksStrict(doc))
+    expect(parsed[0].content).to.equal(doc)
+    expect(parsed[0].child.content).to.equal(`content`)
+  })
+
+  it('should parse whole document', () => {
+    const doc = `const foo = "bar"
+
+<Assistant>
+<User>
 hello world
+</User>
+</Assistant>
+
+restOfTheCode()`
+
+    const parsedDoc = parseGlassDocument(doc, false)
+    expect(parsedDoc).to.have.length(3)
+    expect(parsedDoc[0].content).to.equal('const foo = "bar"\n\n')
+    expect(parsedDoc[1].content).to.equal(`<Assistant>
 <User>
-Goodbye world
-</User>`)
-    ).to.throw('Must complete tag <System> (line 1) before starting tag <User> (line 3)')
+hello world
+</User>
+</Assistant>`)
+    expect(parsedDoc[2].content).to.equal('\n\nrestOfTheCode()')
   })
 
-  it('should parse blocks with nested <Text> node', () => {
-    expect(
-      parseGlassBlocks(`
+  it('should parse whole document with frontmatter', () => {
+    const doc = `---
+language: typescript
+---
+const foo = "bar"
+
+<Assistant>
 <User>
-<Text>
-Hello world
-</Text>
-Goodbye world
-</User>`)
-    ).to.deep.equal([{ content: 'Hello world\nGoodbye world', tag: 'User' }])
+hello world
+</User>
+</Assistant>`
+
+    const parsedDoc = parseGlassDocument(doc, false)
+    expect(parsedDoc).to.have.length(3)
+    expect(parsedDoc[0].content).to.equal(`---
+language: typescript
+---
+`)
+    expect(parsedDoc[1].content).to.equal('const foo = "bar"\n\n')
+    expect(parsedDoc[2].content).to.equal(`<Assistant>
+<User>
+hello world
+</User>
+</Assistant>`)
   })
 })
