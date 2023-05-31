@@ -29,7 +29,7 @@ export const RawView = (props: RawViewProps) => {
               flexDirection: 'column',
             }}
           >
-            <div style={{ fontWeight: 'bolder', opacity: 0.8 }}>
+            <div style={{ opacity: 0.8 }}>
               Session: <span style={{ fontFamily: 'monospace' }}>{session}</span>
             </div>
           </div>

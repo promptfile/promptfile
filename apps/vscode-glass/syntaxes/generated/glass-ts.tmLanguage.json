@@ -16,9 +16,6 @@
       "include": "#state-element"
     },
     {
-      "include": "#text-element"
-    },
-    {
       "include": "#user-element"
     },
     {
@@ -79,17 +76,33 @@
       }
     },
     "system-element": {
-      "begin": "(<)(System)(>)",
+      "begin": "(<)(System)([^>]*)(>)",
       "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.glass.system.name"
-        },
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.system.name" },
         "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
       },
       "patterns": [
         {
@@ -110,17 +123,33 @@
       }
     },
     "assistant-element": {
-      "begin": "(<)(Assistant)(>)",
+      "begin": "(<)(Assistant)([^>]*)(>)",
       "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.glass.assistant.name"
-        },
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.assistant.name" },
         "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
       },
       "patterns": [
         {
@@ -215,17 +244,33 @@
       }
     },
     "user-element": {
-      "begin": "(<)(User)(>)",
+      "begin": "(<)(User)([^>]*)(>)",
       "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.glass.user.name"
-        },
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.user.name" },
         "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
       },
       "patterns": [
         {
@@ -357,6 +402,9 @@
     },
     "markdown-sections": {
       "patterns": [
+        {
+          "include": "#text-element"
+        },
         {
           "include": "#line-comments"
         },

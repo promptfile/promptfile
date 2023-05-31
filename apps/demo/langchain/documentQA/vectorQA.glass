@@ -4,17 +4,15 @@ import { vectorSearch } from './vectorSearch'
 
 const sotu = fs.readFileSync(path.join(__dirname, 'state_of_the_union.txt'), 'utf-8')
 const lines = sotu.split('\n').filter(line => Boolean(line))
-const context = await vectorSearch('sotu', lines, question)
+const context = await vectorSearch('sotu', lines, input)
 
 <System>
 Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+
+Here is context you might need to answer the question:
+###
+${context.join('\n\n')}
+###
 </System>
 
-<User>
-${context.join('\n\n')}
-
-Question: ${question}
-Helpful Answer:
-</User>
-
-<Request model="gpt-3.5-turbo" />
+<Chat model="gpt-3.5-turbo" />
