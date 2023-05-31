@@ -164,7 +164,7 @@ export const navigation = [
       { title: 'VSCode extension', href: '/vscode' },
       { title: 'Languages supported', href: '/languages' },
       { title: 'Models supported', href: '/models' },
-      { title: 'Programmatic Prompting', href: '/code' },
+      { title: 'Code inside prompts', href: '/code' },
       { title: 'Types of Blocks', href: '/blocks' },
       // { title: 'Control Logic', href: '/logic' },
       { title: 'Commenting', href: '/comments' },

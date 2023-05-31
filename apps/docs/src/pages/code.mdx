@@ -1,45 +1,26 @@
 import { Models } from '@/components/Models'
 import Image from 'next/image'
 import codeSnippet from '@/images/screenshots/codesnippet.png'
-import executableCode from '@/images/screenshots/executableCode.png'
 
 import indexCompletion from '@/images/screenshots/index-completion.png'
-
-import pythonExecutable from '@/images/screenshots/pythonexecutableCode.png'
+import executableCode from '@/images/screenshots/CodeOutsideBlock.png'
+import interpolate from '@/images/screenshots/interpolate.png'
 
 export const description = 'Work with code inside Glass .'
 
-# How to write code inside your prompt
+# Why mix code and text?
 
+Not only are LLMs particularly good at working with code, including code inside your prompts allows you to make prompts more dynamic and powerful. You can use code to load data into a prompt or to take specific actions.
 
-
-<Note>
-
-Anything written outside of a block is evaluated as code. We think this is one of the best parts about Glass...you can seamlessly move between code that you use to construct your prompt and the prompt itself.
-
-
-</Note>
-
-
-One of the most popular use cases for LLMs is increasingly in writing code or including code in your request. Glass makes this easy through its support of string interpolation (`${}`), code blocks (`<Code>`), and code snippets.
-
-## Variable interpolation
-
-You can include variables in your prompt by defining them in the `<Code>` block. You can then reference them in your prompt using string interpolation like `${someVariable}`. String interpolation defaults to JavaScript which can be changed in the front matter or in [VScode settings](/vscode)
+However, you might also want to include code as part of your request. For example, you might want to include a code snippet to provide what code you are trying to debug alongside the LLM. Or you might want to include a code snippet to show examples of what code you are trying to generate.
 
 ## Executable Code
 
-Glass supports executable code in your request. This is useful for retrieving information you want to include in your prompt.
+Anything not wrapped in a [block](/blocks) is considered executable code. You can use this to define variables, functions, or anything else you need to make your prompt work. The language defaults to TypeScript, but you can change it in the front matter or in [VScode settings](/vscode). This allows you to move easily from code to text and back again. Use code to load data into a prompt or to take specific actions.
 
-You can import necessary libraries outside a code block before the code block. You can also import libraries inside the code block.
-
-Any variables you want to use in your prompt must be defined in a code block.
+You can access your variables inside your prompt using string interpolation. `${someVariable}`.
 
 <Image src={executableCode} />
-
-The default language in these blocks is JavaScript, but you can specify the language (Python, TypeScript, and JavaScript are supported) by including it in the front matter.
-
-<Image src={pythonExecutable} />
 
 ## Code Snippets
 
