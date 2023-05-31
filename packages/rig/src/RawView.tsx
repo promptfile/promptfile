@@ -19,8 +19,8 @@ export const RawView = (props: RawViewProps) => {
             alignItems: 'center',
             paddingTop: '16px',
             paddingBottom: '16px',
-            paddingLeft: '12px',
-            paddingRight: '12px',
+            paddingLeft: '24px',
+            paddingRight: '24px',
           }}
         >
           <div
@@ -46,7 +46,9 @@ export const RawView = (props: RawViewProps) => {
             Open in editor
           </span>
         </div>
-        <VSCodeDivider style={{ margin: 0, padding: 0 }} />
+        <div style={{ paddingLeft: '24px', paddingRight: '24px' }}>
+          <VSCodeDivider style={{ margin: 0, padding: 0 }} />
+        </div>
       </div>
       <div
         style={{
@@ -54,8 +56,8 @@ export const RawView = (props: RawViewProps) => {
           overflowY: 'auto',
           overflowX: 'hidden',
           height: '100%',
-          paddingLeft: '12px',
-          paddingRight: '12px',
+          paddingLeft: '24px',
+          paddingRight: '24px',
         }}
       >
         <div

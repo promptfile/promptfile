@@ -47,8 +47,8 @@ export const RequestView = (props: RequestViewProps) => {
   return (
     <div
       style={{
-        paddingLeft: '12px',
-        paddingRight: '12px',
+        paddingLeft: '24px',
+        paddingRight: '24px',
         width: '100%',
         height: '100%',
         display: 'flex',

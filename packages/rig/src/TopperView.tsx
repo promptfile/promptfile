@@ -30,8 +30,8 @@ export const TopperView = (props: TopperViewProps) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          paddingLeft: '24px',
-          paddingRight: '24px',
+          paddingLeft: '12px',
+          paddingRight: '12px',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
@@ -67,7 +67,7 @@ export const TopperView = (props: TopperViewProps) => {
           </div> */}
         </div>
       </div>
-      <div style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'row' }}>
+      <div style={{ paddingLeft: '12px', display: 'flex', flexDirection: 'row' }}>
         {tabs.map(t => {
           const isCurrentTab = t === tab
           const opacity = isCurrentTab ? 1 : 0.5
