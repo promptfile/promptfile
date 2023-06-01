@@ -6,5 +6,6 @@ export const TYPESCRIPT_GLOBALS = [
   'Boolean',
   'encodeURIComponent',
   'process',
+  'useState',
   'eval',
 ]

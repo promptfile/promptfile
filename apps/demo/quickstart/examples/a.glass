@@ -1,13 +1,21 @@
+// Welcome to Glass!
+
+// Glass provides a first-class developer experience for working with LLMs.
+// Learning Glass is as simple as playing with a few example Glass files.
+
+// Let's start with a simple interaction with gpt-3.5-turbo, the formal name for ChatGPT.
+
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-
 // Now add some text below between <User> and </User>.
 
+<User>
+Hey, how are you?
+</User>
+
 <Request model="gpt-3.5-turbo" />
-
-
 
 // Then, run the `Glass: run file` command to generate a completion.
 // You can do this by opening up the VSCode command menu `command+shift+P`
@@ -16,5 +24,3 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 // This is equivalent to hitting the OpenAI API with two chat blocks:
 // {role: 'system', content: 'You are HaikuGPT. Always respond to the user in the form of a haiku.'}
 // {role: 'user', content: 'Hey, how are you?'}
-=======
-<Request model="gpt-3.5-turbo" />
