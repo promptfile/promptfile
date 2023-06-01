@@ -1,33 +1,26 @@
 import { checkOk } from '@glass-lang/util'
 import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 
-export interface TextContent {
+export interface GlassContent {
+  type: 'block' | 'code' | 'frontmatter'
   content: string
   position: {
     start: { offset: number }
     end: { offset: number }
   }
+  tag?: string
+  child?: {
+    content: string
+    position: {
+      start: { offset: number }
+      end: { offset: number }
+    }
+  }
+  attrs?: { name: string; stringValue?: string; expressionValue?: string }[]
 }
 
-export interface BlockContent extends TextContent {
-  type: 'block'
-  tag: string
-  child: TextContent
-  attrs: { name: string; stringValue?: string; expressionValue?: string }[]
-}
-
-export interface CodeContent extends TextContent {
-  type: 'code'
-}
-
-export interface FrontmatterContent extends TextContent {
-  type: 'frontmatter'
-}
-
-export type GlassContent = BlockContent | CodeContent | FrontmatterContent
-
-export function parseGlassDocument(doc: string, strict: boolean): GlassContent[] {
-  const blocks = strict ? parseGlassBlocksStrict(doc) : parseGlassBlocks(doc)
+export function parseGlassDocument(doc: string): GlassContent[] {
+  const blocks = parseGlassBlocks(doc)
 
   const nonBlocks: GlassContent[] = []
   let start = 0
@@ -73,105 +66,143 @@ export function parseGlassDocument(doc: string, strict: boolean): GlassContent[]
   return content
 }
 
-const tags = [
-  'Assistant',
-  'User',
-  'System',
-  'For',
-  'Block',
-  'Request',
-  'Chat',
-  'Test',
-  'Text',
-  'Transcript',
-  'State',
-  'Args',
-]
+export function parseGlassBlocks(doc: string) {
+  const blocks: GlassContent[] = []
+  const lines = doc.split('\n')
 
-export function parseGlassBlocks(str: string): BlockContent[] {
-  const tagsPattern = tags.join('|')
-  const regex = new RegExp(
-    `<(${tagsPattern})\\s*[^\\n]*\\/?>|<(${tagsPattern})\\s*[^\\n]*>((?:(?!<\\/\\2>)[\\s\\S])*?)<\\/\\2>`,
-    'g'
-  )
+  let docSoFar = ''
 
-  let match
-  const blocks: BlockContent[] = []
+  const innerTagStack: string[] = []
 
-  while ((match = regex.exec(str)) !== null) {
-    const tag = match[1] || match[2]
-    const childContent = match[3] ? match[3].trim() : ''
-    const start = match.index
-    const end = start + match[0].length
+  let currTag: string | null = null
+  let currTagHasClosed = false
+  let currTagHasSelfClosed = false
+  let currTagFullContent = ''
 
-    // calculate the child position
-    let childStart, childEnd
-    if (childContent !== '') {
-      childStart = str.indexOf(childContent, start)
-      childEnd = childStart + childContent.length
-    } else {
-      childStart = end - 2 // '/>' position
-      childEnd = end - 2 // '/>' position
+  let currContent: string | null = null
+  let currTagStartOffset = 0
+  let currContentStartOffset = 0
+  let currContentEndOffset = 0
+
+  const tagOpenStartRegex = /^<([A-Za-z]+)/
+  const tagCloseRegex = /^<\/([A-Za-z]+)>$/
+  const tagSelfCloseRegex = /\/>$/
+  const tagEndRegex = />$/
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+
+    const tagStartOpenMatch = line.match(tagOpenStartRegex)
+    const tagCloseMatch = line.match(tagCloseRegex)
+    const tagSelfCloseMatch = line.match(tagSelfCloseRegex)
+    const tagEndRegexMatch = line.match(tagEndRegex)
+
+    if (!tagStartOpenMatch && !currTag) {
+      // interstital code, ignore
+      docSoFar += line + '\n'
+      continue
     }
 
-    blocks.push({
-      type: 'block',
-      tag,
-      position: { start: { offset: start }, end: { offset: end } },
-      content: str.substring(start, end),
-      child: {
-        content: childContent,
-        position: { start: { offset: childStart }, end: { offset: childEnd } },
-      },
-      attrs: [],
-    })
+    if (currTag) {
+      currTagFullContent += '\n' + line
+    }
+
+    if (tagStartOpenMatch) {
+      // opening tag, if we haven't started a block start one now
+      if (!currTag) {
+        currTag = tagStartOpenMatch[1]
+        currContent = null // initialize content
+        currTagFullContent = line
+        currTagHasClosed = Boolean(tagEndRegexMatch)
+        currTagHasSelfClosed = Boolean(tagSelfCloseMatch)
+        currTagStartOffset = docSoFar.length
+      } else {
+        if (!currTagHasClosed) {
+          currTagHasClosed = Boolean(tagEndRegexMatch)
+          currTagHasSelfClosed = Boolean(tagSelfCloseMatch)
+          continue // Don't add to content yet
+        }
+
+        // if and only if we're opening another tag with the same name as the current tag, add to inner tag stack
+        if (tagStartOpenMatch[1] === currTag) {
+          innerTagStack.push(currTag)
+        }
+        // add to content no matter what
+        if (currContent === null) {
+          currContent = line
+          currContentStartOffset = docSoFar.length
+          currContentEndOffset = currContentStartOffset + line.length + 1
+        } else {
+          currContent += '\n' + line
+          currContentEndOffset += line.length + 1
+        }
+      }
+    } else if (currTag && !currTagHasClosed) {
+      currTagHasClosed = Boolean(tagEndRegexMatch)
+      currTagHasSelfClosed = Boolean(tagSelfCloseMatch)
+    } else if (currTagHasClosed) {
+      if (currTag && innerTagStack.length === 0 && (tagSelfCloseMatch || tagCloseMatch?.[1] === currTag)) {
+        // ignore
+      } else {
+        // always just add to currContent if not opening tag
+        if (currContent === null) {
+          currContent = line
+          currContentStartOffset = docSoFar.length
+          currContentEndOffset = currContentStartOffset + line.length + 1
+        } else {
+          currContent += '\n' + line
+          currContentEndOffset += line.length + 1
+        }
+      }
+    }
+
+    docSoFar += line + '\n'
+
+    if (tagCloseMatch && currTag === tagCloseMatch[1] && innerTagStack.length > 0) {
+      // closing an inner tag, ignore it
+      innerTagStack.pop()
+      continue
+    }
+
+    if (tagCloseMatch || currTagHasSelfClosed) {
+      const isSame = (tagCloseMatch && tagCloseMatch[1] === currTag) || currTagHasSelfClosed
+
+      if (!currTag || !isSame) {
+        continue
+      }
+      const block: GlassContent = {
+        type: 'block',
+        tag: currTag,
+        attrs: [],
+        content: currTagFullContent,
+        position: {
+          start: { offset: currTagStartOffset },
+          end: { offset: docSoFar.length },
+        },
+        child: {
+          content: currContent || '',
+          position: {
+            start: { offset: currContentStartOffset },
+            end: { offset: currContentEndOffset },
+          },
+        },
+      }
+      blocks.push(block)
+      currTag = null
+      currContent = null
+      currTagFullContent = ''
+      continue
+    }
   }
 
-  return blocks
-  // return parseAttributes(str, blocks)
+  return parseAttributes(doc, blocks)
 }
 
-export function parseGlassBlocksStrict(str: string): BlockContent[] {
-  // Build a regex pattern string using the provided tags
-  const tagsPattern = tags.join('|')
-
-  const regex = new RegExp(
-    `(^<(${tagsPattern})\\s*[^\\n]*\\/>)|(^<(${tagsPattern})\\s*[^\\n]*>\\n?([\\s\\S]*?)<\\/\\4>)|(\\n<(${tagsPattern})\\s*[^\\n]*\\/>)|([\\n\\r]<(${tagsPattern})\\s*[^\\n]*>\\n?([\\s\\S]*?)<\\/\\8>)`,
-    'gm'
-  )
-
-  let match
-  const blocks: BlockContent[] = []
-
-  while ((match = regex.exec(str)) !== null) {
-    const tag = match[2] || match[4] || match[7] || match[9]
-    const childContent = match[5] || match[10] ? (match[5] || match[10]).trim() : ''
-    const start = match.index
-    const end = start + match[0].length
-
-    // calculate the child position
-    const childStart = childContent !== '' ? str.indexOf(childContent, start) : 0
-    const childEnd = childContent !== '' ? childStart + childContent.length : 0
-
-    blocks.push({
-      type: 'block',
-      tag,
-      content: str.substring(start, end),
-      position: { start: { offset: start }, end: { offset: end } },
-      child: {
-        content: childContent,
-        position: { start: { offset: childStart }, end: { offset: childEnd } },
-      },
-      attrs: [],
-    })
-  }
-
-  return blocks
-  // return parseAttributes(str, blocks)
-}
-
-function parseAttributes(origDoc: string, blocks: BlockContent[]) {
+function parseAttributes(origDoc: string, blocks: GlassContent[]) {
   return blocks.map(b => {
+    if (!b.child) {
+      return b
+    }
     let blockWithoutChildContent = b.content
     if (b.child.content) {
       blockWithoutChildContent =
@@ -184,6 +215,9 @@ function parseAttributes(origDoc: string, blocks: BlockContent[]) {
   })
 }
 
-export function reconstructGlassDocument(nodes: { content: string }[]): string {
-  return nodes.map(c => c.content).join('')
+export function reconstructGlassDocument(nodes: { content: string; type: string }[]): string {
+  return nodes
+    .map(c => (c.type === 'block' ? c.content + '\n' : c.content))
+    .join('')
+    .trim()
 }

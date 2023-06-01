@@ -28,7 +28,7 @@ export async function transpileGlassFilePython(
 ) {
   const originalDoc = doc
 
-  const parsedDocument = glasslib.parseGlassDocument(originalDoc, false)
+  const parsedDocument = glasslib.parseGlassDocument(originalDoc)
 
   const testContent = parsedDocument
     .filter(t => 'tag' in t && t.tag === 'Test')
@@ -57,14 +57,14 @@ export async function transpileGlassFilePython(
   let model = 'gpt-3.5-turbo'
 
   // find all the interpolation variables from dynamic code blocks
-  for (const jsxNode of parsedDocument.filter(d => d.type === 'block') as any as glasslib.BlockContent[]) {
+  for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
     if (jsxNode.tag === 'Test') {
       // don't strip away codeblocks, yet
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
     }
     if (jsxNode.tag === 'Request' || jsxNode.tag === 'Chat') {
-      const modelAttr = jsxNode.attrs.find(a => a.name === 'model')
+      const modelAttr = jsxNode.attrs!.find(a => a.name === 'model')
       // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
       // we don't currently support dynamic model values
       model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : model

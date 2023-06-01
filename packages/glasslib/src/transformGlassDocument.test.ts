@@ -10,8 +10,8 @@ language: typescript
 ---
 hello world`
 
-    expect(reconstructGlassDocument(parseGlassDocument(doc, false))).to.equal(doc)
-    expect(parseGlassDocument(doc, false)).to.have.length(1)
+    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
+    expect(parseGlassDocument(doc)).to.have.length(1)
   })
 
   it('should count toplevel nodes correctly and replace document', () => {
@@ -26,8 +26,8 @@ world
 <Assistant>
 world
 </Assistant>`
-    expect(reconstructGlassDocument(parseGlassDocument(doc, false))).to.equal(doc)
-    expect(parseGlassDocument(doc, false)).to.have.length(5)
+    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
+    expect(parseGlassDocument(doc)).to.have.length(5)
   })
 
   it('should parse document nodes and recreate document', () => {
@@ -36,8 +36,8 @@ language: typescript
 ---
 hello world`
 
-    expect(reconstructGlassDocument(parseGlassDocument(doc, false))).to.equal(doc)
-    expect(parseGlassDocument(doc, false)).to.have.length(1)
+    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
+    expect(parseGlassDocument(doc)).to.have.length(1)
   })
 
   it('should parse document nodes and recreate document', () => {
@@ -55,7 +55,7 @@ interstitial
 
 done`
 
-    expect(reconstructGlassDocument(parseGlassDocument(doc, false))).to.equal(doc)
+    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
   })
 
   it('should add node to document', () => {
@@ -67,6 +67,7 @@ hello world`
     expect(addNodeToDocument('<User>\nuser\n</User>\n', 0, doc)).to.equal(`<User>
 user
 </User>
+
 ---
 language: typescript
 ---
@@ -89,7 +90,7 @@ hello world
 
 <User />`
 
-    expect(replaceDocumentNode('<User>\nuser\n</User>\n', 0, doc)).to.equal(`<User>
+    expect(replaceDocumentNode('<User>\nuser\n</User>', 0, doc)).to.equal(`<User>
 user
 </User>
 hello world
@@ -102,6 +103,7 @@ language: typescript
 <User>
 user
 </User>
+
 <User />`)
   })
 
@@ -154,7 +156,7 @@ hello
 </User>`)
     })
 
-    it('should transform document without existing state node', () => {
+    it('should transform document with existing state node', () => {
       const newState = `<State>\nstate\n</State>`
 
       const doc = `const a = "foo"

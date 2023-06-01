@@ -19,9 +19,9 @@ export function parseChatCompletionBlocks(
 
   const res: ChatCompletionRequestMessage[] = []
 
-  for (const node of nodes) {
+  for (const node of nodes.filter(n => n.type === 'block')) {
     let role = node.tag?.toLowerCase()
-    let blockContent = node.child.content
+    let blockContent = node.child!.content
     if (role == 'chat' && isChatUserFirst) {
       res.push({ role: 'user', content: interpolationArgs.input })
       continue
@@ -30,8 +30,8 @@ export function parseChatCompletionBlocks(
       continue // ignore
     }
     if (role === 'block') {
-      const roleAttr = node.attrs.find(attr => attr.name === 'role')
-      const contentAttr = node.attrs.find(attr => attr.name === 'content')
+      const roleAttr = node.attrs!.find(attr => attr.name === 'role')
+      const contentAttr = node.attrs!.find(attr => attr.name === 'content')
       if (roleAttr == null) {
         throw new Error('<Block> tag must have role attribute')
       }

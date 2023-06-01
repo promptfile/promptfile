@@ -144,7 +144,7 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  it.only('should transpile with dynamic for loop', () => {
+  it('should transpile with dynamic for loop', () => {
     const { input, output } = loadTestfile('moreFor', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'moreFor' })
     expect(transpiled.code.trim()).to.equal(output.trim())

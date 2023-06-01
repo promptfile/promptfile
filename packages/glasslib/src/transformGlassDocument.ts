@@ -2,16 +2,16 @@ import { getJSXNodeInsidesString } from './jsxElementNode'
 import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 
 export function addNodeToDocument(content: string, index: number, doc: string) {
-  const parsed: { content: string }[] = parseGlassDocument(doc, false)
-  const nodes = parsed.slice(0, index).concat({ content }).concat(parsed.slice(index))
+  const parsed: { content: string; type: string }[] = parseGlassDocument(doc)
+  const nodes = parsed.slice(0, index).concat({ content, type: 'block' }).concat(parsed.slice(index))
   return reconstructGlassDocument(nodes)
 }
 
 export function replaceDocumentNode(content: string, index: number, doc: string) {
-  const parsed: { content: string }[] = parseGlassDocument(doc, false)
+  const parsed: { content: string; type: string }[] = parseGlassDocument(doc)
   const nodes = parsed
     .slice(0, index)
-    .concat({ content })
+    .concat({ content, type: 'block' })
     .concat(parsed.slice(index + 1))
   return reconstructGlassDocument(nodes)
 }
@@ -25,8 +25,8 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
   // originalDoc = originalWithoutEscape.output
   // interpolatedDoc = interpolatedWithoutEscape.output
 
-  const parsedOriginal = parseGlassDocument(originalDoc, false)
-  const parsedInterpolated = parseGlassDocument(interpolatedDoc, false)
+  const parsedOriginal = parseGlassDocument(originalDoc)
+  const parsedInterpolated = parseGlassDocument(interpolatedDoc)
 
   let transformedOriginal = originalDoc
   let transformedInterpolated = interpolatedDoc
@@ -38,7 +38,7 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
 
     const newOriginalDoc = replaceDocumentNode((originalLoopNode as any).child.content, originalLoopIndex, originalDoc)
 
-    const newDocNodes = parseGlassDocument(newOriginalDoc, false)
+    const newDocNodes = parseGlassDocument(newOriginalDoc)
     const nodesLengthDiff = newDocNodes.length - parsedOriginal.length
 
     transformedOriginal = addNodeToDocument(
@@ -59,7 +59,7 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
       interpolatedDoc
     )
 
-    const newDocNodes = parseGlassDocument(newInterpolatedDoc, false)
+    const newDocNodes = parseGlassDocument(newInterpolatedDoc)
     const nodesLengthDiff = newDocNodes.length - parsedInterpolated.length
 
     transformedInterpolated = addNodeToDocument(
@@ -78,7 +78,7 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
 }
 
 export function replaceStateNode(newStateNode: string, doc: string) {
-  const parsed = parseGlassDocument(doc, false)
+  const parsed = parseGlassDocument(doc)
 
   const stateNode = parsed.find(node => (node as any).tag === 'State')
   if (!stateNode) {
@@ -92,7 +92,7 @@ export function replaceStateNode(newStateNode: string, doc: string) {
         ? doc.slice(0, secondFrontmatterIndex + 4) + '\n' + newStateNode + '\n' + doc.slice(secondFrontmatterIndex + 4)
         : doc
     } else {
-      return addNodeToDocument(newStateNode + '\n' + '\n', 0, doc)
+      return addNodeToDocument(newStateNode + '\n', 0, doc)
     }
   }
 
@@ -106,7 +106,7 @@ export function updateRequestOrChatNode(substitution: string, doc: string) {
 }
 
 export function replaceRequestNode(newRequestNode: string, doc: string) {
-  const parsed = parseGlassDocument(doc, false)
+  const parsed = parseGlassDocument(doc)
 
   const requestNode = parsed.find(node => (node as any).tag === 'Request')
   if (!requestNode) {
@@ -118,7 +118,7 @@ export function replaceRequestNode(newRequestNode: string, doc: string) {
 }
 
 export function updateChatNode(chatNodeSubstitution: string, doc: string) {
-  const parsed = parseGlassDocument(doc, false)
+  const parsed = parseGlassDocument(doc)
 
   const chatNode = parsed.find(node => (node as any).tag === 'Chat')
   if (!chatNode) {

@@ -4,16 +4,7 @@ export { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './lang
 export { ChatCompletionRequestMessage, parseChatCompletionBlocks } from './parseChatCompletionBlocks'
 export { parseGlassAST } from './parseGlassAST'
 export { constructGlassArgsNode, parseGlassArgs } from './parseGlassArgs'
-export {
-  BlockContent,
-  CodeContent,
-  FrontmatterContent,
-  GlassContent,
-  parseGlassBlocks,
-  parseGlassBlocksStrict,
-  parseGlassDocument,
-  reconstructGlassDocument,
-} from './parseGlassBlocks'
+export { GlassContent, parseGlassBlocks, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 export { parseGlassImports } from './parseGlassImports'
 export { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 export { removeGlassComments } from './removeGlassComments'

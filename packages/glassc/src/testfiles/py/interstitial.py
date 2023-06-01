@@ -4,7 +4,6 @@ def getInterstitialPrompt(interpolationArgs = {}):
     def compile(opt = { "args": {} }):
         foo = "bar"
         
-        
         print(foo)
         GLASSVAR = {
             0: """{}""".format("""<User>

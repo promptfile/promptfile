@@ -1,6 +1,5 @@
 import './jsxElementNode.test'
 import './parseGlassBlocks.test'
-import './parseGlassBlocks2.test'
 import './parseGlassTopLevelJsxElements.test'
 import './removeGlassComments.test'
 import './removeGlassFrontmatter.test'
