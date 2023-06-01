@@ -6,20 +6,27 @@ import { executeGlassTypescriptNew } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
-export async function executeTestSuite(document: vscode.TextDocument, interpolationArgs: any, usePython: boolean) {
+export async function executeTestSuite(
+  outputChannel: vscode.OutputChannel,
+  document: vscode.TextDocument,
+  interpolationArgs: any,
+  usePython: boolean
+) {
   const fileName = getDocumentFilename(document)
 
   const openaiKey = getOpenaiKey()
   const anthropicKey = getAnthropicKey()
 
-  const c = usePython
-    ? await executeGlassPython(document, interpolationArgs)
-    : await executeGlassTypescriptNew(document, fileName, interpolationArgs)
+  if (usePython) {
+    const c = await executeGlassPython(document, interpolationArgs)
 
-  const results: UnwrapPromise<ReturnType<typeof runGlass>>[] = []
-  for (const output of c) {
-    console.log('running glass', output)
-    results.push(await runGlass(output, { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '' }))
+    const results: UnwrapPromise<ReturnType<typeof runGlass>>[] = []
+    for (const output of c) {
+      console.log('running glass', output)
+      results.push(await runGlass(output, { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '' }))
+    }
+    return results
   }
-  return results
+
+  return await executeGlassTypescriptNew(outputChannel, document, fileName, interpolationArgs)
 }

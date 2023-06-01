@@ -158,7 +158,12 @@ export async function activate(context: vscode.ExtensionContext) {
         console.error(e)
       }
 
-      const resp = await executeTestSuite(activeEditor.document, {}, activeEditor.document.languageId === 'glass-py')
+      const resp = await executeTestSuite(
+        outputChannel,
+        activeEditor.document,
+        {},
+        activeEditor.document.languageId === 'glass-py'
+      )
     }),
     vscode.commands.registerCommand('glass.showGlassOutput', async () => {
       outputChannel.show()
