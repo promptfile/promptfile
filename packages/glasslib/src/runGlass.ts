@@ -164,7 +164,7 @@ ${setNextUserText}
 }
 
 const requestNodeReplacement = (model: string, message: string, streaming: boolean) => {
-  return `<Assistant model="${model}">
+  return `<Assistant model="${model}" temperature="1">
 ${message}${streaming ? '█' : ''}
 </Assistant>`
 }
