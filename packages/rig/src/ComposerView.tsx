@@ -1,4 +1,5 @@
 import { VSCodeButton, VSCodeDivider, VSCodeTextArea } from '@vscode/webview-ui-toolkit/react'
+import { useEffect } from 'react'
 
 interface ComposerViewProps {
   run: (inputs: Record<string, string>) => void
@@ -10,6 +11,10 @@ interface ComposerViewProps {
 
 export const ComposerView = (props: ComposerViewProps) => {
   const { inputs, setInputs, run, streaming, stop } = props
+
+  useEffect(() => {
+    document.getElementById('composer-input-0')?.focus()
+  }, Object.keys(inputs))
 
   return (
     <div style={{ width: '100%', flexShrink: 0 }}>

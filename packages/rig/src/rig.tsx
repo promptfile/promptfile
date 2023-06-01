@@ -67,7 +67,9 @@ function RigView() {
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
           if (message.data.variables.length > 0) {
-            document.getElementById('composer-input-0')?.focus()
+            setTimeout(() => {
+              document.getElementById('composer-input-0')?.focus()
+            }, 100)
           } else {
             vscode.postMessage({
               action: 'runGlass',
