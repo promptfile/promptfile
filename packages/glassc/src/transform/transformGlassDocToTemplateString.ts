@@ -4,7 +4,7 @@ import { escapePythonTemplateSequences } from './escapePythonTemplateSequences'
 import { transformJsxElementToTemplateString } from './transformJsxElementToTemplateString'
 
 export function transformGlassDocumentToTemplateString(input: string): string {
-  const jsxNodes = glasslib.parseGlassTopLevelJsxElements(input)
+  const jsxNodes = glasslib.parseGlassBlocks(input)
 
   const replacementMap: Record<string, string> = {}
 
@@ -27,7 +27,7 @@ export function transformGlassDocumentToTemplateString(input: string): string {
 }
 
 export function transformGlassDocumentToTemplateStringPython(input: string) {
-  const jsxNodes = glasslib.parseGlassTopLevelJsxElements(input)
+  const jsxNodes = glasslib.parseGlassBlocks(input)
 
   const replacementMap: Record<string, string> = {}
 
@@ -40,7 +40,7 @@ export function transformGlassDocumentToTemplateStringPython(input: string) {
     const docSlice = input.slice(node.position.start.offset, node.position.end.offset)
 
     const attrInterpolations: string[] = []
-    for (const attr of node.attrs) {
+    for (const attr of node.attrs!) {
       if (attr.expressionValue) {
         attrInterpolations.push(`${attr.expressionValue}`)
         // attrInterpolations.push(`${attr.expressionValue.replaceAll('"', '\\"')}`)
@@ -50,24 +50,18 @@ export function transformGlassDocumentToTemplateStringPython(input: string) {
       }
     }
 
-    const insides =
-      node.children.length === 0
-        ? ''
-        : input.substring(
-          node.children[0].position.start.offset,
-          node.children[node.children.length - 1].position.end.offset
-        )
+    const insides = node.child!.content
     const transformedInsides = transformGlassDocumentToTemplateStringPython(insides)
     // const transformedInsides = transformGlassDocumentToTemplateStringPython(insides.replaceAll('"', '\\"'))
     for (const s of transformedInsides.undeclaredSymbols) {
       undeclaredSymbols.add(s)
     }
 
-    const replacement = `"""<${node.tagName}${node.attrs
-      .map(a => ` ${a.name}=${a.stringValue ? `"${a.stringValue}"` : a.expressionValue ? `{{"{}"}}` : `"True"`}`)
+    const replacement = `"""<${node.tag}${node
+      .attrs!.map(a => ` ${a.name}=${a.stringValue ? `"${a.stringValue}"` : a.expressionValue ? `{{"{}"}}` : `"True"`}`)
       .join('')}>
 {}
-</${node.tagName}>""".format(${attrInterpolations.concat(transformedInsides.newDocument).join(', ')})`
+</${node.tag}>""".format(${attrInterpolations.concat(transformedInsides.newDocument).join(', ')})`
 
     replacementMap[`!##GLASS-${i}`] = replacement
     transformedDoc = transformedDoc.replace(docSlice, `!##GLASS-${i}`)
