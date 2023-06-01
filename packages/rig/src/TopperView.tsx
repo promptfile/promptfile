@@ -123,7 +123,7 @@ export const TopperView = (props: TopperViewProps) => {
           style={{ fontSize: '10px', opacity: 0.3, cursor: 'pointer' }}
           onClick={openCurrentGlass}
         >
-          View session
+          Open session file
         </span>
       </div>
       <VSCodeDivider style={{ margin: 0, padding: 0 }} />
