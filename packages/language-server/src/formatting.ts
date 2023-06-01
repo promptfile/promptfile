@@ -1,19 +1,65 @@
 import { parseFrontmatterFromGlass } from '@glass-lang/glassc'
-import { removeGlassFrontmatter } from '@glass-lang/glasslib'
+import { parseGlassDocument, removeGlassFrontmatter } from '@glass-lang/glasslib'
+import * as prettier from 'prettier'
 import { glassElements } from './elements'
 
-export function formatDocument(text: string) {
+export function formatDocument(text: string, isPython: boolean) {
+  text = wrapIfNoBlocks(text)
+
   // Check if the document contains any of the required tags
+  if (!isPython) {
+    const sections = parseGlassDocument(text)
+    const blocks = sections.map(s => {
+      if (s.type === 'frontmatter') {
+        return s
+      }
+      if (s.type === 'block') {
+        const childContent = s.child!.content
+        if (childContent.length === 0) {
+          const formatted = prettify(s.content)
+          return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
+        }
+        const blockWithoutChild =
+          s.content.substring(0, s.child!.position.start.offset - s.position.start.offset) +
+          'GLASS_INNERBLOCK_SUBSTITUTION' +
+          s.content.substring(s.child!.position.end.offset - s.position.start.offset)
+        const formatted = prettify(blockWithoutChild)
+          .replace(/\s*GLASS_INNERBLOCK_SUBSTITUTION\s*/, '\n' + childContent + '\n')
+          .trim()
+        return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
+      }
+      if (s.content.trim().length === 0) {
+        return s
+      }
+      let formattedCode = prettier
+        .format(s.content, {
+          parser: 'typescript',
+          printWidth: 120,
+          arrowParens: 'avoid',
+          semi: false,
+          singleQuote: true,
+          trailingComma: 'es5',
+        })
+        .trim()
+      // if s.content starts or ends with any whitepsace chars, add them back
+      const leadingWhitespace = s.content.match(/^\s+/)
+      const trailingWhitespace = s.content.match(/\s+$/)
+      if (leadingWhitespace) {
+        formattedCode = leadingWhitespace[0] + formattedCode
+      }
+      if (trailingWhitespace) {
+        formattedCode = formattedCode + trailingWhitespace[0]
+      }
+
+      return { ...s, content: formattedCode }
+    })
+    text = blocks.map(b => b.content).join('')
+  }
 
   const nonSelfClosingTags = glassElements.filter(e => e.selfClosing !== true)
 
   const tagNames = glassElements.map(e => e.name).join('|')
-  const hasTags = new RegExp(`<(${tagNames})`).test(text)
 
-  // If no tags are present, wrap the entire content in <User> </User> tags
-  if (!hasTags) {
-    text = `<User>\n${text}\n</User>`
-  }
   const lines = text.split('\n')
   const formattedLines: string[] = []
 
@@ -52,4 +98,27 @@ export function formatDocument(text: string) {
   }
 
   return finalText.trim()
+}
+
+function wrapIfNoBlocks(text: string) {
+  const tagNames = glassElements.map(e => e.name).join('|')
+  const hasTags = new RegExp(`<(${tagNames})`).test(text)
+
+  // If no tags are present, wrap the entire content in <User> </User> tags
+  if (!hasTags) {
+    return `<User>\n${text}\n</User>`
+  }
+
+  return text
+}
+
+function prettify(code: string) {
+  return prettier.format(code, {
+    parser: 'typescript',
+    printWidth: 120,
+    arrowParens: 'avoid',
+    semi: false,
+    singleQuote: true,
+    trailingComma: 'es5',
+  })
 }

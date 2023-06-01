@@ -121,6 +121,15 @@ inside assistant
     expect(parsed[0].child!.content).to.equal(``)
   })
 
+  it('should parse document with no blocks', () => {
+    const doc = `const foo = "bar"
+`
+
+    const parsedDoc = parseGlassDocument(doc)
+    expect(parsedDoc).to.have.length(1)
+    expect(parsedDoc[0].content).to.equal('const foo = "bar"\n')
+  })
+
   it('should parse whole document', () => {
     const doc = `const foo = "bar"
 

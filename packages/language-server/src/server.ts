@@ -143,7 +143,7 @@ connection.onDocumentFormatting(async (params: DocumentFormattingParams): Promis
   if (!document) {
     return []
   }
-  const formattedText = formatDocument(document.getText())
+  const formattedText = formatDocument(document.getText(), document.languageId === 'glass-py')
 
   // Compute the range of the entire document
   const start = document.positionAt(0)

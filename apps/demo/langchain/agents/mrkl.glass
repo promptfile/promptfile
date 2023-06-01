@@ -4,41 +4,48 @@ language: typescript
 
 const serpApiKey = '21dcb41b678d3f25cdb7ce1e946245ba66cb19dec2896e40e1a5c9df9419db21'
 
-const tools = [{
+const tools = [
+  {
     name: 'calculator',
-    description: 'Useful for getting the result of a math expression. The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.'
-}, {
+    description:
+      'Useful for getting the result of a math expression. The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.',
+  },
+  {
     name: 'search',
-    description: 'A search engine. Useful for when you need to answer questions about current events. Input should be a search query.'
-}]
+    description:
+      'A search engine. Useful for when you need to answer questions about current events. Input should be a search query.',
+  },
+]
 
-
-async function runAction(data: { action: 'calculator' | 'search', action_input: string }) {
-    if (data.action === 'calculator') {
-        return '' + eval(data.action_input)
-    }
-    const resp = await fetch('https://serpapi.com/search.json?api_key=' + serpApiKey + '&engine=google&q=' + encodeURIComponent(data.action_input))
-    const json = await resp.json()
-    if (json.answer_box?.answer) {
-      return json.answer_box.answer
-    } else if (json.answer_box?.snippet) {
-      return json.answer_box.snippet
-    } else if (json.answer_box?.snippet_highlighted_words) {
-      return json.answer_box.snippet_highlighted_words[0]
-    } else if (json.sports_results?.game_spotlight) {
-      return json.sports_results.game_spotlight
-    } else if (json.knowledge_graph?.description) {
-      return json.knowledge_graph.description
-    } else if (json.organic_results[0] && json.organic_results[0].snippet) {
-      return json.organic_results[0].snippet
-    }
-    return "No good search result found"
+async function runAction(data: { action: 'calculator' | 'search'; action_input: string }) {
+  if (data.action === 'calculator') {
+    return '' + eval(data.action_input)
+  }
+  const resp = await fetch(
+    'https://serpapi.com/search.json?api_key=' +
+      serpApiKey +
+      '&engine=google&q=' +
+      encodeURIComponent(data.action_input)
+  )
+  const json = await resp.json()
+  if (json.answer_box?.answer) {
+    return json.answer_box.answer
+  } else if (json.answer_box?.snippet) {
+    return json.answer_box.snippet
+  } else if (json.answer_box?.snippet_highlighted_words) {
+    return json.answer_box.snippet_highlighted_words[0]
+  } else if (json.sports_results?.game_spotlight) {
+    return json.sports_results.game_spotlight
+  } else if (json.knowledge_graph?.description) {
+    return json.knowledge_graph.description
+  } else if (json.organic_results[0] && json.organic_results[0].snippet) {
+    return json.organic_results[0].snippet
+  }
+  return 'No good search result found'
 }
 
-
-
-const toolDescriptions = tools.map((tool) => tool.name + ': ' + tool.description).join('\n')
-const toolNames = tools.map((tool) => tool.name).join(', ')
+const toolDescriptions = tools.map(tool => tool.name + ': ' + tool.description).join('\n')
+const toolNames = tools.map(tool => tool.name).join(', ')
 
 <System>
 Assistant is a large language model trained by OpenAI.
@@ -95,14 +102,14 @@ ${input}
 </User>
 
 <Request
-    model="gpt-3.5-turbo"
-    onResponse={async res => {
-        console.log('got response', JSON.stringify(res))
-        const { action, action_input } = JSON.parse(res.message.slice(7, -3))
-        if (action !== 'Final Answer') {
-            const observation = await runAction({ action, action_input })
-            res.setNextUserText(observation)
-            res.continue()
-        }
-    }}
+  model="gpt-3.5-turbo"
+  onResponse={async res => {
+    console.log('got response', JSON.stringify(res))
+    const { action, action_input } = JSON.parse(res.message.slice(7, -3))
+    if (action !== 'Final Answer') {
+      const observation = await runAction({ action, action_input })
+      res.setNextUserText(observation)
+      res.continue()
+    }
+  }}
 />
