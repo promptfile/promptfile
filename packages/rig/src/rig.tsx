@@ -4,9 +4,8 @@ import { render } from 'react-dom'
 import { BlocksView } from './BlocksView'
 import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
-import { RawView } from './RawView'
 import { TopperView } from './TopperView'
-import { getNonce } from './nonce'
+import { getNonce, lastElement } from './util'
 
 export interface GlassLog {
   id: string
@@ -30,7 +29,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['View', 'Raw', 'History']
+  const tabs: string[] = ['View', 'History']
 
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
@@ -163,8 +162,7 @@ function RigView() {
   }
 
   const assistantBlocks = blocks.filter(b => b.tag === 'Assistant')
-  const lastAssistantBlock = assistantBlocks.length > 0 ? assistantBlocks[blocks.length - 1] : null
-  const streaming = lastAssistantBlock?.child?.content.includes('█') === true
+  const streaming = lastElement(assistantBlocks)?.child?.content.includes('█') === true
 
   return (
     <div
@@ -187,12 +185,10 @@ function RigView() {
         openOutput={openOutput}
       />
       {tab === 'View' && <BlocksView session={session} blocks={blocks} />}
-      {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {['View', 'Raw'].includes(tab) &&
-        (Object.keys(inputs).length > 0 || streaming || blocks.some(b => b.tag === 'Request')) && (
-          <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
-        )}
+      {tab === 'View' && (Object.keys(inputs).length > 0 || streaming || blocks.some(b => b.tag === 'Request')) && (
+        <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
+      )}
     </div>
   )
 }

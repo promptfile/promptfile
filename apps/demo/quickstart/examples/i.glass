@@ -12,6 +12,7 @@ setNumMessages(numMessages + 1)
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
 </System>
 
+
 // The `onResponse` attribute lets you execute code with the response from the LLM.
 <Repeat>
 <User>

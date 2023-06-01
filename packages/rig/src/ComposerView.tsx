@@ -50,7 +50,7 @@ export const ComposerView = (props: ComposerViewProps) => {
                 setInputs({ ...inputs, [key]: value })
               }}
               onKeyDown={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (!streaming && e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
                   run(inputs)
                 }
