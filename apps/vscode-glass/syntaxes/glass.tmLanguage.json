@@ -7,10 +7,7 @@
       "include": "#markdown-frontmatter"
     },
     {
-      "include": "#response-element"
-    },
-    {
-      "include": "#repeat-element"
+      "include": "#transcript-element"
     },
     {
       "include": "#request-element"
@@ -81,11 +78,11 @@
         }
       }
     },
-    "response-element": {
-      "begin": "^(<)(Response)([^>]*)(>)$",
+    "transcript-element": {
+      "begin": "^(<)(Transcript)([^>]*)(>)$",
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.end.jsx" },
-        "2": { "name": "source.glass.response.name" },
+        "2": { "name": "source.glass.transcript.name" },
         "3": {
           "patterns": [
             {
@@ -121,78 +118,13 @@
           "include": "#system-element"
         }
       ],
-      "end": "^(<\\/)(Response)(>)$",
+      "end": "^(<\\/)(Transcript)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.response.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
-    },
-    "repeat-element": {
-      "begin": "^(<)(Repeat)([^>]*)(>)$",
-      "beginCaptures": {
-        "1": { "name": "punctuation.definition.tag.end.jsx" },
-        "2": { "name": "source.glass.repeat.name" },
-        "3": {
-          "patterns": [
-            {
-              "include": "source.tsx#jsx-tag-attribute-name"
-            },
-            {
-              "include": "source.tsx#jsx-tag-attribute-assignment"
-            },
-            {
-              "include": "source.tsx#jsx-string-double-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-string-single-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-evaluated-code"
-            },
-            {
-              "include": "source.tsx#jsx-tag-attributes-illegal"
-            }
-          ]
-        },
-        "4": { "name": "punctuation.definition.tag.end.jsx" }
-      },
-      "patterns": [
-        {
-          "include": "#request-element"
-        },
-        {
-          "include": "#test-element"
-        },
-        {
-          "include": "#state-element"
-        },
-        {
-          "include": "#user-element"
-        },
-        {
-          "include": "#assistant-element"
-        },
-        {
-          "include": "#system-element"
-        },
-        {
-          "include": "#for-element"
-        }
-      ],
-      "end": "^(<\\/)(Repeat)(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.glass.repeat.name"
+          "name": "source.glass.transcript.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"

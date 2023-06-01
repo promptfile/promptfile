@@ -115,12 +115,6 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'Repeat',
-    documentation: 'Repeats the inner content in the resulting Glass document',
-    detail: '(element) repeats inner content',
-    attributes: [],
-  },
-  {
     name: 'Request',
     documentation: 'Creates a model inference',
     detail: '(inference) API request to a model',
@@ -196,6 +190,13 @@ export const glassElements: GlassElement[] = [
         optional: true,
       },
     ],
+  },
+  {
+    name: 'Transcript',
+    documentation: 'Creates a Transcript tag to hold conversation history',
+    detail: '(element) holds conversation history',
+    attributes: [],
+    selfClosing: true,
   },
   {
     name: 'User',
