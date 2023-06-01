@@ -45,8 +45,8 @@ function RigView() {
   const updateInputsWithVariables = (variables: string[], clearAllValues?: boolean) => {
     const newInputs: Record<string, string> = {}
     variables.forEach(v => {
-      if (!clearAllValues && previousInputs[v] !== undefined) {
-        newInputs[v] = previousInputs[v]
+      if (!clearAllValues && inputs[v] !== undefined && (previousInputs[v] ?? '') === inputs[v]) {
+        newInputs[v] = inputs[v]
       } else {
         newInputs[v] = ''
       }
