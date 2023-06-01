@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-
 import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 import {
   addNodeToDocument,
@@ -72,7 +71,6 @@ hello world`
     expect(addNodeToDocument('<User>\nuser\n</User>\n', 0, doc)).to.equal(`<User>
 user
 </User>
-
 ---
 language: typescript
 ---
@@ -95,14 +93,14 @@ hello world
 
 <User />`
 
-    expect(replaceDocumentNode('<User>\nuser\n</User>', 0, doc)).to.equal(`<User>
+    expect(replaceDocumentNode('<User>\nuser\n</User>\n', 0, doc)).to.equal(`<User>
 user
 </User>
 hello world
 
 <User />`)
 
-    expect(replaceDocumentNode('<User>\nuser\n</User>\n', 1, doc)).to.equal(`---
+    expect(replaceDocumentNode('<User>\nuser\n</User>\n\n', 1, doc)).to.equal(`---
 language: typescript
 ---
 <User>

@@ -120,9 +120,7 @@ and more
       expect(transformDynamicBlocksPython(glass)).to.deep.equal({
         undeclaredSymbols: ['withvar'],
         nestedInterpolations: {
-          '0': `"""{}""".format("""<Text if="True">
-{}
-</Text>""".format("""With nested if block {}""".format(withvar))) if True else ''`,
+          '0': '"""With nested if block {}""".format(withvar) if True else \'\'',
         },
         jsxInterpolations: {
           '0': `"""{}""".format("""<User>
@@ -146,7 +144,7 @@ and more
 
       expect(transformDynamicBlocksPython(glass)).to.deep.equal({
         nestedInterpolations: {
-          '0': '"""{}""".format("""<Text if="True">\n{}\n</Text>""".format("""With nested if block {}""".format(withvar))) if True else \'\'',
+          '0': '"""With nested if block {}""".format(withvar) if True else \'\'',
         },
         jsxInterpolations: {
           '0': `"""{}""".format("""<User if="True">
@@ -186,10 +184,8 @@ left alone
       expect(transformDynamicBlocksPython(glass)).to.deep.equal({
         undeclaredSymbols: ['withvar'],
         nestedInterpolations: {
-          '0': `"""{}""".format("""<Text if="True">
-{}
-</Text>""".format("""With nested if block {}""".format(withvar))) if True else ''`,
-          '1': '"""{}""".format("""<Text if="False">\n{}\n</Text>""".format("""do something""".format())) if False else \'\'',
+          '0': '"""With nested if block {}""".format(withvar) if True else \'\'',
+          '1': '"""do something""".format() if False else \'\'',
         },
         jsxInterpolations: {
           '0': `"""{}""".format("""<System>

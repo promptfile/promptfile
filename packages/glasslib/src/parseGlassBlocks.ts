@@ -177,13 +177,13 @@ export function parseGlassBlocks(doc: string) {
         content: currTagFullContent,
         position: {
           start: { offset: currTagStartOffset },
-          end: { offset: docSoFar.length },
+          end: { offset: docSoFar.length - 1 },
         },
         child: {
           content: currContent || '',
           position: {
             start: { offset: currContentStartOffset },
-            end: { offset: currContentEndOffset },
+            end: { offset: currContentEndOffset - 1 },
           },
         },
       }
@@ -229,8 +229,11 @@ function parseAttributes(origDoc: string, blocks: GlassContent[]) {
 }
 
 export function reconstructGlassDocument(nodes: { content: string; type: string }[]): string {
-  return nodes
-    .map(c => (c.type === 'block' ? c.content + '\n' : c.content))
-    .join('')
-    .trim()
+  return (
+    nodes
+      .map(c => c.content)
+      // .map(c => (c.type === 'block' ? c.content + '\n' : c.content))
+      .join('')
+      .trim()
+  )
 }

@@ -140,7 +140,7 @@ restOfTheCode()`
 hello world
 </User>
 </Assistant>`)
-    expect(parsedDoc[2].content).to.equal('\nrestOfTheCode()')
+    expect(parsedDoc[2].content).to.equal('\n\nrestOfTheCode()')
   })
 
   it('should parse whole document with frontmatter', () => {
@@ -180,7 +180,7 @@ inside assistant
     expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal(doc)
     expect(parsed[0].child!.content).to.equal('inside assistant')
     expect(doc.substring(parsed[0].child!.position.start.offset, parsed[0].child!.position.end.offset)).to.equal(
-      'inside assistant\n'
+      'inside assistant'
     )
   })
 
@@ -198,11 +198,11 @@ inside user
     expect(parsed[0].tag).to.equal('Assistant')
     expect(parsed[0].content).to.equal('<Assistant>\ninside assistant\n</Assistant>')
     expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal(
-      '<Assistant>\ninside assistant\n</Assistant>\n'
+      '<Assistant>\ninside assistant\n</Assistant>'
     )
     expect(parsed[0].child!.content).to.equal('inside assistant')
     expect(doc.substring(parsed[0].child!.position.start.offset, parsed[0].child!.position.end.offset)).to.equal(
-      'inside assistant\n'
+      'inside assistant'
     )
 
     expect(parsed[1].tag).to.equal('User')
@@ -212,7 +212,7 @@ inside user
     )
     expect(parsed[1].child!.content).to.equal('inside user')
     expect(doc.substring(parsed[1].child!.position.start.offset, parsed[1].child!.position.end.offset)).to.equal(
-      'inside user\n'
+      'inside user'
     )
   })
 
@@ -236,10 +236,10 @@ inside assistant
 
     expect(parsed[0].tag).to.equal('Assistant')
     expect(parsed[0].content).to.equal(expected)
-    expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal(expected + '\n')
+    expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal(expected)
     expect(parsed[0].child!.content).to.equal('inside assistant')
     expect(doc.substring(parsed[0].child!.position.start.offset, parsed[0].child!.position.end.offset)).to.equal(
-      'inside assistant\n'
+      'inside assistant'
     )
 
     expect(parsed[1].tag).to.equal('User')
@@ -249,7 +249,7 @@ inside assistant
     )
     expect(parsed[1].child!.content).to.equal('inside user')
     expect(doc.substring(parsed[1].child!.position.start.offset, parsed[1].child!.position.end.offset)).to.equal(
-      'inside user\n'
+      'inside user'
     )
   })
 
@@ -264,7 +264,7 @@ inside assistant
     expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal(doc)
     expect(parsed[0].child!.content).to.equal('inside assistant')
     expect(doc.substring(parsed[0].child!.position.start.offset, parsed[0].child!.position.end.offset)).to.equal(
-      'inside assistant\n'
+      'inside assistant'
     )
   })
 
@@ -282,7 +282,7 @@ inside assistant
     expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal(doc)
     expect(parsed[0].child!.content).to.equal('inside assistant')
     expect(doc.substring(parsed[0].child!.position.start.offset, parsed[0].child!.position.end.offset)).to.equal(
-      'inside assistant\n'
+      'inside assistant'
     )
   })
 
@@ -295,7 +295,7 @@ inside assistant
     expect(parsed).to.have.length(2)
     expect(parsed[0].tag).to.equal('Assistant')
     expect(parsed[0].content).to.equal(`<Assistant />`)
-    expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal('<Assistant />\n')
+    expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal('<Assistant />')
     expect(parsed[0].child!.content).to.equal('')
     expect(doc.substring(parsed[0].child!.position.start.offset, parsed[0].child!.position.end.offset)).to.equal('')
 
@@ -320,7 +320,7 @@ inside user
     expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal(doc)
     expect(parsed[0].child!.content).to.equal('<User>\ninside user\n</User>')
     expect(doc.substring(parsed[0].child!.position.start.offset, parsed[0].child!.position.end.offset)).to.equal(
-      '<User>\ninside user\n</User>\n'
+      '<User>\ninside user\n</User>'
     )
   })
 
@@ -344,11 +344,11 @@ inside user
     expect(parsed[0].tag).to.equal('Assistant')
     expect(parsed[0].content).to.equal('<Assistant>\n<Assistant>\ninside assistant\n</Assistant>\n</Assistant>')
     expect(doc.substring(parsed[0].position.start.offset, parsed[0].position.end.offset)).to.equal(
-      '<Assistant>\n<Assistant>\ninside assistant\n</Assistant>\n</Assistant>\n'
+      '<Assistant>\n<Assistant>\ninside assistant\n</Assistant>\n</Assistant>'
     )
     expect(parsed[0].child!.content).to.equal('<Assistant>\ninside assistant\n</Assistant>')
     expect(doc.substring(parsed[0].child!.position.start.offset, parsed[0].child!.position.end.offset)).to.equal(
-      '<Assistant>\ninside assistant\n</Assistant>\n'
+      '<Assistant>\ninside assistant\n</Assistant>'
     )
 
     expect(parsed[1].tag).to.equal('User')
@@ -358,7 +358,7 @@ inside user
     )
     expect(parsed[1].child!.content).to.equal('</foo>\n<Foo/>\n<User>\ninside user\n</User>')
     expect(doc.substring(parsed[1].child!.position.start.offset, parsed[1].child!.position.end.offset)).to.equal(
-      '</foo>\n<Foo/>\n<User>\ninside user\n</User>\n'
+      '</foo>\n<Foo/>\n<User>\ninside user\n</User>'
     )
   })
 

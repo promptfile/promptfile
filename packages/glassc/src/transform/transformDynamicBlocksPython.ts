@@ -3,7 +3,7 @@ import { checkOk } from '@glass-lang/util'
 import { transformGlassDocumentToTemplateStringPython } from './transformGlassDocToTemplateString'
 
 export function transformDynamicBlocksPython(doc: string) {
-  const jsxNodes = glasslib.parseGlassTopLevelJsxElements(doc)
+  const jsxNodes = glasslib.parseGlassBlocks(doc)
 
   const jsxInterpolations: any = {}
   let nestedInterpolations: any = {}
@@ -16,7 +16,6 @@ export function transformDynamicBlocksPython(doc: string) {
 
   for (let i = 0; i < jsxNodes.length; i++) {
     const node = jsxNodes[i]
-    checkOk(node.type === 'mdxJsxFlowElement', 'Expected node to be of type mdxJsxFlowElement')
 
     const nodeStartOffset = node.position.start.offset
     const nodeEndOffset = node.position.end.offset
@@ -24,18 +23,12 @@ export function transformDynamicBlocksPython(doc: string) {
     let docSection = origDoc.substring(nodeStartOffset, nodeEndOffset)
     // let docSection = doc.substring(nodeStartOffset + currOffset, nodeEndOffset + currOffset)
 
-    const nodeInsides =
-      node.children.length === 0
-        ? ''
-        : docSection.substring(
-            node.children[0].position.start.offset - nodeStartOffset,
-            node.children[node.children.length - 1].position.end.offset - nodeStartOffset
-          )
+    const nodeInsides = node.child!.content
 
     const transformedNode = nestedTagHelper(Object.keys(nestedInterpolations).length, docSection, node)
     nestedInterpolations = { ...nestedInterpolations, ...transformedNode.jsxInterpolations }
 
-    if (node.tagName !== 'For') {
+    if (node.tag !== 'For') {
       // jsxInterpolations = { ...jsxInterpolations, ...transformedNode.jsxInterpolations }
     }
     for (const s of transformedNode.undeclaredSymbols) {
@@ -59,16 +52,16 @@ export function transformDynamicBlocksPython(doc: string) {
     const oldSequenceLength = docSection.length
     const newSequenceLength = `\${${interpKey}}`.length
 
-    const ifAttr = node.attrs.find(attr => attr.name === 'if')
+    const ifAttr = node.attrs!.find(attr => attr.name === 'if')
     if (ifAttr != null) {
       if (ifAttr.stringValue != null) {
         ifAttr.expressionValue = ifAttr.stringValue
       }
     }
 
-    if (node.tagName === 'For') {
-      const eachAttr = node.attrs.find(attr => attr.name === 'each')!
-      const item = node.attrs.find(attr => attr.name === 'as')!
+    if (node.tag === 'For') {
+      const eachAttr = node.attrs!.find(attr => attr.name === 'each')!
+      const item = node.attrs!.find(attr => attr.name === 'as')!
       checkOk(eachAttr && item, '<For> loop requires both "each" and "as" attributes')
 
       const transform = transformGlassDocumentToTemplateStringPython(nodeInsides)
@@ -124,10 +117,10 @@ export function transformDynamicBlocksPython(doc: string) {
   return { doc, jsxInterpolations, nestedInterpolations, undeclaredSymbols: Array.from(undeclaredSymbols) }
 }
 
-function nestedTagHelper(currInterpolation: number, doc: string, docNode: glasslib.JSXNode) {
+function nestedTagHelper(currInterpolation: number, doc: string, docNode: glasslib.GlassContent) {
   let jsxInterpolations: any = {}
 
-  if (docNode.children.length === 0) {
+  if (!docNode.child?.content) {
     return { jsxInterpolations, origSection: doc, newSection: doc, undeclaredSymbols: [] }
   }
 
@@ -135,26 +128,19 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: glassl
 
   const undeclaredSymbols = new Set<string>([])
 
-  const firstChild = docNode.children[0]
-  const lastChild = docNode.children[docNode.children.length - 1]
-
   const sectionStart = docNode.position.start.offset
 
-  let nodeInsides = doc.substring(
-    firstChild.position.start.offset - sectionStart,
-    lastChild.position.end.offset - sectionStart
-  )
+  let nodeInsides = docNode.child!.content
 
-  const innerNodes = glasslib.parseGlassTopLevelJsxElements(nodeInsides)
+  const innerNodes = glasslib.parseGlassBlocks(nodeInsides)
 
   for (let i = 0; i < innerNodes.length; i++) {
     const node = innerNodes[i]
-    checkOk(node.type === 'mdxJsxFlowElement', 'Expected node to be of type mdxJsxFlowElement')
 
     const startOffset = node.position.start.offset
     const endOffset = node.position.end.offset
 
-    const docSection = nodeInsides.substring(startOffset + currOffset, endOffset + currOffset)
+    const docSection = node.child!.content
 
     const interpolationIndex = currInterpolation + Object.keys(jsxInterpolations).length
 
@@ -171,16 +157,16 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: glassl
     const oldSequenceLength = endOffset - startOffset
     const newSequenceLength = `\${${interpKey}}`.length
 
-    const ifAttr = node.attrs.find(attr => attr.name === 'if')
+    const ifAttr = node.attrs!.find(attr => attr.name === 'if')
     if (ifAttr != null) {
       if (ifAttr.stringValue != null) {
         ifAttr.expressionValue = ifAttr.stringValue
       }
     }
 
-    if (node.tagName === 'For') {
-      const eachAttr = node.attrs.find(attr => attr.name === 'each')!
-      const item = node.attrs.find(attr => attr.name === 'as')!
+    if (node.tag === 'For') {
+      const eachAttr = node.attrs!.find(attr => attr.name === 'each')!
+      const item = node.attrs!.find(attr => attr.name === 'as')!
       checkOk(eachAttr, '<For> loop requires both "each" and "fragment" attributes')
 
       const transform = transformGlassDocumentToTemplateStringPython(nodeInsides)
@@ -233,9 +219,9 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: glassl
   }
 
   const newSection =
-    doc.substring(0, firstChild.position.start.offset - sectionStart) +
+    doc.substring(0, docNode.child!.position.start.offset - sectionStart) +
     nodeInsides +
-    doc.substring(lastChild.position.end.offset - sectionStart)
+    doc.substring(docNode.child!.position.end.offset - sectionStart)
 
   undeclaredSymbols.delete('GLASSVAR')
   return { jsxInterpolations, origSection: doc, newSection, undeclaredSymbols: Array.from(undeclaredSymbols) }

@@ -33,7 +33,7 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
     const nodesLengthDiff = newDocNodes.length - parsedOriginal.length
 
     transformedOriginal = addNodeToDocument(
-      '\n' + originalLoopNode.content,
+      '\n\n' + originalLoopNode.content + '\n',
       nodesLengthDiff + originalLoopIndex + 1,
       newOriginalDoc
     )
@@ -59,7 +59,7 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
     const nodesLengthDiff = newDocNodes.length - parsedInterpolated.length
 
     transformedInterpolated = addNodeToDocument(
-      '\n' + originalLoopNode!.content,
+      '\n\n' + originalLoopNode!.content,
       nodesLengthDiff + originalLoopIndex + 1,
       newInterpolatedDoc
     )
@@ -86,7 +86,7 @@ export function replaceStateNode(newStateNode: string, doc: string) {
         ? doc.slice(0, secondFrontmatterIndex + 4) + '\n' + newStateNode + '\n' + doc.slice(secondFrontmatterIndex + 4)
         : doc
     } else {
-      return addNodeToDocument(newStateNode + '\n', 0, doc)
+      return addNodeToDocument(newStateNode + '\n' + '\n', 0, doc)
     }
   }
 

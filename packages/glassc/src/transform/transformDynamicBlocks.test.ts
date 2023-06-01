@@ -115,7 +115,7 @@ and more
 
       expect(transformDynamicBlocks(glass)).to.deep.equal({
         jsxInterpolations: {
-          'jsx-0': `true ? \`<Text if=\"true\">\nWith nested if block \${withvar}\n</Text>\` : ''`,
+          'jsx-0': `true ? \`With nested if block \${withvar}\` : ''`,
         },
         doc: '<User>\nInner stuff\n${jsx-0}\nand more\n</User>',
       })
@@ -132,7 +132,7 @@ and more
 
       expect(transformDynamicBlocks(glass)).to.deep.equal({
         jsxInterpolations: {
-          'jsx-0': `true ? \`<Text if=\"true\">\nWith nested if block \${withvar}\n</Text>\` : ''`,
+          'jsx-0': `true ? \`With nested if block \${withvar}\` : ''`,
           'jsx-1': `true ? \`<User if=\"true\">\nInner stuff\n\${jsx-0}\nand more\n</User>\` : ''`,
         },
         doc: '${jsx-1}',
@@ -164,9 +164,9 @@ left alone
 
       expect(transformDynamicBlocks(glass)).to.deep.equal({
         jsxInterpolations: {
-          'jsx-0': `true ? \`<Text if=\"true\">\nWith nested if block \${withvar}\n</Text>\` : ''`,
+          'jsx-0': `true ? \`With nested if block \${withvar}\` : ''`,
           'jsx-1': `true ? \`<User if=\"true\">\nInner stuff\n\${jsx-0}\nand more\n</User>\` : ''`,
-          'jsx-2': 'false ? `<Text if="false">\ndo something\n</Text>` : \'\'',
+          'jsx-2': "false ? `do something` : ''",
           'jsx-3': 'true ? `<Assistant if="true">\n${jsx-2}\n</Assistant>` : \'\'',
         },
         doc: '<System>\nsystem prompt\n</System>\n\n${jsx-1}\n\n${jsx-3}\n\n<User>\nleft alone\n</User>',
@@ -204,10 +204,10 @@ who was Einstein?
 
       expect(transformDynamicBlocks(glass)).to.deep.equal({
         jsxInterpolations: {
-          'jsx-0': "useGandhi ? `<Text if={useGandhi}>\nwho was gandhi?\n</Text>` : ''",
-          'jsx-1': "!useGandhi ? `<Text if={!useGandhi}>\nwho was Einstein?\n</Text>` : ''",
-          'jsx-2': "useGandhi ? `<Text if={useGandhi}>\nwho was gandhi?\n</Text>` : ''",
-          'jsx-3': "!useGandhi ? `<Text if={!useGandhi}>\nwho was Einstein?\n</Text>` : ''",
+          'jsx-0': "useGandhi ? `who was gandhi?` : ''",
+          'jsx-1': "!useGandhi ? `who was Einstein?` : ''",
+          'jsx-2': "useGandhi ? `who was gandhi?` : ''",
+          'jsx-3': "!useGandhi ? `who was Einstein?` : ''",
         },
         doc: '<Code>\nconst useGandhi = true\n</Code>\n\n<System>\nYou are a highly-intelligent AI.\n</System>\n\n<User>\n${jsx-0}\n\n${jsx-1}\n</User>\n\n<User>\n<Text if={useGandhi}>\nwho was gandhi?\n</Text>\n\n<Text if={!useGandhi}>\n<User>\n${jsx-2}\n\n${jsx-3}\n</User>',
       })
