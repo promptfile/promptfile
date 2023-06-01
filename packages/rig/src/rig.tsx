@@ -1,3 +1,4 @@
+import { GlassContent } from '@glass-lang/glasslib'
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import { BlocksView } from './BlocksView'
@@ -6,11 +7,6 @@ import { HistoryView } from './HistoryView'
 import { RawView } from './RawView'
 import { TopperView } from './TopperView'
 import { getNonce } from './nonce'
-
-export interface GlassBlock {
-  tag: string
-  content: string
-}
 
 export interface GlassLog {
   id: string
@@ -40,7 +36,7 @@ function RigView() {
   const [glass, setGlass] = useState('')
   const [currentSource, setCurrentSource] = useState('')
   const [originalSource, setOriginalSource] = useState('')
-  const [blocks, setBlocks] = useState<GlassBlock[]>([])
+  const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
   const [session, setSession] = useState(getNonce())
   const [logs, setLogs] = useState<GlassLog[]>([])

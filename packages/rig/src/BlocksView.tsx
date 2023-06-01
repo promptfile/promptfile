@@ -1,8 +1,8 @@
+import { GlassContent } from '@glass-lang/glasslib'
 import { useEffect, useRef, useState } from 'react'
-import { GlassBlock } from './rig'
 
 interface BlocksViewProps {
-  blocks: GlassBlock[]
+  blocks: GlassContent[]
   session: string
 }
 
@@ -38,6 +38,14 @@ export const BlocksView = (props: BlocksViewProps) => {
     }
   }, [blocks, autoScroll])
 
+  function requestSummary(block: GlassContent): string | undefined {
+    const modelAttr = block.attrs?.find(attr => attr.name === 'model')
+    if (block.tag !== 'Assistant' || !modelAttr) {
+      return undefined
+    }
+    return modelAttr.stringValue
+  }
+
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div
@@ -65,23 +73,33 @@ export const BlocksView = (props: BlocksViewProps) => {
           session {session}
         </div>
         {blocks
-          .filter(block => block.tag !== 'System' && !(block.content.startsWith('${') && block.content.endsWith('}')))
-          .map((block, index) => (
-            <span
-              key={index}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                paddingBottom: '24px',
-                fontStyle: block.tag === 'System' ? 'italic' : 'normal',
-              }}
-            >
-              <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px', paddingBottom: '4px' }}>
-                {block.tag}
-              </span>
-              <span style={{ whiteSpace: 'pre-line' }}>{block.content}</span>
-            </span>
-          ))}
+          .filter(
+            block =>
+              block.tag !== 'System' && !(block.child?.content.startsWith('${') && block.child?.content.endsWith('}'))
+          )
+          .map((block, index) => {
+            const summary = requestSummary(block)
+            return (
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  paddingBottom: '24px',
+                  fontStyle: block.tag === 'System' ? 'italic' : 'normal',
+                  width: '100%',
+                }}
+              >
+                <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', paddingBottom: '4px' }}>
+                  <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px' }}>{block.tag}</span>
+                  {summary && (
+                    <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '12px' }}>{summary}</span>
+                  )}
+                </div>
+                <span style={{ whiteSpace: 'pre-line' }}>{block.child?.content}</span>
+              </div>
+            )
+          })}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
     </div>
