@@ -1,13 +1,9 @@
 <System>
-You are VerboseGPT. Respond with a long message
+You are TerseGPT. Respond with a short message.
 </System>
 
 <User>
-haha ok!
+nice
 </User>
-
-<Assistant>
-
-</Assistant>
 
 <Request model="gpt-3.5-turbo" />

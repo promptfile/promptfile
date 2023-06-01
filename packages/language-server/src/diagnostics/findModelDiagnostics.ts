@@ -32,9 +32,9 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
     }
 
     const diagnostics: Diagnostic[] = []
-
+    const systemBlocks = parsed.filter(tag => tag.tag === 'System')
+    const assistantBlocks = parsed.filter(tag => tag.tag === 'Assistant')
     if (languageModel.creator === LanguageModelCreator.anthropic) {
-      const systemBlocks = parsed.filter(tag => tag.tag === 'System')
       diagnostics.push(
         ...systemBlocks.map(tag => {
           const diagnostic: Diagnostic = {
@@ -44,6 +44,22 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
               end: textDocument.positionAt(tag.position.start.offset + 7),
             },
             message: `<System> blocks not supported by Anthropic — this will get converted to a <User> block.`,
+            source: 'glass',
+          }
+          return diagnostic
+        })
+      )
+    }
+    if (languageModel.type === LanguageModelType.completion) {
+      diagnostics.push(
+        ...systemBlocks.map(tag => {
+          const diagnostic: Diagnostic = {
+            severity: DiagnosticSeverity.Warning,
+            range: {
+              start: textDocument.positionAt(tag.position.start.offset + 1),
+              end: textDocument.positionAt(tag.position.start.offset + 7),
+            },
+            message: `<System> blocks not supported by ${languageModel.name} — this will get converted to a <User> block.`,
             source: 'glass',
           }
           return diagnostic
