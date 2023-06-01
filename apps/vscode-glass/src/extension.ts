@@ -114,9 +114,6 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    vscode.commands.registerCommand('glass.openSupportChat', async () => {
-      await vscode.window.showInformationMessage('Opening support chat...')
-    }),
     vscode.commands.registerCommand('glass.runTestSuite', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {

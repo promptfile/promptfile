@@ -111,10 +111,6 @@
         "title": "Glass: Run tests"
       },
       {
-        "command": "glass.openSupportChat",
-        "title": "Glass: Open support chat"
-      },
-      {
         "command": "glass.openSettings",
         "title": "Glass: Open Settings (UI)"
       },
