@@ -188,7 +188,7 @@ function RigView() {
       {tab === 'View' && <BlocksView session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {['View', 'Raw'].includes(tab) && (
+      {['View', 'Raw'].includes(tab) && (streaming || blocks.some(b => b.tag === 'Request')) && (
         <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
       )}
     </div>

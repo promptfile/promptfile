@@ -33,7 +33,6 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
 
     const diagnostics: Diagnostic[] = []
     const systemBlocks = parsed.filter(tag => tag.tag === 'System')
-    const assistantBlocks = parsed.filter(tag => tag.tag === 'Assistant')
     if (languageModel.creator === LanguageModelCreator.anthropic) {
       diagnostics.push(
         ...systemBlocks.map(tag => {
