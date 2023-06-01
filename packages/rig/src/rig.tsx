@@ -162,8 +162,9 @@ function RigView() {
     })
   }
 
-  const lastBlock = blocks.length > 0 ? blocks[blocks.length - 1] : null
-  const streaming = lastBlock?.content.includes('█') === true
+  const assistantBlocks = blocks.filter(b => b.tag === 'Assistant')
+  const lastAssistantBlock = assistantBlocks.length > 0 ? assistantBlocks[blocks.length - 1] : null
+  const streaming = lastAssistantBlock?.content.includes('█') === true
 
   return (
     <div
@@ -188,9 +189,10 @@ function RigView() {
       {tab === 'View' && <BlocksView session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {['View', 'Raw'].includes(tab) && (streaming || blocks.some(b => b.tag === 'Request')) && (
-        <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
-      )}
+      {['View', 'Raw'].includes(tab) &&
+        (Object.keys(inputs).length > 0 || streaming || blocks.some(b => b.tag === 'Request')) && (
+          <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
+        )}
     </div>
   )
 }

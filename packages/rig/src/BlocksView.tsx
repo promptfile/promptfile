@@ -75,7 +75,9 @@ export const BlocksView = (props: BlocksViewProps) => {
         {blocks
           .filter(
             block =>
-              block.tag !== 'System' && !(block.child?.content.startsWith('${') && block.child?.content.endsWith('}'))
+              block.tag &&
+              ['User', 'Assistant'].includes(block.tag) &&
+              !(block.child?.content.startsWith('${') && block.child?.content.endsWith('}'))
           )
           .map((block, index) => {
             const summary = requestSummary(block)
