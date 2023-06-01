@@ -1,6 +1,8 @@
 import pirate from '@/images/screenshots/pirate.png'
 import Image from 'next/image'
 import pythonExecutable from '@/images/screenshots/pythonexecutableCode.png'
+import SimpleExample from '@/images/screenshots/SimpleExample.png'
+import PlaygroundGIF from '@/images/screenshots/Playground.gif'
 
 export const description = 'Quickstart guide to get up and running with Glass'
 
@@ -8,72 +10,45 @@ export const description = 'Quickstart guide to get up and running with Glass'
 
 This guide will get you all set up and ready to use the Glass language. We’ll cover how to get started, install the VS Code extension, and how to create your first Glass file. {{ className: 'lead' }}
 
-<Note>Note: the Glass language is in alpha and is subject to change.</Note>
+<Note>Note: the Glass language is in alpha and is subject to change. </Note>
 
 ## Installing the extension
 
-Working with Glass is easiest in <a href="https://code.visualstudio.com" class="link">Visual Studio Code</a> via the <a href="https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass" class="link">Glass extension</a>. This extension provides the following features:
+Working with Glass is easiest in Visual Studio Code via the Glass extension. This extension provides the following features:
 
-- syntax highlighting, linting, and diagnostics
-- transpiler (which transpiles `.glass` files to your preferred programming language)
 - built-in playground to test your prompts
+- syntax highlighting and diagnostics for Glass files
+- transpiling Glass files to your preferred programming language
 
-Install the Glass VS code extension [on the web](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass) or via the VS Code extension marketplace. [Click here](/vscode) to review all configuration settings available in the extension.
+Install the Glass VS code extension <a href="https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass" class="link" target="_blank">here</a> or via the VS Code extension marketplace. [Click here](/vscode) to review all configuration settings available in the extension.
 
 ## Creating your first `.glass` file
 
 {/* Need to make the example much more simpler and not show off too much, also need to have it include the chat block */}
 
-After installing the extension, create a new file called `example.glass` and add the following content:
+After installing the extension, create a new file called `example.glass` and copy/paste the following content:
 
 ```txt
-// This is a simple prompt that tells the LLM to respond like a pirate.
-// The prompt is structured for chat use via the `System`, `Assistant`, and `User` blocks.
-
-// we can actually execute Typescript as a Code block at the top of our Glass file.
-// async works too — just be sure to await!
-<Code>
-const date = new Date()
-const formattedDate = date.toISOString().split('T')[0]
-</Code>
-
-
-// first, add the instructions to the System prompt.
 <System>
-You are PirateGPT, a helpful assistant. You should always respond as a pirate. Today's date is ${formattedDate}
-
-# Rules
-- Respond like a pirate
-- Be helpful
-- Be kind
-- Include subtle references to how much you love the band Nickelback whenever possible
+You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-// whoa, a conditional block!
-// use conditionals to construct prompts dynamically
-<System if={formattedDate.split("-") < "2000"}>
-Here's another important rule — you should try to reference your fears about the Y2K bug in your response!
-</System>
-
-// here's the first message from the user
-// replace it with anything you want to get strated
-<User>
-hey hey, how's it going PirateGPT? how are you feeling?  also, what day is today?
-</User>
+<Chat model="gpt-3.5-turbo" />
 ```
 
 With the VSCode extension installed correctly, here's how the Glass file should look:
 
-<Image src={pirate} />
+<Image src={SimpleExample} />
 
+## Running in playground
 
-## Built-in playground
+If it's your first time executing a Glass file, you'll be asked to input the key for the specific model you are using in [VSCode settings](/vscode). All of Glass runs locally on your machine — your secret keys are never sent to any server.
 
-{/* This needs to get updated to reflected with chat response, no more playground */}
+In `example.glass`, we're using the `gpt-3.5-turbo` model, so we'll need to input the key for OpenAI `glass.openaiKey`.
 
-We're now ready to run this prompt in the built-in Glass playground.
+When you are ready to run, either hit `Command (⌘) Enter (↩)` or run the Glass file via selecting the VSCode Command Palette `Glass: Open Playground` command.
 
-Note: if it's your first time executing a Glass file, you'll be asked to input your OpenAI key to `glass.openaiKey` in VSCode settings. All of Glass runs locally on your machine — your OpenAI key is never sent to any server.
+<Image src={PlaygroundGIF} />
 
 ## Transpiling `.glass`
 
@@ -83,16 +58,14 @@ To transpile, simply run the `Glass: Transpile all` command from the command pal
 
 ## Using `.glass` in code
 
-You can now call the transpiled `example` function from your codebase and pass in the `subject` argument.
+You can now call the transpiled `example` function from your codebase.
 
 <CodeGroup title="using example.glass in typescript">
 
 ```ts
 import { Glass } from './glass'
 
-const prompt = Glass.example({
-  subject: 'The Glass language',
-})
+const prompt = Glass.example({})
 
 console.log(prompt)
 ```
@@ -100,13 +73,11 @@ console.log(prompt)
 ```python
 import glass
 
-prompt = glass.example({
-  subject: 'The Glass language'
-})
+prompt = glass.example({})
 
 print(prompt)
 ```
 
 </CodeGroup>
 
-We can't wait to see what you make with Glass!
+As we make more complex prompts, we will see how to pass in parameters into the typesafe function the transpilation creates.

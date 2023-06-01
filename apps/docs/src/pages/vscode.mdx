@@ -10,10 +10,10 @@ Glass is designed to work seamlessly within [Visual Studio Code](https://code.vi
   <Col>
     <Properties>
       <Property name="glass.defaultModel" type="string">
-        Default model for prompts.
+        Default model for prompts. Defaults to `gpt-3.5-turbo`.
       </Property>
       <Property name="glass.defaultLanguageMode" type="string">
-        The language to transpile to. Can be one of `typescript` (default), `javascript`, or `python`.
+        The language to transpile to. Defaults to `TypeScript`.
       </Property>
       <Property name="glass.openaiKey" type="string">
         Your OpenAI API key. You can create one on your [OpenAI dashboard](https://platform.openai.com/account/api-keys).
@@ -22,7 +22,10 @@ Glass is designed to work seamlessly within [Visual Studio Code](https://code.vi
         Your Anthropic API key. You can create one on your [Anthropic dashboard](https://console.anthropic.com/account/keys).
       </Property>
       <Property name="glass.outputDirectory" type="string">
-        Where to output transpiled code. Defaults to `${workspaceFolder}/src`.
+        Where to output transpiled code. Defaults to `${workspaceFolder}`.
+      </Property>
+      <Property name="glass.pythonPath" type="string">
+        Path to your Python executable. Defaults to `python3`.
       </Property>
     </Properties>
   </Col>
@@ -30,9 +33,11 @@ Glass is designed to work seamlessly within [Visual Studio Code](https://code.vi
     ```json {{ 'title': '.vscode/settings.json' }}
     {
       "glass.defaultModel": "gpt-3.5-turbo",
-      "glass.language": "typescript",
+      "glass.defaultLanguageMode": "typescript",
       "glass.openaiKey": "sk-...",
-      "glass.outputDirectory": "${workspaceFolder}/src/generated"
+      "glass.anthropicKey": "sk-...",
+      "glass.outputDirectory": "${workspaceFolder}",
+      "glass.pythonPath": "python3
     },
     ```
 
@@ -45,20 +50,32 @@ The Glass extension provides a number of commands to help you work with Glass fi
 
 ### `Glass: Transpile all`
 
-The easiest way to transpile `.glass` files into your language of choice is to use the `Glass: Transpile all` command in VS Code. This command will transpile all `.glass` files in your workspace and write the output to thedirectory of your choice.
+This command transpiles all `.glass` files in your workspace and writes the output to the directory of your choice which you can [configure in your VSCode settings](/vscode).
 
 ### `Glass: Transpile current file`
 
 Similar to the `Transpile all` command, but only transpiles the current file.
 
-### `Glass: Run in playground`
+### `Glass: Open Playground`
 
 This command will open and run the current file in the Glass playground sidebar.
 
-### `Glass: Open settings`
+### `Glass: Open Settings (UI)`
 
 Shortcut to open the Glass settings in your `settings.json` file.
 
-### `Glass: Open documentation`
+### `Glass: Show Glass Output`
+
+This shortcut shows the logs of your playground
+
+### `Glass: Open Documentation`
 
 Shortcut to open the Glass documentation in your browser.
+
+### `Glass: Open support chat`
+
+Coming soon! Shortcut to open the Glass support chat in your browser.
+
+### `Glass: Run tests`
+
+Coming soon! Shortcut to run test cases for your prompts.

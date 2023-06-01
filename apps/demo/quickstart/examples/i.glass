@@ -17,4 +17,4 @@ Hi there!
 </User>
 
 // The `onResponse` attribute lets you execute code with the response from the LLM.
-<Request model="gpt-3.5-turbo" onResponse={(response) => setLastMessageText(response.message)} />
+<Chat model="gpt-3.5-turbo" onResponse={(response) => setLastMessageText(response.message)} />

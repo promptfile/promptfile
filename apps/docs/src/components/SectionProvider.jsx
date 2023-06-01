@@ -1,28 +1,18 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react'
+import { createContext, useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { createStore, useStore } from 'zustand'
 
 import { remToPx } from '@/lib/remToPx'
 
 function createSectionStore(sections) {
-  return createStore((set) => ({
+  return createStore(set => ({
     sections,
     visibleSections: [],
-    setVisibleSections: (visibleSections) =>
-      set((state) =>
-        state.visibleSections.join() === visibleSections.join()
-          ? {}
-          : { visibleSections }
-      ),
+    setVisibleSections: visibleSections =>
+      set(state => (state.visibleSections.join() === visibleSections.join() ? {} : { visibleSections })),
     registerHeading: ({ id, ref, offsetRem }) =>
-      set((state) => {
+      set(state => {
         return {
-          sections: state.sections.map((section) => {
+          sections: state.sections.map(section => {
             if (section.id === id) {
               return {
                 ...section,
@@ -38,22 +28,21 @@ function createSectionStore(sections) {
 }
 
 function useVisibleSections(sectionStore) {
-  let setVisibleSections = useStore(sectionStore, (s) => s.setVisibleSections)
-  let sections = useStore(sectionStore, (s) => s.sections)
+  let setVisibleSections = useStore(sectionStore, s => s.setVisibleSections)
+  let sections = useStore(sectionStore, s => s.sections)
 
   useEffect(() => {
     function checkVisibleSections() {
       let { innerHeight, scrollY } = window
       let newVisibleSections = []
 
-      for (
-        let sectionIndex = 0;
-        sectionIndex < sections.length;
-        sectionIndex++
-      ) {
+      for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
         let { id, headingRef, offsetRem } = sections[sectionIndex]
         let offset = remToPx(offsetRem)
-        let top = headingRef.current.getBoundingClientRect().top + scrollY
+        let top = 0
+        if (headingRef.current) {
+          top = headingRef.current.getBoundingClientRect().top + scrollY
+        }
 
         if (sectionIndex === 0 && top - offset > scrollY) {
           newVisibleSections.push('_top')
@@ -61,8 +50,7 @@ function useVisibleSections(sectionStore) {
 
         let nextSection = sections[sectionIndex + 1]
         let bottom =
-          (nextSection?.headingRef.current.getBoundingClientRect().top ??
-            Infinity) +
+          (nextSection?.headingRef.current.getBoundingClientRect().top ?? Infinity) +
           scrollY -
           remToPx(nextSection?.offsetRem ?? 0)
 
@@ -92,8 +80,7 @@ function useVisibleSections(sectionStore) {
 
 const SectionStoreContext = createContext()
 
-const useIsomorphicLayoutEffect =
-  typeof window === 'undefined' ? useEffect : useLayoutEffect
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 export function SectionProvider({ sections, children }) {
   let [sectionStore] = useState(() => createSectionStore(sections))
@@ -104,11 +91,7 @@ export function SectionProvider({ sections, children }) {
     sectionStore.setState({ sections })
   }, [sectionStore, sections])
 
-  return (
-    <SectionStoreContext.Provider value={sectionStore}>
-      {children}
-    </SectionStoreContext.Provider>
-  )
+  return <SectionStoreContext.Provider value={sectionStore}>{children}</SectionStoreContext.Provider>
 }
 
 export function useSectionStore(selector) {

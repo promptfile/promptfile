@@ -4,56 +4,69 @@ import { HeroPattern } from '@/components/HeroPattern'
 
 import chat from '@/images/screenshots/chat.png'
 import Image from 'next/image'
+import forLoop from '@/images/screenshots/SimpleFor.png'
+import conditional from '@/images/screenshots/conditional.png'
+import codeOutside from '@/images/screenshots/CodeOutsideBlock.png'
+import userBlock from '@/images/screenshots/userBlock.png'
 
 export const description = 'Glass is a domain-specific language for prompting LLMs.'
 
-## What are Blocks?
+# What are Blocks?
 
-There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your models more readable and easier to maintain.
+There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your prompts more readable and easier to maintain. Blocks also help avoid common mistakes when making requests to different models.
 
-All Glass files must include some block. If no block is present, on save, your file will be wrapped inside a `<User>`
-
-## Completion Blocks
-
-If you are making a request to a completion endpoint, you can use the following blocks:
+## Types of Blocks
 
 ### `<User>` (default)
 
-Arguments: none
+In both OpenAI and Anthropic models, the user block is used to designate the text coming from the user/human. If no block is present, on save, your file will be wrapped inside a `<User>` block.
 
-### `<Completion>`
+- **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to a user.
+- **if** <i>(optional)</i> <br/> Allows you to add conditional logic to the block
 
-Arguments:
+<Image src={userBlock} />
 
-- **`model`**. Can be one of:
-  - `text-davinci-003` (default),
-  - `text-curie-001`,
-  - `text-babbage-001`,
-  - `text-ada-001`,
-  - `text-davinci-002`,
-  - `text-davinci-001`,
-  - `davinci-instruct-beta`,
-  - `davinci`,
-  - `curie`,
-  - `babbage`,
-  - `ada`,
+### `<Assistant>`
 
-## Chat Role Blocks
+In both OpenAI and Anthropic models, the assistant block is used to designate the text coming from the model.
 
-Glass can be especially helpful when writing prompts for chat interfaces, especially when it comes to cleanly handling different roles in chat prompts and building more dynamic conversation prompts.
+- **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to the assistant.
+- **model** <i>(optional)</i> <br/> _String_: Allows you to track which model generated the assistant text
+- **if** <i>(optional)</i> <br/> _function_:Allows you to add conditional logic to the block
 
-Glass comes with built-in support for chat prompt blocks:
+### `<Request>`
 
-- `<System>` blocks allow you to designate a message with role="system"
-- `<User>` blocks allow you to designate a message with role="user"
-- `<Assistant>` blocks allow you to designate a message with role="assistant"
+This block allows you to create a API request to the model.
 
-Here's an example of a chat prompt that utilizes the `<System>` and `<User>` blocks:
+- **model** <i>(optional)</i> <br/> _enum_: The name of the model you want to inference. Defaults to `gpt-3.5-turbo`
+- **temperature** <i>(optional)</i> <br/> _enum_: The temperance of the inference to the model. Defaults to `0.0`
+- **max_tokens** <i>(optional)</i> <br/> _enum_: The maximum number of tokens to generate. Defaults to `64`
+- **onResponse** <i>(optional)</i> <br/> _function_: The name of the function to call when the response is received.
 
-<Image src={chat} />
+### `<For>`
 
-## Text Blocks
+This block is used to repeat over elements in an array.
 
-If you want to add normal text to your prompt and utilize [conditional logic](/logic), you can use the `<Text>` block. These are generally helpful only to add conditional logic, you can add text inside other blocks without
+- **each** <i>(required)</i> <br/> _Array_: The array you want to iterate over
+- **as** <i>(required)</i><br/> _String_: The variable name for each item in the array
+  <Image src={forLoop} />
 
-- `<Text>` blocks allow you to add text to your prompt and utilize conditional logic.
+### `<Text>`
+
+This block is used to add text inside another block. This is useful for adding text to the assistant block only if a condition is met.
+
+- **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block
+
+<Image src={conditional} />
+
+### `<Test>`
+
+This block is used to temporarily define test cases that will be run with the file. When you actually call the prompt, you will pass the actual values for these variables. The test variables will be overwritten with the actual values during invocation.
+
+### `<Block>`
+
+This block is used in a for loop to define the role of each block in the loop. The block will be repeated for each item in the array.
+
+- **role** <i>(required)</i> <br/> _enum_: The type of block you want to repeat. Can be `User`, `Assistant`, or `System`.
+
+- **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block
