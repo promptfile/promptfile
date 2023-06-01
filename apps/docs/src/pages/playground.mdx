@@ -1,10 +1,23 @@
 import { Guides } from '@/components/Guides'
 import { Resources } from '@/components/Resources'
 import { HeroPattern } from '@/components/HeroPattern'
+import tabs from '@/images/screenshots/playground/tabWalkthrough.gif'
 
 import Image from 'next/image'
 
 export const description = 'Glass is a domain-specific language for prompting LLMs.'
+
+# What is the Playground?
+
+When building with Glass, you can run your Glass file directly in VSCode through our Playground. To run a Glass file in Playground, either hit `Command (⌘) Enter (↩)` or by selecting the VSCode Command Palette `Glass: Open Playground` command. You will be able to chat directly with your prompt and see the results in real-time.
+
+<Image src={tabs} />
+
+There are three different tabs: chat, raw, and history.
+
+- **Chat** this allows you to try out your prompt
+- **Raw** this shows the raw prompt that is going to be transpiled
+- **History** this shows the history of your requests and responses
 
 # Token counting
 

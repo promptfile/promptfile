@@ -167,7 +167,7 @@ export const navigation = [
       { title: 'Code inside prompts', href: '/code' },
       { title: 'Blocks', href: '/blocks' },
       // { title: 'Control Logic', href: '/logic' },
-      { title: 'Token Counter', href: '/tokens' },
+      { title: 'Playground', href: '/playground' },
       { title: 'Changelog', href: '/changelog' },
       // { title: 'Code execution', href: '/execution' },
     ],
