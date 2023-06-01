@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
-import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
+import { parseGlassBlocks } from './parseGlassBlocks'
 import { replaceStateNode, transformGlassDocument, updateRequestOrChatNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
@@ -59,14 +59,13 @@ export async function runGlass(
   // (content)
   // </User>
 
-  const toplevelNodes = parseGlassTopLevelJsxElements(interpolatedDoc)
-  const chatNode = toplevelNodes.find(node => node.tagName === 'Chat')
+  const toplevelNodes = parseGlassBlocks(interpolatedDoc)
+  const chatNode = toplevelNodes.find(node => node.tag === 'Chat')
   const chatNodeIndex = chatNode ? toplevelNodes.indexOf(chatNode) : -1
   const isChatUserFirst =
     chatNodeIndex !== -1 &&
-    !chatNode!.attrs.some(attr => attr.name === 'initialRole' && attr.stringValue === 'assistant') &&
-    (toplevelNodes[chatNodeIndex - 1]?.tagName === 'System' ||
-      toplevelNodes[chatNodeIndex - 1]?.tagName === 'Assistant')
+    !chatNode!.attrs!.some(attr => attr.name === 'initialRole' && attr.stringValue === 'assistant') &&
+    (toplevelNodes[chatNodeIndex - 1]?.tag === 'System' || toplevelNodes[chatNodeIndex - 1]?.tag === 'Assistant')
 
   // eslint-disable-next-line prefer-const
   let { transformedOriginalDoc, transformedInterpolatedDoc } = transformGlassDocument(originalDoc, interpolatedDoc)

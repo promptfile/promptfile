@@ -4,6 +4,10 @@ const [numMessages, setNumMessages] = useState(0)
 You are a helpful assistant.
 </System>
 
-<Request model="gpt-3.5-turbo" onResponse={response => {
-    setNumMessages(numMessages + 1)
-}} />
+<Repeat>
+<User>
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+</Repeat>

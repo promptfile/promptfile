@@ -5,14 +5,13 @@ import { parseCodeBlock } from './parseTypescript'
 const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block'])
 
 export function parseGlassMetadata(document: string) {
-  const blocks = glasslib.parseGlassBlocks(document)
-
   const toplevelCode = glasslib
     .parseGlassDocument(document)
     .filter(t => t.type === 'code')
     .map(t => t.content)
     .join('\n')
 
+  const blocks = glasslib.parseGlassBlocksRecursive(document)
   const relevantBlocks = blocks.filter(block => contentBlocks.has(block.tag || ''))
 
   const vars = relevantBlocks.flatMap(block => {

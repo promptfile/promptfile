@@ -5,7 +5,6 @@
 // We can fetch the raw HTML and inject it into the prompt — the LLM can use this HTML to answer questions
 
 // Be sure to `await` any async calls!
-// If the website HTML is not valid JSX, you can wrap `<Text escapeHtml>...</Text>` to escape it.
 
 const url = "https://elliottburris.com"
 const res = await fetch(url)
@@ -15,9 +14,7 @@ const htmlText = await res.text()
 Your job is to answer questions based on the following website.
 
 ###
-<Text escapeHtml>
 ${htmlText}
-</Text>
 ###
 </System>
 

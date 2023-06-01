@@ -16,14 +16,6 @@ export function replaceDocumentNode(content: string, index: number, doc: string)
 }
 
 export function transformGlassDocument(originalDoc: string, interpolatedDoc: string) {
-  // const originalWithoutEscape = removeEscapedHtml(originalDoc)
-  // const interpolatedWithoutEscape = removeEscapedHtml(interpolatedDoc)
-  // const originalWithoutEscape = originalDoc
-  // const interpolatedWithoutEscape = interpolatedDoc
-
-  // originalDoc = originalWithoutEscape.output
-  // interpolatedDoc = interpolatedWithoutEscape.output
-
   const parsedOriginal = parseGlassDocument(originalDoc)
   const parsedInterpolated = parseGlassDocument(interpolatedDoc)
 
@@ -76,8 +68,6 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
   return {
     transformedOriginalDoc: transformedOriginal,
     transformedInterpolatedDoc: transformedInterpolated,
-    // transformedOriginalDoc: restoreEscapedHtml(transformedOriginal, originalWithoutEscape.replacements),
-    // transformedInterpolatedDoc: restoreEscapedHtml(transformedInterpolated, interpolatedWithoutEscape.replacements),
   }
 }
 

@@ -198,6 +198,19 @@ export function parseGlassBlocks(doc: string) {
   return parseAttributes(doc, blocks)
 }
 
+export function parseGlassBlocksRecursive(doc: string): GlassContent[] {
+  const blocks = parseGlassBlocks(doc)
+  return blocks.flatMap(b => {
+    if (!b.child?.content) {
+      return [b]
+    }
+    if (b.tag !== 'For' && b.tag !== 'Repeat') {
+      return [b]
+    }
+    return [b, ...parseGlassBlocksRecursive(b.child.content)]
+  })
+}
+
 function parseAttributes(origDoc: string, blocks: GlassContent[]) {
   return blocks.map(b => {
     if (!b.child) {

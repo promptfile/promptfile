@@ -3,7 +3,7 @@ import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
   parseGlassBlocks,
-  parseGlassTopLevelJsxElements,
+  parseGlassBlocksRecursive,
 } from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
@@ -124,10 +124,10 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       try {
-        const elements = parseGlassTopLevelJsxElements(activeEditor.document.getText())
-        const chatElement = elements.find(element => element.tagName === 'Request')
+        const elements = parseGlassBlocksRecursive(activeEditor.document.getText())
+        const chatElement = elements.find(element => element.tag === 'Request')
         const model =
-          chatElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue ??
+          chatElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue ??
           (vscode.workspace.getConfiguration('glass').get('defaultModel') as string)
         const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
         if (!languageModel) {
@@ -287,12 +287,10 @@ export async function activate(context: vscode.ExtensionContext) {
               session: string,
               inputs: any
             ) {
-              const elements = parseGlassTopLevelJsxElements(glass)
-              const requestElement = elements.find(
-                element => element.tagName && ['Request', 'Chat'].includes(element.tagName)
-              )
+              const elements = parseGlassBlocksRecursive(glass)
+              const requestElement = elements.find(element => element.tag && ['Request', 'Chat'].includes(element.tag))
               const model =
-                requestElement?.attrs.find((attr: any) => attr.name === 'model')?.stringValue ??
+                requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue ??
                 (vscode.workspace.getConfiguration('glass').get('defaultModel') as string)
               const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
               if (!languageModel) {
