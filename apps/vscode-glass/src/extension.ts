@@ -224,6 +224,7 @@ export async function activate(context: vscode.ExtensionContext) {
             await panel.webview.postMessage({
               action: 'onStream',
               data: {
+                session: stopSession,
                 glass: stoppedGlass,
                 blocks: stoppedBlocks,
                 variables: stoppedMetadata.interpolationVariables,
@@ -356,6 +357,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     await panel.webview.postMessage({
                       action: 'onStream',
                       data: {
+                        session,
                         glass: nextDoc,
                         blocks: blocksForGlass,
                         variables: metadataForGlass.interpolationVariables,
@@ -374,6 +376,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 await panel.webview.postMessage({
                   action: 'onResponse',
                   data: {
+                    session,
                     glass: resp.finalDoc,
                     blocks: blocksForGlass,
                     variables: metadataForGlass.interpolationVariables,

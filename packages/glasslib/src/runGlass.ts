@@ -205,6 +205,9 @@ async function runGlassChat(
   })
 
   const response = await handleStream(r, handleChatChunk, next => {
+    if (!r.ok) {
+      throw new Error(`HTTP error: ${r.status}`)
+    }
     // right now claude has a leading whitespace character
     // we need to remove that!
     const updatedRequestNode = requestNodeReplacement(model, next.trim(), options?.progress != null)
@@ -281,6 +284,9 @@ async function runGlassChatAnthropic(
   })
 
   const response = await handleStream(r, handleAnthropicChunk, next => {
+    if (!r.ok) {
+      throw new Error(`HTTP error: ${r.status}`)
+    }
     const updatedRequestNode = requestNodeReplacement(model, next, options?.progress != null)
     const nextDoc = updateRequestOrChatNode(updatedRequestNode, docs.originalDoc)
     const nextInterpolatedDoc = updateRequestOrChatNode(updatedRequestNode, docs.interpolatedDoc)
@@ -361,6 +367,9 @@ async function runGlassCompletion(
   })
 
   const response = await handleStream(r, handleCompletionChunk, next => {
+    if (!r.ok) {
+      throw new Error(`HTTP error: ${r.status}`)
+    }
     const updatedRequestNode = requestNodeReplacement(model, next, options?.progress != null)
     const nextDoc = updateRequestOrChatNode(updatedRequestNode, docs.originalDoc)
     const nextInterpolatedDoc = updateRequestOrChatNode(updatedRequestNode, docs.interpolatedDoc)

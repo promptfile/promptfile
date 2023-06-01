@@ -55,6 +55,8 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'onOpen':
+          const newSession = getNonce()
+          setSession(newSession)
           const initialGlass = message.data.glass
           setOriginalSource(() => message.data.originalSource)
           setCurrentSource(() => message.data.currentSource)
@@ -72,17 +74,23 @@ function RigView() {
               data: {
                 inputs: {},
                 glass: initialGlass,
-                session,
+                session: newSession,
               },
             })
           }
           break
         case 'onStream':
+          if (message.data.session !== session) {
+            break
+          }
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
           break
         case 'onResponse':
+          if (message.data.session !== session) {
+            break
+          }
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables, true)
