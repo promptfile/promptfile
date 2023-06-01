@@ -4,6 +4,7 @@ export const TYPESCRIPT_GLOBALS = [
   'JSON',
   '__dirname',
   'Boolean',
+  'Error',
   'encodeURIComponent',
   'process',
   'useState',

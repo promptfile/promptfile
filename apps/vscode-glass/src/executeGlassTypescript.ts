@@ -7,6 +7,7 @@ import { TextDecoder } from 'util'
 import * as vscode from 'vscode'
 
 export async function executeGlassTypescriptNew(
+  outputChannel: vscode.OutputChannel,
   document: vscode.TextDocument,
   fileName: string,
   inputs: any,
@@ -14,8 +15,6 @@ export async function executeGlassTypescriptNew(
 ): Promise<{
   rawResponse: string
   codeResponse?: any
-  continued: boolean
-  setNextUserText: string | null
   initDoc: string
   initInterpolatedDoc: string
   finalDoc: string
@@ -122,6 +121,9 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
             console.error('failed parsing progress line', line, e)
           }
         } else {
+          if (!line.startsWith('glass-result: ')) {
+            outputChannel.appendLine(line)
+          }
           console.log(line)
         }
 
@@ -134,6 +136,7 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
 
     p.stderr.on('data', chunk => {
       error += chunk.toString()
+      outputChannel.append(chunk.toString())
     })
 
     p.on('exit', code => {

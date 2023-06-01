@@ -188,7 +188,7 @@ async function runGlassChat(
   rawResponse: string
 }> {
   const messages = parseChatCompletionBlocks(docs.interpolatedDoc, interpolationArgs, isChatUserFirst)
-  const requestTokens = console.log('running glass chat', messages)
+  console.log('runGlass: chat-gpt', messages)
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -265,7 +265,7 @@ async function runGlassChatAnthropic(
     }
   }
   anthropicQuery += '\n\nAssistant: '
-  console.log('anthropic query', anthropicQuery)
+  console.log('runGlass: anthropic', anthropicQuery)
 
   const r = await fetch('https://api.anthropic.com/v1/complete', {
     method: 'POST',
@@ -349,7 +349,7 @@ async function runGlassCompletion(
     prompt += '\n\nAssistant: '
   }
 
-  console.log('completion conversion query', prompt)
+  console.log('runGlass: gpt3', prompt)
 
   const r = await fetch('https://api.openai.com/v1/completions', {
     method: 'POST',
@@ -427,12 +427,12 @@ async function handleStream(
     })
 
     readStream.on('end', () => {
-      console.log('Stream has been closed by the server.')
+      console.debug('runGlass: stream has been closed by the server')
       resolve(fullResult)
     })
 
     readStream.on('error', error => {
-      console.log('error on stream', error)
+      console.log('runGlass: stream error', error)
       reject(error)
     })
   })

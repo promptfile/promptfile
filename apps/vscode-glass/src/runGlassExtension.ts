@@ -7,6 +7,7 @@ import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
 export async function executeGlassFile(
+  outputChannel: vscode.OutputChannel,
   document: vscode.TextDocument,
   inputs: any,
   progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
@@ -24,5 +25,5 @@ export async function executeGlassFile(
     return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
   }
 
-  return await executeGlassTypescriptNew(document, fileName, inputs, progress)
+  return await executeGlassTypescriptNew(outputChannel, document, fileName, inputs, progress)
 }

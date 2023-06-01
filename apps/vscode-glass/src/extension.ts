@@ -345,6 +345,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
               try {
                 const resp = await executeGlassFile(
+                  outputChannel,
                   playgroundDocument,
                   inputs,
                   async ({ nextDoc, nextInterpolatedDoc, rawResponse }) => {
