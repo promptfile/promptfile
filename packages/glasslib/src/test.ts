@@ -1,8 +1,5 @@
-import './escapeHtml.test'
-import './jsxElementNode.test'
 import './parseGlassBlocks.test'
 import './parseGlassTopLevelJsxElements.test'
-import './parseGlassTopLevelNodes.test'
 import './removeGlassComments.test'
 import './removeGlassFrontmatter.test'
 import './transformGlassDocument.test'

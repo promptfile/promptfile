@@ -4,7 +4,6 @@ import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { parsePythonLocalVariables, parsePythonUndeclaredSymbols } from '../parse/parsePython.js'
-import { parseTestData } from '../parse/parseTestData.js'
 import { transformDynamicBlocksPython } from '../transform/transformDynamicBlocksPython.js'
 import { transformPythonTestBlock } from '../transform/transformPyTestBlock.js'
 import { indentLines } from '../util/indentLines.js'
@@ -29,8 +28,14 @@ export async function transpileGlassFilePython(
 ) {
   const originalDoc = doc
 
-  const toplevelNodes = glasslib.parseGlassTopLevelJsxElements(originalDoc)
-  const testContent = parseTestData(toplevelNodes, originalDoc)
+  const parsedDocument = glasslib.parseGlassDocument(originalDoc)
+
+  const testContent = parsedDocument
+    .filter(t => 'tag' in t && t.tag === 'Test')
+    .map(t => (t as any).child.content)
+    .join('\n')
+
+  const stateNode = parsedDocument.find(node => 'tag' in node && node.tag === 'State')
 
   // remove all block comments before any processing happens
   doc = glasslib.removeGlassComments(doc)
@@ -52,14 +57,14 @@ export async function transpileGlassFilePython(
   let model = 'gpt-3.5-turbo'
 
   // find all the interpolation variables from dynamic code blocks
-  for (const jsxNode of toplevelNodes) {
-    if (jsxNode.tagName === 'Test') {
+  for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
+    if (jsxNode.tag === 'Test') {
       // don't strip away codeblocks, yet
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
     }
-    if (jsxNode.tagName === 'Request' || jsxNode.tagName === 'Chat') {
-      const modelAttr = jsxNode.attrs.find(a => a.name === 'model')
+    if (jsxNode.tag === 'Request' || jsxNode.tag === 'Chat') {
+      const modelAttr = jsxNode.attrs!.find(a => a.name === 'model')
       // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
       // we don't currently support dynamic model values
       model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : model
@@ -73,7 +78,10 @@ export async function transpileGlassFilePython(
   // remove frontmatter after parsing the AST
   doc = glasslib.removeGlassFrontmatter(doc)
 
-  let toplevelCode = glasslib.parseGlassTopLevelCode(doc)
+  let toplevelCode = parsedDocument
+    .filter(d => d.type === 'code')
+    .map(d => d.content)
+    .join('\n')
 
   // remove all lines from toplevel code that start with `import `
   toplevelCode = toplevelCode

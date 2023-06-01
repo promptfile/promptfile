@@ -1,11 +1,12 @@
 import { expect } from 'chai'
+
+import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 import {
   addNodeToDocument,
-  parseGlassTopLevelNodesNext,
-  reconstructDocFromNodes,
   replaceDocumentNode,
-} from './parseGlassTopLevelNodesNext'
-import { replaceStateNode, transformGlassDocument } from './transformGlassDocument'
+  replaceStateNode,
+  transformGlassDocument,
+} from './transformGlassDocument'
 
 describe('transformGlassDocument', () => {
   it('should parse document nodes and recreate document', () => {
@@ -14,24 +15,24 @@ language: typescript
 ---
 hello world`
 
-    expect(reconstructDocFromNodes(parseGlassTopLevelNodesNext(doc), doc)).to.equal(doc)
-    expect(parseGlassTopLevelNodesNext(doc)).to.have.length(1)
+    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
+    expect(parseGlassDocument(doc)).to.have.length(1)
   })
 
   it('should count toplevel nodes correctly and replace document', () => {
-    const doc = `<Foo>
+    const doc = `<Assistant>
 bar
-</Foo>
+</Assistant>
 
-<Hello>
+<User>
 world
-</Hello>
+</User>
 
-<Goodbye>
+<Assistant>
 world
-</Goodbye>`
-    expect(reconstructDocFromNodes(parseGlassTopLevelNodesNext(doc), doc)).to.equal(doc)
-    expect(parseGlassTopLevelNodesNext(doc)).to.have.length(5)
+</Assistant>`
+    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
+    expect(parseGlassDocument(doc)).to.have.length(5)
   })
 
   it('should parse document nodes and recreate document', () => {
@@ -40,8 +41,8 @@ language: typescript
 ---
 hello world`
 
-    expect(reconstructDocFromNodes(parseGlassTopLevelNodesNext(doc), doc)).to.equal(doc)
-    expect(parseGlassTopLevelNodesNext(doc)).to.have.length(1)
+    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
+    expect(parseGlassDocument(doc)).to.have.length(1)
   })
 
   it('should parse document nodes and recreate document', () => {
@@ -59,7 +60,7 @@ interstitial
 
 done`
 
-    expect(reconstructDocFromNodes(parseGlassTopLevelNodesNext(doc), doc)).to.equal(doc)
+    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
   })
 
   it('should add node to document', () => {
@@ -68,15 +69,16 @@ language: typescript
 ---
 hello world`
 
-    expect(addNodeToDocument('<User>\nuser\n</User>', 0, doc)).to.equal(`<User>
+    expect(addNodeToDocument('<User>\nuser\n</User>\n', 0, doc)).to.equal(`<User>
 user
 </User>
+
 ---
 language: typescript
 ---
 hello world`)
 
-    expect(addNodeToDocument('<User>\nuser\n</User>', 1, doc)).to.equal(`---
+    expect(addNodeToDocument('\n<User>\nuser\n</User>', 1, doc)).to.equal(`---
 language: typescript
 ---
 hello world
@@ -91,21 +93,23 @@ language: typescript
 ---
 hello world
 
-<Foo />`
+<User />`
 
     expect(replaceDocumentNode('<User>\nuser\n</User>', 0, doc)).to.equal(`<User>
 user
 </User>
-<Foo />`)
-
-    expect(replaceDocumentNode('<User>\nuser\n</User>', 1, doc)).to.equal(`---
-language: typescript
----
 hello world
 
+<User />`)
+
+    expect(replaceDocumentNode('<User>\nuser\n</User>\n', 1, doc)).to.equal(`---
+language: typescript
+---
 <User>
 user
-</User>`)
+</User>
+
+<User />`)
   })
 
   it('should trafnsform document loop', () => {
@@ -250,7 +254,7 @@ hello
     })
 
     it('should transform document without frontmatter', () => {
-      const newState = `<State>\nstate\n</State>`
+      const newState = '<State>\nstate\n</State>'
 
       const doc = `const a = "foo"
 
@@ -269,7 +273,7 @@ hello
 </User>`)
     })
 
-    it('should transform document without existing state node', () => {
+    it('should transform document with existing state node', () => {
       const newState = `<State>\nstate\n</State>`
 
       const doc = `const a = "foo"
