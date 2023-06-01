@@ -164,7 +164,7 @@ function RigView() {
 
   const assistantBlocks = blocks.filter(b => b.tag === 'Assistant')
   const lastAssistantBlock = assistantBlocks.length > 0 ? assistantBlocks[blocks.length - 1] : null
-  const streaming = lastAssistantBlock?.content.includes('█') === true
+  const streaming = lastAssistantBlock?.child?.content.includes('█') === true
 
   return (
     <div

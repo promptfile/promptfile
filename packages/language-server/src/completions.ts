@@ -24,7 +24,7 @@ export function generateCompletions(
           : attribute.type === 'string'
           ? `"$${cursorIndex}"`
           : attribute.type === 'array'
-          ? `{$${cursorIndex}]}`
+          ? `{$${cursorIndex}}`
           : `\$${cursorIndex}`
       return ` ${attribute.name}=${attributeValue}`
     })
