@@ -12,10 +12,11 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 // Now add some text below between <User> and </User>.
 
 <User>
-Hey, how are you?
+${input}
 </User>
 
 <Request model="gpt-3.5-turbo" />
+
 
 // Then, run the `Glass: run file` command to generate a completion.
 // You can do this by opening up the VSCode command menu `command+shift+P`

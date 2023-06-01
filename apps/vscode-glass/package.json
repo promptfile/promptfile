@@ -243,13 +243,6 @@
             }
           },
           {
-            "scope": "source.glass.transcript.name",
-            "settings": {
-              "foreground": "#6b7c68",
-              "fontStyle": "italic"
-            }
-          },
-          {
             "scope": "source.glass.text.name",
             "settings": {
               "fontStyle": "italic"
@@ -284,7 +277,7 @@
             }
           },
           {
-            "scope": "source.glass.repeat.name",
+            "scope": "source.glass.transcript.name",
             "settings": {
               "foreground": "#E5C75E",
               "fontStyle": "italic"

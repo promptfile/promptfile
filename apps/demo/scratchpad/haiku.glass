@@ -2,6 +2,8 @@
 You are HaikuGPT. Respond with a haiku.
 </System>
 
+<Transcript />
+
 <User>
 ${input}
 </User>
