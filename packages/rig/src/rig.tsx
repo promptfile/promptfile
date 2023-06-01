@@ -175,6 +175,8 @@ function RigView() {
       }}
     >
       <TopperView
+        session={session}
+        openCurrentGlass={() => openGlass(glass)}
         dirty={originalSource !== currentSource}
         reloadable={glass !== originalSource || originalSource !== currentSource}
         tab={tab}

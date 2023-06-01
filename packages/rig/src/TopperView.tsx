@@ -10,10 +10,12 @@ interface TopperViewProps {
   reset: () => void
   dirty: boolean
   reloadable: boolean
+  openCurrentGlass: () => void
+  session: string
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { dirty, reloadable, filename, tabs, tab, setTab, reset, openOutput } = props
+  const { dirty, reloadable, filename, tabs, tab, setTab, reset, openOutput, openCurrentGlass, session } = props
 
   return (
     <div
@@ -67,40 +69,62 @@ export const TopperView = (props: TopperViewProps) => {
           </div> */}
         </div>
       </div>
-      <div style={{ paddingLeft: '12px', display: 'flex', flexDirection: 'row' }}>
-        {tabs.map(t => {
-          const isCurrentTab = t === tab
-          const opacity = isCurrentTab ? 1 : 0.5
-          const color = isCurrentTab ? 'white' : undefined
-          const borderBottomColor = isCurrentTab ? 'white' : 'transparent'
-          return (
-            <div style={{ paddingRight: '24px' }} key={t}>
-              <div
-                style={{
-                  opacity,
-                  color,
-                  borderBottomStyle: 'solid',
-                  borderBottomWidth: '2px',
-                  borderBottomColor,
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  paddingBottom: '8px',
-                  paddingLeft: '8px',
-                  paddingRight: '8px',
-                }}
-                onClick={() => setTab(t)}
-                onMouseEnter={(event: any) => {
-                  event.target.style.opacity = '1.0'
-                }}
-                onMouseLeave={(event: any) => {
-                  event.target.style.opacity = opacity
-                }}
-              >
-                {t}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingLeft: '12px',
+          paddingRight: '12px',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+          {tabs.map(t => {
+            const isCurrentTab = t === tab
+            const opacity = isCurrentTab ? 1 : 0.5
+            const color = isCurrentTab ? 'white' : undefined
+            const borderBottomColor = isCurrentTab ? 'white' : 'transparent'
+            return (
+              <div style={{ paddingRight: '24px' }} key={t}>
+                <div
+                  style={{
+                    opacity,
+                    color,
+                    borderBottomStyle: 'solid',
+                    borderBottomWidth: '2px',
+                    borderBottomColor,
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    paddingBottom: '8px',
+                    paddingLeft: '8px',
+                    paddingRight: '8px',
+                  }}
+                  onClick={() => setTab(t)}
+                  onMouseEnter={(event: any) => {
+                    event.target.style.opacity = '1.0'
+                  }}
+                  onMouseLeave={(event: any) => {
+                    event.target.style.opacity = opacity
+                  }}
+                >
+                  {t}
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
+        <span
+          onMouseEnter={(event: any) => {
+            event.target.style.opacity = '1.0'
+          }}
+          onMouseLeave={(event: any) => {
+            event.target.style.opacity = '0.3'
+          }}
+          style={{ fontSize: '10px', opacity: 0.3, cursor: 'pointer' }}
+          onClick={openCurrentGlass}
+        >
+          View session
+        </span>
       </div>
       <VSCodeDivider style={{ margin: 0, padding: 0 }} />
     </div>

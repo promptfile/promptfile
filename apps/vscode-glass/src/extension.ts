@@ -237,7 +237,9 @@ export async function activate(context: vscode.ExtensionContext) {
                 language: languageId,
                 content: message.data.glass,
               })
-              await vscode.window.showTextDocument(newGlassFile)
+              await vscode.window.showTextDocument(newGlassFile, {
+                viewColumn: vscode.ViewColumn.Active,
+              })
             } catch {
               await vscode.window.showErrorMessage('Unable to open Glass file')
             }
