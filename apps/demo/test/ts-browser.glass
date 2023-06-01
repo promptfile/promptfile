@@ -1,18 +1,11 @@
-<Test>
-const input = "Murder on the orient express"
-</Test>
-
+const input = "Where did elliott go to school?"
 const res = await fetch("https://elliottburris.com")
 const website = await res.text()
-
-// and this is a comment
 
 <System>
 your job is to answer questions based on the following website code:
 ###
-<Text escapeHtml>
 ${website}
-</Text>
 ###
 </System>
 

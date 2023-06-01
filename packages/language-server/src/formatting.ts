@@ -20,7 +20,12 @@ export function formatDocument(text: string) {
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index]
 
-    formattedLines.push(line)
+    // Check if line has any tags (with or without attributes), if yes, trim the line.
+    if (new RegExp(`</?(${tagNames})(\\s+[^>]*)?>`).test(line)) {
+      formattedLines.push(line.trim())
+    } else {
+      formattedLines.push(line)
+    }
   }
 
   let finalText = formattedLines.join('\n').trim()

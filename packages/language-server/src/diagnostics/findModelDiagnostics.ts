@@ -1,21 +1,16 @@
-import {
-  LANGUAGE_MODELS,
-  LanguageModelCreator,
-  LanguageModelType,
-  parseGlassTopLevelJsxElements,
-} from '@glass-lang/glasslib'
+import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType, parseGlassBlocks } from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
 export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
-    const parsed = parseGlassTopLevelJsxElements(textDocument.getText())
-    const requestElement = parsed.find(tag => tag.tagName && ['Request', 'Chat'].includes(tag.tagName))
+    const parsed = parseGlassBlocks(textDocument.getText())
+    const requestElement = parsed.find(tag => tag.tag && ['Request'].includes(tag.tag))
     if (!requestElement) {
       return []
     }
 
-    const modelAttribute = requestElement.attrs.find(attr => attr.name === 'model')
+    const modelAttribute = requestElement.attrs?.find(attr => attr.name === 'model')
     if (!modelAttribute || !modelAttribute.stringValue) {
       return []
     }
@@ -39,7 +34,7 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
     const diagnostics: Diagnostic[] = []
 
     if (languageModel.creator === LanguageModelCreator.anthropic) {
-      const systemBlocks = parsed.filter(tag => tag.tagName === 'System')
+      const systemBlocks = parsed.filter(tag => tag.tag === 'System')
       diagnostics.push(
         ...systemBlocks.map(tag => {
           const diagnostic: Diagnostic = {
@@ -58,7 +53,7 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
 
     switch (languageModel.type) {
       case LanguageModelType.completion:
-        const multiplePromptBlocks = parsed.filter(tag => tag.tagName === 'User')
+        const multiplePromptBlocks = parsed.filter(tag => tag.tag === 'User')
         if (multiplePromptBlocks.length > 1) {
           diagnostics.push(
             ...multiplePromptBlocks.slice(1).map(tag => {

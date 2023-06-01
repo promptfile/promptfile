@@ -7,6 +7,12 @@
       "include": "#markdown-frontmatter"
     },
     {
+      "include": "#response-element"
+    },
+    {
+      "include": "#repeat-element"
+    },
+    {
       "include": "#request-element"
     },
     {
@@ -65,7 +71,7 @@
           "include": "source.tsx#jsx-tag-attributes-illegal"
         }
       ],
-      "end": "(?:(\\/)\\s*)?(>)",
+      "end": "(?:(\\/)\\s*)?(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.self-closing.jsx"
@@ -75,8 +81,126 @@
         }
       }
     },
+    "response-element": {
+      "begin": "^(<)(Response)([^>]*)(>)$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.response.name" },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
+      },
+      "patterns": [
+        {
+          "include": "#user-element"
+        },
+        {
+          "include": "#assistant-element"
+        },
+        {
+          "include": "#system-element"
+        }
+      ],
+      "end": "^(<\\/)(Response)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.response.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "repeat-element": {
+      "begin": "^(<)(Repeat)([^>]*)(>)$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.repeat.name" },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
+      },
+      "patterns": [
+        {
+          "include": "#request-element"
+        },
+        {
+          "include": "#test-element"
+        },
+        {
+          "include": "#state-element"
+        },
+        {
+          "include": "#user-element"
+        },
+        {
+          "include": "#assistant-element"
+        },
+        {
+          "include": "#system-element"
+        },
+        {
+          "include": "#for-element"
+        }
+      ],
+      "end": "^(<\\/)(Repeat)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.repeat.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
     "system-element": {
-      "begin": "(<)(System)([^>]*)(>)",
+      "begin": "^(<)(System)([^>]*)(>)$",
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.end.jsx" },
         "2": { "name": "source.glass.system.name" },
@@ -109,7 +233,7 @@
           "include": "#markdown-sections"
         }
       ],
-      "end": "(<\\/)(System)(>)",
+      "end": "^(<\\/)(System)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -123,7 +247,7 @@
       }
     },
     "assistant-element": {
-      "begin": "(<)(Assistant)([^>]*)(>)",
+      "begin": "^(<)(Assistant)([^>]*)(>)$",
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.end.jsx" },
         "2": { "name": "source.glass.assistant.name" },
@@ -156,7 +280,7 @@
           "include": "#markdown-sections"
         }
       ],
-      "end": "(<\\/)(Assistant)(>)",
+      "end": "^(<\\/)(Assistant)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -170,7 +294,7 @@
       }
     },
     "state-element": {
-      "begin": "(<)(State)(>)",
+      "begin": "^(<)(State)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -187,7 +311,7 @@
           "include": "source.json"
         }
       ],
-      "end": "(<\\/)(State)(>)",
+      "end": "^(<\\/)(State)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -244,7 +368,7 @@
       }
     },
     "user-element": {
-      "begin": "(<)(User)([^>]*)(>)",
+      "begin": "^(<)(User)([^>]*)(>)$",
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.end.jsx" },
         "2": { "name": "source.glass.user.name" },
@@ -277,7 +401,7 @@
           "include": "#markdown-sections"
         }
       ],
-      "end": "(<\\/)(User)(>)",
+      "end": "^(<\\/)(User)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -317,15 +441,12 @@
       ]
     },
     "request-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Request|Chat)(?=[\\s\\/\\>\\{])",
+      "begin": "^(<)(Request)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
-        },
-        "3": {
           "name": "source.glass.request.name"
         }
       },
@@ -402,6 +523,9 @@
     },
     "markdown-sections": {
       "patterns": [
+        {
+          "include": "#extension-mdx-expression-text"
+        },
         {
           "include": "#text-element"
         },
@@ -1867,7 +1991,7 @@
       },
       "patterns": [
         {
-          "include": "source.tsx#expression"
+          "include": "source.js"
         }
       ]
     },
@@ -1887,7 +2011,7 @@
       },
       "patterns": [
         {
-          "include": "source.tsx#expression"
+          "include": "source.js"
         }
       ]
     },

@@ -6,7 +6,6 @@ import prettier from 'prettier'
 import { parseFrontmatter } from '../parse/parseFrontmatter.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
-import { parseTestData } from '../parse/parseTestData.js'
 import { parseCodeBlock, parseTsGlassImports } from '../parse/parseTypescript.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
 import { getUseStatePairs, transformSetState } from '../transform/transformSetState.js'
@@ -36,19 +35,17 @@ export function transpileGlassFileNext(
 
   const originalDoc = doc
 
-  const toplevelNodes = glasslib.parseGlassTopLevelJsxElements(originalDoc)
+  const parsedDocument = glasslib.parseGlassDocument(originalDoc)
 
-  const testContent = parseTestData(toplevelNodes, originalDoc)
+  const testContent = parsedDocument
+    .filter(t => 'tag' in t && t.tag === 'Test')
+    .map(t => (t as any).child.content)
+    .join('\n')
 
-  const stateNode = toplevelNodes.find(node => node.tagName === 'State')
+  const stateNode = parsedDocument.find(node => 'tag' in node && node.tag === 'State')
   let state = {} as any
   if (stateNode) {
-    const innerContents = stateNode.children.length
-      ? originalDoc.substring(
-          stateNode.children[0].position.start.offset,
-          stateNode.children[stateNode.children.length - 1].position.end.offset
-        )
-      : '{}'
+    const innerContents = (stateNode as any).child.content
     if (innerContents.startsWith('```json') && innerContents.endsWith('```')) {
       state = JSON.parse(innerContents.slice(7, -3).trim())
     } else {
@@ -87,22 +84,22 @@ export function transpileGlassFileNext(
   let onResponse = ''
 
   // find all the interpolation variables from dynamic code blocks
-  for (const jsxNode of toplevelNodes) {
-    if (jsxNode.tagName === 'Test') {
+  for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
+    if (jsxNode.tag === 'Test') {
       // don't strip away codeblocks, yet
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
     }
-    if (jsxNode.tagName === 'State') {
+    if (jsxNode.tag === 'State') {
       continue
     }
-    if (jsxNode.tagName === 'Request' || jsxNode.tagName === 'Chat') {
-      const modelAttr = jsxNode.attrs.find(a => a.name === 'model')
+    if (jsxNode.tag === 'Request' || jsxNode.tag === 'Chat') {
+      const modelAttr = jsxNode.attrs!.find(a => a.name === 'model')
       // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
       // we don't currently support dynamic model values
       model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : model
 
-      const onResponseAttr = jsxNode.attrs.find(a => a.name === 'onResponse')
+      const onResponseAttr = jsxNode.attrs!.find(a => a.name === 'onResponse')
       onResponse = onResponseAttr ? onResponseAttr.expressionValue! : ''
       continue
     }
@@ -130,7 +127,10 @@ export function transpileGlassFileNext(
   // remove frontmatter after parsing the AST
   doc = glasslib.removeGlassFrontmatter(doc)
 
-  let toplevelCode = glasslib.parseGlassTopLevelCode(doc)
+  let toplevelCode = parsedDocument
+    .filter(d => d.type === 'code')
+    .map(d => d.content)
+    .join('\n')
 
   // remove all lines from toplevel code that start with `import `
   toplevelCode = toplevelCode

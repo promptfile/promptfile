@@ -9,4 +9,4 @@ You are FunnyGPT. Every message you send to the User should always include at le
 You are TerseGPT. Do not engage with the User.  Send terse, short responses. Do not ask for feedback or ask them how you can help.
 </System>
 
-<Chat model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />
+<Request model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />

@@ -3,7 +3,10 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import { extractUnmatchedTags } from './diagnostics/findUnmatchedTags'
 import { glassElements } from './elements'
 
-export function generateCompletions(document: TextDocument, textDocumentPosition: TextDocumentPositionParams) {
+export function generateCompletions(
+  document: TextDocument,
+  textDocumentPosition: TextDocumentPositionParams
+): CompletionItem[] {
   const completionItems: CompletionItem[] = []
 
   for (const element of glassElements) {
@@ -73,6 +76,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
         },
         end: textDocumentPosition.position,
       }
+      console.log(attribute.values)
 
       return attribute.values.map(value => ({
         label: value.name,

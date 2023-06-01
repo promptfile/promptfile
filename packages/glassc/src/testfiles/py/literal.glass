@@ -9,8 +9,6 @@ response = requests.get("https://elliottburris.com")
 <System>
 your job is to answer questions based on the following website code:
 ###
-<Text escapeHtml>
 ${response.text}
-</Text>
 ###
 </System>

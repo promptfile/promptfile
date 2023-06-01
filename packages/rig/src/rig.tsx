@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
-import { ChatView } from './ChatView'
+import { BlocksView } from './BlocksView'
+import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
 import { RawView } from './RawView'
-import { RequestView } from './RequestView'
 import { TopperView } from './TopperView'
 import { getNonce } from './nonce'
 
@@ -34,17 +34,21 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const [type, setType] = useState('Chat')
+  const tabs: string[] = ['View', 'Raw', 'History']
+
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
   const [currentSource, setCurrentSource] = useState('')
   const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassBlock[]>([])
-  const [variables, setVariables] = useState<string[]>([])
+  const [inputs, setInputs] = useState<Record<string, string>>({})
   const [session, setSession] = useState(getNonce())
   const [logs, setLogs] = useState<GlassLog[]>([])
+  const [tab, setTab] = useState(tabs[0])
 
-  const [tab, setTab] = useState(type)
+  const updateInputsWithVariables = (variables: string[], clearAllValues?: boolean) => {
+    setInputs(Object.fromEntries(variables.map(v => [v, clearAllValues ? '' : inputs[v] || ''])))
+  }
 
   // register a callback for when the extension sends a message
   useEffect(() => {
@@ -55,22 +59,37 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'onOpen':
+          const initialGlass = message.data.glass
           setOriginalSource(() => message.data.originalSource)
           setCurrentSource(() => message.data.currentSource)
           setFilename(() => message.data.filename)
-          setGlass(() => message.data.glass)
+          setGlass(() => initialGlass)
           setBlocks(() => message.data.blocks)
-          setVariables(() => message.data.variables)
+          updateInputsWithVariables(message.data.variables)
+          if (message.data.variables.length > 0) {
+            setTimeout(() => {
+              document.getElementById('composer-input-0')?.focus()
+            }, 100)
+          } else {
+            vscode.postMessage({
+              action: 'runGlass',
+              data: {
+                inputs: {},
+                glass: initialGlass,
+                session,
+              },
+            })
+          }
           break
         case 'onStream':
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
-          setVariables(() => message.data.variables)
+          updateInputsWithVariables(message.data.variables)
           break
         case 'onResponse':
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
-          setVariables(() => message.data.variables)
+          updateInputsWithVariables(message.data.variables, true)
           setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
           break
         default:
@@ -134,9 +153,13 @@ function RigView() {
       action: 'stopGlass',
       data: {
         session,
+        glass,
       },
     })
   }
+
+  const lastBlock = blocks.length > 0 ? blocks[blocks.length - 1] : null
+  const streaming = lastBlock?.content.includes('█') === true
 
   return (
     <div
@@ -153,15 +176,17 @@ function RigView() {
         reloadable={glass !== originalSource || originalSource !== currentSource}
         tab={tab}
         setTab={setTab}
-        tabs={[type, 'Raw', 'History']}
+        tabs={tabs}
         filename={filename}
         reset={reset}
         openOutput={openOutput}
       />
-      {tab === 'Chat' && <ChatView stop={stop} run={run} session={session} blocks={blocks} />}
-      {tab === 'Request' && <RequestView stop={stop} run={run} session={session} blocks={blocks} />}
+      {tab === 'View' && <BlocksView session={session} blocks={blocks} />}
       {tab === 'Raw' && <RawView session={session} glass={glass} openGlass={openGlass} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
+      {['View', 'Raw'].includes(tab) && (
+        <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
+      )}
     </div>
   )
 }

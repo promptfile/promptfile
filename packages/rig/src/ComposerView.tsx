@@ -1,22 +1,20 @@
 import { VSCodeButton, VSCodeDivider, VSCodeTextArea } from '@vscode/webview-ui-toolkit/react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 interface ComposerViewProps {
   run: (inputs: Record<string, string>) => void
   stop: () => void
   streaming: boolean
+  inputs: Record<string, string>
+  setInputs: (inputs: Record<string, string>) => void
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { run, streaming, stop } = props
-
-  const [text, setText] = useState('')
+  const { inputs, setInputs, run, streaming, stop } = props
 
   useEffect(() => {
-    setTimeout(() => {
-      document.getElementById('composer-input')?.focus()
-    }, 500)
-  }, [])
+    document.getElementById('composer-input-0')?.focus()
+  }, Object.keys(inputs))
 
   return (
     <div style={{ width: '100%', flexShrink: 0 }}>
@@ -40,30 +38,32 @@ export const ComposerView = (props: ComposerViewProps) => {
             paddingRight: '8px',
           }}
         >
-          <VSCodeTextArea
-            style={{ width: '100%' }}
-            value={text}
-            id={`composer-input`}
-            placeholder={'Say something'}
-            onInput={e => {
-              const value = (e.target as any).value
-              setText(value)
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                run({ input: text })
-                setText('')
-              }
-            }}
-          />
+          {Object.keys(inputs).map((key, index) => (
+            <VSCodeTextArea
+              key={key}
+              style={{ width: '100%' }}
+              value={inputs[key]}
+              id={`composer-input-${index}`}
+              placeholder={key}
+              onInput={e => {
+                const value = (e.target as any).value
+                setInputs({ ...inputs, [key]: value })
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  run(inputs)
+                }
+              }}
+            />
+          ))}
         </div>
         {streaming ? (
-          <VSCodeButton style={{ width: 'fit-content' }} appearance="secondary" onClick={stop}>
+          <VSCodeButton appearance="secondary" onClick={stop}>
             Stop
           </VSCodeButton>
         ) : (
-          <VSCodeButton style={{ width: 'fit-content' }} appearance="primary" onClick={() => run({ input: text })}>
+          <VSCodeButton appearance="primary" onClick={() => run(inputs)}>
             Run
           </VSCodeButton>
         )}

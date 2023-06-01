@@ -5,9 +5,14 @@ import { parseCodeBlock } from './parseTypescript'
 const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block'])
 
 export function parseGlassMetadata(document: string) {
-  const blocks = glasslib.parseGlassBlocks(document)
+  const toplevelCode = glasslib
+    .parseGlassDocument(document)
+    .filter(t => t.type === 'code')
+    .map(t => t.content)
+    .join('\n')
 
-  const relevantBlocks = blocks.filter(block => contentBlocks.has(block.tag))
+  const blocks = glasslib.parseGlassBlocksRecursive(document)
+  const relevantBlocks = blocks.filter(block => contentBlocks.has(block.tag || ''))
 
   const vars = relevantBlocks.flatMap(block => {
     let match: RegExpMatchArray | null = null
@@ -20,7 +25,6 @@ export function parseGlassMetadata(document: string) {
   })
 
   const imports = glasslib.parseGlassImports(document)
-  const toplevelCode = glasslib.parseGlassTopLevelCode(glasslib.removeGlassFrontmatter(document))
 
   const parsedCodeBlock = parseCodeBlock(`${imports.join('\n')}\n\n${toplevelCode}`)
 

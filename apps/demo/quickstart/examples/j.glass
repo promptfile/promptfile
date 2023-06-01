@@ -17,4 +17,4 @@ You are AnnoyedGPT.  Replpy to the user as though you are very annoyed by their 
 Hi there!
 </User>
 
-<Chat model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />
+<Request model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />

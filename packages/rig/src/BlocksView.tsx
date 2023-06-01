@@ -1,16 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { ComposerView } from './ComposerView'
 import { GlassBlock } from './rig'
 
-interface ChatViewProps {
+interface BlocksViewProps {
   blocks: GlassBlock[]
   session: string
-  run: (inputs: Record<string, string>) => void
-  stop: () => void
 }
 
-export const ChatView = (props: ChatViewProps) => {
-  const { blocks, session, run } = props
+export const BlocksView = (props: BlocksViewProps) => {
+  const { blocks, session } = props
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
 
@@ -40,9 +37,6 @@ export const ChatView = (props: ChatViewProps) => {
       document.getElementById('end')?.scrollIntoView()
     }
   }, [blocks, autoScroll])
-
-  const lastBlock = blocks.length > 0 ? blocks[blocks.length - 1] : null
-  const streaming = lastBlock?.content.includes('█') === true
 
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -90,7 +84,6 @@ export const ChatView = (props: ChatViewProps) => {
           ))}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
-      <ComposerView streaming={streaming} stop={stop} run={run} />
     </div>
   )
 }

@@ -8,6 +8,6 @@ foo = "bar"
 ${foo}
 </User>
 
-<Chat model="claude-instant-v1" />
+<Request model="claude-instant-v1" />
 
 print(foo)

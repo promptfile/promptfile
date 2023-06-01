@@ -42,8 +42,12 @@ export const glassElements: GlassElement[] = [
         name: 'model',
         detail: 'model used to generate the content',
         documentation: 'The `model` attribute allows you to track which model generated the assistant text.',
-        type: 'string',
-        optional: true,
+        type: 'enum',
+        values: LANGUAGE_MODELS.map(model => ({
+          name: model.name,
+          detail: model.creator,
+          documentation: model.description,
+        })),
       },
       {
         name: 'if',
@@ -91,42 +95,6 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'Chat',
-    documentation: 'Creates a model inference',
-    detail: '(inference) API request to a model',
-    selfClosing: true,
-    attributes: [
-      {
-        name: 'model',
-        detail: 'model for inference',
-        documentation: 'The `model` attribute determines which model to inference',
-        type: 'enum',
-        values: LANGUAGE_MODELS,
-      },
-      {
-        name: 'temperature',
-        detail: 'temperature for inference',
-        documentation: 'The `temperature` attribute determines the temperature for inference',
-        type: 'number',
-        optional: true,
-      },
-      {
-        name: 'maxTokens',
-        detail: 'max tokens for inference',
-        documentation: 'The `maxTokens` attribute determines the max tokens for inference',
-        type: 'number',
-        optional: true,
-      },
-      {
-        name: 'onResponse',
-        detail: 'callback for response',
-        documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
-        type: 'function',
-        optional: true,
-      },
-    ],
-  },
-  {
     name: 'For',
     documentation: 'Creates a for loop',
     detail: '(element) loop over elements in an array',
@@ -146,6 +114,12 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
+    name: 'Repeat',
+    documentation: 'Repeats the inner content in the resulting Glass document',
+    detail: '(element) repeats inner content',
+    attributes: [],
+  },
+  {
     name: 'Request',
     documentation: 'Creates a model inference',
     detail: '(inference) API request to a model',
@@ -156,7 +130,11 @@ export const glassElements: GlassElement[] = [
         detail: 'model for inference',
         documentation: 'The `model` attribute determines which model to inference',
         type: 'enum',
-        values: LANGUAGE_MODELS,
+        values: LANGUAGE_MODELS.map(model => ({
+          name: model.name,
+          detail: model.creator,
+          documentation: model.description,
+        })),
       },
       {
         name: 'temperature',

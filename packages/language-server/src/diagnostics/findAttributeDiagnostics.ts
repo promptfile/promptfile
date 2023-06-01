@@ -1,15 +1,15 @@
-import { parseGlassTopLevelJsxElements } from '@glass-lang/glasslib'
+import { parseGlassBlocks } from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from '../elements'
 
 export function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
-    const parsed: any[] = parseGlassTopLevelJsxElements(textDocument.getText())
+    const parsed = parseGlassBlocks(textDocument.getText())
     const invalidAttributes: { type: string; tag: any; attribute: string }[] = []
     for (const tag of parsed) {
       const existingAttributes = tag.attrs ?? []
-      const glassElement = glassElements.find(element => element.name === tag.tagName)
+      const glassElement = glassElements.find(element => element.name === tag.tag)
       const validAttributes = glassElement?.attributes ?? []
       const missingRequiredAttributes = validAttributes.filter(
         attribute =>
