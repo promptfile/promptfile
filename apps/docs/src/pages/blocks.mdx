@@ -55,3 +55,15 @@ This block is used to add text inside another block. This is useful for adding t
 - **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block
 
 <Image src={conditional} />
+
+### `<Test>`
+
+This block is used to temporarily define test cases that will be run with the file. When you actually call the prompt, you will pass the actual values for these variables. The test variables will be overwritten with the actual values during invocation.
+
+### `<Block>`
+
+This block is used in a for loop to define the role of each block in the loop. The block will be repeated for each item in the array.
+
+- **role** <i>(required)</i> <br/> _enum_: The type of block you want to repeat. Can be `User`, `Assistant`, or `System`.
+
+- **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block

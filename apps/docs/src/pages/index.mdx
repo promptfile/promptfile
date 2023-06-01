@@ -4,6 +4,8 @@ import { Resources } from '@/components/Resources'
 import { HeroPattern } from '@/components/HeroPattern'
 import indexChat from '@/images/screenshots/index-chat.png'
 import indexCompletion from '@/images/screenshots/index-completion.png'
+import beforeGlass from '@/images/screenshots/badStringPrompt.png'
+import afterGlass from '@/images/screenshots/betterVersion.png'
 
 export const description = 'Glass is a declarative domain-specific templating language for prompting LLMs.'
 
@@ -18,7 +20,7 @@ export const sections = [
 
 Glass is an open-source, declarative framework to build applications using large language models (LLMs). {{ className: 'lead' }}
 
-Glass has a number of features purpose-built for working with language models:
+Glass has a number of features purpose-built for building and iterating with language models:
 
 - **Playground in VSCode** - Iterate and test your prompts where you work... in VSCode.
 - **Create more complex, dynamic prompts** - Execute code in your prompt, create templates, add conditional logic, and chain prompts together
@@ -35,14 +37,14 @@ The fastest way to learn about Glass is to follow the [Quickstart](/quickstart) 
 
 When we were building things in production for LLM, we were writing prompts that looked like this mixed in with our application logic.
 
-<Image src={indexCompletion} />
+<Image src={beforeGlass} />
 
-We separated it into a separate MDX file and then it looked like this:
+So we separated our prompts into a different <a href="https://mdxjs.com/" target="_blank">MDX file</a>
 
-<Image src={indexCompletion} />
+But, even that wasn't enough...We wanted something specially built for writing prompts.
 
-We wanted to extend MDX to make it even more powerful, so we created Glass. Glass is a superset of MDX that adds a number of features that make it easier to write prompts for LLMs. As we started digging deeper, we realized there was even more that we could do to make it easier to write prompts.
-
-<Image src={indexCompletion} />
+Glass is a superset of MDX that adds a number of features that make it easier to write prompts for LLMs. As we started digging deeper, we realized there was even more that we could do to make it easier to write prompts.
 
 Now, here's what the same prompt looks like in Glass:
+
+<Image src={afterGlass} />
