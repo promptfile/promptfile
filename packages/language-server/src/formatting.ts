@@ -18,9 +18,15 @@ export function formatDocument(text: string) {
   const formattedLines: string[] = []
 
   for (let index = 0; index < lines.length; index++) {
-    const line = lines[index]
+    const line = lines[index].trim() // Trim the line here
 
-    formattedLines.push(line)
+    // If it's a line with a tag, trim it.
+    const lineHasTag = new RegExp(`</?(${tagNames})>`).test(line)
+    if (lineHasTag) {
+      formattedLines.push(line.trim())
+    } else {
+      formattedLines.push(line)
+    }
   }
 
   let finalText = formattedLines.join('\n').trim()

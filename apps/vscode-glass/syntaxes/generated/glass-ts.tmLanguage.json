@@ -79,7 +79,7 @@
       }
     },
     "repeat-element": {
-      "begin": "(<)(Repeat)([^>]*)(>)",
+      "begin": "^(<)(Repeat)([^>]*)(>)",
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.end.jsx" },
         "2": { "name": "source.glass.repeat.name" },
@@ -130,7 +130,7 @@
           "include": "#for-element"
         }
       ],
-      "end": "(<\\/)(Repeat)(>)",
+      "end": "^(<\\/)(Repeat)(>)",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -144,7 +144,7 @@
       }
     },
     "system-element": {
-      "begin": "(<)(System)([^>]*)(>)",
+      "begin": "^(<)(System)([^>]*)(>)",
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.end.jsx" },
         "2": { "name": "source.glass.system.name" },
@@ -177,7 +177,7 @@
           "include": "#markdown-sections"
         }
       ],
-      "end": "(<\\/)(System)(>)",
+      "end": "^(<\\/)(System)(>)",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -191,7 +191,7 @@
       }
     },
     "assistant-element": {
-      "begin": "(<)(Assistant)([^>]*)(>)",
+      "begin": "^(<)(Assistant)([^>]*)(>)",
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.end.jsx" },
         "2": { "name": "source.glass.assistant.name" },
@@ -224,7 +224,7 @@
           "include": "#markdown-sections"
         }
       ],
-      "end": "(<\\/)(Assistant)(>)",
+      "end": "^(<\\/)(Assistant)(>)",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -238,7 +238,7 @@
       }
     },
     "state-element": {
-      "begin": "(<)(State)(>)",
+      "begin": "^(<)(State)(>)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -255,7 +255,7 @@
           "include": "source.json"
         }
       ],
-      "end": "(<\\/)(State)(>)",
+      "end": "^(<\\/)(State)(>)",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -312,7 +312,7 @@
       }
     },
     "user-element": {
-      "begin": "(<)(User)([^>]*)(>)",
+      "begin": "^(<)(User)([^>]*)(>)",
       "beginCaptures": {
         "1": { "name": "punctuation.definition.tag.end.jsx" },
         "2": { "name": "source.glass.user.name" },
@@ -385,15 +385,12 @@
       ]
     },
     "request-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Request|Chat)(?=[\\s\\/\\>\\{])",
+      "begin": "^(<)(Request|Chat)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
-        },
-        "3": {
           "name": "source.glass.request.name"
         }
       },
