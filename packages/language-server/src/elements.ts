@@ -42,8 +42,12 @@ export const glassElements: GlassElement[] = [
         name: 'model',
         detail: 'model used to generate the content',
         documentation: 'The `model` attribute allows you to track which model generated the assistant text.',
-        type: 'string',
-        optional: true,
+        type: 'enum',
+        values: LANGUAGE_MODELS.map(model => ({
+          name: model.name,
+          detail: model.creator,
+          documentation: model.description,
+        })),
       },
       {
         name: 'if',
@@ -151,38 +155,6 @@ export const glassElements: GlassElement[] = [
         detail: 'callback for response',
         documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
         type: 'function',
-        optional: true,
-      },
-    ],
-  },
-  {
-    name: 'Response',
-    documentation: 'Response from a model inference',
-    detail: '(inference) API response from a model',
-    attributes: [
-      {
-        name: 'model',
-        detail: 'model for inference',
-        documentation: 'The `model` attribute determines which model generated the response',
-        type: 'enum',
-        values: LANGUAGE_MODELS.map(model => ({
-          name: model.name,
-          detail: model.creator,
-          documentation: model.description,
-        })),
-      },
-      {
-        name: 'temperature',
-        detail: 'temperature for inference',
-        documentation: 'The `temperature` attribute determines the temperature of the inference',
-        type: 'number',
-        optional: true,
-      },
-      {
-        name: 'maxTokens',
-        detail: 'max tokens for inference',
-        documentation: 'The `maxTokens` attribute determines the max tokens for inference',
-        type: 'number',
         optional: true,
       },
     ],
