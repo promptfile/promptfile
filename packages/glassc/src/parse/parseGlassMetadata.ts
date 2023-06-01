@@ -24,9 +24,7 @@ export function parseGlassMetadata(document: string) {
     return interpolationVariables
   })
 
-  const imports = glasslib.parseGlassImports(document)
-
-  const parsedCodeBlock = parseCodeBlock(`${imports.join('\n')}\n\n${toplevelCode}`)
+  const parsedCodeBlock = parseCodeBlock(toplevelCode)
 
   const finalVars = new Set(vars)
 

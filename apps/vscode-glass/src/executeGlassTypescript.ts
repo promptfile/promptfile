@@ -81,6 +81,7 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
     entryPoints: [tmpFilePath],
     bundle: true,
     platform: 'node',
+    sourcemap: 'inline',
     write: false,
     format: 'cjs',
     target: 'es2020',
