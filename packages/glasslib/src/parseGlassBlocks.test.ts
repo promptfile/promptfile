@@ -13,7 +13,7 @@ hello world
     expect(parsed[0].child.content).to.equal('hello world')
   })
 
-  it.only('should parse complex 3', () => {
+  it('should parse complex 3', () => {
     const doc = `<For each={[
       { role: 'user', content: 'name an ice cream' },
       { role: "assistant", content: 'Vanilla' },
