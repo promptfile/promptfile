@@ -5,7 +5,7 @@ Include at least one emoji per line.
 </System>
 
 <User>
-how are you doing?
+whatas new
 </User>
 
 <Request model="gpt-3.5-turbo" />

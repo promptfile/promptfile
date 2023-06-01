@@ -165,7 +165,6 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       const initialGlass = activeEditor.document.getText()
       const languageId = activeEditor.document.languageId
-      const fileLocation = activeEditor.document.uri.fsPath
       const filename = getDocumentFilename(activeEditor.document)
 
       outputChannel.appendLine(`${filename} — launching Glass playground`)
@@ -175,17 +174,15 @@ export async function activate(context: vscode.ExtensionContext) {
       // Check if there is an existing panel for this file
       const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
       if (existingPanel) {
-        // open this panel in vscode
-        const fileContents = fs.readFileSync(fileLocation, 'utf-8')
-        const blocks = parseGlassBlocks(fileContents)
-        const metadata = parseGlassMetadata(fileContents)
+        const blocks = parseGlassBlocks(initialGlass)
+        const metadata = parseGlassMetadata(initialGlass)
         await existingPanel.webview.postMessage({
           action: 'onOpen',
           data: {
-            currentSource: fileContents,
-            originalSource: fileContents,
+            currentSource: initialGlass,
+            originalSource: initialGlass,
             filename,
-            glass: fileContents,
+            glass: initialGlass,
             blocks: blocks,
             variables: metadata.interpolationVariables,
           },
