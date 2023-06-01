@@ -37,16 +37,12 @@ function RigView() {
   const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
-  const [previousInputs, setPreviousInputs] = useState<Record<string, string>>({})
+
   const [session, setSession] = useState(getNonce())
   const [logs, setLogs] = useState<GlassLog[]>([])
   const [tab, setTab] = useState(tabs[0])
 
   const updateInputsWithVariables = (variables: string[], clearAllValues?: boolean) => {
-    console.log('RUNNING updateInputsWithVariables')
-    console.log('variables', variables)
-    console.log('initialInputs', inputs)
-    console.log('clearAllValues', clearAllValues)
     const newInputs: Record<string, string> = {}
     variables.forEach(v => {
       if (clearAllValues) {
@@ -138,7 +134,6 @@ function RigView() {
   }
 
   const run = (inputs: Record<string, string>) => {
-    setPreviousInputs(inputs)
     vscode.postMessage({
       action: 'runGlass',
       data: {

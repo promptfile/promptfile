@@ -363,42 +363,37 @@ export async function activate(context: vscode.ExtensionContext) {
               const playgroundDocument = await vscode.workspace.openTextDocument(newFilePath)
 
               try {
-                const resp = await executeGlassFile(
-                  outputChannel,
-                  playgroundDocument,
-                  inputs,
-                  async ({ nextDoc, nextInterpolatedDoc, rawResponse }) => {
-                    const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
-                    if (!existingPanel || stoppedSessions.has(session)) {
-                      return false
-                    }
-                    const blocksForGlass = parseGlassBlocks(nextDoc)
-                    const metadataForGlass =
-                      languageId === 'glass-py'
-                        ? await parseGlassMetadataPython(initialGlass)
-                        : parseGlassMetadata(nextDoc)
-                    await panel.webview.postMessage({
-                      action: 'onStream',
-                      data: {
-                        session,
-                        glass: nextDoc,
-                        blocks: blocksForGlass,
-                        variables: metadataForGlass.interpolationVariables,
-                      },
-                    })
-                    return true
+                const resp = await executeGlassFile(outputChannel, playgroundDocument, inputs, async ({ nextDoc }) => {
+                  const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
+                  if (!existingPanel || stoppedSessions.has(session)) {
+                    return false
                   }
-                )
+                  const blocksForGlass = parseGlassBlocks(nextDoc)
+                  const metadataForGlass =
+                    languageId === 'glass-py'
+                      ? await parseGlassMetadataPython(initialGlass)
+                      : parseGlassMetadata(nextDoc)
+                  await panel.webview.postMessage({
+                    action: 'onStream',
+                    data: {
+                      session,
+                      glass: nextDoc,
+                      blocks: blocksForGlass,
+                      variables: metadataForGlass.interpolationVariables,
+                    },
+                  })
+                  return true
+                })
 
                 const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
                 if (!existingPanel || stoppedSessions.has(session)) {
                   return false
                 }
-                const blocksForGlass = parseGlassBlocks(resp.finalInterpolatedDoc)
+                const blocksForGlass = parseGlassBlocks(resp.finalDoc)
                 const metadataForGlass =
                   languageId === 'glass-py'
                     ? await parseGlassMetadataPython(initialGlass)
-                    : parseGlassMetadata(resp.finalInterpolatedDoc)
+                    : parseGlassMetadata(resp.finalDoc)
                 await panel.webview.postMessage({
                   action: 'onResponse',
                   data: {
