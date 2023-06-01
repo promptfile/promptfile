@@ -188,7 +188,6 @@ async function runGlassChat(
   rawResponse: string
 }> {
   const messages = parseChatCompletionBlocks(docs.interpolatedDoc, interpolationArgs, isChatUserFirst)
-  console.log('runGlass: chat-gpt', messages)
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -265,7 +264,6 @@ async function runGlassChatAnthropic(
     }
   }
   anthropicQuery += '\n\nAssistant: '
-  console.log('runGlass: anthropic', anthropicQuery)
 
   const r = await fetch('https://api.anthropic.com/v1/complete', {
     method: 'POST',
@@ -348,8 +346,6 @@ async function runGlassCompletion(
     }
     prompt += '\n\nAssistant: '
   }
-
-  console.log('runGlass: gpt3', prompt)
 
   const r = await fetch('https://api.openai.com/v1/completions', {
     method: 'POST',

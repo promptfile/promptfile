@@ -43,15 +43,20 @@ function RigView() {
   const [tab, setTab] = useState(tabs[0])
 
   const updateInputsWithVariables = (variables: string[], clearAllValues?: boolean) => {
+    console.log('RUNNING updateInputsWithVariables')
+    console.log('variables', variables)
+    console.log('initialInputs', inputs)
+    console.log('clearAllValues', clearAllValues)
     const newInputs: Record<string, string> = {}
     variables.forEach(v => {
-      if (!clearAllValues && inputs[v] !== undefined && (previousInputs[v] ?? '') === inputs[v]) {
-        newInputs[v] = inputs[v]
-      } else {
+      if (clearAllValues) {
         newInputs[v] = ''
+      } else {
+        newInputs[v] = inputs[v] || ''
       }
     })
-    setInputs(newInputs)
+    console.log('newInputs', newInputs)
+    setInputs(() => newInputs)
   }
 
   // register a callback for when the extension sends a message
@@ -100,7 +105,6 @@ function RigView() {
           }
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
-          updateInputsWithVariables(message.data.variables)
           setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
           break
         default:
