@@ -11,28 +11,9 @@ export interface ChatCompletionRequestMessage {
   name?: string
 }
 
-export type ModelName =
-  | 'gpt-3.5-turbo'
-  | 'gpt-4'
-  | 'claude-v1'
-  | 'claude-v1-100k'
-  | 'claude-instant-v1'
-  | 'claude-instant-v1-100k'
-  | 'claude-v1.3'
-  | 'claude-v1.3-100k'
-  | 'claude-v1.2'
-  | 'claude-v1.0'
-  | 'claude-instant-v1.1'
-  | 'claude-instant-v1.1-100k'
-  | 'claude-instant-v1.0'
-  | 'text-davinci-003'
-  | 'curie'
-  | 'babbage'
-  | 'ada'
-
 export interface TranspilerOutput {
   fileName: string
-  model: ModelName
+  model: string
   interpolatedDoc: string
   originalDoc: string
   state: any
@@ -194,7 +175,7 @@ ${message}${streaming ? '█' : ''}
  */
 async function runGlassChat(
   fileName: string,
-  model: ModelName,
+  model: string,
   interpolationArgs: any,
   docs: { interpolatedDoc: string; originalDoc: string },
   isChatUserFirst: boolean,
@@ -252,7 +233,7 @@ async function runGlassChat(
  */
 async function runGlassChatAnthropic(
   fileName: string,
-  model: ModelName,
+  model: string,
   interpolationArgs: any,
   docs: { interpolatedDoc: string; originalDoc: string },
   isChatUserFirst: boolean,
