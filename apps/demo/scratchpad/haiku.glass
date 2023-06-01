@@ -3,7 +3,11 @@ You are VerboseGPT. Respond with a long message
 </System>
 
 <User>
-how are you?
+haha ok!
 </User>
+
+<Assistant>
+
+</Assistant>
 
 <Request model="gpt-3.5-turbo" />

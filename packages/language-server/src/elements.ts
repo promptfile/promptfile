@@ -43,6 +43,7 @@ export const glassElements: GlassElement[] = [
         detail: 'model used to generate the content',
         documentation: 'The `model` attribute allows you to track which model generated the assistant text.',
         type: 'enum',
+        optional: true,
         values: LANGUAGE_MODELS.map(model => ({
           name: model.name,
           detail: model.creator,
