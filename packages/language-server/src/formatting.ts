@@ -31,16 +31,7 @@ export function formatDocument(text: string, isPython: boolean) {
       if (s.content.trim().length === 0) {
         return s
       }
-      let formattedCode = prettier
-        .format(s.content, {
-          parser: 'typescript',
-          printWidth: 120,
-          arrowParens: 'avoid',
-          semi: false,
-          singleQuote: true,
-          trailingComma: 'es5',
-        })
-        .trim()
+      let formattedCode = prettify(s.content).trim()
       // if s.content starts or ends with any whitepsace chars, add them back
       const leadingWhitespace = s.content.match(/^\s+/)
       const trailingWhitespace = s.content.match(/\s+$/)
