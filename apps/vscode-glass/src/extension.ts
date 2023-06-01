@@ -170,12 +170,12 @@ export async function activate(context: vscode.ExtensionContext) {
       outputChannel.appendLine(`${filename} — launching Glass playground`)
 
       const transpiledCode = await transpileCurrentFile(activeEditor.document)
+      const initialBlocks = parseGlassBlocks(initialGlass)
+      const initialMetadata = parseGlassMetadata(initialGlass)
 
       // Check if there is an existing panel for this file
       const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
       if (existingPanel) {
-        const blocks = parseGlassBlocks(initialGlass)
-        const metadata = parseGlassMetadata(initialGlass)
         await existingPanel.webview.postMessage({
           action: 'onOpen',
           data: {
@@ -183,11 +183,11 @@ export async function activate(context: vscode.ExtensionContext) {
             originalSource: initialGlass,
             filename,
             glass: initialGlass,
-            blocks: blocks,
-            variables: metadata.interpolationVariables,
+            blocks: initialBlocks,
+            variables: initialMetadata.interpolationVariables,
           },
         })
-        existingPanel.reveal(vscode.ViewColumn.Beside)
+        existingPanel.reveal(vscode.ViewColumn.Beside, initialMetadata.interpolationVariables.length === 0)
         return
       }
 
@@ -195,7 +195,10 @@ export async function activate(context: vscode.ExtensionContext) {
       const panel = vscode.window.createWebviewPanel(
         'glass.webView',
         `${filename} (playground)`,
-        vscode.ViewColumn.Beside,
+        {
+          viewColumn: vscode.ViewColumn.Beside,
+          preserveFocus: initialMetadata.interpolationVariables.length === 0,
+        },
         {
           enableScripts: true,
           retainContextWhenHidden: true,
