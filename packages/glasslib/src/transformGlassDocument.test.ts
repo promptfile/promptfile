@@ -130,7 +130,7 @@ hello world
     const res = transformGlassDocument(initDocument, initInterplatedDoc)
 
     expect(res.transformedOriginalDoc).to.equal(`<User>
-\${input}
+hello world
 </User>
 
 <Request model="gpt-4" />
@@ -190,7 +190,7 @@ You are a helpful assistant.
 </System>
 
 <User>
-\${input}
+how are you?
 </User>
 
 <Request model="gpt-3.5-turbo" />

@@ -23,11 +23,15 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
   let transformedInterpolated = interpolatedDoc
 
   const originalLoopNode = parsedOriginal.find(node => (node as any).tag === 'Repeat')
-  let originalLoopIndex = -1
-  if (originalLoopNode) {
-    originalLoopIndex = parsedOriginal.indexOf(originalLoopNode)
-
-    const newOriginalDoc = replaceDocumentNode((originalLoopNode as any).child.content, originalLoopIndex, originalDoc)
+  const interpolatedLoopNode = parsedInterpolated.find(node => (node as any).tag === 'Repeat')
+  const originalLoopIndex = parsedOriginal.indexOf(originalLoopNode || (null as any))
+  const interpolatedLoopIndex = parsedInterpolated.indexOf(interpolatedLoopNode || (null as any))
+  if (originalLoopNode && interpolatedLoopNode) {
+    const newOriginalDoc = replaceDocumentNode(
+      interpolatedLoopNode.child!.content,
+      interpolatedLoopIndex,
+      interpolatedDoc
+    )
 
     const newDocNodes = parseGlassDocument(newOriginalDoc)
     const nodesLengthDiff = newDocNodes.length - parsedOriginal.length
@@ -39,11 +43,7 @@ export function transformGlassDocument(originalDoc: string, interpolatedDoc: str
     )
   }
 
-  const interpolatedLoopNode = parsedInterpolated.find(node => (node as any).tag === 'Repeat')
-  let interpolatedLoopIndex = -1
-  if (interpolatedLoopNode) {
-    interpolatedLoopIndex = parsedInterpolated.indexOf(interpolatedLoopNode)
-
+  if (originalLoopNode && interpolatedLoopNode) {
     const newInterpolatedDoc = replaceDocumentNode(
       interpolatedLoopNode.child!.content,
       interpolatedLoopIndex,
