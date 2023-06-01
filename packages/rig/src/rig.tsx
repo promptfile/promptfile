@@ -37,12 +37,21 @@ function RigView() {
   const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
+  const [previousInputs, setPreviousInputs] = useState<Record<string, string>>({})
   const [session, setSession] = useState(getNonce())
   const [logs, setLogs] = useState<GlassLog[]>([])
   const [tab, setTab] = useState(tabs[0])
 
   const updateInputsWithVariables = (variables: string[], clearAllValues?: boolean) => {
-    setInputs(Object.fromEntries(variables.map(v => [v, clearAllValues ? '' : inputs[v] || ''])))
+    const newInputs: Record<string, string> = {}
+    variables.forEach(v => {
+      if (!clearAllValues && previousInputs[v] !== undefined) {
+        newInputs[v] = previousInputs[v]
+      } else {
+        newInputs[v] = ''
+      }
+    })
+    setInputs(newInputs)
   }
 
   // register a callback for when the extension sends a message
@@ -84,7 +93,6 @@ function RigView() {
           }
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
-          updateInputsWithVariables(message.data.variables)
           break
         case 'onResponse':
           if (message.data.session !== session) {
@@ -92,7 +100,7 @@ function RigView() {
           }
           setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
-          updateInputsWithVariables(message.data.variables, true)
+          updateInputsWithVariables(message.data.variables)
           setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
           break
         default:
@@ -126,6 +134,7 @@ function RigView() {
   }
 
   const run = (inputs: Record<string, string>) => {
+    setPreviousInputs(inputs)
     vscode.postMessage({
       action: 'runGlass',
       data: {
@@ -134,6 +143,7 @@ function RigView() {
         session,
       },
     })
+    updateInputsWithVariables(Object.keys(inputs), true)
   }
 
   const openGlass = (glass: string) => {
