@@ -2,24 +2,37 @@ import { Guides } from '@/components/Guides'
 import { Resources } from '@/components/Resources'
 import { HeroPattern } from '@/components/HeroPattern'
 import tabs from '@/images/screenshots/playground/tabWalkthrough.gif'
-
+import logs from '@/images/screenshots/playground/logs.gif'
 import Image from 'next/image'
 
 export const description = 'Glass is a domain-specific language for prompting LLMs.'
 
 # What is the Playground?
 
-When building with Glass, you can run your Glass file directly in VSCode through our Playground. To run a Glass file in Playground, either hit `Command (⌘) Enter (↩)` or by selecting the VSCode Command Palette `Glass: Open Playground` command. You will be able to chat directly with your prompt and see the results in real-time.
+When building with Glass, you can run your Glass file directly in VSCode through our Playground. To run a Glass file in Playground, either hit `Command (⌘) Enter (↩)` or by selecting the VSCode Command Palette `Glass: Open Playground` command. You will be able to chat directly with your prompt and see the results in real-time. You can also see the raw prompt that will be transpiled and then sent to the API and the history of your requests and responses.
 
-<Image src={tabs} />
+<Note>
+  {' '}
+  If you make changes to your prompt, you currently have to restart the Playground, but we will be making that easier{' '}
+</Note>
 
 There are three different tabs: chat, raw, and history.
 
-- **Chat** this allows you to try out your prompt
-- **Raw** this shows the raw prompt that is going to be transpiled
-- **History** this shows the history of your requests and responses
+## Parts of Playground
 
-# Token counting
+- **Chat** this allows you to try out your prompt.
+- **Raw** this shows the raw prompt that is going to be transpiled
+- **History** this shows the history of your requests and responses. You can click the ID to open up a Glass file of the session. This is one thing we like about Glass...the output of a Glass file is another Glass file!
+
+<Image src={tabs} />
+
+## Playground Logs
+
+You can see the logs of your Playground by opening the logs button. This will keep track of all of your playground sessions and allow you to go back to a specific playground session.
+
+<Image src={logs} />
+
+## Token counting
 
 You can keep track of the amount of tokens inside your Glass file at the bottom of the editor. Currently we use <a href="https://github.com/openai/tiktoken" target="_blank"> tiktoken</a> which is the one used by OpenAI.
 

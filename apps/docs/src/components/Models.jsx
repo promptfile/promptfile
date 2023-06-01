@@ -30,7 +30,7 @@ export function Models() {
       </Heading>
       <div className="not-prose mt-4 grid grid-cols-1 gap-x-6 gap-y-10 border-t border-zinc-900/5 pt-10 dark:border-white/5 sm:grid-cols-2 xl:max-w-none xl:grid-cols-3">
         {supportedmodels.map(model => (
-          <div key={model.name} className="flex flex-row-reverse gap-6">
+          <div key={model.name} className="flex flex-row-reverse gap-10">
             <div className="flex-auto">
               <div className="flex">
                 <h3 className="pr-2 text-sm font-semibold text-zinc-900 dark:text-white">{model.name}</h3>

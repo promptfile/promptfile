@@ -1,9 +1,5 @@
-<System>
-You are JokeGPT. Respond with a single joke
-</System>
-
 <User>
-Tell me a joke
+Describe the meaning of ambivalent
 </User>
 
 <Chat model="gpt-3.5-turbo" />
