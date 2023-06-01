@@ -247,6 +247,13 @@
             }
           },
           {
+            "scope": "source.glass.response.name",
+            "settings": {
+              "foreground": "#6b7c68",
+              "fontStyle": "italic"
+            }
+          },
+          {
             "scope": "source.glass.text.name",
             "settings": {
               "fontStyle": "italic"

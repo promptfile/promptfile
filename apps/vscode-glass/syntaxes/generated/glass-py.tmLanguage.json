@@ -7,6 +7,9 @@
       "include": "#markdown-frontmatter"
     },
     {
+      "include": "#response-element"
+    },
+    {
       "include": "#repeat-element"
     },
     {
@@ -74,6 +77,59 @@
           "name": "punctuation.definition.tag.self-closing.jsx"
         },
         "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "response-element": {
+      "begin": "^(<)(Response)([^>]*)(>)$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.response.name" },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
+      },
+      "patterns": [
+        {
+          "include": "#user-element"
+        },
+        {
+          "include": "#assistant-element"
+        },
+        {
+          "include": "#system-element"
+        }
+      ],
+      "end": "^(<\\/)(Response)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.response.name"
+        },
+        "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }

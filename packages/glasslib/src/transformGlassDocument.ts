@@ -93,8 +93,7 @@ export function replaceStateNode(newStateNode: string, doc: string) {
 }
 
 export function updateRequestOrChatNode(substitution: string, doc: string) {
-  const res = replaceRequestNode(substitution, doc)
-  return updateChatNode(substitution + '\n', res)
+  return replaceRequestNode(substitution, doc)
 }
 
 export function replaceRequestNode(newRequestNode: string, doc: string) {
@@ -111,26 +110,4 @@ export function replaceRequestNode(newRequestNode: string, doc: string) {
   const idx = parsed.indexOf(requestNode)
   const newDoc = replaceDocumentNode(newRequestNode, idx, doc)
   return restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
-}
-
-export function updateChatNode(chatNodeSubstitution: string, doc: string) {
-  const docWithoutLiterals = removeEscapedHtml(doc)
-  doc = docWithoutLiterals.output
-
-  const parsed = parseGlassTopLevelNodesNext(doc)
-
-  const chatNode = parsed.find(node => (node as any).tagName === 'Chat')
-  if (!chatNode) {
-    return doc
-  }
-
-  const idx = parsed.indexOf(chatNode)
-  const newDoc = addNodeToDocument(chatNodeSubstitution, idx, doc)
-  const res = restoreEscapedHtml(newDoc, docWithoutLiterals.replacements)
-  // remove all instances of initialRole="assistant"
-  return res
-    .replace(/initialRole="(assistant|user|Assistant|User)"/g, '')
-    .replace(/initialRole={"(assistant|user|Assistant|User)"}/g, '')
-    .replace(/initialRole={'(assistant|user|Assistant|User)'}/g, '')
-    .replace(/initialRole={`(assistant|user|Assistant|User)`}/g, '')
 }

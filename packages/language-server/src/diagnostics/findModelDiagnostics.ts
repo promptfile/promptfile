@@ -10,7 +10,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed = parseGlassTopLevelJsxElements(textDocument.getText())
-    const requestElement = parsed.find(tag => tag.tagName && ['Request', 'Chat'].includes(tag.tagName))
+    const requestElement = parsed.find(tag => tag.tagName && ['Request'].includes(tag.tagName))
     if (!requestElement) {
       return []
     }

@@ -156,6 +156,38 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
+    name: 'Response',
+    documentation: 'Response from a model inference',
+    detail: '(inference) API response from a model',
+    attributes: [
+      {
+        name: 'model',
+        detail: 'model for inference',
+        documentation: 'The `model` attribute determines which model generated the response',
+        type: 'enum',
+        values: LANGUAGE_MODELS.map(model => ({
+          name: model.name,
+          detail: model.creator,
+          documentation: model.description,
+        })),
+      },
+      {
+        name: 'temperature',
+        detail: 'temperature for inference',
+        documentation: 'The `temperature` attribute determines the temperature of the inference',
+        type: 'number',
+        optional: true,
+      },
+      {
+        name: 'maxTokens',
+        detail: 'max tokens for inference',
+        documentation: 'The `maxTokens` attribute determines the max tokens for inference',
+        type: 'number',
+        optional: true,
+      },
+    ],
+  },
+  {
     name: 'State',
     insertText: 'State>\n{\n\t"$1": "$2"\n}\n</State>',
     documentation: 'Creates a State tag to hold document state',
