@@ -1,4 +1,9 @@
-import { parseGlassMetadata, transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
+import {
+  parseGlassMetadata,
+  parseGlassMetadataPython,
+  transpileGlassNext,
+  transpileGlassPython,
+} from '@glass-lang/glassc'
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
@@ -171,7 +176,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
       const transpiledCode = await transpileCurrentFile(activeEditor.document)
       const initialBlocks = parseGlassBlocks(initialGlass)
-      const initialMetadata = parseGlassMetadata(initialGlass)
+      const initialMetadata =
+        languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
 
       // Check if there is an existing panel for this file
       const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
@@ -220,7 +226,10 @@ export async function activate(context: vscode.ExtensionContext) {
             stoppedSessions.add(stopSession)
             const stoppedGlass = message.data.glass.replace('█', '')
             const stoppedBlocks = parseGlassBlocks(stoppedGlass)
-            const stoppedMetadata = parseGlassMetadata(stoppedGlass)
+            const stoppedMetadata =
+              languageId === 'glass-py'
+                ? await parseGlassMetadataPython(initialGlass)
+                : parseGlassMetadata(stoppedGlass)
             await panel.webview.postMessage({
               action: 'onStream',
               data: {
@@ -266,7 +275,10 @@ export async function activate(context: vscode.ExtensionContext) {
           case 'onOpen':
             const glassSession = message.data.session
             const initialBlocks = parseGlassBlocks(initialGlass)
-            const initialMetadata = parseGlassMetadata(initialGlass)
+            const initialMetadata =
+              languageId === 'glass-py'
+                ? await parseGlassMetadataPython(initialGlass)
+                : parseGlassMetadata(initialGlass)
             outputChannel.appendLine(`${filename} — created session ${glassSession}`)
             await panel.webview.postMessage({
               action: 'onOpen',
@@ -356,7 +368,10 @@ export async function activate(context: vscode.ExtensionContext) {
                       return false
                     }
                     const blocksForGlass = parseGlassBlocks(nextDoc)
-                    const metadataForGlass = parseGlassMetadata(nextDoc)
+                    const metadataForGlass =
+                      languageId === 'glass-py'
+                        ? await parseGlassMetadataPython(initialGlass)
+                        : parseGlassMetadata(nextDoc)
                     await panel.webview.postMessage({
                       action: 'onStream',
                       data: {
@@ -375,7 +390,10 @@ export async function activate(context: vscode.ExtensionContext) {
                   return false
                 }
                 const blocksForGlass = parseGlassBlocks(resp.finalInterpolatedDoc)
-                const metadataForGlass = parseGlassMetadata(resp.finalInterpolatedDoc)
+                const metadataForGlass =
+                  languageId === 'glass-py'
+                    ? await parseGlassMetadataPython(initialGlass)
+                    : parseGlassMetadata(resp.finalInterpolatedDoc)
                 await panel.webview.postMessage({
                   action: 'onResponse',
                   data: {

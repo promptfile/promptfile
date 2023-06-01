@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { parseGlassMetadata } from './parseGlassMetadata'
+import { parseGlassMetadata, parseGlassMetadataPython } from './parseGlassMetadata'
 
 describe('parseGlassMetadata', () => {
   it('should parse non-chat document with no vars', () => {
@@ -100,5 +100,83 @@ Helpful Answer:
 </Block>
 </For>`)
     ).to.deep.equal({ interpolationVariables: [] })
+  })
+
+  describe('parseGlassMetadataPython', () => {
+    it('should parse non-chat document with no vars', async () => {
+      expect(
+        await parseGlassMetadataPython(`<User>
+hello world
+</User>`)
+      ).to.deep.equal({ interpolationVariables: [] })
+    })
+
+    it('should parse chat document with no vars', async () => {
+      expect(
+        await parseGlassMetadataPython(`<System>
+hello world
+</System>`)
+      ).to.deep.equal({ interpolationVariables: [] })
+    })
+
+    it('should parse non-chat document with vars', async () => {
+      expect(
+        await parseGlassMetadataPython(`<User>
+\${foo}
+</User>`)
+      ).to.deep.equal({ interpolationVariables: ['foo'] })
+    })
+
+    it('should parse chat document with vars', async () => {
+      expect(
+        (
+          await parseGlassMetadataPython(`
+import requests
+
+<System>
+\${foo}
+</System>
+
+<User>
+\${bar}
+</User>
+
+a = requests.get(url)
+text = a.text()
+
+<Assistant>
+\${foo}
+</Assistant>`)
+        ).interpolationVariables
+      ).to.have.members(['foo', 'bar', 'url'])
+    })
+
+    it('should parse another glass document', async () => {
+      expect(
+        await parseGlassMetadataPython(`<For each={[
+    { role: 'user', content: 'name an ice cream' },
+    { role: "assistant", content: 'Vanilla' },
+    { role: 'user', content: 'name a fruit' }
+]} as="m">
+<Block role={m.role}>
+\${content}
+</Block>
+</For>`)
+      ).to.deep.equal({ interpolationVariables: ['content'] })
+    })
+
+    it('should parse another glass document', async () => {
+      expect(
+        await parseGlassMetadataPython(`<For each={[
+    { role: 'user', content: 'name an ice cream' },
+    { role: "assistant", content: 'Vanilla' },
+    { role: 'user', content: 'name a fruit' }
+]} as="m">
+<Block role={m.role}>
+\${m.content}
+</Block>
+</For>`)
+      ).to.deep.equal({ interpolationVariables: [] })
+    })
   })
 })
