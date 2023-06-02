@@ -36,11 +36,22 @@ export async function createPlayground(
   const languageId = document.languageId
   const existingPlayground = playgrounds.get(filepath)
   if (existingPlayground) {
-    if (!session) {
-      return existingPlayground
-    }
     existingPlayground.sessionId = session.id
     playgrounds.set(filepath, existingPlayground)
+    const currentGlass = await loadGlass(session)
+    const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
+    const currentMetadata =
+      languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
+    await existingPlayground.panel.webview.postMessage({
+      action: 'setGlass',
+      data: {
+        filename: filepath.split('/').pop(),
+        session: existingPlayground.sessionId,
+        glass: currentGlass,
+        blocks: currentBlocks,
+        variables: currentMetadata.interpolationVariables,
+      },
+    })
     return existingPlayground
   }
 
