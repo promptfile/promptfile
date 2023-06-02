@@ -10,7 +10,7 @@ import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getHtmlForWebview } from '../webview'
 import { getAnthropicKey, getOpenaiKey } from './keys'
-import { GlassSession, createSession, getSessionFilepath, loadGlass } from './session'
+import { GlassSession, createSession, getSessionFilepath, loadGlass, writeGlass } from './session'
 
 export interface GlassPlayground {
   filepath: string
@@ -154,7 +154,7 @@ export async function createPlayground(
         try {
           const newSessionFile = await vscode.workspace.openTextDocument(sessionFilepath)
           await vscode.window.showTextDocument(newSessionFile, {
-            viewColumn: vscode.ViewColumn.Active,
+            viewColumn: vscode.ViewColumn.Beside,
           })
         } catch {
           await vscode.window.showErrorMessage('Unable to open session file')
@@ -232,14 +232,14 @@ export async function createPlayground(
               if (!session || session.stopped) {
                 return false
               }
+              writeGlass(session, nextDoc)
               const blocksForGlass = parseGlassTranscriptBlocks(nextDoc)
               const metadataForGlass =
-                languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(nextDoc)
+                languageId === 'glass-py' ? await parseGlassMetadataPython(nextDoc) : parseGlassMetadata(nextDoc)
               await panel.webview.postMessage({
                 action: 'onStream',
                 data: {
-                  session,
-                  glass: nextDoc,
+                  session: session.id,
                   blocks: blocksForGlass,
                   variables: metadataForGlass.interpolationVariables,
                 },
@@ -258,8 +258,9 @@ export async function createPlayground(
             const blocksForGlass = parseGlassTranscriptBlocks(resp.finalDoc)
             const metadataForGlass =
               languageId === 'glass-py'
-                ? await parseGlassMetadataPython(initialGlass)
+                ? await parseGlassMetadataPython(resp.finalDoc)
                 : parseGlassMetadata(resp.finalDoc)
+            writeGlass(session, resp.finalDoc)
             await panel.webview.postMessage({
               action: 'onResponse',
               data: {
@@ -288,15 +289,10 @@ export async function createPlayground(
         }
         activeSession.stopped = false
         sessions.set(sessionId, activeSession)
-
+        const glass = loadGlass(activeSession)
         const inputs = message.data.inputs
         if (inputs == null) {
           await vscode.window.showErrorMessage('No inputs provided')
-          return
-        }
-        const glass = message.data.glass
-        if (glass == null) {
-          await vscode.window.showErrorMessage('No glass provided')
           return
         }
         await runGlassExtension(glass, sessionId, inputs)

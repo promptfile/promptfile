@@ -20,6 +20,11 @@ export function loadGlass(session: GlassSession) {
   return glass
 }
 
+export function writeGlass(session: GlassSession, glass: string) {
+  const sessionFilepath = getSessionFilepath(session)
+  fs.writeFileSync(sessionFilepath, glass)
+}
+
 export async function createSession(
   filepath: string,
   sessions: Map<string, GlassSession>
