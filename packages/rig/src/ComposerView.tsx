@@ -12,9 +12,11 @@ interface ComposerViewProps {
 export const ComposerView = (props: ComposerViewProps) => {
   const { inputs, setInputs, run, streaming, stop } = props
 
+  const keys: string[] = Object.keys(inputs)
+
   useEffect(() => {
     document.getElementById('composer-input-0')?.focus()
-  }, Object.keys(inputs))
+  }, keys)
 
   return (
     <div style={{ width: '100%', flexShrink: 0 }}>
@@ -38,24 +40,28 @@ export const ComposerView = (props: ComposerViewProps) => {
             paddingRight: '8px',
           }}
         >
-          {Object.keys(inputs).map((key, index) => (
-            <VSCodeTextArea
-              key={key}
-              style={{ width: '100%' }}
-              value={inputs[key]}
-              id={`composer-input-${index}`}
-              placeholder={key}
-              onInput={e => {
-                const value = (e.target as any).value
-                setInputs({ ...inputs, [key]: value })
-              }}
-              onKeyDown={e => {
-                if (!streaming && e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  run(inputs)
-                }
-              }}
-            />
+          {keys.map((key, index) => (
+            <div key={key} style={{ width: '100%' }}>
+              {keys.length > 1 && (
+                <div style={{ paddingTop: index === 0 ? '0px' : '8px', paddingBottom: '4px' }}>{key}</div>
+              )}
+              <VSCodeTextArea
+                style={{ width: '100%' }}
+                value={inputs[key]}
+                id={`composer-input-${index}`}
+                placeholder={keys.length === 1 ? key : ''}
+                onInput={e => {
+                  const value = (e.target as any).value
+                  setInputs({ ...inputs, [key]: value })
+                }}
+                onKeyDown={e => {
+                  if (!streaming && e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    run(inputs)
+                  }
+                }}
+              />
+            </div>
           ))}
         </div>
         {streaming ? (
