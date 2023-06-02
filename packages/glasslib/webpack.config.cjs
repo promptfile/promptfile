@@ -4,6 +4,7 @@ module.exports = [
   {
     entry: './src/index.ts',
     target: 'node',
+    devtool: 'source-map',
     module: {
       rules: [
         {
@@ -24,6 +25,7 @@ module.exports = [
   {
     entry: './src/test.ts',
     target: 'node',
+    devtool: 'source-map',
     module: {
       rules: [
         {
@@ -39,6 +41,7 @@ module.exports = [
       filename: 'test.js',
       path: path.resolve(__dirname, 'dist'),
       libraryTarget: 'commonjs',
+      devtoolModuleFilenameTemplate: info => 'file://' + path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },
   },
 ]

@@ -2,7 +2,9 @@
 language: typescript
 ---
 
-const serpApiKey = '21dcb41b678d3f25cdb7ce1e946245ba66cb19dec2896e40e1a5c9df9419db21'
+<Test>
+const question = "Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?"
+</Test>
 
 const tools = [
   {
@@ -23,7 +25,7 @@ async function runAction(data: { action: 'calculator' | 'search'; action_input: 
   }
   const resp = await fetch(
     'https://serpapi.com/search.json?api_key=' +
-      serpApiKey +
+      process.env.SERP_API_KEY +
       '&engine=google&q=' +
       encodeURIComponent(data.action_input)
   )
@@ -44,9 +46,6 @@ async function runAction(data: { action: 'calculator' | 'search'; action_input: 
   return 'No good search result found'
 }
 
-const toolDescriptions = tools.map(tool => tool.name + ': ' + tool.description).join('\n')
-const toolNames = tools.map(tool => tool.name).join(', ')
-
 <System>
 Assistant is a large language model trained by OpenAI.
 
@@ -59,12 +58,12 @@ Overall, Assistant is a powerful system that can help with a wide range of tasks
 However, above all else, all responses must adhere to the format of RESPONSE FORMAT INSTRUCTIONS.
 </System>
 
-<User>
+<User once>
 TOOLS
 ------
 Assistant can ask the user to use tools to look up information that may be helpful in answering the users original question. The tools the human can use are:
 
-${toolDescriptions}
+${tools.map(tool => tool.name + ': ' + tool.description).join('\n')}
 
 RESPONSE FORMAT INSTRUCTIONS
 ----------------------------
@@ -77,7 +76,7 @@ Markdown code snippet formatted in the following schema:
 
 ```json
 {
-    "action": string // The action to take. Must be one of [${toolNames}]
+    "action": string // The action to take. Must be one of [${tools.map(tool => tool.name).join(', ')}]
     "action_input": string // The input to the action. May be a stringified object.
 }
 ```
@@ -101,14 +100,19 @@ Here is the user's input (remember to respond with a markdown code snippet of a 
 ${input}
 </User>
 
+<Transcript />
+
+<System>
+DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRUCTIONS. Respond *only* with a ```json``` fenced block.
+</System>
+
 <Request
-  model="gpt-3.5-turbo"
+  model="gpt-4"
   onResponse={async res => {
-    console.log('got response', JSON.stringify(res))
     const { action, action_input } = JSON.parse(res.message.slice(7, -3))
     if (action !== 'Final Answer') {
       const observation = await runAction({ action, action_input })
-      res.setNextUserText(observation)
+      res.addToTranscript('User', observation)
       res.continue()
     }
   }}

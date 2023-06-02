@@ -1,66 +1,39 @@
 const examples = [
-    {
-        message: "ur product never works, def want my money back",
-        classification: "NEEDS_ATTENTION"
-    },
-    {
-        message: "Love it! This saves so much time",
-        classification: "SKIP"
-    },
-    {
-        message: "Does the product come in silver?",
-        classification: "NEEDS_ATTENTION"
-    },
-    {
-        message: "would highly recommend not buying this product, I've had so many problems",
-        classification: "NEEDS_ATTENTION"
-    }
+  {
+    message: 'ur product never works, def want my money back',
+    classification: 'NEEDS_ATTENTION',
+  },
+  {
+    message: 'Love it! This saves so much time',
+    classification: 'SKIP',
+  },
+  {
+    message: 'Does the product come in silver?',
+    classification: 'NEEDS_ATTENTION',
+  },
+  {
+    message: "would highly recommend not buying this product, I've had so many problems",
+    classification: 'NEEDS_ATTENTION',
+  },
 ]
+
+
 
 <System>
 You are an AI community moderator. Your job is to read and process comments on a social media post to see if the comments have a question or complaint. If the comment has a question or complaint, return "NEEDS_ATTENTION". Otherwise, return "SKIP". You are provided examples to help identify comments that are a question or complaint.
 </System>
 
+<For each={examples} as="example">
 <User>
-ur product never works, def want my money back
+${example.message}
 </User>
-
 <Assistant>
-NEEDS_ATTENTION
+${example.classification}
 </Assistant>
-
-<User>
-Love it! This saves so much time
-</User>
-
-<Assistant>
-SKIP
-</Assistant>
+</For>
 
 <User>
-Does the product come in silver?
+${input}
 </User>
-
-<Assistant>
-NEEDS_ATTENTION
-</Assistant>
-
-<User>
-would highly recommend not buying this product, I've had so many problems
-</User>
-
-<Assistant>
-NEEDS_ATTENTION
-</Assistant>
-
-<User>
-hey! i love your product
-</User>
-
-<Assistant>
-SKIP
-</Assistant>
-
-
 
 <Request model="gpt-3.5-turbo" />

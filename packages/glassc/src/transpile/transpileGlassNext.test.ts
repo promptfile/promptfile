@@ -174,6 +174,12 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
+  it('should transpile with special characters', () => {
+    const { input, output } = loadTestfile('specialCharacters', 'ts')
+    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'specialCharacters' })
+    expect(transpiled.code.trim()).to.equal(output.trim())
+  })
+
   it.skip('should transpile with .glass import', () => {
     const { input, output } = loadTestfile('glassImport', 'ts')
     const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'glassImport' })

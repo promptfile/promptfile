@@ -20,8 +20,7 @@ export async function executeGlassTypescriptNew(
   finalDoc: string
   finalInterpolatedDoc: string
   continued: boolean
-  setText: string | null
-  setNextUserText: string | null
+  addToTranscript: { tag: string; content: string }[] | null
 }> {
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
   if (!activeEditorWorkspaceFolder) {

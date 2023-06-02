@@ -6,8 +6,8 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf dist",
-    "test": "mocha --exit ./dist/test.js",
-    "test:watch": "mocha --watch ./dist/test.js",
+    "test": "mocha --exit --enable-source-maps ./dist/test.js",
+    "test:watch": "mocha --watch --enable-source-maps ./dist/test.js",
     "build": "npm run build:types && webpack --mode production",
     "watch": "webpack --watch --mode development",
     "build:types": "tsc --emitDeclarationOnly",
