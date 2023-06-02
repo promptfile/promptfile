@@ -1,4 +1,5 @@
 export { DocumentNode, JSXNode, Position, TextBlockNode } from './ast'
+export { countTokens } from './countTokens'
 export { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 export { ChatCompletionRequestMessage, parseChatCompletionBlocks } from './parseChatCompletionBlocks'
 export { parseGlassAST } from './parseGlassAST'

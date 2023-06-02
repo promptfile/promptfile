@@ -63,5 +63,8 @@
     ],
     "clean": true,
     "dts": true
+  },
+  "dependencies": {
+    "tiktoken": "^1.0.7"
   }
 }
