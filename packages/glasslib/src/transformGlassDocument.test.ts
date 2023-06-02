@@ -1,11 +1,6 @@
 import { expect } from 'chai'
 import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
-import {
-  addNodeToDocument,
-  replaceDocumentNode,
-  replaceStateNode,
-  transformGlassDocument,
-} from './transformGlassDocument'
+import { addNodeToDocument, handleRequestNode, replaceDocumentNode, replaceStateNode } from './transformGlassDocument'
 
 describe('transformGlassDocument', () => {
   it('should parse document nodes and recreate document', () => {
@@ -110,118 +105,6 @@ user
 <User />`)
   })
 
-  it('should trafnsform document loop', () => {
-    const initDocument = `<Repeat>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />
-</Repeat>`
-
-    const initInterplatedDoc = `<Repeat>
-<User>
-hello world
-</User>
-
-<Request model="gpt-4" />
-</Repeat>`
-
-    const res = transformGlassDocument(initDocument, initInterplatedDoc)
-
-    expect(res.transformedOriginalDoc).to.equal(`<User>
-hello world
-</User>
-
-<Request model="gpt-4" />
-
-<Repeat>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />
-</Repeat>`)
-
-    expect(res.transformedInterpolatedDoc).to.equal(`<User>
-hello world
-</User>
-
-<Request model="gpt-4" />
-
-<Repeat>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />
-</Repeat>`)
-  })
-
-  it('should trafnsform document loop2', () => {
-    const initDocument = `<System>
-You are a helpful assistant.
-</System>
-
-<Repeat>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-</Repeat>`
-
-    const initInterplatedDoc = `<System>
-You are a helpful assistant.
-</System>
-
-<Repeat>
-<User>
-how are you?
-</User>
-
-<Request model="gpt-3.5-turbo" />
-</Repeat>`
-
-    const res = transformGlassDocument(initDocument, initInterplatedDoc)
-
-    expect(res.transformedOriginalDoc).to.equal(`<System>
-You are a helpful assistant.
-</System>
-
-<User>
-how are you?
-</User>
-
-<Request model="gpt-3.5-turbo" />
-
-<Repeat>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-</Repeat>`)
-
-    expect(res.transformedInterpolatedDoc).to.equal(`<System>
-You are a helpful assistant.
-</System>
-
-<User>
-how are you?
-</User>
-
-<Request model="gpt-3.5-turbo" />
-
-<Repeat>
-<User>
-\${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-</Repeat>`)
-  })
-
   describe('replaceStateNode', () => {
     it('should transform document with frontmatter', () => {
       const newState = `<State>\nstate\n</State>`
@@ -293,6 +176,148 @@ state
 <User>
 hello
 </User>`)
+    })
+  })
+
+  describe('handleRequestNode', () => {
+    it('shoudl handle request without transcript', () => {
+      const origDoc = `---
+language: typescript
+---
+
+<User>
+\${input}
+</User>
+
+<Request model="gpt-4" />`
+
+      const interpDoc = `---
+language: typescript
+---
+
+<User>
+hello world
+</User>
+
+<Request model="gpt-4" />`
+
+      const res = handleRequestNode(origDoc, interpDoc, { message: '', streaming: true, model: 'gpt-4' })
+      expect(res.rawResponse).to.equal('█')
+      expect(res.finalDoc).to.equal(`---
+language: typescript
+---
+
+<Transcript>
+<User>
+hello world
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+█
+</Assistant>
+</Transcript>
+
+<User>
+\${input}
+</User>
+
+<Request model="gpt-4" />`)
+    })
+
+    it('shoudl handle request with empty transcript', () => {
+      const origDoc = `<User>
+\${input}
+</User>
+
+<Transcript />
+
+<Request model="gpt-4" />`
+
+      const interpDoc = `<User>
+hello world
+</User>
+
+<Transcript />
+
+<Request model="gpt-4" />`
+
+      const res = handleRequestNode(origDoc, interpDoc, { message: '', streaming: true, model: 'gpt-4' })
+      expect(res.rawResponse).to.equal('█')
+      expect(res.finalDoc).to.equal(`<User>
+\${input}
+</User>
+
+<Transcript>
+<User>
+hello world
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+█
+</Assistant>
+</Transcript>
+
+<Request model="gpt-4" />`)
+    })
+
+    it('shoudl handle request with transcript', () => {
+      const origDoc = `<Transcript>
+<User>
+hello world
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+how are you doing?
+</Assistant>
+</Transcript>
+
+<User>
+\${input}
+</User>
+
+<Request model="gpt-4" />`
+
+      const interpDoc = `<Transcript>
+<User>
+hello world
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+how are you doing?
+</Assistant>
+</Transcript>
+
+<User>
+goodbye world
+</User>
+
+<Request model="gpt-4" />`
+
+      const res = handleRequestNode(origDoc, interpDoc, { message: '', streaming: true, model: 'gpt-4' })
+      expect(res.rawResponse).to.equal('█')
+      expect(res.finalDoc).to.equal(`<Transcript>
+<User>
+hello world
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+how are you doing?
+</Assistant>
+
+<User>
+goodbye world
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+█
+</Assistant>
+</Transcript>
+
+<User>
+\${input}
+</User>
+
+<Request model="gpt-4" />`)
     })
   })
 })

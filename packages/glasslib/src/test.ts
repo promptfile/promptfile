@@ -1,3 +1,4 @@
+import './parseChatCompletionBlocks.test'
 import './parseGlassBlocks.test'
 import './parseGlassTopLevelJsxElements.test'
 import './removeGlassComments.test'

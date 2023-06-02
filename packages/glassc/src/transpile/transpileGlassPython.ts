@@ -63,7 +63,10 @@ export async function transpileGlassFilePython(
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
     }
-    if (jsxNode.tag === 'Request' || jsxNode.tag === 'Chat') {
+    if (jsxNode.tag === 'Transcript') {
+      continue
+    }
+    if (jsxNode.tag === 'Request') {
       const modelAttr = jsxNode.attrs!.find(a => a.name === 'model')
       // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
       // we don't currently support dynamic model values

@@ -126,4 +126,28 @@ Goodbye world
       )
     ).to.deep.equal([{ role: 'system', content: 'Hello world' }])
   })
+
+  it('should use transcript blocks', () => {
+    expect(
+      parseChatCompletionBlocks(
+        `<System>
+Hello world
+</System>
+
+<Transcript>
+<User>
+Goodbye world
+</User>
+</Transcript>
+
+<User>
+Goodbye world 2
+</User>`
+      )
+    ).to.deep.equal([
+      { role: 'system', content: 'Hello world' },
+      { role: 'user', content: 'Goodbye world' },
+      { role: 'user', content: 'Goodbye world 2' },
+    ])
+  })
 })

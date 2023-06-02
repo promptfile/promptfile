@@ -1,4 +1,4 @@
-import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
+import { parseGlassBlocks, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 
 export function addNodeToDocument(content: string, index: number, doc: string) {
   const parsed: { content: string; type: string }[] = parseGlassDocument(doc)
@@ -13,62 +13,6 @@ export function replaceDocumentNode(content: string, index: number, doc: string)
     .concat({ content, type: 'block' })
     .concat(parsed.slice(index + 1))
   return reconstructGlassDocument(nodes)
-}
-
-export function transformGlassDocument(originalDoc: string, interpolatedDoc: string) {
-  const parsedOriginal = parseGlassDocument(originalDoc)
-  const parsedInterpolated = parseGlassDocument(interpolatedDoc)
-
-  let transformedOriginal = originalDoc
-  let transformedInterpolated = interpolatedDoc
-
-  const originalLoopNode = parsedOriginal.find(node => (node as any).tag === 'Repeat')
-  const interpolatedLoopNode = parsedInterpolated.find(node => (node as any).tag === 'Repeat')
-  const originalLoopIndex = parsedOriginal.indexOf(originalLoopNode || (null as any))
-  const interpolatedLoopIndex = parsedInterpolated.indexOf(interpolatedLoopNode || (null as any))
-  if (originalLoopNode && interpolatedLoopNode) {
-    const newOriginalDoc = replaceDocumentNode(
-      interpolatedLoopNode.child!.content,
-      interpolatedLoopIndex,
-      interpolatedDoc
-    )
-
-    const newDocNodes = parseGlassDocument(newOriginalDoc)
-    const nodesLengthDiff = newDocNodes.length - parsedOriginal.length
-
-    transformedOriginal = addNodeToDocument(
-      '\n\n' + originalLoopNode.content + '\n',
-      nodesLengthDiff + originalLoopIndex + 1,
-      newOriginalDoc
-    )
-  }
-
-  if (originalLoopNode && interpolatedLoopNode) {
-    const newInterpolatedDoc = replaceDocumentNode(
-      interpolatedLoopNode.child!.content,
-      interpolatedLoopIndex,
-      interpolatedDoc
-    )
-    // const newInterpolatedDoc = replaceDocumentNode(
-    //   getJSXNodeInsidesString((interpolatedLoopNode as any).child.content, interpolatedDoc),
-    //   interpolatedLoopIndex,
-    //   interpolatedDoc
-    // )
-
-    const newDocNodes = parseGlassDocument(newInterpolatedDoc)
-    const nodesLengthDiff = newDocNodes.length - parsedInterpolated.length
-
-    transformedInterpolated = addNodeToDocument(
-      '\n\n' + originalLoopNode!.content,
-      nodesLengthDiff + originalLoopIndex + 1,
-      newInterpolatedDoc
-    )
-  }
-
-  return {
-    transformedOriginalDoc: transformedOriginal,
-    transformedInterpolatedDoc: transformedInterpolated,
-  }
 }
 
 export function replaceStateNode(newStateNode: string, doc: string) {
@@ -94,8 +38,45 @@ export function replaceStateNode(newStateNode: string, doc: string) {
   return replaceDocumentNode(newStateNode, stateIndex, doc)
 }
 
-export function updateRequestOrChatNode(substitution: string, doc: string) {
-  return replaceRequestNode(substitution, doc)
+export function handleRequestNode(
+  uninterpolatedDoc: string,
+  interpolatedDoc: string,
+  request: { model: string; message: string; streaming: boolean }
+) {
+  const parsedInterpolated = parseGlassBlocks(interpolatedDoc)
+  const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
+  const newRequestNode = requestNodeReplacement(request.model, request.message, request.streaming)
+
+  const userAndAssistantBlocks = parsedInterpolated.filter(block => block.tag === 'User' || block.tag === 'Assistant')
+
+  let transcriptContent = transcriptNode?.child?.content || ''
+  if (transcriptContent) {
+    transcriptContent += '\n\n'
+  }
+  if (userAndAssistantBlocks.length > 0) {
+    transcriptContent += userAndAssistantBlocks.map(block => block.content).join('\n\n')
+  }
+  transcriptContent += '\n\n' + newRequestNode
+
+  return {
+    nextDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc),
+    finalDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc),
+    nextInterpolatedDoc: replaceTranscriptNode(
+      '<Transcript>\n' + transcriptContent + '\n</Transcript>',
+      interpolatedDoc
+    ),
+    finalInterpolatedDoc: replaceTranscriptNode(
+      '<Transcript>\n' + transcriptContent + '\n</Transcript>',
+      interpolatedDoc
+    ),
+    rawResponse: request.streaming ? '█' : request.message,
+  }
+}
+
+const requestNodeReplacement = (model: string, message: string, streaming: boolean) => {
+  return `<Assistant model="${model}" temperature="1">
+${message}${streaming ? '█' : ''}
+</Assistant>`
 }
 
 export function replaceRequestNode(newRequestNode: string, doc: string) {
@@ -110,20 +91,16 @@ export function replaceRequestNode(newRequestNode: string, doc: string) {
   return replaceDocumentNode(newRequestNode, idx, doc)
 }
 
-export function updateChatNode(chatNodeSubstitution: string, doc: string) {
+export function replaceTranscriptNode(newTranscriptNode: string, doc: string) {
   const parsed = parseGlassDocument(doc)
 
-  const chatNode = parsed.find(node => (node as any).tag === 'Chat')
-  if (!chatNode) {
-    return doc
+  const transNode = parsed.find(node => (node as any).tag === 'Transcript')
+  if (!transNode) {
+    // put transcript node at the index of the first block
+    const firstBlockIndex = parsed.findIndex(node => node.type === 'block')
+    return addNodeToDocument(newTranscriptNode + '\n\n', firstBlockIndex, doc)
   }
 
-  const idx = parsed.indexOf(chatNode)
-  const newDoc = addNodeToDocument(chatNodeSubstitution, idx, doc)
-  // remove all instances of initialRole="assistant"
-  return newDoc
-    .replace(/initialRole="(assistant|user|Assistant|User)"/g, '')
-    .replace(/initialRole={"(assistant|user|Assistant|User)"}/g, '')
-    .replace(/initialRole={'(assistant|user|Assistant|User)'}/g, '')
-    .replace(/initialRole={`(assistant|user|Assistant|User)`}/g, '')
+  const idx = parsed.indexOf(transNode)
+  return replaceDocumentNode(newTranscriptNode, idx, doc)
 }

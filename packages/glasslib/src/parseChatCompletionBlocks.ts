@@ -7,11 +7,7 @@ export interface ChatCompletionRequestMessage {
   name?: string
 }
 
-export function parseChatCompletionBlocks(
-  content: string,
-  interpolationArgs: any = {},
-  isChatUserFirst = true
-): ChatCompletionRequestMessage[] {
+export function parseChatCompletionBlocks(content: string): ChatCompletionRequestMessage[] {
   const doc = removeGlassComments(content)
 
   // first interpolate the jsx interpolations
@@ -22,8 +18,10 @@ export function parseChatCompletionBlocks(
   for (const node of nodes.filter(n => n.type === 'block')) {
     let role = node.tag?.toLowerCase()
     let blockContent = node.child!.content
-    if (role == 'chat' && isChatUserFirst) {
-      res.push({ role: 'user', content: interpolationArgs.input })
+    if (role === 'transcript') {
+      const transcriptContent = node.child!.content
+      const transcriptNodes = parseChatCompletionBlocks(transcriptContent)
+      res.push(...transcriptNodes)
       continue
     }
     if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
