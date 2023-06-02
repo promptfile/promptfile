@@ -64,44 +64,35 @@ export const TranscriptView = (props: TranscriptViewProps) => {
             paddingTop: '16px',
             paddingBottom: '16px',
             fontFamily: 'monospace',
-            fontSize: '12px',
+            fontSize: '10px',
             opacity: 0.3,
             width: '100%',
             textAlign: 'center',
           }}
         >
-          session {session}
+          {session}
         </div>
-        {blocks
-          .filter(
-            block =>
-              block.tag &&
-              ['User', 'Assistant'].includes(block.tag) &&
-              !(block.child?.content.startsWith('${') && block.child?.content.endsWith('}'))
-          )
-          .map((block, index) => {
-            const summary = requestSummary(block)
-            return (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  paddingBottom: '24px',
-                  fontStyle: block.tag === 'System' ? 'italic' : 'normal',
-                  width: '100%',
-                }}
-              >
-                <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', paddingBottom: '4px' }}>
-                  <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px' }}>{block.tag}</span>
-                  {summary && (
-                    <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>
-                  )}
-                </div>
-                <span style={{ whiteSpace: 'pre-line' }}>{block.child?.content}</span>
+        {blocks.map((block, index) => {
+          const summary = requestSummary(block)
+          return (
+            <div
+              key={index}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                paddingBottom: '24px',
+                fontStyle: block.tag === 'System' ? 'italic' : 'normal',
+                width: '100%',
+              }}
+            >
+              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', paddingBottom: '4px' }}>
+                <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px' }}>{block.tag}</span>
+                {summary && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>}
               </div>
-            )
-          })}
+              <span style={{ whiteSpace: 'pre-wrap' }}>{block.child?.content}</span>
+            </div>
+          )
+        })}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
     </div>
