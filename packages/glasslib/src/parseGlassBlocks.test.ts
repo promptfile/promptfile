@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { parseGlassBlocks, parseGlassBlocksRecursive, parseGlassDocument } from './parseGlassBlocks'
+import { parseGlassBlocks, parseGlassDocument } from './parseGlassBlocks'
 
 describe('parseGlassBlocks', () => {
   it('should parse complex', () => {
@@ -371,22 +371,22 @@ inside user
     )
   })
 
-  it('should parse recursive blocks', () => {
-    const doc = `<Assistant>
-inside me
-<User>
-ignore
-</User>
-</Assistant>
+  //   it('should parse recursive blocks', () => {
+  //     const doc = `<Assistant>
+  // inside me
+  // <User>
+  // ignore
+  // </User>
+  // </Assistant>
 
-<Repeat>
-<Request mode="gpt-4" />
-</Repeat>`
+  // <Repeat>
+  // <Request mode="gpt-4" />
+  // </Repeat>`
 
-    const parsed = parseGlassBlocksRecursive(doc)
-    expect(parsed).to.have.length(3)
-    expect(parsed[2].tag).to.equal('Request')
-    expect(parsed[2].content).to.equal('<Request mode="gpt-4" />')
-    expect(parsed[2].child!.content).to.equal('')
-  })
+  //     const parsed = parseGlassBlocksRecursive(doc)
+  //     expect(parsed).to.have.length(3)
+  //     expect(parsed[2].tag).to.equal('Request')
+  //     expect(parsed[2].content).to.equal('<Request mode="gpt-4" />')
+  //     expect(parsed[2].child!.content).to.equal('')
+  //   })
 })

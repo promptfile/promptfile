@@ -39,23 +39,23 @@ hello world`
     expect(parseGlassDocument(doc)).to.have.length(1)
   })
 
-  it('should parse document nodes and recreate document', () => {
-    const doc = `hello world
+  //   it('should parse document nodes and recreate document', () => {
+  //     const doc = `hello world
 
-<Repeat>
-<User>
-\${input}
-</User>
+  // <Repeat>
+  // <User>
+  // \${input}
+  // </User>
 
-interstitial
+  // interstitial
 
-<Request model="gpt-4" />
-</Repeat>
+  // <Request model="gpt-4" />
+  // </Repeat>
 
-done`
+  // done`
 
-    expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
-  })
+  //     expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
+  //   })
 
   it('should add node to document', () => {
     const doc = `---

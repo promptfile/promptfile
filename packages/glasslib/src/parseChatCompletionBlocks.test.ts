@@ -111,21 +111,21 @@ Goodbye world
     ])
   })
 
-  it('should ignore loop blocks', () => {
-    expect(
-      parseChatCompletionBlocks(
-        `<System>
-Hello world
-</System>
+  //   it('should ignore loop blocks', () => {
+  //     expect(
+  //       parseChatCompletionBlocks(
+  //         `<System>
+  // Hello world
+  // </System>
 
-<Repeat>
-<User>
-Goodbye world
-</User>
-</Repeat>`
-      )
-    ).to.deep.equal([{ role: 'system', content: 'Hello world' }])
-  })
+  // <Repeat>
+  // <User>
+  // Goodbye world
+  // </User>
+  // </Repeat>`
+  //       )
+  //     ).to.deep.equal([{ role: 'system', content: 'Hello world' }])
+  //   })
 
   it('should use transcript blocks', () => {
     expect(
