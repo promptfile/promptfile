@@ -177,6 +177,7 @@ function RigView() {
 
   const assistantBlocks = blocks.filter(b => b.tag === 'Assistant')
   const streaming = lastElement(assistantBlocks)?.child?.content.includes('█') === true
+  const dirty = source !== currentSource
 
   return (
     <div
@@ -191,8 +192,8 @@ function RigView() {
       <TopperView
         session={session}
         openSessionFile={openSessionFile}
-        dirty={source !== currentSource}
-        reloadable={assistantBlocks.length > 0 && !streaming}
+        dirty={dirty}
+        reloadable={assistantBlocks.length > 0 || dirty}
         tab={tab}
         setTab={setTab}
         tabs={tabs}
