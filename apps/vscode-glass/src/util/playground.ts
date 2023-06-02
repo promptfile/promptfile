@@ -219,33 +219,40 @@ export async function createPlayground(
             return
           }
 
+          const origFilePath = session.filepath
           const newFilePath = getSessionFilepath(session)
           const sessionDocument = await vscode.workspace.openTextDocument(newFilePath)
 
           try {
-            const resp = await executeGlassFile(outputChannel, sessionDocument, inputs, async ({ nextDoc }) => {
-              const existingPlayground = playgrounds.get(filepath)
-              if (!existingPlayground || sessionId !== existingPlayground.sessionId) {
-                return false
+            const resp = await executeGlassFile(
+              origFilePath,
+              outputChannel,
+              sessionDocument,
+              inputs,
+              async ({ nextDoc }) => {
+                const existingPlayground = playgrounds.get(filepath)
+                if (!existingPlayground || sessionId !== existingPlayground.sessionId) {
+                  return false
+                }
+                const session = sessions.get(existingPlayground.sessionId)
+                if (!session || session.stopped) {
+                  return false
+                }
+                writeGlass(session, nextDoc)
+                const blocksForGlass = parseGlassTranscriptBlocks(nextDoc)
+                const metadataForGlass =
+                  languageId === 'glass-py' ? await parseGlassMetadataPython(nextDoc) : parseGlassMetadata(nextDoc)
+                await panel.webview.postMessage({
+                  action: 'onStream',
+                  data: {
+                    session: session.id,
+                    blocks: blocksForGlass,
+                    variables: metadataForGlass.interpolationVariables,
+                  },
+                })
+                return true
               }
-              const session = sessions.get(existingPlayground.sessionId)
-              if (!session || session.stopped) {
-                return false
-              }
-              writeGlass(session, nextDoc)
-              const blocksForGlass = parseGlassTranscriptBlocks(nextDoc)
-              const metadataForGlass =
-                languageId === 'glass-py' ? await parseGlassMetadataPython(nextDoc) : parseGlassMetadata(nextDoc)
-              await panel.webview.postMessage({
-                action: 'onStream',
-                data: {
-                  session: session.id,
-                  blocks: blocksForGlass,
-                  variables: metadataForGlass.interpolationVariables,
-                },
-              })
-              return true
-            })
+            )
 
             const existingPlayground = playgrounds.get(filepath)
             if (!existingPlayground || sessionId !== existingPlayground.sessionId) {

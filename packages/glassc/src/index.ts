@@ -1,5 +1,6 @@
 export { parseFrontmatterFromGlass } from './parse/parseFrontmatter.js'
 export { parseGlassMetadata, parseGlassMetadataPython } from './parse/parseGlassMetadata.js'
+export { rewriteImports } from './transform/rewriteImports.js'
 // breaks CommonJS projects, since it imports ESM packages
 export {
   constructGlassOutputFileNext,

@@ -1,3 +1,4 @@
+import { rewriteImports } from '@glass-lang/glassc'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
@@ -22,7 +23,8 @@ export function loadGlass(session: GlassSession) {
 
 export function writeGlass(session: GlassSession, glass: string) {
   const sessionFilepath = getSessionFilepath(session)
-  fs.writeFileSync(sessionFilepath, glass)
+  const updatedGlass = rewriteImports(glass, session.tempDir, session.filepath)
+  fs.writeFileSync(sessionFilepath, updatedGlass)
 }
 
 export async function createSession(
@@ -44,7 +46,8 @@ export async function createSession(
     fs.mkdirSync(tempDir)
   }
   const newFilePath = path.join(tempDir, `${sessionId}.glass`)
-  fs.writeFileSync(newFilePath, glass)
+  const updatedGlass = rewriteImports(glass, tempDir, filepath)
+  fs.writeFileSync(newFilePath, updatedGlass)
   const session: GlassSession = {
     id: sessionId,
     filepath,

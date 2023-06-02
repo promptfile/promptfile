@@ -7,6 +7,7 @@ import { TextDecoder } from 'util'
 import * as vscode from 'vscode'
 
 export async function executeGlassTypescriptNew(
+  glassfilePath: string,
   outputChannel: vscode.OutputChannel,
   document: vscode.TextDocument,
   fileName: string,
@@ -84,6 +85,9 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
     write: false,
     format: 'cjs',
     target: 'es2020',
+    define: {
+      __dirname: `"${path.join(glassfilePath, '..')}"`,
+    },
     external: ['@glass-lang/glasslib', 'hnswlib-node', 'openai'],
   })
 

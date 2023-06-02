@@ -15,4 +15,8 @@ ${context.join('\n\n')}
 ###
 </System>
 
+<User>
+${input}
+</User>
+
 <Request model="gpt-3.5-turbo" />
