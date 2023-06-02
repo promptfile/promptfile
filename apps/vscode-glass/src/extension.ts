@@ -7,8 +7,8 @@ import {
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
-  parseGlassBlocks,
   parseGlassBlocksRecursive,
+  parseGlassTranscriptBlocks,
 } from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
@@ -180,7 +180,7 @@ export async function activate(context: vscode.ExtensionContext) {
       outputChannel.appendLine(`${filename} — launching Glass playground`)
 
       const transpiledCode = await transpileCurrentFile(activeEditor.document)
-      const initialBlocks = parseGlassBlocks(initialGlass)
+      const initialBlocks = parseGlassTranscriptBlocks(initialGlass)
       const initialMetadata =
         languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
 
@@ -230,7 +230,7 @@ export async function activate(context: vscode.ExtensionContext) {
             const stopSession = message.data.session
             stoppedSessions.add(stopSession)
             const stoppedGlass = message.data.glass.replace('█', '')
-            const stoppedBlocks = parseGlassBlocks(stoppedGlass)
+            const stoppedBlocks = parseGlassTranscriptBlocks(stoppedGlass)
             const stoppedMetadata =
               languageId === 'glass-py'
                 ? await parseGlassMetadataPython(initialGlass)
@@ -279,7 +279,7 @@ export async function activate(context: vscode.ExtensionContext) {
             break
           case 'onOpen':
             const glassSession = message.data.session
-            const initialBlocks = parseGlassBlocks(initialGlass)
+            const initialBlocks = parseGlassTranscriptBlocks(initialGlass)
             const initialMetadata =
               languageId === 'glass-py'
                 ? await parseGlassMetadataPython(initialGlass)
@@ -368,7 +368,7 @@ export async function activate(context: vscode.ExtensionContext) {
                   if (!existingPanel || stoppedSessions.has(session)) {
                     return false
                   }
-                  const blocksForGlass = parseGlassBlocks(nextDoc)
+                  const blocksForGlass = parseGlassTranscriptBlocks(nextDoc)
                   const metadataForGlass =
                     languageId === 'glass-py'
                       ? await parseGlassMetadataPython(initialGlass)
@@ -389,7 +389,7 @@ export async function activate(context: vscode.ExtensionContext) {
                 if (!existingPanel || stoppedSessions.has(session)) {
                   return false
                 }
-                const blocksForGlass = parseGlassBlocks(resp.finalDoc)
+                const blocksForGlass = parseGlassTranscriptBlocks(resp.finalDoc)
                 const metadataForGlass =
                   languageId === 'glass-py'
                     ? await parseGlassMetadataPython(initialGlass)

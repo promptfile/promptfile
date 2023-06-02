@@ -37,7 +37,6 @@ function RigView() {
   const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
-
   const [session, setSession] = useState(getNonce())
   const [logs, setLogs] = useState<GlassLog[]>([])
   const [tab, setTab] = useState(tabs[0])
@@ -64,6 +63,7 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'onOpen':
+          console.log(message)
           const newSession = getNonce()
           setSession(newSession)
           const initialGlass = message.data.glass
@@ -197,10 +197,9 @@ function RigView() {
       />
       {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {tab === 'Transcript' &&
-        (streaming || (blocks.some(b => b.tag === 'Request') && Object.keys(inputs).length > 0)) && (
-          <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
-        )}
+      {tab === 'Transcript' && (streaming || (glass.includes('<Request') && Object.keys(inputs).length > 0)) && (
+        <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
+      )}
     </div>
   )
 }

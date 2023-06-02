@@ -1,4 +1,5 @@
-import { countTokens, parseGlassBlocks } from '@glass-lang/glasslib'
+import { countTokens } from '@glass-lang/glassc'
+import { parseGlassBlocks } from '@glass-lang/glasslib'
 import * as vscode from 'vscode'
 
 export function updateTokenCount(counter: vscode.StatusBarItem) {

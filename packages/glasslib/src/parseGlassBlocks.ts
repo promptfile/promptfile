@@ -237,3 +237,12 @@ export function reconstructGlassDocument(nodes: { content: string; type: string 
       .trim()
   )
 }
+
+export function parseGlassTranscriptBlocks(glass: string): GlassContent[] {
+  const blocks = parseGlassBlocks(glass)
+  const transcript = blocks.find(b => b.tag === 'Transcript')
+  if (!transcript || !transcript.child) {
+    return []
+  }
+  return parseGlassBlocks(transcript.child.content)
+}

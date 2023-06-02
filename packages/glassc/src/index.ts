@@ -12,3 +12,4 @@ export {
   transpileGlassFilePython,
   transpileGlassPython,
 } from './transpile/transpileGlassPython.js'
+export { countTokens } from './util/countTokens.js'
