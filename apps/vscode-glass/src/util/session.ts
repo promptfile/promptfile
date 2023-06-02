@@ -35,6 +35,7 @@ export async function createSession(
   const launchFile = vscode.workspace.textDocuments.find(doc => doc.uri.fsPath === filepath)
   const savedFileText = fs.readFileSync(filepath, 'utf-8')
   const glass = launchFile?.getText() ?? savedFileText
+  console.log('createSession glass: ', glass)
 
   const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filepath))
   if (!workspaceFolder) {

@@ -61,8 +61,12 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'setGlass':
-          setSession(() => message.data.session)
-          setFilename(() => message.data.filename)
+          if (message.data.filename) {
+            setFilename(() => message.data.filename)
+          }
+          if (message.data.session) {
+            setSession(() => message.data.session)
+          }
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
           if (message.data.variables.length > 0) {
@@ -108,7 +112,7 @@ function RigView() {
     })
   }, [])
 
-  const reset = () => {
+  const reload = () => {
     vscode.postMessage({
       action: 'resetSession',
     })
@@ -180,7 +184,7 @@ function RigView() {
         setTab={setTab}
         tabs={tabs}
         filename={filename}
-        reset={reset}
+        reload={reload}
         openOutput={openOutput}
       />
       {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}

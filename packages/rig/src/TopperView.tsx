@@ -7,7 +7,7 @@ interface TopperViewProps {
   tab: string
   setTab: (tab: string) => void
   openOutput: () => void
-  reset: () => void
+  reload: () => void
   dirty: boolean
   reloadable: boolean
   openSessionFile: () => void
@@ -15,7 +15,7 @@ interface TopperViewProps {
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { dirty, reloadable, filename, tabs, tab, setTab, reset, openOutput, openSessionFile, session } = props
+  const { dirty, reloadable, filename, tabs, tab, setTab, reload, openOutput, openSessionFile, session } = props
 
   return (
     <div
@@ -61,7 +61,7 @@ export const TopperView = (props: TopperViewProps) => {
           >
             Logs
           </div>
-          <VSCodeButton appearance="secondary" onClick={reset} disabled={!reloadable}>
+          <VSCodeButton appearance="secondary" onClick={reload} disabled={!reloadable}>
             Reload
           </VSCodeButton>
           {/* <div style={{ paddingLeft: '8px' }}>
