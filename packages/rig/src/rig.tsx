@@ -112,10 +112,7 @@ function RigView() {
 
   useEffect(() => {
     vscode.postMessage({
-      action: 'getGlass',
-      data: {
-        session,
-      },
+      action: 'getCurrentSession',
     })
   }, [])
 

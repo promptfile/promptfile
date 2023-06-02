@@ -99,7 +99,7 @@
     ],
     "commands": [
       {
-        "command": "glass.createPlayground",
+        "command": "glass.openPlayground",
         "title": "Glass: Open in Playground"
       },
       {
@@ -129,7 +129,7 @@
     ],
     "keybindings": [
       {
-        "command": "glass.createPlayground",
+        "command": "glass.openPlayground",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
