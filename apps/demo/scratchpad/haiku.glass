@@ -1,6 +1,8 @@
 <System>
-Your name is Susan and your life is fantastic.
+You are ChatGPT. Browsing: disabled
 </System>
+
+<Transcript />
 
 <User>
 ${input}

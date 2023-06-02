@@ -6,47 +6,6 @@ import { glassElements } from './elements'
 export function formatDocument(text: string, isPython: boolean) {
   text = wrapIfNoBlocks(text)
 
-  // Check if the document contains any of the required tags
-  if (!isPython) {
-    const sections = parseGlassDocument(text)
-    const blocks = sections.map(s => {
-      if (s.type === 'frontmatter') {
-        return s
-      }
-      if (s.type === 'block') {
-        const childContent = s.child!.content
-        if (childContent.length === 0) {
-          const formatted = prettify(s.content)
-          return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
-        }
-        const blockWithoutChild =
-          s.content.substring(0, s.child!.position.start.offset - s.position.start.offset) +
-          'GLASS_INNERBLOCK_SUBSTITUTION' +
-          s.content.substring(s.child!.position.end.offset - s.position.start.offset)
-        const formatted = prettify(blockWithoutChild)
-          .replace(/\s*GLASS_INNERBLOCK_SUBSTITUTION\s*/, '\n' + childContent + '\n')
-          .trim()
-        return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
-      }
-      if (s.content.trim().length === 0) {
-        return s
-      }
-      let formattedCode = prettify(s.content).trim()
-      // if s.content starts or ends with any whitepsace chars, add them back
-      const leadingWhitespace = s.content.match(/^\s+/)
-      const trailingWhitespace = s.content.match(/\s+$/)
-      if (leadingWhitespace) {
-        formattedCode = leadingWhitespace[0] + formattedCode
-      }
-      if (trailingWhitespace) {
-        formattedCode = formattedCode + trailingWhitespace[0]
-      }
-
-      return { ...s, content: formattedCode }
-    })
-    text = blocks.map(b => b.content).join('')
-  }
-
   const nonSelfClosingTags = glassElements.filter(e => e.selfClosing !== true)
 
   const tagNames = glassElements.map(e => e.name).join('|')
@@ -86,6 +45,47 @@ export function formatDocument(text: string, isPython: boolean) {
     }
   } catch {
     // Ignore errors
+  }
+
+  // Check if the document contains any of the required tags
+  if (!isPython) {
+    const sections = parseGlassDocument(finalText)
+    const blocks = sections.map(s => {
+      if (s.type === 'frontmatter') {
+        return s
+      }
+      if (s.type === 'block') {
+        const childContent = s.child!.content
+        if (childContent.length === 0) {
+          const formatted = prettify(s.content).trim()
+          return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
+        }
+        const blockWithoutChild =
+          s.content.substring(0, s.child!.position.start.offset - s.position.start.offset) +
+          'GLASS_INNERBLOCK_SUBSTITUTION' +
+          s.content.substring(s.child!.position.end.offset - s.position.start.offset)
+        const formatted = prettify(blockWithoutChild)
+          .replace(/\s*GLASS_INNERBLOCK_SUBSTITUTION\s*/, '\n' + childContent + '\n')
+          .trim()
+        return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
+      }
+      if (s.content.trim().length === 0) {
+        return s
+      }
+      let formattedCode = prettify(s.content).trim()
+      // if s.content starts or ends with any whitepsace chars, add them back
+      const leadingWhitespace = s.content.match(/^\s+/)
+      const trailingWhitespace = s.content.match(/\s+$/)
+      if (leadingWhitespace) {
+        formattedCode = leadingWhitespace[0] + formattedCode
+      }
+      if (trailingWhitespace) {
+        formattedCode = formattedCode + trailingWhitespace[0]
+      }
+
+      return { ...s, content: formattedCode }
+    })
+    finalText = blocks.map(b => b.content).join('')
   }
 
   return finalText.trim()
