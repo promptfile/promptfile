@@ -125,6 +125,7 @@ export async function createPlayground(
             glass: currentGlass,
             blocks: currentBlocks,
             variables: currentMetadata.interpolationVariables,
+            currentSource: currentGlass,
             source: currentGlass,
           },
         })

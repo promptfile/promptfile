@@ -193,7 +193,14 @@ function RigView() {
       {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
       {tab === 'Transcript' && (streaming || Object.keys(inputs).length > 0) && (
-        <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
+        <ComposerView
+          reload={reload}
+          run={run}
+          stop={stop}
+          streaming={streaming}
+          inputs={inputs}
+          setInputs={setInputs}
+        />
       )}
     </div>
   )

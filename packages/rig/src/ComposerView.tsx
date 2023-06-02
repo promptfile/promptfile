@@ -4,13 +4,14 @@ import { useEffect } from 'react'
 interface ComposerViewProps {
   run: (inputs: Record<string, string>) => void
   stop: () => void
+  reload: () => void
   streaming: boolean
   inputs: Record<string, string>
   setInputs: (inputs: Record<string, string>) => void
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { inputs, setInputs, run, streaming, stop } = props
+  const { inputs, setInputs, run, reload, streaming, stop } = props
 
   const keys: string[] = Object.keys(inputs)
 
@@ -55,7 +56,13 @@ export const ComposerView = (props: ComposerViewProps) => {
                   setInputs({ ...inputs, [key]: value })
                 }}
                 onKeyDown={e => {
-                  if (!streaming && e.key === 'Enter' && !e.shiftKey) {
+                  if (e.metaKey && e.key === 'r') {
+                    e.preventDefault()
+                    reload()
+                  } else if (e.metaKey && e.key === 'Enter') {
+                    e.preventDefault()
+                    reload()
+                  } else if (!streaming && e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault()
                     run(inputs)
                   }
