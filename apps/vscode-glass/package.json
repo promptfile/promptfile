@@ -100,7 +100,7 @@
     "commands": [
       {
         "command": "glass.openPlayground",
-        "title": "Glass: Open Playground"
+        "title": "Glass: Open in Playground"
       },
       {
         "command": "glass.showGlassOutput",
