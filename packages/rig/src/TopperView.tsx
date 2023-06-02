@@ -10,12 +10,12 @@ interface TopperViewProps {
   reset: () => void
   dirty: boolean
   reloadable: boolean
-  openCurrentGlass: () => void
+  openSessionFile: () => void
   session: string
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { dirty, reloadable, filename, tabs, tab, setTab, reset, openOutput, openCurrentGlass, session } = props
+  const { dirty, reloadable, filename, tabs, tab, setTab, reset, openOutput, openSessionFile, session } = props
 
   return (
     <div
@@ -121,7 +121,7 @@ export const TopperView = (props: TopperViewProps) => {
             event.target.style.opacity = '0.3'
           }}
           style={{ fontSize: '10px', opacity: 0.3, cursor: 'pointer' }}
-          onClick={openCurrentGlass}
+          onClick={openSessionFile}
         >
           Open session file
         </span>

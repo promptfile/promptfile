@@ -4,29 +4,25 @@ import {
   transpileGlassNext,
   transpileGlassPython,
 } from '@glass-lang/glassc'
-import {
-  LANGUAGE_MODELS,
-  LanguageModelCreator,
-  parseGlassBlocksRecursive,
-  parseGlassTranscriptBlocks,
-} from '@glass-lang/glasslib'
+import { LANGUAGE_MODELS, LanguageModelCreator, parseGlassBlocksRecursive } from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeTestSuite } from './executeTestSuite'
-import { executeGlassFile } from './runGlassExtension'
 import { updateDecorations } from './util/decorations'
 import { getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
+import { GlassPlayground, createPlayground } from './util/playground'
+import { GlassSession } from './util/session'
 import { updateTokenCount } from './util/tokenCounter'
 import { transpileCurrentFile } from './util/transpile'
-import { getHtmlForWebview } from './webview'
 
 let client: LanguageClient | null = null
-const activePlaygrounds = new Map<string, vscode.WebviewPanel>()
-const stoppedSessions = new Set<string>()
+
+const sessions = new Map<string, GlassSession>()
+const playgrounds = new Map<string, GlassPlayground>()
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -48,7 +44,7 @@ export async function activate(context: vscode.ExtensionContext) {
     },
     {
       documentSelector: [
-        { scheme: 'file', language: '`glass-py`' },
+        { scheme: 'file', language: 'glass-py`' },
         { scheme: 'file', language: 'glass-ts' },
         { scheme: 'file', language: 'glass-js' },
       ],
@@ -105,9 +101,9 @@ export async function activate(context: vscode.ExtensionContext) {
           updateDecorations(activeEditor, codeDecorations)
           updateTokenCount(tokenCount)
           await updateLanguageMode(editor.document)
-          const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
-          if (existingPanel) {
-            await existingPanel.webview.postMessage({
+          const existingPlayground = playgrounds.get(editor.document.uri.fsPath)
+          if (existingPlayground) {
+            await existingPlayground.panel.webview.postMessage({
               action: 'onDidChangeTextDocument',
               data: {
                 currentSource: editor.document.getText(),
@@ -173,284 +169,20 @@ export async function activate(context: vscode.ExtensionContext) {
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
         return
       }
+
       const initialGlass = activeEditor.document.getText()
       const languageId = activeEditor.document.languageId
+      const filepath = activeEditor.document.uri.fsPath
       const filename = getDocumentFilename(activeEditor.document)
-
       outputChannel.appendLine(`${filename} — launching Glass playground`)
-
-      const transpiledCode = await transpileCurrentFile(activeEditor.document)
-      const initialBlocks = parseGlassTranscriptBlocks(initialGlass)
       const initialMetadata =
         languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
-
-      // Check if there is an existing panel for this file
-      const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
-      if (existingPanel) {
-        await existingPanel.webview.postMessage({
-          action: 'onOpen',
-          data: {
-            currentSource: initialGlass,
-            originalSource: initialGlass,
-            filename,
-            glass: initialGlass,
-            blocks: initialBlocks,
-            variables: initialMetadata.interpolationVariables,
-          },
-        })
-        existingPanel.reveal(vscode.ViewColumn.Beside, initialMetadata.interpolationVariables.length === 0)
+      const playground = await createPlayground(filepath, playgrounds, sessions, context.extensionUri, outputChannel)
+      if (!playground) {
+        await vscode.window.showErrorMessage('Unable to create playground')
         return
       }
-
-      // If there's no existing panel, create a new one
-      const panel = vscode.window.createWebviewPanel(
-        'glass.webView',
-        `${filename} (playground)`,
-        {
-          viewColumn: vscode.ViewColumn.Beside,
-          preserveFocus: initialMetadata.interpolationVariables.length === 0,
-        },
-        {
-          enableScripts: true,
-          retainContextWhenHidden: true,
-        }
-      )
-      // Store the new panel in the map
-      activePlaygrounds.set(activeEditor.document.uri.fsPath, panel)
-
-      // When the panel is disposed, remove it from the map
-      panel.onDidDispose(() => {
-        activePlaygrounds.delete(activeEditor.document.uri.fsPath)
-      })
-
-      panel.webview.html = getHtmlForWebview(panel.webview, context.extensionUri)
-      panel.webview.onDidReceiveMessage(async (message: any) => {
-        switch (message.action) {
-          case 'stopGlass':
-            const stopSession = message.data.session
-            stoppedSessions.add(stopSession)
-            const stoppedGlass = message.data.glass.replace('█', '')
-            const stoppedBlocks = parseGlassTranscriptBlocks(stoppedGlass)
-            const stoppedMetadata =
-              languageId === 'glass-py'
-                ? await parseGlassMetadataPython(initialGlass)
-                : parseGlassMetadata(stoppedGlass)
-            await panel.webview.postMessage({
-              action: 'onStream',
-              data: {
-                session: stopSession,
-                glass: stoppedGlass,
-                blocks: stoppedBlocks,
-                variables: stoppedMetadata.interpolationVariables,
-              },
-            })
-            break
-          case 'openGlass':
-            try {
-              const newGlassFile = await vscode.workspace.openTextDocument({
-                language: languageId,
-                content: message.data.glass,
-              })
-              await vscode.window.showTextDocument(newGlassFile, {
-                viewColumn: vscode.ViewColumn.Active,
-              })
-            } catch {
-              await vscode.window.showErrorMessage('Unable to open Glass file')
-            }
-            break
-          case 'transpileGlass':
-            const lookup: Record<string, string> = {
-              'glass-py': 'python',
-              'glass-js': 'javascript',
-              'glass-ts': 'typescript',
-            }
-            try {
-              // open the code string in a new editor
-              const newFile = await vscode.workspace.openTextDocument({
-                language: lookup[languageId],
-                content: transpiledCode,
-              })
-              await vscode.window.showTextDocument(newFile)
-            } catch {
-              await vscode.window.showErrorMessage('Unable to transpile Glass file')
-            }
-          case 'openOutput':
-            outputChannel.show()
-            break
-          case 'onOpen':
-            const glassSession = message.data.session
-            const initialBlocks = parseGlassTranscriptBlocks(initialGlass)
-            const initialMetadata =
-              languageId === 'glass-py'
-                ? await parseGlassMetadataPython(initialGlass)
-                : parseGlassMetadata(initialGlass)
-            outputChannel.appendLine(`${filename} — created session ${glassSession}`)
-            await panel.webview.postMessage({
-              action: 'onOpen',
-              data: {
-                filename,
-                currentSource: initialGlass,
-                originalSource: initialGlass,
-                glass: initialGlass,
-                blocks: initialBlocks,
-                variables: initialMetadata.interpolationVariables,
-              },
-            })
-            break
-          case 'runGlass':
-            async function runGlassExtension(
-              activeEditor: vscode.TextEditor,
-              glass: string,
-              session: string,
-              inputs: any
-            ) {
-              const elements = parseGlassBlocksRecursive(glass)
-              const requestElement = elements.find(element => element.tag && ['Request', 'Chat'].includes(element.tag))
-              const model =
-                requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue ??
-                (vscode.workspace.getConfiguration('glass').get('defaultModel') as string)
-              const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
-              if (!languageModel) {
-                await vscode.window.showErrorMessage(`Unable to find model ${model}`)
-                return
-              }
-              switch (languageModel.creator) {
-                case LanguageModelCreator.anthropic:
-                  const anthropicKey = getAnthropicKey()
-                  if (anthropicKey == null || anthropicKey === '') {
-                    await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
-                    await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
-                    return
-                  }
-                  break
-                case LanguageModelCreator.openai:
-                  const openaiKey = getOpenaiKey()
-                  if (openaiKey == null || openaiKey === '') {
-                    await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
-                    await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
-                    return
-                  }
-                  break
-              }
-
-              // Ensure a workspace is opened
-              if (!vscode.workspace.workspaceFolders) {
-                await vscode.window.showErrorMessage('No workspace opened')
-                return
-              }
-
-              // Get the current workspace root where the file is located
-              const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri)
-              if (!activeEditorWorkspaceFolder) {
-                await vscode.window.showErrorMessage('No workspace opened')
-                return
-              }
-
-              // Define the temporary directory path
-              const tempDir = path.join(activeEditorWorkspaceFolder.uri.fsPath, '.glasslog')
-
-              // Create the temporary directory if it doesn't exist
-              if (!fs.existsSync(tempDir)) {
-                fs.mkdirSync(tempDir)
-              }
-
-              // Define the new file's path. This places it in the '.glasslog' directory in the workspace root.
-              const timestamp = new Date().getTime()
-              const newFilePath = path.join(tempDir, filename.replace('.glass', `.${timestamp}.glass`))
-              fs.writeFileSync(newFilePath, glass)
-
-              // load the textdocument from newFilePath
-              const playgroundDocument = await vscode.workspace.openTextDocument(newFilePath)
-
-              try {
-                const resp = await executeGlassFile(outputChannel, playgroundDocument, inputs, async ({ nextDoc }) => {
-                  const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
-                  if (!existingPanel || stoppedSessions.has(session)) {
-                    return false
-                  }
-                  const blocksForGlass = parseGlassTranscriptBlocks(nextDoc)
-                  const metadataForGlass =
-                    languageId === 'glass-py'
-                      ? await parseGlassMetadataPython(initialGlass)
-                      : parseGlassMetadata(nextDoc)
-                  await panel.webview.postMessage({
-                    action: 'onStream',
-                    data: {
-                      session,
-                      glass: nextDoc,
-                      blocks: blocksForGlass,
-                      variables: metadataForGlass.interpolationVariables,
-                    },
-                  })
-                  return true
-                })
-
-                const existingPanel = activePlaygrounds.get(activeEditor.document.uri.fsPath)
-                if (!existingPanel || stoppedSessions.has(session)) {
-                  return false
-                }
-                const blocksForGlass = parseGlassTranscriptBlocks(resp.finalDoc)
-                const metadataForGlass =
-                  languageId === 'glass-py'
-                    ? await parseGlassMetadataPython(initialGlass)
-                    : parseGlassMetadata(resp.finalDoc)
-                await panel.webview.postMessage({
-                  action: 'onResponse',
-                  data: {
-                    session,
-                    glass: resp.finalDoc,
-                    blocks: blocksForGlass,
-                    variables: metadataForGlass.interpolationVariables,
-                    model,
-                    inputs,
-                    output: resp.rawResponse,
-                  },
-                })
-                if (resp.continued) {
-                  await runGlassExtension(activeEditor, resp.finalDoc, session, inputs)
-                }
-              } catch (error) {
-                console.error(error)
-                void vscode.window.showErrorMessage(`ERROR: ${error}`)
-              } finally {
-                fs.unlinkSync(newFilePath)
-              }
-            }
-            // end runGlassExtension definition
-
-            const session = message.data.session
-            if (session == null) {
-              await vscode.window.showErrorMessage('No session provided')
-              return
-            }
-            stoppedSessions.delete(session)
-            const inputs = message.data.inputs
-            if (inputs == null) {
-              await vscode.window.showErrorMessage('No inputs provided')
-              return
-            }
-            const glass = message.data.glass
-            if (glass == null) {
-              await vscode.window.showErrorMessage('No glass provided')
-              return
-            }
-            await runGlassExtension(activeEditor, glass, session, inputs)
-            break
-          case 'showMessage':
-            const level = message.data.level
-            const text = message.data.text
-            if (level === 'error') {
-              await vscode.window.showErrorMessage(text)
-            } else if (level === 'warn') {
-              await vscode.window.showWarningMessage(text)
-            } else {
-              await vscode.window.showInformationMessage(text)
-            }
-            break
-          default:
-            break
-        }
-      })
+      playground.panel.reveal(vscode.ViewColumn.Beside, initialMetadata.interpolationVariables.length === 0)
     }),
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')

@@ -32,12 +32,11 @@ function RigView() {
   const tabs: string[] = ['Transcript', 'History']
 
   const [filename, setFilename] = useState('')
-  const [glass, setGlass] = useState('')
   const [currentSource, setCurrentSource] = useState('')
   const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
-  const [session, setSession] = useState(getNonce())
+  const [session, setSession] = useState('')
   const [logs, setLogs] = useState<GlassLog[]>([])
   const [tab, setTab] = useState(tabs[0])
 
@@ -61,14 +60,9 @@ function RigView() {
         case 'onDidChangeTextDocument':
           setCurrentSource(() => message.data.currentSource)
           break
-        case 'onOpen':
-          const newSession = getNonce()
-          setSession(newSession)
-          const initialGlass = message.data.glass
-          setOriginalSource(() => message.data.originalSource)
-          setCurrentSource(() => message.data.currentSource)
+        case 'setGlass':
+          setSession(() => message.data.session)
           setFilename(() => message.data.filename)
-          setGlass(() => initialGlass)
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
           if (message.data.variables.length > 0) {
@@ -77,11 +71,10 @@ function RigView() {
             }, 100)
           } else {
             vscode.postMessage({
-              action: 'runGlass',
+              action: 'runSession',
               data: {
                 inputs: {},
-                glass: initialGlass,
-                session: newSession,
+                session: message.data.session,
               },
             })
           }
@@ -90,14 +83,12 @@ function RigView() {
           if (message.data.session !== session) {
             break
           }
-          setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           break
         case 'onResponse':
           if (message.data.session !== session) {
             break
           }
-          setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
           break
@@ -113,30 +104,21 @@ function RigView() {
 
   useEffect(() => {
     vscode.postMessage({
-      action: 'onOpen',
-      data: {
-        session,
-      },
+      action: 'getCurrentSession',
     })
   }, [])
 
   const reset = () => {
-    const newSession = getNonce()
-    setSession(newSession)
     vscode.postMessage({
-      action: 'onOpen',
-      data: {
-        session: newSession,
-      },
+      action: 'resetSession',
     })
   }
 
   const run = (inputs: Record<string, string>) => {
     vscode.postMessage({
-      action: 'runGlass',
+      action: 'runSession',
       data: {
         inputs,
-        glass,
         session,
       },
     })
@@ -152,6 +134,15 @@ function RigView() {
     })
   }
 
+  const openSessionFile = () => {
+    vscode.postMessage({
+      action: 'openSessionFile',
+      data: {
+        session,
+      },
+    })
+  }
+
   const openOutput = () => {
     vscode.postMessage({
       action: 'openOutput',
@@ -160,10 +151,9 @@ function RigView() {
 
   const stop = () => {
     vscode.postMessage({
-      action: 'stopGlass',
+      action: 'stopSession',
       data: {
         session,
-        glass,
       },
     })
   }
@@ -183,9 +173,9 @@ function RigView() {
     >
       <TopperView
         session={session}
-        openCurrentGlass={() => openGlass(glass)}
+        openSessionFile={openSessionFile}
         dirty={originalSource !== currentSource}
-        reloadable={glass !== originalSource || originalSource !== currentSource}
+        reloadable={assistantBlocks.length > 0 && !streaming}
         tab={tab}
         setTab={setTab}
         tabs={tabs}
@@ -195,7 +185,7 @@ function RigView() {
       />
       {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {tab === 'Transcript' && (streaming || (glass.includes('<Request') && Object.keys(inputs).length > 0)) && (
+      {tab === 'Transcript' && (streaming || Object.keys(inputs).length > 0) && (
         <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
       )}
     </div>
