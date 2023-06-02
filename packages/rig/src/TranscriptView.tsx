@@ -95,7 +95,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', paddingBottom: '4px' }}>
                   <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px' }}>{block.tag}</span>
                   {summary && (
-                    <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '12px' }}>{summary}</span>
+                    <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>
                   )}
                 </div>
                 <span style={{ whiteSpace: 'pre-line' }}>{block.child?.content}</span>

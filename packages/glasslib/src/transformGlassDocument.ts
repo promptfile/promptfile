@@ -41,11 +41,14 @@ export function replaceStateNode(newStateNode: string, doc: string) {
 export function handleRequestNode(
   uninterpolatedDoc: string,
   interpolatedDoc: string,
-  request: { model: string; message: string; streaming: boolean }
+  request: { model: string; message: string; streaming: boolean; requestTokens?: number; responseTokens?: number }
 ) {
   const parsedInterpolated = parseGlassBlocks(interpolatedDoc)
   const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
-  const newRequestNode = requestNodeReplacement(request.model, request.message, request.streaming)
+  const newRequestNode = requestNodeReplacement(request.model, request.message, request.streaming, {
+    requestTokens: request.requestTokens,
+    responseTokens: request.responseTokens,
+  })
 
   const userAndAssistantBlocks = parsedInterpolated.filter(block => block.tag === 'User' || block.tag === 'Assistant')
 
@@ -73,8 +76,26 @@ export function handleRequestNode(
   }
 }
 
-const requestNodeReplacement = (model: string, message: string, streaming: boolean) => {
-  return `<Assistant model="${model}" temperature="1">
+const requestNodeReplacement = (
+  model: string,
+  message: string,
+  streaming: boolean,
+  tokens?: { requestTokens?: number; responseTokens?: number }
+) => {
+  const args: Record<string, string> = {
+    model,
+    temperature: '1',
+  }
+  if (tokens?.requestTokens) {
+    args.requestTokens = tokens.requestTokens.toString()
+  }
+  if (tokens?.responseTokens) {
+    args.responseTokens = tokens.responseTokens.toString()
+  }
+  const argAttributes: string = Object.entries(args).reduce((acc, [key, value]) => {
+    return acc + ` ${key}="${value}"`
+  }, '')
+  return `<Assistant${argAttributes}>
 ${message}${streaming ? '█' : ''}
 </Assistant>`
 }
