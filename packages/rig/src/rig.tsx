@@ -32,7 +32,6 @@ function RigView() {
   const tabs: string[] = ['Transcript', 'History']
 
   const [filename, setFilename] = useState('')
-  const [glass, setGlass] = useState('')
   const [currentSource, setCurrentSource] = useState('')
   const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
@@ -61,13 +60,9 @@ function RigView() {
         case 'onDidChangeTextDocument':
           setCurrentSource(() => message.data.currentSource)
           break
-        case 'setSession':
-          const initialGlass = message.data.glass
+        case 'setGlass':
           setSession(() => message.data.session)
-          setOriginalSource(() => message.data.originalSource)
-          setCurrentSource(() => message.data.currentSource)
           setFilename(() => message.data.filename)
-          setGlass(() => initialGlass)
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
           if (message.data.variables.length > 0) {
@@ -79,7 +74,6 @@ function RigView() {
               action: 'runSession',
               data: {
                 inputs: {},
-                glass: initialGlass,
                 session: message.data.session,
               },
             })
@@ -89,14 +83,12 @@ function RigView() {
           if (message.data.session !== session) {
             break
           }
-          setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           break
         case 'onResponse':
           if (message.data.session !== session) {
             break
           }
-          setGlass(() => message.data.glass)
           setBlocks(() => message.data.blocks)
           setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
           break
@@ -162,7 +154,6 @@ function RigView() {
       action: 'stopSession',
       data: {
         session,
-        glass,
       },
     })
   }
@@ -184,7 +175,7 @@ function RigView() {
         session={session}
         openSessionFile={openSessionFile}
         dirty={originalSource !== currentSource}
-        reloadable={glass !== originalSource || originalSource !== currentSource}
+        reloadable={assistantBlocks.length > 0 && !streaming}
         tab={tab}
         setTab={setTab}
         tabs={tabs}
@@ -194,7 +185,7 @@ function RigView() {
       />
       {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {tab === 'Transcript' && (streaming || (glass.includes('<Request') && Object.keys(inputs).length > 0)) && (
+      {tab === 'Transcript' && (streaming || Object.keys(inputs).length > 0) && (
         <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
       )}
     </div>

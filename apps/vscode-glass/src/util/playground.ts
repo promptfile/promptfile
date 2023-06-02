@@ -108,6 +108,7 @@ export async function createPlayground(
         await panel.webview.postMessage({
           action: 'setGlass',
           data: {
+            filename: filepath.split('/').pop(),
             session: currentSession.id,
             glass: currentGlass,
             blocks: currentBlocks,
