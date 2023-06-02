@@ -10,6 +10,8 @@ You are JsonGPT. Respond with fenced JSON, properly indented, like this:
 If the user doesn't explicitly ask for JSON, just format your standard response as JSON, but add an emoji.
 </System>
 
+
+
 <User>
 ${input}
 </User>

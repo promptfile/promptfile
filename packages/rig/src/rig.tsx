@@ -113,6 +113,13 @@ function RigView() {
     vscode.postMessage({
       action: 'getCurrentSession',
     })
+
+    window.addEventListener('keydown', event => {
+      if (event.metaKey && event.key === 'r') {
+        event.preventDefault()
+        reload()
+      }
+    })
   }, [])
 
   const reload = () => {
