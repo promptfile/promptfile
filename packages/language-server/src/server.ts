@@ -15,11 +15,12 @@ import {
 } from 'vscode-languageserver/node'
 import { generateCompletions } from './completions'
 import { findAttributeDiagnostics } from './diagnostics/findAttributeDiagnostics'
-import { findEmptyBlocks } from './diagnostics/findEmptyBlocks'
+import { findEmptyBlocksDiagnostics } from './diagnostics/findEmptyBlocksDiagnostics'
 import { findFrontmatterDiagnostics } from './diagnostics/findFrontmatterDiagnostics'
 import { findModelDiagnostics } from './diagnostics/findModelDiagnostics'
-import { findUnmatchedTags } from './diagnostics/findUnmatchedTags'
-import { findUnsupportedTags } from './diagnostics/findUnsupportedTags'
+import { findMultipleTranscriptDiagnostics } from './diagnostics/findMultipleTranscriptDiagnostics'
+import { findUnmatchedTagsDiagnostics } from './diagnostics/findUnmatchedTagsDiagnostics'
+import { findUnsupportedTagsDiagnostics } from './diagnostics/findUnsupportedTagsDiagnostics'
 import { findFoldableTagPairs, findMarkdownFoldingRanges } from './folding'
 import { formatDocument } from './formatting'
 
@@ -90,12 +91,13 @@ documents.onDidChangeContent(change => {
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   const diagnostics: Diagnostic[] = [
-    ...findUnmatchedTags(textDocument),
-    ...findUnsupportedTags(textDocument),
+    ...findUnmatchedTagsDiagnostics(textDocument),
+    ...findUnsupportedTagsDiagnostics(textDocument),
     ...findAttributeDiagnostics(textDocument),
     ...findModelDiagnostics(textDocument),
-    ...findEmptyBlocks(textDocument),
+    ...findEmptyBlocksDiagnostics(textDocument),
     ...findFrontmatterDiagnostics(textDocument),
+    ...findMultipleTranscriptDiagnostics(textDocument),
   ]
 
   void connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })

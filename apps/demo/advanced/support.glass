@@ -16,7 +16,7 @@ i'd like some help with my language server for glass.  here is the code i have t
 ```typescript
 import { CompletionItem, CompletionItemKind, InsertTextFormat, TextDocumentPositionParams } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { extractUnmatchedTags } from './diagnostics/findUnmatchedTags'
+import { extractUnmatchedTags } from './diagnostics/findUnmatchedTagsDiagnostics'
 import { glassElements } from './elements'
 
 export function generateCompletions(document: TextDocument, textDocumentPosition: TextDocumentPositionParams) {
