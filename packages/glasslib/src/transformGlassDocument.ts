@@ -84,6 +84,36 @@ export function addToTranscript(
   }
 }
 
+export function addToDocument(
+  addToDocument: { tag: string; content: string; attrs?: any }[],
+  doc: string,
+  interpolatedDoc: string
+) {
+  const bs = addToDocument
+    .map(b => {
+      const attrs = b.attrs
+        ? ` ${Object.keys(b.attrs)
+            .map(k => `${k}={${JSON.stringify(b.attrs[k])}}`)
+            .join(' ')}`
+        : ''
+      return `<${b.tag}${attrs}>\n${b.content}\n</${b.tag}>`
+    })
+    .join('\n\n')
+
+  const parsedDoc = parseGlassDocument(doc)
+  const transcriptNodeDoc = parsedDoc.find(node => node.tag === 'Transcript')
+  const transcriptNodeIndex = parsedDoc.indexOf(transcriptNodeDoc!)
+
+  const parsedInterpolated = parseGlassDocument(interpolatedDoc)
+  const transcriptInterpNode = parsedInterpolated.find(node => node.tag === 'Transcript')
+  const transcriptNodeInterpIndex = parsedDoc.indexOf(transcriptInterpNode!)
+
+  return {
+    doc: addNodeToDocument('\n\n' + bs + '\n\n', transcriptNodeIndex + 1, doc),
+    interpolatedDoc: addNodeToDocument('\n\n' + bs + '\n\n', transcriptNodeInterpIndex + 1, interpolatedDoc),
+  }
+}
+
 export function handleRequestNode(
   uninterpolatedDoc: string,
   interpolatedDoc: string,

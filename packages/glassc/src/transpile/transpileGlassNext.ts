@@ -235,6 +235,21 @@ ${toplevelCode}
   const escapedInterpolatedDoc = glasslib
     .parseGlassDocument(codeSanitizedDoc)
     .map(b => {
+      if (b.type === 'block') {
+        // if it's a block, we need to escape the backticks but only in the attributes
+        const bContentWithoutChild =
+          b.content.substring(0, b.child!.position.start.offset - b.position.start.offset) +
+          'GLASSCHILD' +
+          b.content.substring(b.child!.position.end.offset - b.position.start.offset)
+        return bContentWithoutChild
+          .replace(/\$\{(.*?)\}/g, function (match, contents) {
+            if (contents.startsWith('GLASSVAR[')) {
+              return match
+            }
+            return '\\' + match
+          })
+          .replace('GLASSCHILD', b.child!.content)
+      }
       if (b.type !== 'code') {
         return b.content
       }

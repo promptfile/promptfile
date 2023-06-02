@@ -3,7 +3,7 @@ import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
 import { parseGlassBlocks } from './parseGlassBlocks'
-import { addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
+import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
@@ -21,6 +21,7 @@ export interface TranspilerOutput {
   onResponse?: (data: {
     message: string
     addToTranscript: (tag: string, content: string) => void
+    addToDocument: (tag: string, content: string, attrs?: any) => void
     continue: () => void
   }) => Promise<any>
 }
@@ -106,6 +107,7 @@ export async function runGlass(
   let codeResponse: any = undefined
 
   const blocksToAdd: { tag: string; content: string }[] = []
+  const blocksToAddToDocument: { tag: string; content: string; attrs?: any }[] = []
   let continued = false
 
   if (onResponse) {
@@ -113,6 +115,9 @@ export async function runGlass(
       message: res.rawResponse,
       addToTranscript: (tag: string, content: string) => {
         blocksToAdd.push({ tag, content })
+      },
+      addToDocument: (tag: string, content: string, attrs?: any) => {
+        blocksToAddToDocument.push({ tag, content, attrs })
       },
       continue: () => {
         continued = true
@@ -126,8 +131,13 @@ export async function runGlass(
   }
 
   if (blocksToAdd.length > 0) {
-    console.log('wanting to add blocks', blocksToAdd)
     const added = addToTranscript(blocksToAdd, res.finalDoc, res.finalInterpolatedDoc)
+    res.finalDoc = added.doc
+    res.finalInterpolatedDoc = added.interpolatedDoc
+  }
+
+  if (blocksToAddToDocument.length > 0) {
+    const added = addToDocument(blocksToAddToDocument, res.finalDoc, res.finalInterpolatedDoc)
     res.finalDoc = added.doc
     res.finalInterpolatedDoc = added.interpolatedDoc
   }
