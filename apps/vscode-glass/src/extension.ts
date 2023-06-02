@@ -164,9 +164,6 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('glass.showGlassOutput', async () => {
       outputChannel.show()
     }),
-    vscode.commands.registerCommand('glass.commandR', async () => {
-      outputChannel.show()
-    }),
     vscode.commands.registerCommand('glass.openPlayground', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
