@@ -80,7 +80,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                paddingBottom: '24px',
+                paddingBottom: '36px',
                 fontStyle: block.tag === 'System' ? 'italic' : 'normal',
                 width: '100%',
               }}

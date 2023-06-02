@@ -61,6 +61,9 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'setGlass':
+          if (message.data.currentSource) {
+            setCurrentSource(() => message.data.currentSource)
+          }
           if (message.data.source) {
             setSource(() => message.data.source)
           }
