@@ -9,9 +9,6 @@ ${website}
 ###
 </System>
 
-<Transcript />
-
-
 
 <User>
 ${input}

@@ -1,6 +1,6 @@
 import { CompletionItem, CompletionItemKind, InsertTextFormat, TextDocumentPositionParams } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { extractUnmatchedTags } from './diagnostics/findUnmatchedTagsDiagnostics'
+import { extractUnmatchedTags } from './diagnostics'
 import { glassElements } from './elements'
 
 export function generateCompletions(
