@@ -14,13 +14,15 @@ import {
   createConnection,
 } from 'vscode-languageserver/node'
 import { generateCompletions } from './completions'
-import { findAttributeDiagnostics } from './diagnostics/findAttributeDiagnostics'
-import { findEmptyBlocksDiagnostics } from './diagnostics/findEmptyBlocksDiagnostics'
-import { findFrontmatterDiagnostics } from './diagnostics/findFrontmatterDiagnostics'
-import { findModelDiagnostics } from './diagnostics/findModelDiagnostics'
-import { findMultipleTranscriptDiagnostics } from './diagnostics/findMultipleTranscriptDiagnostics'
-import { findUnmatchedTagsDiagnostics } from './diagnostics/findUnmatchedTagsDiagnostics'
-import { findUnsupportedTagsDiagnostics } from './diagnostics/findUnsupportedTagsDiagnostics'
+import {
+  findAttributeDiagnostics,
+  findEmptyBlocksDiagnostics,
+  findFrontmatterDiagnostics,
+  findModelDiagnostics,
+  findMultipleTranscriptDiagnostics,
+  findUnmatchedTagsDiagnostics,
+  findUnsupportedTagsDiagnostics,
+} from './diagnostics'
 import { findFoldableTagPairs, findMarkdownFoldingRanges } from './folding'
 import { formatDocument } from './formatting'
 

@@ -1,10 +1,10 @@
 import { GlassContent } from '@glass-lang/glasslib'
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
-import { BlocksView } from './BlocksView'
 import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
 import { TopperView } from './TopperView'
+import { TranscriptView } from './TranscriptView'
 import { getNonce, lastElement } from './util'
 
 export interface GlassLog {
@@ -29,7 +29,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['View', 'History']
+  const tabs: string[] = ['Transcript', 'History']
 
   const [filename, setFilename] = useState('')
   const [glass, setGlass] = useState('')
@@ -195,11 +195,12 @@ function RigView() {
         reset={reset}
         openOutput={openOutput}
       />
-      {tab === 'View' && <BlocksView session={session} blocks={blocks} />}
+      {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {tab === 'View' && (streaming || (blocks.some(b => b.tag === 'Request') && Object.keys(inputs).length > 0)) && (
-        <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
-      )}
+      {tab === 'Transcript' &&
+        (streaming || (blocks.some(b => b.tag === 'Request') && Object.keys(inputs).length > 0)) && (
+          <ComposerView run={run} stop={stop} streaming={streaming} inputs={inputs} setInputs={setInputs} />
+        )}
     </div>
   )
 }

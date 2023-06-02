@@ -1,12 +1,12 @@
 import { GlassContent } from '@glass-lang/glasslib'
 import { useEffect, useRef, useState } from 'react'
 
-interface BlocksViewProps {
+interface TranscriptViewProps {
   blocks: GlassContent[]
   session: string
 }
 
-export const BlocksView = (props: BlocksViewProps) => {
+export const TranscriptView = (props: TranscriptViewProps) => {
   const { blocks, session } = props
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)

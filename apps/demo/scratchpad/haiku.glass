@@ -3,7 +3,7 @@ Your name is Susan and your life is fantastic.
 </System>
 
 <User>
-Hey how are you?
+${input}
 </User>
 
 <Request model="gpt-3.5-turbo" />
