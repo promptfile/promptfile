@@ -1,18 +1,35 @@
-import { parseGlassBlocks, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
+import { GlassContent, parseGlassBlocks, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 
-export function addNodeToDocument(content: string, index: number, doc: string) {
-  const parsed: { content: string; type: string }[] = parseGlassDocument(doc)
-  const nodes = parsed.slice(0, index).concat({ content, type: 'block' }).concat(parsed.slice(index))
+export function addNodeToDocument(content: string, index: number, doc: string, replaceOnceNodes = false) {
+  const parsed = parseGlassDocument(doc)
+  const nodes = parsed
+    .slice(0, index)
+    .concat({ content, type: 'block' } as any)
+    .concat(parsed.slice(index))
+    .filter(b => (replaceOnceNodes ? !isOnceBlock(b) : true))
   return reconstructGlassDocument(nodes)
 }
 
-export function replaceDocumentNode(content: string, index: number, doc: string) {
-  const parsed: { content: string; type: string }[] = parseGlassDocument(doc)
+export function replaceDocumentNode(content: string, index: number, doc: string, replaceOnceNodes = false) {
+  const parsed = parseGlassDocument(doc)
   const nodes = parsed
     .slice(0, index)
-    .concat({ content, type: 'block' })
+    .concat({ content, type: 'block' } as any)
     .concat(parsed.slice(index + 1))
+    .filter(b => (replaceOnceNodes ? !isOnceBlock(b) : true))
   return reconstructGlassDocument(nodes)
+}
+
+function isOnceBlock(block: GlassContent) {
+  const onceAttr = block.attrs?.find(attr => attr.name === 'once')
+  return (
+    onceAttr &&
+    ((onceAttr.stringValue == null && onceAttr.expressionValue == null) ||
+      onceAttr.stringValue?.toLowerCase() === 'true' ||
+      onceAttr?.expressionValue?.toLowerCase() === '"true"' ||
+      onceAttr?.expressionValue?.toLowerCase() === 'true' ||
+      onceAttr?.expressionValue?.toLowerCase() === "'true'")
+  )
 }
 
 export function replaceStateNode(newStateNode: string, doc: string) {
@@ -36,6 +53,35 @@ export function replaceStateNode(newStateNode: string, doc: string) {
 
   const stateIndex = parsed.indexOf(stateNode)
   return replaceDocumentNode(newStateNode, stateIndex, doc)
+}
+
+export function addToTranscript(
+  addToTranscript: { tag: string; content: string }[],
+  doc: string,
+  interpolatedDoc: string
+) {
+  const parsedDoc = parseGlassDocument(doc)
+  const transcriptNodeDoc = parsedDoc.find(node => node.tag === 'Transcript')
+  const newDocTranscript =
+    '<Transcript>\n' +
+    (transcriptNodeDoc?.child?.content || '') +
+    '\n\n' +
+    addToTranscript.map(block => `<${block.tag}>\n${block.content}\n</${block.tag}>`).join('\n\n') +
+    '\n</Transcript>'
+
+  const parsedInterpolated = parseGlassDocument(interpolatedDoc)
+  const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
+  const newInterpolatedTranscript =
+    '<Transcript>\n' +
+    (transcriptNode?.child?.content || '') +
+    '\n\n' +
+    addToTranscript.map(block => `<${block.tag}>\n${block.content}\n</${block.tag}>`).join('\n\n') +
+    '\n</Transcript>'
+
+  return {
+    doc: replaceTranscriptNode(newDocTranscript, doc, false),
+    interpolatedDoc: replaceTranscriptNode(newInterpolatedTranscript, interpolatedDoc, false),
+  }
 }
 
 export function handleRequestNode(
@@ -62,15 +108,17 @@ export function handleRequestNode(
   transcriptContent += '\n\n' + newRequestNode
 
   return {
-    nextDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc),
-    finalDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc),
+    nextDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc, true),
+    finalDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc, true),
     nextInterpolatedDoc: replaceTranscriptNode(
       '<Transcript>\n' + transcriptContent + '\n</Transcript>',
-      interpolatedDoc
+      interpolatedDoc,
+      true
     ),
     finalInterpolatedDoc: replaceTranscriptNode(
       '<Transcript>\n' + transcriptContent + '\n</Transcript>',
-      interpolatedDoc
+      interpolatedDoc,
+      true
     ),
     rawResponse: request.streaming ? '█' : request.message,
   }
@@ -112,16 +160,16 @@ export function replaceRequestNode(newRequestNode: string, doc: string) {
   return replaceDocumentNode(newRequestNode, idx, doc)
 }
 
-export function replaceTranscriptNode(newTranscriptNode: string, doc: string) {
+export function replaceTranscriptNode(newTranscriptNode: string, doc: string, replaceOnceNodes = false) {
   const parsed = parseGlassDocument(doc)
 
   const transNode = parsed.find(node => (node as any).tag === 'Transcript')
   if (!transNode) {
     // put transcript node at the index of the first block
     const firstBlockIndex = parsed.findIndex(node => node.type === 'block')
-    return addNodeToDocument(newTranscriptNode + '\n\n', firstBlockIndex, doc)
+    return addNodeToDocument(newTranscriptNode + '\n\n', firstBlockIndex, doc, replaceOnceNodes)
   }
 
   const idx = parsed.indexOf(transNode)
-  return replaceDocumentNode(newTranscriptNode, idx, doc)
+  return replaceDocumentNode(newTranscriptNode, idx, doc, replaceOnceNodes)
 }

@@ -1,6 +1,12 @@
 import { expect } from 'chai'
 import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
-import { addNodeToDocument, handleRequestNode, replaceDocumentNode, replaceStateNode } from './transformGlassDocument'
+import {
+  addNodeToDocument,
+  addToTranscript,
+  handleRequestNode,
+  replaceDocumentNode,
+  replaceStateNode,
+} from './transformGlassDocument'
 
 describe('transformGlassDocument', () => {
   it('should parse document nodes and recreate document', () => {
@@ -224,6 +230,52 @@ hello world
 <Request model="gpt-4" />`)
     })
 
+    it('shoudl handle request with once block', () => {
+      const origDoc = `<System>
+You are a helpful assistant.
+</System>
+
+<User once="true">
+\${input}
+</User>
+
+<Transcript />
+
+<Request model="gpt-3.5-turbo" />`
+
+      const interpDoc = `<System>
+You are a helpful assistant.
+</System>
+
+<User once="true">
+hello world
+</User>
+
+<Transcript />
+
+<Request model="gpt-3.5-turbo" />`
+
+      const res = handleRequestNode(origDoc, interpDoc, { message: '', streaming: true, model: 'gpt-4' })
+      expect(res.rawResponse).to.equal('█')
+      expect(res.finalDoc).to.equal(`<System>
+You are a helpful assistant.
+</System>
+
+
+
+<Transcript>
+<User once="true">
+hello world
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+█
+</Assistant>
+</Transcript>
+
+<Request model="gpt-3.5-turbo" />`)
+    })
+
     it('shoudl handle request with empty transcript', () => {
       const origDoc = `<User>
 \${input}
@@ -319,5 +371,22 @@ goodbye world
 
 <Request model="gpt-4" />`)
     })
+  })
+
+  it('should add to transcript', () => {
+    const doc = `<Transcript>
+<User>
+hello
+</User>
+</Transcript>`
+    expect(addToTranscript([{ tag: 'User', content: 'hello world' }], doc, doc).doc).to.equal(`<Transcript>
+<User>
+hello
+</User>
+
+<User>
+hello world
+</User>
+</Transcript>`)
   })
 })

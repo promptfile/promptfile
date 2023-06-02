@@ -3,7 +3,7 @@ import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
 import { parseGlassBlocks } from './parseGlassBlocks'
-import { handleRequestNode, replaceStateNode } from './transformGlassDocument'
+import { addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
@@ -20,8 +20,7 @@ export interface TranspilerOutput {
   interpolationArgs: any
   onResponse?: (data: {
     message: string
-    setText: (text: string) => void
-    setNextUserText: (text: string) => void
+    addToTranscript: (tag: string, content: string) => void
     continue: () => void
   }) => Promise<any>
 }
@@ -41,8 +40,6 @@ export async function runGlass(
   finalDoc: string
   finalInterpolatedDoc: string
   continued: boolean
-  setText: string | null
-  setNextUserText: string | null
 }> {
   // replace initDoc instances of
   //
@@ -108,18 +105,14 @@ export async function runGlass(
 
   let codeResponse: any = undefined
 
-  let setNextUserText: string | null = null
-  let setText: string | null = null
+  const blocksToAdd: { tag: string; content: string }[] = []
   let continued = false
 
   if (onResponse) {
     codeResponse = await onResponse({
       message: res.rawResponse,
-      setText: (text: string) => {
-        setText = text
-      },
-      setNextUserText: (text: string) => {
-        setNextUserText = text
+      addToTranscript: (tag: string, content: string) => {
+        blocksToAdd.push({ tag, content })
       },
       continue: () => {
         continued = true
@@ -132,14 +125,12 @@ export async function runGlass(
     }
   }
 
-  //   if (setNextUserText) {
-  //     const newRequestNode = `<User>
-  // ${setNextUserText}
-  // </User>`
-
-  //     res.finalDoc = replaceRequestNode(newRequestNode, res.finalDoc)
-  //     res.finalInterpolatedDoc = replaceRequestNode(newRequestNode, res.finalInterpolatedDoc)
-  //   }
+  if (blocksToAdd.length > 0) {
+    console.log('wanting to add blocks', blocksToAdd)
+    const added = addToTranscript(blocksToAdd, res.finalDoc, res.finalInterpolatedDoc)
+    res.finalDoc = added.doc
+    res.finalInterpolatedDoc = added.interpolatedDoc
+  }
 
   return {
     ...res,
@@ -147,8 +138,6 @@ export async function runGlass(
     initInterpolatedDoc: transformedInterpolatedDoc,
     codeResponse,
     continued,
-    setText,
-    setNextUserText,
   }
 }
 

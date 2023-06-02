@@ -60,7 +60,7 @@ Overall, Assistant is a powerful system that can help with a wide range of tasks
 However, above all else, all responses must adhere to the format of RESPONSE FORMAT INSTRUCTIONS.
 </System>
 
-<User>
+<User once>
 TOOLS
 ------
 Assistant can ask the user to use tools to look up information that may be helpful in answering the users original question. The tools the human can use are:
@@ -102,14 +102,15 @@ Here is the user's input (remember to respond with a markdown code snippet of a 
 ${input}
 </User>
 
+<Transcript />
+
 <Request
   model="gpt-3.5-turbo"
   onResponse={async res => {
-    console.log('got response', JSON.stringify(res))
     const { action, action_input } = JSON.parse(res.message.slice(7, -3))
     if (action !== 'Final Answer') {
       const observation = await runAction({ action, action_input })
-      res.setNextUserText(observation)
+      res.addToTranscript('User', observation)
       res.continue()
     }
   }}

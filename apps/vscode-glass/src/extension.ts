@@ -416,6 +416,8 @@ export async function activate(context: vscode.ExtensionContext) {
                 fs.unlinkSync(newFilePath)
               }
             }
+            // end runGlassExtension definition
+
             const session = message.data.session
             if (session == null) {
               await vscode.window.showErrorMessage('No session provided')
