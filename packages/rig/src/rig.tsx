@@ -37,7 +37,7 @@ function RigView() {
   const [originalSource, setOriginalSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
-  const [session, setSession] = useState(getNonce())
+  const [session, setSession] = useState('')
   const [logs, setLogs] = useState<GlassLog[]>([])
   const [tab, setTab] = useState(tabs[0])
 
@@ -50,7 +50,6 @@ function RigView() {
         newInputs[v] = inputs[v] || ''
       }
     })
-    console.log('newInputs', newInputs)
     setInputs(() => newInputs)
   }
 
@@ -62,11 +61,9 @@ function RigView() {
         case 'onDidChangeTextDocument':
           setCurrentSource(() => message.data.currentSource)
           break
-        case 'onOpen':
-          console.log(message)
-          const newSession = getNonce()
-          setSession(newSession)
+        case 'setSession':
           const initialGlass = message.data.glass
+          setSession(() => message.data.session)
           setOriginalSource(() => message.data.originalSource)
           setCurrentSource(() => message.data.currentSource)
           setFilename(() => message.data.filename)
@@ -79,11 +76,11 @@ function RigView() {
             }, 100)
           } else {
             vscode.postMessage({
-              action: 'runGlass',
+              action: 'runSession',
               data: {
                 inputs: {},
                 glass: initialGlass,
-                session: newSession,
+                session: message.data.session,
               },
             })
           }
@@ -115,7 +112,7 @@ function RigView() {
 
   useEffect(() => {
     vscode.postMessage({
-      action: 'onOpen',
+      action: 'getGlass',
       data: {
         session,
       },
@@ -123,22 +120,16 @@ function RigView() {
   }, [])
 
   const reset = () => {
-    const newSession = getNonce()
-    setSession(newSession)
     vscode.postMessage({
-      action: 'onOpen',
-      data: {
-        session: newSession,
-      },
+      action: 'resetSession',
     })
   }
 
   const run = (inputs: Record<string, string>) => {
     vscode.postMessage({
-      action: 'runGlass',
+      action: 'runSession',
       data: {
         inputs,
-        glass,
         session,
       },
     })
@@ -154,6 +145,15 @@ function RigView() {
     })
   }
 
+  const openSessionFile = () => {
+    vscode.postMessage({
+      action: 'openSessionFile',
+      data: {
+        session,
+      },
+    })
+  }
+
   const openOutput = () => {
     vscode.postMessage({
       action: 'openOutput',
@@ -162,7 +162,7 @@ function RigView() {
 
   const stop = () => {
     vscode.postMessage({
-      action: 'stopGlass',
+      action: 'stopSession',
       data: {
         session,
         glass,
@@ -185,7 +185,7 @@ function RigView() {
     >
       <TopperView
         session={session}
-        openCurrentGlass={() => openGlass(glass)}
+        openSessionFile={openSessionFile}
         dirty={originalSource !== currentSource}
         reloadable={glass !== originalSource || originalSource !== currentSource}
         tab={tab}
