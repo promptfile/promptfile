@@ -95,7 +95,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                   style={{
                     fontWeight: 'bold',
                     color: block.tag ? colorLookup[block.tag] : undefined,
-
+                    fontStyle: 'italic',
                     fontSize: '12px',
                   }}
                 >
