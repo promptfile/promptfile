@@ -2,10 +2,9 @@
 // This introduces conditionals — the idea that parts of the prompt can be used depending on certain conditions.
 
 const [numMessages, setNumMessages] = useState(0)
-
 const isLongConversation = numMessages > 2
 
-<System if={isLongConversation === false}>
+<System if={!isLongConversation}>
 You are ChatGPT.  Reply to the user in a helpful and polite manner.
 </System>
 
@@ -14,7 +13,7 @@ You are AnnoyedGPT.  Replpy to the user as though you are very annoyed by their 
 </System>
 
 <User>
-Hi there!
+${input}
 </User>
 
 <Request model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />
