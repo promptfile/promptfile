@@ -10,6 +10,7 @@ import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getHtmlForWebview } from '../webview'
 import { getAnthropicKey, getOpenaiKey } from './keys'
+import { updateLanguageMode } from './languageMode'
 import { GlassSession, createSession, getSessionFilepath, loadGlass, writeGlass } from './session'
 
 export interface GlassPlayground {
@@ -38,7 +39,7 @@ export async function createPlayground(
   if (existingPlayground) {
     existingPlayground.sessionId = session.id
     playgrounds.set(filepath, existingPlayground)
-    const currentGlass = await loadGlass(session)
+    const currentGlass = loadGlass(session)
     const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
     const currentMetadata =
       languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
@@ -241,6 +242,7 @@ export async function createPlayground(
           const sessionDocument = await vscode.workspace.openTextDocument(newFilePath)
 
           try {
+            await updateLanguageMode(sessionDocument)
             const resp = await executeGlassFile(
               origFilePath,
               outputChannel,

@@ -48,6 +48,7 @@ export async function createSession(
   const newFilePath = path.join(tempDir, `${sessionId}.glass`)
   const updatedGlass = rewriteImports(glass, tempDir, filepath)
   fs.writeFileSync(newFilePath, updatedGlass)
+
   const session: GlassSession = {
     id: sessionId,
     filepath,
