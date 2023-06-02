@@ -56,6 +56,13 @@ export const glassElements: GlassElement[] = [
         documentation: 'The `if` attribute allows you to conditionally render an Assistant block.',
         optional: true,
       },
+      {
+        name: 'once',
+        detail: 'only render once',
+        documentation: 'The `once` attribute allows you to only render the Assistant block once.',
+        type: 'boolean',
+        optional: true,
+      },
     ],
   },
   {
@@ -215,6 +222,13 @@ export const glassElements: GlassElement[] = [
         name: 'if',
         detail: 'conditional expression',
         documentation: 'The `if` attribute allows you to conditionally render a User block.',
+        optional: true,
+      },
+      {
+        name: 'once',
+        detail: 'only render once',
+        documentation: 'The `once` attribute allows you to only render the User block once.',
+        type: 'boolean',
         optional: true,
       },
     ],
