@@ -204,7 +204,7 @@ export function parseGlassBlocksRecursive(doc: string): GlassContent[] {
     if (!b.child?.content) {
       return [b]
     }
-    if (b.tag !== 'For' && b.tag !== 'Repeat') {
+    if (b.tag !== 'For') {
       return [b]
     }
     return [b, ...parseGlassBlocksRecursive(b.child.content)]
