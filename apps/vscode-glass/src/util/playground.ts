@@ -50,6 +50,7 @@ export async function createPlayground(
         glass: currentGlass,
         blocks: currentBlocks,
         variables: currentMetadata.interpolationVariables,
+        source: currentGlass,
       },
     })
     return existingPlayground
@@ -124,6 +125,7 @@ export async function createPlayground(
             glass: currentGlass,
             blocks: currentBlocks,
             variables: currentMetadata.interpolationVariables,
+            source: currentGlass,
           },
         })
         break
@@ -151,6 +153,7 @@ export async function createPlayground(
             glass: newGlass,
             blocks: newBlocks,
             variables: newMetadata.interpolationVariables,
+            source: newGlass,
           },
         })
         break

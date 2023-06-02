@@ -33,7 +33,7 @@ function RigView() {
 
   const [filename, setFilename] = useState('')
   const [currentSource, setCurrentSource] = useState('')
-  const [originalSource, setOriginalSource] = useState('')
+  const [source, setSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
   const [session, setSession] = useState('')
@@ -61,6 +61,9 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'setGlass':
+          if (message.data.source) {
+            setSource(() => message.data.source)
+          }
           if (message.data.filename) {
             setFilename(() => message.data.filename)
           }
@@ -178,7 +181,7 @@ function RigView() {
       <TopperView
         session={session}
         openSessionFile={openSessionFile}
-        dirty={originalSource !== currentSource}
+        dirty={source !== currentSource}
         reloadable={assistantBlocks.length > 0 && !streaming}
         tab={tab}
         setTab={setTab}
