@@ -6,8 +6,6 @@ language: typescript
 const question = "Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?"
 </Test>
 
-const serpApiKey = '21dcb41b678d3f25cdb7ce1e946245ba66cb19dec2896e40e1a5c9df9419db21'
-
 const tools = [
   {
     name: 'calculator',
@@ -27,7 +25,7 @@ async function runAction(data: { action: 'calculator' | 'search'; action_input: 
   }
   const resp = await fetch(
     'https://serpapi.com/search.json?api_key=' +
-      serpApiKey +
+      process.env.SERP_API_KEY +
       '&engine=google&q=' +
       encodeURIComponent(data.action_input)
   )
@@ -104,8 +102,12 @@ ${input}
 
 <Transcript />
 
+<System>
+DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRUCTIONS. Respond *only* with a ```json``` fenced block.
+</System>
+
 <Request
-  model="gpt-3.5-turbo"
+  model="gpt-4"
   onResponse={async res => {
     const { action, action_input } = JSON.parse(res.message.slice(7, -3))
     if (action !== 'Final Answer') {
