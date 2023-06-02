@@ -1,5 +1,10 @@
-// Glass provides a more powerful way to work with few shots.
-// We can load up our examples in code and then loop through them using a <For /> block.
+import { expect } from 'chai'
+import { parseGlassAST } from './parseGlassAST'
+
+describe.skip('parse glass AST', () => {
+  it('should parse with invalid JSX', () => {
+    const doc = `// Glass provides a more powerful way to work with few shots.
+// We can load up our examples in code and then loop through them using a <For> block.
 // This file is equivalent to the last one — but it's much easier to follow.
 
 const examples = [
@@ -27,11 +32,11 @@ You are an AI community moderator. Your job is to read and process comments on a
 
 <For each={examples} as="example">
 <User>
-${example.message}
+\${example.message}
 </User>
 
 <Assistant>
-${example.classification}
+\${example.classification}
 </Assistant>
 </For>
 
@@ -39,4 +44,15 @@ ${example.classification}
 I'm not sure what's going on.
 </User>
 
-<Request model="gpt-3.5-turbo" />
+<Request model="gpt-3.5-turbo" />`
+
+    expect(() => {
+      parseGlassAST(doc, {
+        workspaceFolder: '/',
+        fileName: 'foo.glass',
+        folderPath: '/',
+        outputDirectory: '/',
+      })
+    }).to.not.throw()
+  })
+})

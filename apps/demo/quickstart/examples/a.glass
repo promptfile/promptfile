@@ -10,16 +10,17 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
 <User>
-${input}
+hello!
 </User>
 
 <Request model="gpt-3.5-turbo" />
 
 
-// Then, run the `Glass: Open in Playground` command to generate a completion.
+// Run the `Glass: Open in Playground` command to generate a completion.
 // You can do this by opening up the VSCode command menu `command+shift+P`
 // and selecting the `Glass: Open in Playground` command.
+// Or use the default keybinding: `command+Enter`
 
 // This is equivalent to hitting the OpenAI API with two chat blocks:
-// {role: 'system', content: 'You are HaikuGPT. Always respond to the user in the form of a haiku.'}
-// {role: 'user', content: 'whatever you '}
+//   { role: 'system', content: 'You are HaikuGPT. Always respond to the user in the form of a haiku.' }
+//   { role: 'user', content: 'hello!' }

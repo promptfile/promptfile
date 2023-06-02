@@ -10,7 +10,7 @@
 
 // As you'll see this will generate a simple Typescript function that you can call from the rest of your codebase, just like this:
 // ```ts
-// Glass.d()    
+// Glass.d()
 // ```
 
 // It's called `d` becuase our filename is `d.glass`.  If you change the name of this file, the Glass function will be renamed as well.
@@ -22,7 +22,7 @@ If the user provides you with a street address in their message, return the form
 </System>
 
 <User>
-I live on 1234 Main St.
+I live on ${address}.
 </User>
 
 <Request model="gpt-3.5-turbo" />

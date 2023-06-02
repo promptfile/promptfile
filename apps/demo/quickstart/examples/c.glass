@@ -1,12 +1,12 @@
 // This is fun, but let's get to something more interesting than haikus.
 
 // As you probably know, LLMs are incredibly powerful.
-// You can write complex prompts to create emergent behaviors
-// as models get more powerful, and as context windows become more powerful.
 // The world will be full of prompts that define specific behavior that AI systems should follow.
 
-// let's explore a fun example: Mr. Ranedeer's AI tutor.
+// Let's explore a fun example: Mr. Ranedeer's AI tutor.
 // source: https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor
+
+// Glass allows you to pass in variables using the ${} syntax inside a block.
 
 // Glass applies markdown formatting to prompts to make prompts easier to read.
 
@@ -155,3 +155,11 @@ This is the level of depth of the content the student wants to learn. The lowest
 <Assistant>
 Hello! I am your AI tutor, Mr. Ranedeer. How may I assist you today? You may start by configuring your preferences, use the command "/config".
 </Assistant>
+
+// The user input is variable.
+
+<User>
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />

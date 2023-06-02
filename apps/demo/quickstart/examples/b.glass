@@ -13,6 +13,10 @@ hello!
 
 <Request model="gpt-3.5-turbo" />
 
-// Anthropic actually doesn't support System blocks via their API,
-// so switching to the `claude-instant-v1` model will trigger a diagnostic (aka "yellow squiggle").
-// The glass language will guide you to use the models (and their varying APIs) correctly.
+// Anthropic actually doesn't support System blocks via their API, so switching to the
+// `claude-instant-v1` model will trigger a diagnostic (aka "yellow squiggle").
+//
+// The file is still runnable! Glass will convert the document into a sensible prompt for whatever
+// model you want to use, including non-chat models like GPT3 `text-davinci-003`.
+//
+// The Glass extension will guide you to use the models (and their varying APIs) correctly.

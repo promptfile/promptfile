@@ -195,8 +195,10 @@ export function replaceTranscriptNode(newTranscriptNode: string, doc: string, re
 
   const transNode = parsed.find(node => (node as any).tag === 'Transcript')
   if (!transNode) {
-    // put transcript node at the index of the first block
-    const firstBlockIndex = parsed.findIndex(node => node.type === 'block')
+    // put transcript node at the index of the first non-state/test block
+    const firstBlockIndex = parsed.findIndex(
+      node => node.type === 'block' && node.tag !== 'State' && node.tag !== 'Test'
+    )
     return addNodeToDocument(newTranscriptNode + '\n\n', firstBlockIndex, doc, replaceOnceNodes)
   }
 
