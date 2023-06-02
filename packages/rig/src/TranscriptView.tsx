@@ -11,6 +11,11 @@ export const TranscriptView = (props: TranscriptViewProps) => {
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
 
+  const colorLookup: Record<string, string> = {
+    User: '#5EC5E5',
+    Assistant: '#4EC9B0',
+  }
+
   const handleScroll = () => {
     if (!chatContainer.current) return
 
@@ -86,7 +91,16 @@ export const TranscriptView = (props: TranscriptViewProps) => {
               }}
             >
               <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', paddingBottom: '4px' }}>
-                <span style={{ fontWeight: 'bold', opacity: 0.5, fontSize: '12px' }}>{block.tag}</span>
+                <span
+                  style={{
+                    fontWeight: 'bold',
+                    color: block.tag ? colorLookup[block.tag] : undefined,
+
+                    fontSize: '12px',
+                  }}
+                >
+                  {block.tag}
+                </span>
                 {summary && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>}
               </div>
               <span style={{ whiteSpace: 'pre-wrap' }}>{block.child?.content}</span>
