@@ -12,7 +12,6 @@ export function updateTokenCount(counter: vscode.StatusBarItem) {
       block => block.tag && ['System', 'User', 'Assistant', 'Block'].includes(block.tag)
     )
     const promptText = promptBlocks.map(block => block.child?.content ?? '').join('\n\n')
-    console.log(promptText)
     try {
       const fullTextTokens = countTokens(promptText)
       let selectedTextTokensCount = 0

@@ -232,6 +232,23 @@ ${toplevelCode}
     context[v] = `(val) => GLASS_STATE[${k}] = val`
   }
 
+  const escapedInterpolatedDoc = glasslib
+    .parseGlassDocument(codeSanitizedDoc)
+    .map(b => {
+      if (b.type !== 'code') {
+        return b.content
+      }
+      // replace all instances of ${.+} with \${.+}, as long as .+ doesn't start with GLASSVAR
+      return b.content.replace(/\$\{(.*?)\}/g, function (match, contents) {
+        if (contents.startsWith('GLASSVAR[')) {
+          return match
+        }
+        return '\\' + match
+      })
+    })
+    .join('')
+    .replaceAll('`', '\\`')
+
   const code = `${imports.filter(i => !i.includes('.glass')).join('\n')}
 
 ${dependencyGlassDocs
@@ -261,7 +278,7 @@ export function ${exportName}() {
         .map(k => `"${k}": ${codeInterpolationMap[k]}`)
         .join(',')}
     }
-    const TEMPLATE = \`${codeSanitizedDoc.replaceAll('`', '\\`')}\`
+    const TEMPLATE = \`${escapedInterpolatedDoc}\`
     return {
       fileName: '${fileName}',
       model: '${model}',

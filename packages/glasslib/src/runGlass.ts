@@ -386,12 +386,10 @@ async function handleStream(
     })
 
     readStream.on('end', () => {
-      console.debug('runGlass: stream has been closed by the server')
       resolve(fullResult)
     })
 
     readStream.on('error', error => {
-      console.log('runGlass: stream error', error)
       reject(error)
     })
   })

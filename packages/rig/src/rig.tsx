@@ -50,7 +50,6 @@ function RigView() {
         newInputs[v] = inputs[v] || ''
       }
     })
-    console.log('newInputs', newInputs)
     setInputs(() => newInputs)
   }
 
@@ -63,7 +62,6 @@ function RigView() {
           setCurrentSource(() => message.data.currentSource)
           break
         case 'onOpen':
-          console.log(message)
           const newSession = getNonce()
           setSession(newSession)
           const initialGlass = message.data.glass
