@@ -1,8 +1,7 @@
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
-import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
-import { parseGlassBlocks } from './parseGlassBlocks'
+import { parseChatCompletionBlocks, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
 import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
@@ -56,8 +55,6 @@ export async function runGlass(
   // <User>
   // (content)
   // </User>
-
-  const toplevelNodes = parseGlassBlocks(interpolatedDoc)
 
   // eslint-disable-next-line prefer-const
   let transformedOriginalDoc = originalDoc
@@ -168,7 +165,7 @@ async function runGlassChat(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
+  const messages = parseChatCompletionBlocks2(docs.interpolatedDoc)
   console.log('runGlass: chat-gpt', messages)
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
