@@ -162,17 +162,17 @@ export function transpileGlassFileNext(
   toplevelCode = trimmedImports.trimmedCode
   let imports = trimmedImports.imports
 
-  const glassImports = parseTsGlassImports(imports)
-  const dependencyGlassDocs = glassImports.flatMap(gi => {
-    const res = transpileGlassHelper(workspaceFolder, path.join(workspaceFolder, gi.path), language, outputDirectory)
-    return res.map(r => ({ ...r, symbolName: gi.name }))
-  })
-
   imports = rewriteImports(
     imports,
     outputDirectory.replace('${workspaceFolder}', workspaceFolder),
     path.join(folderPath, fileName)
   )
+
+  const glassImports = parseTsGlassImports(imports)
+  const dependencyGlassDocs = glassImports.flatMap(gi => {
+    const res = transpileGlassHelper(workspaceFolder, path.join(workspaceFolder, gi.path), language, outputDirectory)
+    return res.map(r => ({ ...r, symbolName: gi.name }))
+  })
 
   for (const symbol of codeBlock.symbolsAddedToScope) {
     interpolationVarSet.delete(symbol)
