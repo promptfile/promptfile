@@ -6,7 +6,6 @@ You are a helpful assistant.
 
 <Transcript />
 
-
 <User>
 ${input}
 </User>

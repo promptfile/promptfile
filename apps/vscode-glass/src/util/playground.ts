@@ -247,6 +247,7 @@ export async function createPlayground(
               origFilePath,
               outputChannel,
               sessionDocument,
+              glass,
               inputs,
               async ({ nextDoc }) => {
                 const existingPlayground = playgrounds.get(filepath)
@@ -286,7 +287,8 @@ export async function createPlayground(
               languageId === 'glass-py'
                 ? await parseGlassMetadataPython(resp.finalDoc)
                 : parseGlassMetadata(resp.finalDoc)
-            writeGlass(session, resp.finalDoc)
+
+            writeGlass(session, resp.finalDoc) // wait for this?
             await panel.webview.postMessage({
               action: 'onResponse',
               data: {
@@ -300,8 +302,7 @@ export async function createPlayground(
               },
             })
             if (resp.continued) {
-              console.log('continuing')
-              console.log(resp.finalDoc)
+              console.log('continuing execution...')
               await runGlassExtension(resp.finalDoc, sessionId, inputs)
             }
           } catch (error) {

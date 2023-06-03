@@ -4,9 +4,16 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import prettier from 'prettier'
 import { parseFrontmatter } from '../parse/parseFrontmatter.js'
+import { parseInterpolations } from '../parse/parseInterpolations.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
-import { parseCodeBlock, parseTsGlassImports } from '../parse/parseTypescript.js'
+import {
+  parseCodeBlock,
+  parseCodeBlockUndeclaredSymbols,
+  parseTsGlassImports,
+  removeImports,
+} from '../parse/parseTypescript.js'
+import { rewriteImports } from '../transform/rewriteImports.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
 import { getUseStatePairs, transformSetState } from '../transform/transformSetState.js'
 import { transformTsTestBlock } from '../transform/transformTsTestBlock.js'
@@ -59,28 +66,48 @@ export function transpileGlassFileNext(
   const functionName = camelcase(fileName)
   const exportName = getGlassExportName(fileName)
 
-  const { imports, interpolationArgs, jsxExpressions, frontmatter } = glasslib.parseGlassAST(doc, {
-    workspaceFolder,
-    folderPath,
-    outputDirectory,
-    fileName,
-  })
+  const interpolationVarSet = new Set<string>([])
 
-  const glassImports = parseTsGlassImports(imports.join('\n'))
-  const dependencyGlassDocs = glassImports.flatMap(gi => {
-    const res = transpileGlassHelper(workspaceFolder, path.join(workspaceFolder, gi.path), language, outputDirectory)
-    return res.map(r => ({ ...r, symbolName: gi.name }))
-  })
+  const dynamicTransform = transformDynamicBlocks(doc, true)
+  doc = dynamicTransform.doc
 
-  // all variables inside {} are interpolation variables, including ones like {foo.bar}
-  const allInterpolationVars = Object.keys(interpolationArgs)
+  const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }
 
-  const interpolationVarNames = Array.from(new Set<string>(allInterpolationVars.map(arg => arg.split('.')[0])))
+  // iterate over all the jsxExpressions (values inside `{ }`) and replace them with a number if they're supposed to be treated like code (values inside `${ }`)
+  let codeSanitizedDoc = ''
+  for (const node of glasslib.parseGlassDocument(glasslib.removeGlassFrontmatter(doc))) {
+    if (node.type === 'code' || node.type === 'frontmatter') {
+      codeSanitizedDoc += node.content // or remove frontmatter from code sanitized doc?
+      continue
+    }
 
-  const interpolationVarSet = new Set(interpolationVarNames)
+    let content = node.content
+    const interpolations = parseInterpolations(content)
+
+    for (const codeInterpolation of interpolations) {
+      const expr = codeInterpolation.slice(2, -1)
+
+      for (const s of parseCodeBlockUndeclaredSymbols(expr)) {
+        interpolationVarSet.add(s)
+      }
+
+      const indexOfInterpolation = content.indexOf(codeInterpolation)
+      if (indexOfInterpolation === -1) {
+        continue
+      }
+      if (expr.trim().startsWith('async')) {
+        content = content.replace(codeInterpolation, `\${await (${expr.trim()})()}`)
+      } else if (expr.trim().startsWith('function')) {
+        content = content.replace(codeInterpolation, `\${(${expr.trim()})()}`)
+      } else {
+        content = content.replace(codeInterpolation, `\${${expr.trim()}}`)
+      }
+    }
+
+    codeSanitizedDoc += content
+  }
 
   let model = 'gpt-3.5-turbo'
-
   let onResponse = ''
 
   // find all the interpolation variables from dynamic code blocks
@@ -106,9 +133,6 @@ export function transpileGlassFileNext(
       onResponse = onResponseAttr ? onResponseAttr.expressionValue! : ''
       continue
     }
-    // if (builtinTags.has(jsxNode.tagName)) {
-    //   continue
-    // }
     const jsxString = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
     const parsedJsx = parseJsxElement(jsxString)
     const attrs = parseJsxAttributes(jsxString)
@@ -127,24 +151,28 @@ export function transpileGlassFileNext(
     }
   }
 
-  // remove frontmatter after parsing the AST
-  doc = glasslib.removeGlassFrontmatter(doc)
-
   let toplevelCode = parsedDocument
     .filter(d => d.type === 'code')
     .map(d => d.content)
     .join('\n')
 
-  // remove all lines from toplevel code that start with `import `
-  toplevelCode = toplevelCode
-    .split('\n')
-    .filter(line => !line.startsWith('import '))
-    .join('\n')
+  const codeBlock = parseCodeBlock(toplevelCode)
 
-  const codeBlock = parseCodeBlock(`${imports.join('\n')}
+  const trimmedImports = removeImports(toplevelCode)
+  toplevelCode = trimmedImports.trimmedCode
+  let imports = trimmedImports.imports
 
-${toplevelCode}
-`)
+  const glassImports = parseTsGlassImports(imports)
+  const dependencyGlassDocs = glassImports.flatMap(gi => {
+    const res = transpileGlassHelper(workspaceFolder, path.join(workspaceFolder, gi.path), language, outputDirectory)
+    return res.map(r => ({ ...r, symbolName: gi.name }))
+  })
+
+  imports = rewriteImports(
+    imports,
+    outputDirectory.replace('${workspaceFolder}', workspaceFolder),
+    path.join(folderPath, fileName)
+  )
 
   for (const symbol of codeBlock.symbolsAddedToScope) {
     interpolationVarSet.delete(symbol)
@@ -166,64 +194,14 @@ ${toplevelCode}
 
   interpolationVarSet.delete('') // TODO: figure out where/why this shows up
 
-  const argsOverride = parseFrontmatter(frontmatter)?.args || {}
-
-  const dynamicTransform = transformDynamicBlocks(doc, true)
-  doc = dynamicTransform.doc
-
+  const argsOverride = parseFrontmatter(parsedDocument.find(n => n.type === 'frontmatter')?.content || '')?.args || {}
   const allInterpolationNames = Array.from(interpolationVarSet)
-
-  // if (frontmatterArgs.length === 0 && interpolationVarNames.length > 0) {
   const argsString = allInterpolationNames.map(arg => arg + `: ${argsOverride[arg] || 'string'}`).join(', ')
   let fullArgString = ''
   if (allInterpolationNames.length > 0) {
     fullArgString = language === 'typescript' ? `args: { ${argsString} }` : 'args'
   }
-
-  // }
-
-  let codeSanitizedDoc = doc
-  const codeInterpolationMap: any = { ...dynamicTransform.jsxInterpolations }
-
-  // iterate over all the jsxExpressions (values inside `{ }`) and replace them with a number if they're supposed to be treated like code (values inside `${ }`)
-
-  for (let j = 0; j < jsxExpressions.length; j++) {
-    const expr = jsxExpressions[j]
-
-    const codeInterpolation = '${' + expr + '}'
-    const indexOfInterpolation = codeSanitizedDoc.indexOf(codeInterpolation)
-    if (indexOfInterpolation === -1) {
-      continue
-    }
-    // codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${${j}}`)
-    if (expr.trim().startsWith('async')) {
-      codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${await (${expr.trim()})()}`)
-      // codeInterpolationMap['' + j] = `await (${expr.trim()})()`
-    } else if (expr.trim().startsWith('function')) {
-      codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${(${expr.trim()})()}`)
-      // codeInterpolationMap['' + j] = `(${expr.trim()})()`
-    } else {
-      codeSanitizedDoc = codeSanitizedDoc.replace(codeInterpolation, `\${${expr.trim()}}`)
-      // codeInterpolationMap['' + j] = expr.trim()
-    }
-  }
-
-  // after interpolating everything, we can unescape `\{ \}` sequences
-  // codeSanitizedDoc = unescapeGlass(codeSanitizedDoc)
-
-  // handle undefined options
   const functionArgs = language === 'javascript' ? 'opt' : `opt: { ${fullArgString} }`
-  // let options =
-  //   language === 'typescript'
-  //     ? 'options?: {  openaiKey?: string, progress?: (data: { nextDoc: string; rawResponse?: string }) => void } '
-  //     : 'options'
-  // if (fullArgString) {
-  //   options = ', ' + options
-  // }
-
-  // // handle undefined options
-  // const functionArgs =
-  //   language === 'javascript' ? 'opt' : `opt${fullArgString ? '' : '?'}: { ${fullArgString}${options} }`
 
   const codePairs = getUseStatePairs(toplevelCode)
   // join them all together
@@ -264,8 +242,7 @@ ${toplevelCode}
     .join('')
     .replaceAll('`', '\\`')
 
-  const code = `${imports.filter(i => !i.includes('.glass')).join('\n')}
-
+  const code = `${imports.replace(/import .+ from ['"].+\.glass['"]/gm, '')}
 ${dependencyGlassDocs
   .map(g => {
     return `
@@ -319,7 +296,6 @@ export function ${exportName}() {
   return {
     code: formattedCode.trim(),
     args: [],
-    imports,
     functionName,
     exportName,
     variableNames: allInterpolationNames,
@@ -379,7 +355,6 @@ function transpileGlassHelper(
     description?: string | undefined
     optional?: boolean | undefined
   }[]
-  imports: string[]
   functionName: string
   exportName: string
 }[] {

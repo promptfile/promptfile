@@ -7,6 +7,7 @@ import {
   parseCodeImportedSymbols,
   parseReturnExpression,
   parseTsGlassImports,
+  removeImports,
   removeReturnStatements,
 } from './parseTypescript'
 
@@ -193,6 +194,37 @@ import something from './someOtherFile.glass'
 import baz from 'baz'`
 
       expect(parseTsGlassImports(code)).to.deep.equal([{ name: 'something', path: './someOtherFile.glass' }])
+    })
+
+    it('should parse glass imports with other code', () => {
+      const code = `import {foo, bar} from './someFile'
+import something from './someOtherFile.glass'
+import baz from 'baz'
+
+const foo = "bar"`
+
+      expect(parseTsGlassImports(code)).to.deep.equal([{ name: 'something', path: './someOtherFile.glass' }])
+    })
+  })
+
+  describe('removeImports', () => {
+    it('should remove importss', () => {
+      const code = `import {foo, bar} from './someFile'
+import something from './someOtherFile.glass'
+import baz from 'baz'
+
+const a = foo
+
+import foo from 'foo'`
+
+      expect(removeImports(code)).to.deep.equal({
+        imports: `import {foo, bar} from './someFile'
+import something from './someOtherFile.glass'
+import baz from 'baz'
+
+import foo from 'foo'`,
+        trimmedCode: 'const a = foo',
+      })
     })
   })
 })

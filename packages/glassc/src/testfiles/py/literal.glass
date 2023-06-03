@@ -2,7 +2,7 @@
 language: python
 ---
 
-import requests from "requests"
+import requests
 
 response = requests.get("https://elliottburris.com")
 
@@ -12,3 +12,9 @@ your job is to answer questions based on the following website code:
 ${response.text}
 ###
 </System>
+
+<User>
+where did elliott go to school?
+</User>
+
+<Request model="gpt-3.5-turbo" />

@@ -1,4 +1,4 @@
-import { JSXNode } from './ast'
+import { JSXNode } from './parseGlassTopLevelJsxElements'
 
 export function parseGlassArgs(node?: JSXNode | null) {
   if (node == null) {

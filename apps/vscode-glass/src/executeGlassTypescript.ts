@@ -10,6 +10,7 @@ export async function executeGlassTypescriptNew(
   glassfilePath: string,
   outputChannel: vscode.OutputChannel,
   document: vscode.TextDocument,
+  content: string, // may be fresher than document.getText() wtf
   fileName: string,
   inputs: any,
   progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
@@ -34,7 +35,7 @@ export async function executeGlassTypescriptNew(
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
   const folderPath = document.uri.fsPath.split('/').slice(0, -1).join('/')
 
-  const transpiledFunction = transpileGlassFileNext(document.getText(), {
+  const transpiledFunction = transpileGlassFileNext(content, {
     workspaceFolder: workspacePath,
     folderPath,
     fileName,
@@ -124,10 +125,8 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
           } catch (e: any) {
             console.error('failed parsing progress line', line, e)
           }
-        } else {
-          if (!line.startsWith('glass-result: ')) {
-            outputChannel.appendLine(line)
-          }
+        } else if (!line.startsWith('glass-result: ')) {
+          outputChannel.appendLine(line)
           console.log(line)
         }
 
