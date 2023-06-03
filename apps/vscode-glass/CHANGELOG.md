@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.3
+
+### Patch Changes
+
+- [`ed5ad72`](https://github.com/foundation-ui/glass/commit/ed5ad72efb57f32e0968c2df4ac40f6728b3cf77) Thanks [@elliottburris](https://github.com/elliottburris)! - ui updates
+
 ## 0.11.2
 
 ### Patch Changes
