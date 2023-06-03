@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.1
+
+### Patch Changes
+
+- [`e713d1e`](https://github.com/foundation-ui/glass/commit/e713d1e210807a2792b96750ecdfd4f9df6bb8c2) Thanks [@elliottburris](https://github.com/elliottburris)! - moving tiktoken to vscode-glass
+
 ## 0.11.0
 
 ### Minor Changes
