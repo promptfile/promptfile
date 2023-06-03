@@ -1,5 +1,12 @@
+const request = await fetch('https://elliottburris.com')
+const response = await request.text()
+
 <System>
-You are ChatGPT. Browsing: disabled.
+Use the following information to answer the user's question
+
+###
+${response}
+###
 </System>
 
 <User>
