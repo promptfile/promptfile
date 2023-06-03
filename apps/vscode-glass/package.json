@@ -310,13 +310,6 @@
             }
           },
           {
-            "scope": "punctuation.definition.expression.begin.js, punctuation.definition.expression.end.js",
-            "settings": {
-              "foreground": "#4dff00",
-              "fontStyle": "bold"
-            }
-          },
-          {
             "scope": "source.glass.flow.punctuation",
             "settings": {
               "foreground": "#4dff00",
