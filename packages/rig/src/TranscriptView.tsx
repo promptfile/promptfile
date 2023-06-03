@@ -85,7 +85,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                paddingBottom: '36px',
+                paddingBottom: '48px',
                 fontStyle: block.tag === 'System' ? 'italic' : 'normal',
                 width: '100%',
               }}
@@ -103,9 +103,6 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 </span>
                 {summary && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>}
               </div>
-              {/* <SyntaxHighlighter language="markdown" style={materialOceanic}>
-
-              </SyntaxHighlighter> */}
               <span style={{ whiteSpace: 'pre-wrap' }}>{block.child?.content ?? ''}</span>
             </div>
           )
