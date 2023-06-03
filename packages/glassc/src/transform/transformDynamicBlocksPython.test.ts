@@ -53,7 +53,7 @@ And this is the end`
     })
   })
 
-  it.skip('should transform document with dynamic for block with body', () => {
+  it('should transform document with dynamic for block with body', () => {
     const glass = `Hello world this is a document.
 
 <For each={messages} as="m">
@@ -70,23 +70,14 @@ And this is the end`
 
     expect(transformDynamicBlocksPython(glass)).to.deep.equal({
       undeclaredSymbols: [],
-      nestedInterpolations: {},
-      jsxInterpolations: {
-        '0': `"""{}""".format("""<User>
-{}
-</User>""".format("""{}""".format(m.foo)))`,
-        '1': `"""{}""".format("""<Assistant>
-{}
-</Assistant>""".format("""bar""".format()))`,
-        '2': `"\\n\\n".join(list(map(lambda m: """{}""".format("""{}
-
-{}""".format("""<User>
-{}
-</User>""".format("""{}""".format(m.foo)), """<Assistant>
-{}
-</Assistant>""".format("""bar""".format()))), messages)))`,
+      nestedInterpolations: {
+        '0': '"""{}""".format(m.foo)',
+        '1': '"""bar""".format()',
       },
-      doc: 'Hello world this is a document.\n\n${GLASSVAR[2]} And this is the end',
+      jsxInterpolations: {
+        '0': '"\\n\\n".join(list(map(lambda m: """{}""".format("""{}\n\n{}""".format("""<User>\n{}\n</User>""".format("""{}""".format(m.foo)), """<Assistant>\n{}\n</Assistant>""".format("""bar""".format()))), messages)))',
+      },
+      doc: 'Hello world this is a document.\n\n${GLASSVAR[0]}\n\nAnd this is the end',
     })
   })
 
@@ -201,7 +192,7 @@ left alone
       })
     })
 
-    it.skip('should transform document with nested text expressions', () => {
+    it('should transform document with nested text expressions', () => {
       const glass = `<Code>
 const useGandhi = true
 </Code>
@@ -231,37 +222,20 @@ who was Einstein?
 </User>`
 
       expect(transformDynamicBlocksPython(glass)).to.deep.equal({
-        jsxInterpolations: {
-          'jsx-0': "useGandhi ? `<Text if={useGandhi}>\nwho was gandhi?\n</Text>` : ''",
-          'jsx-1': "!useGandhi ? `<Text if={!useGandhi}>\nwho was Einstein?\n</Text>` : ''",
-          'jsx-2': "useGandhi ? `<Text if={useGandhi}>\nwho was gandhi?\n</Text>` : ''",
-          'jsx-3': "!useGandhi ? `<Text if={!useGandhi}>\nwho was Einstein?\n</Text>` : ''",
+        nestedInterpolations: {
+          '0': '"""who was gandhi?""".format() if useGandhi else \'\'',
+          '1': '"""who was Einstein?""".format() if !useGandhi else \'\'',
+          '2': '"""who was gandhi?""".format() if useGandhi else \'\'',
+          '3': '"""who was Einstein?""".format() if !useGandhi else \'\'',
         },
-        doc: '<Code>\nconst useGandhi = true\n</Code>\n\n<System>\nYou are a highly-intelligent AI.\n</System>\n\n<User>\n${jsx-0}\n\n${jsx-1}\n</User>\n\n<User>\n<Text if={useGandhi}>\nwho was gandhi?\n</Text>\n\n<Text if={!useGandhi}>\n<User>\n${jsx-2}\n\n${jsx-3}\n</User>',
-      })
-    })
-
-    it.skip('should transform document with literal', () => {
-      const glass = `---
-language: python
----
-
-import requests from "requests"
-
-response = requests.get("https://elliottburris.com")
-
-<System>
-your job is to answer questions based on the following website code:
-###
-<Text escapeHtml>
-\${response.text}
-</Text>
-###
-</System>`
-
-      expect(transformDynamicBlocksPython(glass)).to.deep.equal({
-        jsxInterpolations: {},
-        doc: '',
+        undeclaredSymbols: [],
+        jsxInterpolations: {
+          '0': '"""{}""".format("""<Code>\n{}\n</Code>""".format("""const useGandhi = true""".format()))',
+          '1': '"""{}""".format("""<System>\n{}\n</System>""".format("""You are a highly-intelligent AI.""".format()))',
+          '2': '"""{}""".format("""<User>\n{}\n</User>""".format("""{}\n\n{}""".format(GLASSVAR[0], GLASSVAR[1])))',
+          '3': '"""{}""".format("""<User>\n{}\n</User>""".format("""{}\n\n{}""".format(GLASSVAR[2], GLASSVAR[3])))',
+        },
+        doc: '${GLASSVAR[0]}\n\n${GLASSVAR[1]}\n\n${GLASSVAR[2]}\n\n${GLASSVAR[3]}',
       })
     })
   })
