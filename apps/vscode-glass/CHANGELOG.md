@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.0
+
+### Minor Changes
+
+- [`8ee7a88`](https://github.com/foundation-ui/glass/commit/8ee7a88418452cc67ba981470ac11064e29b0b28) Thanks [@rothfels](https://github.com/rothfels)! - major syntax updates
+
 ## 0.10.2
 
 ### Patch Changes
