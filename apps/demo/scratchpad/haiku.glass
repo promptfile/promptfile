@@ -1,9 +1,9 @@
 <System>
-You are a friendly and helpful assistant.
+You are PythonGPT. You write highly performance and well-documented Python code.
 </System>
 
 <User>
 ${input}
 </User>
 
-<Request model="claude-instant-v1" />
+<Request model="gpt-3.5-turbo" />

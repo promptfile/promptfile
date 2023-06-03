@@ -1,9 +1,5 @@
 import { GlassContent } from '@glass-lang/glasslib'
 import { useEffect, useRef, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import remarkGfm from 'remark-gfm'
 
 interface TranscriptViewProps {
   blocks: GlassContent[]
@@ -14,21 +10,6 @@ export const TranscriptView = (props: TranscriptViewProps) => {
   const { blocks, session } = props
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
-
-  const components = {
-    code({ node, inline, className, children, ...props }) {
-      const match = /language-(\w+)/.exec(className || '')
-      return !inline && match ? (
-        <SyntaxHighlighter style={materialOceanic} language={match[1]} PreTag="div" {...props}>
-          {String(children).replace(/\n$/, '')}
-        </SyntaxHighlighter>
-      ) : (
-        <code className={className} {...props}>
-          {children}
-        </code>
-      )
-    },
-  }
 
   const colorLookup: Record<string, string> = {
     User: '#5EC5E5',
@@ -109,7 +90,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 width: '100%',
               }}
             >
-              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', paddingBottom: '4px' }}>
                 <span
                   style={{
                     fontWeight: 'bold',
@@ -122,11 +103,10 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 </span>
                 {summary && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>}
               </div>
-              <span style={{ whiteSpace: 'pre-wrap' }}>
-                <ReactMarkdown remarkPlugins={[remarkGfm]} components={components as any}>
-                  {block.child?.content ?? ''}
-                </ReactMarkdown>
-              </span>
+              {/* <SyntaxHighlighter language="markdown" style={materialOceanic}>
+
+              </SyntaxHighlighter> */}
+              <span style={{ whiteSpace: 'pre-wrap' }}>{block.child?.content ?? ''}</span>
             </div>
           )
         })}
