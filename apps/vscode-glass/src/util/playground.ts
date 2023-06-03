@@ -300,6 +300,8 @@ export async function createPlayground(
               },
             })
             if (resp.continued) {
+              console.log('continuing')
+              console.log(resp.finalDoc)
               await runGlassExtension(resp.finalDoc, sessionId, inputs)
             }
           } catch (error) {

@@ -207,7 +207,7 @@ hello world
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { message: '', streaming: true, model: 'gpt-4' })
+      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`---
 language: typescript
@@ -228,6 +228,77 @@ hello world
 </User>
 
 <Request model="gpt-4" />`)
+    })
+
+    it('shoudl handle multiple request', () => {
+      const origDoc = `<User>
+You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
+
+Title: \${title}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+
+<User>
+You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
+</User>
+
+<Request model="gpt-3.5-turbo" />`
+
+      const interpDoc = `<User>
+You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
+
+Title: hello world
+</User>
+
+<Request model="gpt-3.5-turbo" />
+
+<User>
+You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
+</User>
+
+<Request model="gpt-3.5-turbo" />`
+
+      const res = handleRequestNode(origDoc, interpDoc, {
+        messages: ['goodbye', 'world'],
+        streaming: false,
+        model: 'gpt-4',
+        index: 1,
+      })
+      expect(res.rawResponse).to.equal('world')
+      expect(res.finalDoc).to.equal(`<Transcript>
+<User>
+You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
+
+Title: hello world
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+goodbye
+</Assistant>
+
+<User>
+You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
+</User>
+
+<Assistant model="gpt-4" temperature="1">
+world
+</Assistant>
+</Transcript>
+
+<User>
+You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
+
+Title: \${title}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+
+<User>
+You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
+</User>
+
+<Request model="gpt-3.5-turbo" />`)
     })
 
     it('shoudl handle request with once block', () => {
@@ -255,7 +326,7 @@ hello world
 
 <Request model="gpt-3.5-turbo" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { message: '', streaming: true, model: 'gpt-4' })
+      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`<System>
 You are a helpful assistant.
@@ -293,7 +364,7 @@ hello world
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { message: '', streaming: true, model: 'gpt-4' })
+      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`<User>
 \${input}
@@ -345,7 +416,7 @@ goodbye world
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { message: '', streaming: true, model: 'gpt-4' })
+      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`<Transcript>
 <User>

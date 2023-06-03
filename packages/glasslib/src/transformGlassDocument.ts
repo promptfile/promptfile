@@ -117,16 +117,46 @@ export function addToDocument(
 export function handleRequestNode(
   uninterpolatedDoc: string,
   interpolatedDoc: string,
-  request: { model: string; message: string; streaming: boolean; requestTokens?: number; responseTokens?: number }
+  request: {
+    model: string
+    messages: string[]
+    streaming: boolean
+    requestTokens?: number
+    responseTokens?: number
+    index: number
+  }
 ) {
   const parsedInterpolated = parseGlassBlocks(interpolatedDoc)
   const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
-  const newRequestNode = requestNodeReplacement(request.model, request.message, request.streaming, {
-    requestTokens: request.requestTokens,
-    responseTokens: request.responseTokens,
-  })
+  const newRequestNode = requestNodeReplacement(
+    request.model,
+    request.messages[request.messages.length - 1],
+    request.streaming,
+    {
+      requestTokens: request.requestTokens,
+      responseTokens: request.responseTokens,
+    }
+  )
 
-  const userAndAssistantBlocks = parsedInterpolated.filter(block => block.tag === 'User' || block.tag === 'Assistant')
+  const userAndAssistantBlocks: GlassContent[] = []
+  let currRequest = 0
+  for (const block of parsedInterpolated) {
+    if (block.tag === 'Request') {
+      if (currRequest < request.index && request.messages[currRequest] != null) {
+        userAndAssistantBlocks.push({
+          tag: 'Assistant',
+          content: requestNodeReplacement(request.model, request.messages[currRequest], false),
+        } as any)
+      }
+      currRequest++
+      if (currRequest > request.index) {
+        break
+      }
+    }
+    if (block.tag === 'User' || block.tag === 'Assistant') {
+      userAndAssistantBlocks.push(block)
+    }
+  }
 
   let transcriptContent = transcriptNode?.child?.content || ''
   if (transcriptContent) {
@@ -150,7 +180,7 @@ export function handleRequestNode(
       interpolatedDoc,
       true
     ),
-    rawResponse: request.streaming ? '█' : request.message,
+    rawResponse: request.streaming ? '█' : request.messages[request.messages.length - 1],
   }
 }
 
