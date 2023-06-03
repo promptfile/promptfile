@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.2
+
+### Patch Changes
+
+- [`b49213c`](https://github.com/foundation-ui/glass/commit/b49213cb334ab592ab77eab67cfc2ddf971d7a31) Thanks [@rothfels](https://github.com/rothfels)! - bundle tiktoken
+
 ## 0.11.1
 
 ### Patch Changes
