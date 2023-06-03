@@ -1,6 +1,14 @@
-import { countTokens } from '@glass-lang/glassc'
+import cl100k_base from '@dqbd/tiktoken/encoders/cl100k_base.json'
+import { Tiktoken } from '@dqbd/tiktoken/lite'
 import { parseGlassBlocks } from '@glass-lang/glasslib'
 import * as vscode from 'vscode'
+
+const encoding = new Tiktoken(cl100k_base.bpe_ranks, cl100k_base.special_tokens, cl100k_base.pat_str)
+
+function countTokens(text: string) {
+  const tokens = encoding.encode(text)
+  return tokens.length
+}
 
 export function updateTokenCount(counter: vscode.StatusBarItem) {
   const editor = vscode.window.activeTextEditor
