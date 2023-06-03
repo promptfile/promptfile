@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import remarkGfm from 'remark-gfm'
 
 interface TranscriptViewProps {
   blocks: GlassContent[]
@@ -122,7 +123,9 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 {summary && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>}
               </div>
               <span style={{ whiteSpace: 'pre-wrap' }}>
-                <ReactMarkdown components={components as any}>{block.child?.content ?? ''}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} components={components as any}>
+                  {block.child?.content ?? ''}
+                </ReactMarkdown>
               </span>
             </div>
           )
