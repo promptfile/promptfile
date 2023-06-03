@@ -108,7 +108,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 width: '100%',
               }}
             >
-              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', paddingBottom: '4px' }}>
+              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                 <span
                   style={{
                     fontWeight: 'bold',
@@ -121,7 +121,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 </span>
                 {summary && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>}
               </div>
-              <span style={{ whiteSpace: 'pre-wrap' }}>
+              <span style={{ backgroundColor: 'blue', whiteSpace: 'pre-wrap' }}>
                 <ReactMarkdown components={components as any}>{block.child?.content ?? ''}</ReactMarkdown>
               </span>
             </div>
