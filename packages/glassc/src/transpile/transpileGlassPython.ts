@@ -35,19 +35,10 @@ export async function transpileGlassFilePython(
     .map(t => (t as any).child.content)
     .join('\n')
 
-  const stateNode = parsedDocument.find(node => 'tag' in node && node.tag === 'State')
-
   // remove all block comments before any processing happens
   doc = glasslib.removeGlassComments(doc)
   const functionName = camelcase(fileName)
   const exportName = getGlassExportName(fileName)
-
-  const { imports, jsxExpressions } = glasslib.parseGlassAST(doc, {
-    workspaceFolder,
-    folderPath,
-    outputDirectory,
-    fileName,
-  })
 
   // all variables inside {} are interpolation variables, including ones like {foo.bar}
   // const allInterpolationVars = Object.keys(interpolationArgs)
@@ -81,16 +72,12 @@ export async function transpileGlassFilePython(
   // remove frontmatter after parsing the AST
   doc = glasslib.removeGlassFrontmatter(doc)
 
-  let toplevelCode = parsedDocument
+  const toplevelCode = parsedDocument
     .filter(d => d.type === 'code')
     .map(d => d.content)
     .join('\n')
 
   // remove all lines from toplevel code that start with `import `
-  toplevelCode = toplevelCode
-    .split('\n')
-    .filter(line => !line.startsWith('import '))
-    .join('\n')
 
   const dynamicTransform = transformDynamicBlocksPython(doc)
   doc = dynamicTransform.doc
@@ -162,16 +149,10 @@ export async function transpileGlassFilePython(
   }
 
   // if any imports match "import .+ from .+", translate them to "from .+ import .+"
-  for (let i = 0; i < imports.length; i++) {
-    const importLine = imports[i]
-    const match = importLine.match(/import (.+) from ['"](.+)['"]/)
+  for (const line of toplevelCode.split('\n')) {
+    const match = line.match(/import (.+)/)
     if (match) {
       undeclaredSymbols.delete(match[1])
-      if (match[2] === match[1]) {
-        imports[i] = `import ${match[1]}`
-      } else {
-        imports[i] = `from ${match[2]} import ${match[1]}`
-      }
     }
   }
 
@@ -196,9 +177,7 @@ export async function transpileGlassFilePython(
           .join(',\n            ') +
         '\n    }'
 
-  const code = `${imports.join('\n')}
-
-def ${exportName}(interpolationArgs = {}):
+  const code = `def ${exportName}(interpolationArgs = {}):
 ${indentLines(await transformPythonTestBlock(testContent), 4)}
 ${'    '}
     def compile(opt = { "args": {} }):
@@ -223,7 +202,6 @@ ${'    '}
   return {
     code: code.trim(),
     args: [],
-    imports,
     functionName,
     exportName,
     variableNames: dynamicTransform.undeclaredSymbols,
@@ -270,7 +248,6 @@ async function transpileGlassHelper(
       description?: string | undefined
       optional?: boolean | undefined
     }[]
-    imports: string[]
     functionName: string
     exportName: string
   }[]

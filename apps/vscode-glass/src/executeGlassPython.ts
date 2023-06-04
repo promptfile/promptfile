@@ -7,7 +7,11 @@ import * as vscode from 'vscode'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
-export async function executeGlassPython(document: vscode.TextDocument, inputs: any): Promise<TranspilerOutput[]> {
+export async function executeGlassPython(
+  document: vscode.TextDocument,
+  content: string,
+  inputs: any
+): Promise<TranspilerOutput[]> {
   const fileName = getDocumentFilename(document)
 
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)
@@ -19,7 +23,7 @@ export async function executeGlassPython(document: vscode.TextDocument, inputs: 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
 
-  const transpiledFunction = await transpileGlassFilePython(document.getText(), {
+  const transpiledFunction = await transpileGlassFilePython(content, {
     workspaceFolder: workspacePath,
     folderPath: document.uri.fsPath.split('/').slice(0, -1).join('/'),
     fileName,

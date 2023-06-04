@@ -1,14 +1,12 @@
 const res = await fetch(url)
 const website = await res.text()
 
-
 <System>
 your job is to answer questions based on the following website code:
 ###
 ${website}
 ###
 </System>
-
 
 <User>
 ${input}

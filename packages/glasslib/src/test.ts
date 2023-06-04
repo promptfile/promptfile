@@ -1,5 +1,4 @@
 import './parseChatCompletionBlocks.test'
-import './parseGlassAST.test'
 import './parseGlassBlocks.test'
 import './parseGlassTopLevelJsxElements.test'
 import './removeGlassComments.test'

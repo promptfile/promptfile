@@ -10,9 +10,20 @@ import { mdxJsx } from 'micromark-extension-mdx-jsx'
 import { mdxMd } from 'micromark-extension-mdx-md'
 import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
 import { combineExtensions } from 'micromark-util-combine-extensions'
-import { JSXNode } from './ast'
 import { removeGlassComments } from './removeGlassComments'
 import { removeGlassFrontmatter } from './removeGlassFrontmatter'
+
+export interface JSXNode {
+  tagName?: string
+  value?: string
+  type?: string
+  attrs: { name: string; stringValue?: string; expressionValue?: string }[]
+  children: JSXNode[]
+  position: {
+    start: { line: number; column: number; offset: number }
+    end: { line: number; column: number; offset: number }
+  }
+}
 
 /**
  * Takes a glass document and returns all the top-level JSX elements.

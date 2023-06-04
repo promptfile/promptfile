@@ -232,6 +232,33 @@ export function parseTsGlassImports(code: string) {
   return importedSymbols.map(s => ({ ...s, path: s.path.replace(/'/g, '').replace(/"/g, '') }))
 }
 
+export function removeImports(code: string) {
+  const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
+
+  let imports = ''
+  const importPositions: { start: number; end: number }[] = []
+
+  function visit(node: ts.Node) {
+    if (ts.isImportDeclaration(node)) {
+      imports += node.getFullText(sourceFile)
+      importPositions.push({ start: node.getStart(sourceFile), end: node.getEnd() })
+    }
+    ts.forEachChild(node, visit)
+  }
+
+  visit(sourceFile)
+
+  // Sort the import positions in reverse order to avoid shifting positions when removing text.
+  importPositions.sort((a, b) => b.start - a.start)
+
+  let trimmedCode = code
+  for (const position of importPositions) {
+    trimmedCode = trimmedCode.substring(0, position.start) + trimmedCode.substring(position.end)
+  }
+
+  return { imports: imports.trim(), trimmedCode: trimmedCode.trim() }
+}
+
 /**
  * Returns true if the typescript code contains an `await` expression.
  */

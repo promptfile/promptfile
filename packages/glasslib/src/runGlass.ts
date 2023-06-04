@@ -1,8 +1,7 @@
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
-import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
-import { parseGlassBlocks } from './parseGlassBlocks'
+import { parseChatCompletionBlocks, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
 import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
@@ -57,8 +56,6 @@ export async function runGlass(
   // (content)
   // </User>
 
-  const toplevelNodes = parseGlassBlocks(interpolatedDoc)
-
   // eslint-disable-next-line prefer-const
   let transformedOriginalDoc = originalDoc
   let transformedInterpolatedDoc = interpolatedDoc
@@ -72,7 +69,12 @@ export async function runGlass(
 
   if (options?.progress) {
     options.progress(
-      handleRequestNode(transformedOriginalDoc, transformedInterpolatedDoc, { message: '', model, streaming: true })
+      handleRequestNode(transformedOriginalDoc, transformedInterpolatedDoc, {
+        messages: [''],
+        model,
+        streaming: true,
+        index: 0,
+      })
     )
   }
   const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
@@ -168,37 +170,58 @@ async function runGlassChat(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
-  console.log('runGlass: chat-gpt', messages)
+  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc)
+  const messagesSoFar: ChatCompletionRequestMessage[] = []
 
-  const r = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
-      Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      messages,
-      model: model,
-      stream: true,
-    }),
+  let i = 0
+  const responses: string[] = []
+  for (; i < messageBlocks.length; i++) {
+    const messages = messageBlocks[i]
+    console.log('runGlass: chat-gpt', messages)
+
+    const r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        // eslint-disable-next-line turbo/no-undeclared-env-vars
+        Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: messagesSoFar.concat(messages),
+        model: model,
+        stream: true,
+      }),
+    })
+
+    const response = await handleStream(r, handleChatChunk, next => {
+      if (!r.ok) {
+        throw new Error(`HTTP error: ${r.status}`)
+      }
+      // right now claude has a leading whitespace character
+      // we need to remove that!
+      if (options?.progress) {
+        return options.progress(
+          handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+            messages: responses.concat(next.trim()),
+            model,
+            streaming: true,
+            index: i,
+          })
+        )
+      }
+    })
+
+    responses.push(response)
+    messagesSoFar.push(...messages)
+    messagesSoFar.push({ role: 'assistant', content: response })
+  }
+
+  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+    messages: responses,
+    model,
+    streaming: false,
+    index: i - 1,
   })
-
-  const response = await handleStream(r, handleChatChunk, next => {
-    if (!r.ok) {
-      throw new Error(`HTTP error: ${r.status}`)
-    }
-    // right now claude has a leading whitespace character
-    // we need to remove that!
-    if (options?.progress) {
-      return options.progress(
-        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, { message: next.trim(), model, streaming: true })
-      )
-    }
-  })
-
-  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, { message: response, model, streaming: false })
 }
 
 /**
@@ -220,54 +243,71 @@ async function runGlassChatAnthropic(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
+  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc)
+  const messagesSoFar: ChatCompletionRequestMessage[] = []
 
-  let anthropicQuery = ''
-  for (const msg of messages) {
-    if (msg.role === 'assistant') {
-      anthropicQuery += `\n\nAssistant: ${msg.content}`
-    } else if (msg.role === 'user') {
-      anthropicQuery += `\n\nHuman: ${msg.content}`
-    } else if (msg.role === 'system') {
-      anthropicQuery += `\n\nHuman: ${msg.content}`
-    } else {
-      throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
+  let i = 0
+  const responses: string[] = []
+  for (; i < messageBlocks.length; i++) {
+    const messages = messageBlocks[i]
+
+    let anthropicQuery = ''
+    for (const msg of messagesSoFar.concat(messages)) {
+      if (msg.role === 'assistant') {
+        anthropicQuery += `\n\nAssistant: ${msg.content}`
+      } else if (msg.role === 'user') {
+        anthropicQuery += `\n\nHuman: ${msg.content}`
+      } else if (msg.role === 'system') {
+        anthropicQuery += `\n\nHuman: ${msg.content}`
+      } else {
+        throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
+      }
     }
+    anthropicQuery += '\n\nAssistant: '
+    console.log('runGlass: anthropic', anthropicQuery)
+
+    const r = await fetch('https://api.anthropic.com/v1/complete', {
+      method: 'POST',
+      headers: {
+        // eslint-disable-next-line turbo/no-undeclared-env-vars
+        'X-API-Key': (options?.anthropicKey || process.env.ANTHROPIC_API_KEY)!,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: model,
+        prompt: anthropicQuery,
+        max_tokens_to_sample: 2048,
+        stopSequences: ['Human:', 'Assistant:'],
+        stream: true,
+      }),
+    })
+
+    const response = await handleStream(r, handleAnthropicChunk, next => {
+      if (!r.ok) {
+        throw new Error(`HTTP error: ${r.status}`)
+      }
+      if (options?.progress) {
+        return options.progress(
+          handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+            messages: responses.concat(next.trim()),
+            model,
+            streaming: true,
+            index: i,
+          })
+        )
+      }
+    })
+
+    responses.push(response.trim())
+    messagesSoFar.push(...messages)
+    messagesSoFar.push({ role: 'assistant', content: response.trim() })
   }
-  anthropicQuery += '\n\nAssistant: '
-  console.log('runGlass: anthropic', anthropicQuery)
-
-  const r = await fetch('https://api.anthropic.com/v1/complete', {
-    method: 'POST',
-    headers: {
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
-      'X-API-Key': (options?.anthropicKey || process.env.ANTHROPIC_API_KEY)!,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: model,
-      prompt: anthropicQuery,
-      max_tokens_to_sample: 2048,
-      stopSequences: ['Human:', 'Assistant:'],
-      stream: true,
-    }),
-  })
-
-  const response = await handleStream(r, handleAnthropicChunk, next => {
-    if (!r.ok) {
-      throw new Error(`HTTP error: ${r.status}`)
-    }
-    if (options?.progress) {
-      return options.progress(
-        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, { message: next.trim(), model, streaming: true })
-      )
-    }
-  })
 
   return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-    message: response.trim(),
+    messages: responses,
     model,
     streaming: false,
+    index: i - 1,
   })
 }
 
@@ -289,64 +329,82 @@ async function runGlassCompletion(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
-  const useChat = messages.length > 1
+  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc)
+  const messagesSoFar: ChatCompletionRequestMessage[] = []
 
-  let prompt = ''
-  let stopSequence: string | null = null
-  if (!useChat) {
-    prompt = messages[0].content
-  } else {
-    stopSequence = '\n\nHuman:'
-    for (const msg of messages) {
-      if (msg.role === 'assistant') {
-        prompt += `\n\nAssistant: ${msg.content}`
-      } else if (msg.role === 'user') {
-        prompt += `\n\nHuman: ${msg.content}`
-      } else if (msg.role === 'system') {
-        prompt += `\n\nHuman: ${msg.content}`
-      } else {
-        throw new Error(`Unknown role for completion query: ${msg.role}`)
+  let i = 0
+  const responses: string[] = []
+
+  for (; i < messageBlocks.length; i++) {
+    const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
+    const useChat = messages.length > 1
+
+    const messagesToUse = messagesSoFar.concat(messages)
+
+    let prompt = ''
+    let stopSequence: string | null = null
+    if (!useChat) {
+      prompt = messagesToUse[0].content
+    } else {
+      stopSequence = '\n\nHuman:'
+      for (const msg of messagesToUse) {
+        if (msg.role === 'assistant') {
+          prompt += `\n\nAssistant: ${msg.content}`
+        } else if (msg.role === 'user') {
+          prompt += `\n\nHuman: ${msg.content}`
+        } else if (msg.role === 'system') {
+          prompt += `\n\nHuman: ${msg.content}`
+        } else {
+          throw new Error(`Unknown role for completion query: ${msg.role}`)
+        }
       }
+      prompt += '\n\nAssistant: '
     }
-    prompt += '\n\nAssistant: '
+
+    console.log('runGlass: gpt3', prompt)
+
+    const r = await fetch('https://api.openai.com/v1/completions', {
+      method: 'POST',
+      headers: {
+        // eslint-disable-next-line turbo/no-undeclared-env-vars
+        Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt,
+        model: model,
+        stream: true,
+        stop: stopSequence,
+      }),
+    })
+
+    const response = await handleStream(r, handleCompletionChunk, next => {
+      if (!r.ok) {
+        throw new Error(`HTTP error: ${r.status}`)
+      }
+      if (options?.progress) {
+        return options.progress(
+          handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+            messages: responses.concat(next.trim()),
+            model,
+            streaming: true,
+            index: i,
+          })
+        )
+      }
+    })
+
+    responses.push(response.trim())
+    messagesSoFar.push(...messages)
+    messagesSoFar.push({ role: 'assistant', content: response.trim() })
   }
 
-  console.log('runGlass: gpt3', prompt)
-
-  const r = await fetch('https://api.openai.com/v1/completions', {
-    method: 'POST',
-    headers: {
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
-      Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      prompt,
-      model: model,
-      stream: true,
-      stop: stopSequence,
-    }),
+  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+    messages: responses,
+    model,
+    streaming: false,
+    index: i - 1,
   })
-
-  const response = await handleStream(r, handleCompletionChunk, next => {
-    if (!r.ok) {
-      throw new Error(`HTTP error: ${r.status}`)
-    }
-    if (options?.progress) {
-      return options.progress(
-        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, { message: next.trim(), model, streaming: true })
-      )
-    }
-  })
-
-  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, { message: response, model, streaming: false })
-
-  // return {
-  //   finalDoc: replaceRequestNode(updatedRequestNode, docs.originalDoc),
-  //   finalInterpolatedDoc: replaceRequestNode(updatedRequestNode, docs.interpolatedDoc),
-  //   rawResponse: response,
-  // }
 }
 
 async function handleStream(
@@ -377,9 +435,13 @@ async function handleStream(
           if (content === '[DONE]') {
             return
           }
-          const eventData = JSON.parse(content)
-          fullResult = processChunk(fullResult, eventData)
-          progress(fullResult)
+          try {
+            const eventData = JSON.parse(content)
+            fullResult = processChunk(fullResult, eventData)
+            progress(fullResult)
+          } catch (e) {
+            console.error('runGlass: error parsing event data', e)
+          }
         }
       }
     })
