@@ -2,8 +2,6 @@ const shiki = require('shiki')
 const fs = require('fs')
 const path = require('path')
 
-console.log(__dirname)
-
 const glassTs = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../vscode-glass/syntaxes/generated/glass-ts.tmLanguage.json')).toString()
 )
