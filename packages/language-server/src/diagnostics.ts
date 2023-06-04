@@ -1,6 +1,8 @@
+import { parseFrontmatterFromGlass } from '@glass-lang/glassc'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType, parseGlassBlocks } from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { glassElements } from './elements'
 
 export function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
@@ -73,9 +75,6 @@ export function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnost
     return []
   }
 }
-
-import { parseFrontmatterFromGlass } from '@glass-lang/glassc'
-import { glassElements } from './elements'
 
 export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
