@@ -171,30 +171,6 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
       )
     }
 
-    switch (languageModel.type) {
-      case LanguageModelType.completion:
-        const multiplePromptBlocks = parsed.filter(tag => tag.tag === 'User')
-        if (multiplePromptBlocks.length > 1) {
-          diagnostics.push(
-            ...multiplePromptBlocks.slice(1).map(tag => {
-              const diagnostic: Diagnostic = {
-                severity: DiagnosticSeverity.Error,
-                range: {
-                  start: textDocument.positionAt(tag.position.start.offset),
-                  end: textDocument.positionAt(tag.position.end.offset),
-                },
-                message: `Only one <User> block allowed per file.`,
-                source: 'glass',
-              }
-              return diagnostic
-            })
-          )
-        }
-        break
-
-      default:
-        break
-    }
     return diagnostics
   } catch {
     return []
