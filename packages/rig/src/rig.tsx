@@ -9,7 +9,7 @@ import { getNonce, lastElement } from './util'
 
 export interface GlassLog {
   id: string
-  session: string
+  sessionId: string
   timestamp?: string
   model: string
   inputs: Record<string, string>
@@ -36,7 +36,7 @@ function RigView() {
   const [source, setSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
-  const [session, setSession] = useState('')
+  const [sessionId, setSession] = useState('')
   const [logs, setLogs] = useState<GlassLog[]>([])
   const [tab, setTab] = useState(tabs[0])
 
@@ -70,8 +70,8 @@ function RigView() {
           if (message.data.filename) {
             setFilename(() => message.data.filename)
           }
-          if (message.data.session) {
-            setSession(() => message.data.session)
+          if (message.data.sessionId) {
+            setSession(() => message.data.sessionId)
           }
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
@@ -84,23 +84,23 @@ function RigView() {
               action: 'runSession',
               data: {
                 inputs: {},
-                session: message.data.session,
+                sessionId: message.data.sessionId,
               },
             })
           }
           break
         case 'onStream':
-          if (message.data.session !== session) {
+          if (message.data.sessionId !== sessionId) {
             break
           }
           setBlocks(() => message.data.blocks)
           break
         case 'onResponse':
-          if (message.data.session !== session) {
+          if (message.data.sessionId !== sessionId) {
             break
           }
           setBlocks(() => message.data.blocks)
-          setLogs([...logs, { ...message.data, id: getNonce(), session, timestamp: new Date().toISOString() }])
+          setLogs([...logs, { ...message.data, id: getNonce(), sessionId, timestamp: new Date().toISOString() }])
           break
         default:
           break
@@ -110,7 +110,7 @@ function RigView() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [session, logs])
+  }, [sessionId, logs])
 
   useEffect(() => {
     vscode.postMessage({
@@ -136,7 +136,7 @@ function RigView() {
       action: 'runSession',
       data: {
         inputs,
-        session,
+        sessionId,
       },
     })
     updateInputsWithVariables(Object.keys(inputs), true)
@@ -155,7 +155,7 @@ function RigView() {
     vscode.postMessage({
       action: 'openSessionFile',
       data: {
-        session,
+        sessionId,
       },
     })
   }
@@ -170,7 +170,7 @@ function RigView() {
     vscode.postMessage({
       action: 'stopSession',
       data: {
-        session,
+        sessionId,
       },
     })
   }
@@ -190,7 +190,7 @@ function RigView() {
       }}
     >
       <TopperView
-        session={session}
+        sessionId={sessionId}
         openSessionFile={openSessionFile}
         dirty={dirty}
         reloadable={assistantBlocks.length > 0 || dirty}
@@ -201,7 +201,7 @@ function RigView() {
         reload={reload}
         openOutput={openOutput}
       />
-      {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
+      {tab === 'Transcript' && <TranscriptView sessionId={sessionId} blocks={blocks} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
       {tab === 'Transcript' && (streaming || Object.keys(inputs).length > 0) && (
         <ComposerView

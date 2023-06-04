@@ -71,7 +71,7 @@ export const HistoryView = (props: HistoryViewProps) => {
                     {log.id}
                   </VSCodeLink>
                 </VSCodeDataGridCell>
-                <VSCodeDataGridCell grid-column="2">{log.session}</VSCodeDataGridCell>
+                <VSCodeDataGridCell grid-column="2">{log.sessionId}</VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="3">{log.model}</VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="4">{inputSummary(log.inputs)}</VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="5">{truncate(log.output)}</VSCodeDataGridCell>

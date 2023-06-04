@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from 'react'
 
 interface TranscriptViewProps {
   blocks: GlassContent[]
-  session: string
+  sessionId: string
 }
 
 export const TranscriptView = (props: TranscriptViewProps) => {
-  const { blocks, session } = props
+  const { blocks, sessionId } = props
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
 
@@ -75,7 +75,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
             textAlign: 'center',
           }}
         >
-          {session}
+          {sessionId}
         </div>
         {blocks.map((block, index) => {
           const summary = requestSummary(block)

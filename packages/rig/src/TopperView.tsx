@@ -11,11 +11,11 @@ interface TopperViewProps {
   dirty: boolean
   reloadable: boolean
   openSessionFile: () => void
-  session: string
+  sessionId: string
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { dirty, reloadable, filename, tabs, tab, setTab, reload, openOutput, openSessionFile, session } = props
+  const { dirty, reloadable, filename, tabs, tab, setTab, reload, openOutput, openSessionFile, sessionId } = props
 
   return (
     <div
