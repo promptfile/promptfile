@@ -4,6 +4,27 @@
   "scopeName": "source.SCOPE_NAME",
   "patterns": [
     {
+      "begin": "^---$",
+      "beginCaptures": {
+        "0": {
+          "name": "string.other.begin.yaml"
+        }
+      },
+      "end": "^---$",
+      "endCaptures": {
+        "0": {
+          "name": "string.other.end.yaml"
+        }
+      },
+      "contentName": "source.yaml",
+      "patterns": [
+        {
+          "include": "source.yaml"
+        }
+      ]
+    },
+
+    {
       "include": "#transcript-element"
     },
     {
