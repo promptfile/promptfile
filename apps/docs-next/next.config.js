@@ -1,18 +1,23 @@
 const shiki = require('shiki')
 const fs = require('fs')
+const path = require('path')
+
+console.log(__dirname)
 
 const glassTs = JSON.parse(
-  fs.readFileSync('/Users/rothfels/glass/apps/docs-next/components/glass-ts.tmLanguage.json').toString()
+  fs.readFileSync(path.join(__dirname, '../vscode-glass/syntaxes/generated/glass-ts.tmLanguage.json')).toString()
 )
 const glassPy = JSON.parse(
-  fs.readFileSync('/Users/rothfels/glass/apps/docs-next/components/glass-py.tmLanguage.json').toString()
+  fs.readFileSync(path.join(__dirname, '../vscode-glass/syntaxes/generated/glass-py.tmLanguage.json')).toString()
 )
+const syntaxTheme = JSON.parse(fs.readFileSync(path.join(__dirname, 'shiki-theme.json')).toString())
 
 const withNextra = require('nextra')({
   theme: 'nextra-theme-docs',
   themeConfig: './theme.config.tsx',
   mdxOptions: {
     rehypePrettyCodeOptions: {
+      theme: syntaxTheme,
       getHighlighter: async options => {
         const highlighter = await shiki.getHighlighter(options)
         await highlighter.loadLanguage({
