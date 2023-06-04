@@ -34,6 +34,87 @@
       }
     },
     {
+      "scope": "source.glass.request.name",
+      "settings": {
+        "foreground": "#3e69d1",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.text.name",
+      "settings": {
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.state.name",
+      "settings": {
+        "foreground": "#7a7a7a",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.test.name",
+      "settings": {
+        "foreground": "#FFB454",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.system.name",
+      "settings": {
+        "foreground": "#f467c6",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.for.name",
+      "settings": {
+        "foreground": "#E5C75E",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.transcript.name",
+      "settings": {
+        "foreground": "#E5C75E",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.user.name",
+      "settings": {
+        "foreground": "#5EC5E5",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.assistant.name",
+      "settings": {
+        "foreground": "#4EC9B0",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "source.glass.highlight",
+      "settings": {
+        "foreground": "#569CD6"
+      }
+    },
+    {
+      "scope": "markup.list.table-delimiter.mdx",
+      "settings": {
+        "foreground": "#569CD6"
+      }
+    },
+    {
+      "scope": "source.glass.flow.punctuation",
+      "settings": {
+        "foreground": "#4dff00",
+        "fontStyle": "bold"
+      }
+    },
+    {
       "scope": ["markup.inserted", "meta.diff.header.to-file", "punctuation.definition.inserted"],
       "settings": {
         "foreground": "#4bb74a"

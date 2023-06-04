@@ -24,7 +24,7 @@ const withNextra = require('nextra')({
           id: 'glass-ts',
           scopeName: 'source.glass-ts',
           grammar: glassTs,
-          aliases: ['glass-ts'],
+          aliases: ['glass', 'glass-ts'],
         })
         await highlighter.loadLanguage({
           id: 'glass-py',
