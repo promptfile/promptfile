@@ -1,0 +1,32 @@
+{
+  "name": "docs-next",
+  "version": "0.0.1",
+  "description": "Glass documentation",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foundation-ui/glass.git"
+  },
+  "author": "John Rothfels <john@foundation-ui.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/foundation-ui/glass/issues"
+  },
+  "homepage": "https://github.com/foundation-ui/glass#readme",
+  "dependencies": {
+    "next": "^13.0.6",
+    "nextra": "latest",
+    "nextra-theme-docs": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "shiki": "^0.14.2"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.10",
+    "typescript": "^4.9.3"
+  }
+}

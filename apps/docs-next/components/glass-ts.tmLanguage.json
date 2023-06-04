@@ -1,0 +1,439 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Septh/tmlanguage/master/tmlanguage.json",
+  "name": "Glass",
+  "scopeName": "source.glass-ts",
+  "patterns": [
+    {
+      "include": "#transcript-element"
+    },
+    {
+      "include": "#request-element"
+    },
+    {
+      "include": "#test-element"
+    },
+    {
+      "include": "#state-element"
+    },
+    {
+      "include": "#user-element"
+    },
+    {
+      "include": "#assistant-element"
+    },
+    {
+      "include": "#system-element"
+    },
+    {
+      "include": "#for-element"
+    },
+    {
+      "include": "#flow-expression"
+    },
+    {
+      "include": "source.js"
+    }
+  ],
+  "repository": {
+    "flow-expression": {
+      "begin": "(\\$\\{)",
+      "beginCaptures": {
+        "1": { "name": "source.glass.flow.punctuation" }
+      },
+      "end": "(\\})",
+      "endCaptures": {
+        "1": { "name": "source.glass.flow.punctuation" }
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "for-element": {
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(For)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.closing.jsx"
+        },
+        "3": {
+          "name": "source.glass.for.name"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.tsx#jsx-tag-attribute-name"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attribute-assignment"
+        },
+        {
+          "include": "source.tsx#jsx-string-double-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-string-single-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-evaluated-code"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attributes-illegal"
+        }
+      ],
+      "end": "(?:(\\/)\\s*)?(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "transcript-element": {
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Transcript)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.closing.jsx"
+        },
+        "3": {
+          "name": "source.glass.transcript.name"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.tsx#jsx-tag-attribute-name"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attribute-assignment"
+        },
+        {
+          "include": "source.tsx#jsx-string-double-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-string-single-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-evaluated-code"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attributes-illegal"
+        }
+      ],
+      "end": "(?:(\\/)\\s*)?(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "system-element": {
+      "begin": "^(<)(System)([^>]*)(>)$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.system.name" },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
+      },
+      "patterns": [
+        {
+          "include": "#flow-expression"
+        },
+        {
+          "include": "text.html.markdown"
+        }
+      ],
+      "end": "^(<\\/)(System)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.system.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "assistant-element": {
+      "begin": "^(<)(Assistant)([^>]*)(>)$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.assistant.name" },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
+      },
+      "patterns": [
+        {
+          "include": "#flow-expression"
+        },
+        {
+          "include": "text.html.markdown"
+        }
+      ],
+      "end": "^(<\\/)(Assistant)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.assistant.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "state-element": {
+      "begin": "^(<)(State)(>)$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.state.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.json"
+        }
+      ],
+      "end": "^(<\\/)(State)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.state.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "text-element": {
+      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Text)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.closing.jsx"
+        },
+        "3": {
+          "name": "source.glass.text.name"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.tsx#jsx-tag-attribute-name"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attribute-assignment"
+        },
+        {
+          "include": "source.tsx#jsx-string-double-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-string-single-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-evaluated-code"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attributes-illegal"
+        }
+      ],
+      "end": "(?:(\\/)\\s*)?(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "user-element": {
+      "begin": "^(<)(User)([^>]*)(>)$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.user.name" },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
+      },
+      "patterns": [
+        {
+          "include": "#flow-expression"
+        },
+        {
+          "include": "text.html.markdown"
+        }
+      ],
+      "end": "^(<\\/)(User)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.user.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "line-comments": {
+      "name": "source.glass.highlight",
+      "match": "^//.*$"
+    },
+    "request-element": {
+      "begin": "^(<)(Request)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.request.name"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.tsx#jsx-tag-attribute-name"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attribute-assignment"
+        },
+        {
+          "include": "source.tsx#jsx-string-double-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-string-single-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-evaluated-code"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attributes-illegal"
+        }
+      ],
+      "end": "(?:(\\/)\\s*)?(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "test-element": {
+      "begin": "(<)(Test)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.test.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ],
+      "end": "(<\\/)(Test)(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.test.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    }
+  }
+}

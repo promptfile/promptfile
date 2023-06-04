@@ -1,0 +1,73 @@
+# Another Page
+
+```js filename="demo.js" {3} copy
+let a = 1
+
+console.log(a)
+```
+
+## Component
+
+import { useState } from 'react'
+
+{/* Import CSS modules */}
+import styles from '../components/counters.module.css'
+
+export const Counter = () => {
+  const [count, setCount] = useState(0)
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)} className={styles.counter}>
+        Clicked {count} times
+      </button>
+    </div>
+  )
+}
+
+<Counter />
+
+## External Component
+
+import Counters from '../components/counters'
+
+<Counters />
+
+## Code Block
+
+```glass-ts
+import {foo} from './bar'
+
+const a = "foo";
+const b = 123;
+
+<System>
+hello *world*
+# foo
+
+- hello
+- world
+</System>
+
+const a = "hello"
+
+<User>
+foobar
+${a}
+</User>
+```
+
+```glass-py
+import requests
+
+a = "foo"
+b = 123
+
+<System>
+hello world
+</System>
+
+<User>
+foobar
+${a}
+</User>
+```
