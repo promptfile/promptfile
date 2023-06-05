@@ -28,7 +28,7 @@ Current timestamp: ${timestamp}.  Browsing: disabled.
 ${input}
 </User>
 
-<Request model="claude-instant-v1" />
+<Request model="gpt-3.5-turbo" />
 
 
 <System>
@@ -38,11 +38,9 @@ In your previous message, did you just agree to remember something about the Use
 
 ```json
 {
-    "newProfile": "inJsonFormat"
+    "key": "value" // string, array, or dictionary
 }
 ```
-
-Remember, respond with either 
 </System>
 
-<Request model="claude-instant-v1" onResponse={handleResponse} />
+<Request model="gpt-3.5-turbo" onResponse={handleResponse} />
