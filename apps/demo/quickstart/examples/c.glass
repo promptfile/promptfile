@@ -153,4 +153,4 @@ ${input}
 
 
 // gpt-4 is particularly useful for this example — try it out!
-<Request model="gpt-3.5-turbo" />
+<Request model="gpt-4" />
