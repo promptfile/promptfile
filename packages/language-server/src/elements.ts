@@ -63,6 +63,14 @@ export const glassElements: GlassElement[] = [
         type: 'boolean',
         optional: true,
       },
+      {
+        name: 'transcript',
+        detail: 'whether the Assistant block should be added to the transcript',
+        documentation: 'The `transcript` attribute allows you to optionally add the Assistant block to the transcript.',
+
+        type: 'boolean',
+        optional: true,
+      },
     ],
   },
   {
@@ -228,6 +236,13 @@ export const glassElements: GlassElement[] = [
         name: 'once',
         detail: 'only render once',
         documentation: 'The `once` attribute allows you to only render the User block once.',
+        type: 'boolean',
+        optional: true,
+      },
+      {
+        name: 'transcript',
+        detail: 'whether the User block should be added to the transcript',
+        documentation: 'The `transcript` attribute allows you to optionally add the User block to the transcript.',
         type: 'boolean',
         optional: true,
       },
