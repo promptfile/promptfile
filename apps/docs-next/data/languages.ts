@@ -9,7 +9,6 @@ export const languages: ICards = {
     },
     darkIcon: {
       width: 24,
-      fill: '#f0f0f0',
     },
     description:
       'Typescript (TS) is a strict syntactical superset of JavaScript and adds optional static typing to the language. It is designed for the development of large applications and transpiles to JavaScript.',
