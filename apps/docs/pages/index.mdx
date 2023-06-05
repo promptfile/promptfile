@@ -8,7 +8,7 @@ Glass has a number of features purpose-built for building and iterating with lan
 - **Create more complex, dynamic prompts** - Execute code in your prompt, create templates, add conditional logic, and chain prompts together
 - **Developer-first features** -Count tokens, switch models quickly, create test cases, import logic from your codebase, and call your prompts as a typesafe function
 
-The fastest way to learn about Glass is to follow the [Quickstart](/quickstart) and installing the VSCode extension.
+The fastest way to learn about Glass is to install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass) and follow the [Quickstart](/quickstart).
 
 ## Why Glass?
 
@@ -91,9 +91,11 @@ interface User {
 ```
 </System>
 
+
 <User>
 delete the firstName field
 </User>
+
 
 <Assistant>
 ```js
@@ -105,9 +107,11 @@ context.rows = context.rows.map(r => {
 ```
 </Assistant>
 
+
 <User>
 update age to 22
 </User>
+
 
 <Assistant>
 ```js
@@ -118,6 +122,7 @@ context.rows = context.rows.map(r => {
 })
 ```
 </Assistant>
+
 
 <User>
 ${task}

@@ -75,7 +75,7 @@ function RigView() {
           }
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
-          if (message.data.variables.length > 0) {
+          if (message.data.variables.length > 0 && !message.data.testing) {
             setTimeout(() => {
               document.getElementById('composer-input-0')?.focus()
             }, 100)

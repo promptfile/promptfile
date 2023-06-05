@@ -2,9 +2,10 @@ import { runGlass } from '@glass-lang/glasslib'
 import { UnwrapPromise } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassPython } from './executeGlassPython'
-import { executeGlassTypescriptNew } from './executeGlassTypescript'
+import { executeGlassTypescript } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
+import { countTokens, maxTokensForModel } from './util/tokenCounter'
 
 export async function executeTestSuite(
   outputChannel: vscode.OutputChannel,
@@ -23,12 +24,21 @@ export async function executeTestSuite(
     const results: UnwrapPromise<ReturnType<typeof runGlass>>[] = []
     for (const output of c) {
       console.log('running glass', output)
-      results.push(await runGlass(output, { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '' }))
+      results.push(
+        await runGlass(output, {
+          transcriptTokenCounter: {
+            countTokens: countTokens,
+            maxTokens: maxTokensForModel(c[0].model),
+          },
+          openaiKey: openaiKey || '',
+          anthropicKey: anthropicKey || '',
+        })
+      )
     }
     return results
   }
 
-  return await executeGlassTypescriptNew(
+  return await executeGlassTypescript(
     document.uri.fsPath,
     outputChannel,
     document,

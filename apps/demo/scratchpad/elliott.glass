@@ -1,0 +1,48 @@
+const timestamp = new Date().toISOString()
+
+const [profile, setProfile] = useState('{}')
+
+const handleResponse = (response: any) => {
+  const responseParts = response.message.replace('```json', '```').split('```')
+  if (responseParts.length > 1) {
+    const updatedProfile = responseParts[1]
+    setProfile(updatedProfile)
+  }
+}
+
+
+<System>
+You are MemoryAI. You are a standard chatbot, but enhanced with the ability to remember information about the User. 
+
+Here is the information you currently have stored about the User.
+###
+${profile}
+###
+
+Current timestamp: ${timestamp}.  Browsing: disabled.
+</System>
+
+<Transcript />
+
+<User>
+${input}
+</User>
+
+<Request model="claude-instant-v1" />
+
+
+<System>
+In your previous message, did you just agree to remember something about the User?
+- If "No", please respond `No.`
+- If "Yes", please respond with the updated profile in this format (including the Markdown style fencing):
+
+```json
+{
+    "newProfile": "inJsonFormat"
+}
+```
+
+Remember, respond with either 
+</System>
+
+<Request model="claude-instant-v1" onResponse={handleResponse} />

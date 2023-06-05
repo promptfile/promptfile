@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { parseChatCompletionBlocks } from './parseChatCompletionBlocks'
+import { parseChatCompletionBlocks, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
 
 describe('parseChatCompletionBlocks', () => {
   it('should parse empty document', () => {
@@ -148,6 +148,45 @@ Goodbye world 2
       { role: 'system', content: 'Hello world' },
       { role: 'user', content: 'Goodbye world' },
       { role: 'user', content: 'Goodbye world 2' },
+    ])
+  })
+
+  it('should parse chat completion blocks with token counter', () => {
+    expect(
+      parseChatCompletionBlocks2(
+        `<System>
+Hello world
+</System>
+
+<Transcript>
+<User>
+1
+</User>
+
+<User>
+2
+</User>
+
+<User>
+3
+</User>
+</Transcript>
+
+<User>
+Goodbye world 2
+</User>`,
+        {
+          countTokens: () => 1,
+          maxTokens: 2,
+          reserveCount: 1,
+        }
+      )
+    ).to.deep.equal([
+      [
+        { role: 'system', content: 'Hello world' },
+        { role: 'user', content: '3' },
+        { role: 'user', content: 'Goodbye world 2' },
+      ],
     ])
   })
 })

@@ -18,6 +18,7 @@ import { GlassPlayground, createPlayground } from './util/playground'
 import { GlassSession } from './util/session'
 import { updateTokenCount } from './util/tokenCounter'
 import { transpileCurrentFile } from './util/transpile'
+import { getCurrentViewColumn } from './util/viewColumn'
 
 let client: LanguageClient | null = null
 
@@ -184,7 +185,7 @@ export async function activate(context: vscode.ExtensionContext) {
         await vscode.window.showErrorMessage('Unable to create playground')
         return
       }
-      playground.panel.reveal(vscode.ViewColumn.Beside, initialMetadata.interpolationVariables.length === 0)
+      playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
     }),
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')

@@ -7,7 +7,21 @@ export interface ChatCompletionRequestMessage {
   name?: string
 }
 
-export function parseChatCompletionBlocks(content: string): ChatCompletionRequestMessage[] {
+export interface TokenCounter {
+  countTokens: (str: string) => number
+  // maximum number of tokens allowable by model
+  maxTokens: number
+  // number of tokens to reserve
+  reserveCount?: number
+}
+
+export function parseChatCompletionBlocks(
+  content: string,
+  transcriptTokenCounter: TokenCounter = {
+    countTokens: () => 0,
+    maxTokens: Infinity,
+  }
+): ChatCompletionRequestMessage[] {
   const doc = removeGlassComments(content)
 
   // first interpolate the jsx interpolations
@@ -21,7 +35,18 @@ export function parseChatCompletionBlocks(content: string): ChatCompletionReques
     if (role === 'transcript') {
       const transcriptContent = node.child!.content
       const transcriptNodes = parseChatCompletionBlocks(transcriptContent)
-      res.push(...transcriptNodes)
+
+      const transcriptNodesReversed = transcriptNodes.slice().reverse()
+      let totalNumTokensUsed = 0
+      const transcriptNodesToKeep = transcriptNodesReversed.filter(n => {
+        totalNumTokensUsed += transcriptTokenCounter.countTokens(n.content)
+        const amountToReserve = transcriptTokenCounter.reserveCount || transcriptTokenCounter.maxTokens / 5
+        return transcriptTokenCounter.maxTokens === Infinity
+          ? true
+          : transcriptTokenCounter.maxTokens - amountToReserve >= totalNumTokensUsed
+      })
+
+      res.push(...transcriptNodesToKeep.slice().reverse())
       continue
     }
     if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
@@ -45,7 +70,13 @@ export function parseChatCompletionBlocks(content: string): ChatCompletionReques
   return res
 }
 
-export function parseChatCompletionBlocks2(content: string): ChatCompletionRequestMessage[][] {
+export function parseChatCompletionBlocks2(
+  content: string,
+  transcriptTokenCounter: TokenCounter = {
+    countTokens: () => 0,
+    maxTokens: Infinity,
+  }
+): ChatCompletionRequestMessage[][] {
   const doc = removeGlassComments(content)
 
   // first interpolate the jsx interpolations
@@ -65,7 +96,19 @@ export function parseChatCompletionBlocks2(content: string): ChatCompletionReque
     if (role === 'transcript') {
       const transcriptContent = node.child!.content
       const transcriptNodes = parseChatCompletionBlocks(transcriptContent)
-      currBlock.push(...transcriptNodes)
+
+      const transcriptNodesReversed = transcriptNodes.slice().reverse()
+      let totalNumTokensUsed = 0
+      const transcriptNodesToKeep = transcriptNodesReversed.filter(n => {
+        totalNumTokensUsed += transcriptTokenCounter.countTokens(n.content)
+        const amountToReserve = transcriptTokenCounter.reserveCount || transcriptTokenCounter.maxTokens / 5
+        return transcriptTokenCounter.maxTokens === Infinity
+          ? true
+          : transcriptTokenCounter.maxTokens - amountToReserve >= totalNumTokensUsed
+      })
+
+      currBlock.push(...transcriptNodesToKeep.slice().reverse())
+
       continue
     }
     if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
@@ -84,6 +127,10 @@ export function parseChatCompletionBlocks2(content: string): ChatCompletionReque
     }
     // return { role: role as any, content: doc }
     currBlock.push({ role: role as any, content: blockContent })
+  }
+
+  if (currBlock.length > 0) {
+    res.push(currBlock)
   }
 
   return res

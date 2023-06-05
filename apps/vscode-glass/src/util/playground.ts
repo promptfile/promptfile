@@ -2,6 +2,7 @@ import { parseGlassMetadata, parseGlassMetadataPython } from '@glass-lang/glassc
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
+  parseGlassBlocks,
   parseGlassBlocksRecursive,
   parseGlassTranscriptBlocks,
 } from '@glass-lang/glasslib'
@@ -12,6 +13,7 @@ import { getHtmlForWebview } from '../webview'
 import { getAnthropicKey, getOpenaiKey } from './keys'
 import { updateLanguageMode } from './languageMode'
 import { GlassSession, createSession, getSessionFilepath, loadGlass, writeGlass } from './session'
+import { getCurrentViewColumn } from './viewColumn'
 
 export interface GlassPlayground {
   filepath: string
@@ -40,6 +42,7 @@ export async function createPlayground(
     existingPlayground.sessionId = session.id
     playgrounds.set(filepath, existingPlayground)
     const currentGlass = loadGlass(session)
+    const allBlocks = parseGlassBlocks(currentGlass)
     const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
     const currentMetadata =
       languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
@@ -53,6 +56,7 @@ export async function createPlayground(
         variables: currentMetadata.interpolationVariables,
         currentSource: currentGlass,
         source: currentGlass,
+        testing: allBlocks.some(block => block.tag === 'Test'),
       },
     })
     return existingPlayground
@@ -67,7 +71,7 @@ export async function createPlayground(
     'glass.webView',
     `${filename} (playground)`,
     {
-      viewColumn: vscode.ViewColumn.Beside,
+      viewColumn: getCurrentViewColumn(playgrounds),
       preserveFocus: initialMetadata.interpolationVariables.length === 0,
     },
     {
@@ -120,6 +124,7 @@ export async function createPlayground(
           return
         }
         const currentGlass = loadGlass(currentSession)
+        const allBlocks = parseGlassBlocks(currentGlass)
         const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
         const currentMetadata =
           languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
@@ -133,6 +138,7 @@ export async function createPlayground(
             variables: currentMetadata.interpolationVariables,
             currentSource: currentGlass,
             source: currentGlass,
+            testing: allBlocks.some(block => block.tag === 'Test'),
           },
         })
         break
@@ -151,6 +157,7 @@ export async function createPlayground(
         playgrounds.set(filepath, playground)
         const newGlass = loadGlass(newSession)
         const newBlocks = parseGlassTranscriptBlocks(newGlass)
+        const newAllBlocks = parseGlassBlocks(newGlass)
         const newMetadata =
           languageId === 'glass-py' ? await parseGlassMetadataPython(newGlass) : parseGlassMetadata(newGlass)
         await panel.webview.postMessage({
@@ -162,6 +169,7 @@ export async function createPlayground(
             variables: newMetadata.interpolationVariables,
             source: newGlass,
             currentSource: newGlass,
+            testing: newAllBlocks.some(block => block.tag === 'Test'),
           },
         })
         break
@@ -176,7 +184,7 @@ export async function createPlayground(
         try {
           const newSessionFile = await vscode.workspace.openTextDocument(sessionFilepath)
           await vscode.window.showTextDocument(newSessionFile, {
-            viewColumn: vscode.ViewColumn.Beside,
+            viewColumn: getCurrentViewColumn(playgrounds),
           })
         } catch {
           await vscode.window.showErrorMessage('Unable to open session file')

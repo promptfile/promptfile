@@ -8,19 +8,18 @@
     "clean": "rm -rf dist",
     "test": "mocha --exit --enable-source-maps ./dist/test.js",
     "test:watch": "mocha --watch --enable-source-maps ./dist/test.js",
+    "dev": "webpack --watch --mode development",
     "build": "npm run build:types && webpack --mode production",
-    "watch": "webpack --watch --mode development",
     "build:types": "tsc --emitDeclarationOnly",
     "build:tsup": "tsup src/index.ts",
-    "dev": "npm run build -- --watch",
     "lint": "eslint src --ext ts"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/foundation-ui/glass.git"
+    "url": "https://github.com/glass-lang/glass.git"
   },
-  "homepage": "https://github.com/foundation-ui/glass",
-  "bugs": "https://github.com/foundation-ui/glass/issues",
+  "homepage": "https://github.com/glass-lang/glass",
+  "bugs": "https://github.com/glass-lang/glass/issues",
   "authors": [
     "John Rothfels <john@foundation-ui.com>",
     "Elliott Burris <elliott@foundation-ui.com>"

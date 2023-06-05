@@ -3,7 +3,7 @@
 // Everything outside of the code blocks is actually just code. The default language is TypeScript, but Glass also supports Python and JavaScript (with more coming soon).
 
 // You can use this code to load data, define variables, import libraries, and more. You can even use it to define your own functions and classes, which you can then use inside of the prompt blocks.
-
+<Test>
 const userProfile = {
   name: 'Jane Doe',
   age: 25,
@@ -14,12 +14,15 @@ const userProfile = {
   favoriteFood: 'pizza',
 }
 
+const input = "Hi, how are you?"
+</Test>
+
 // now, use the response in code
 <System>
 You are having a conversation with the following User:
 
 ###
-${userProfile}
+${JSON.stringify(userProfile)}
 ###
 
 Only answer questions from the User based on the information above. Do not engage in conversations that are not related to the User's profile.

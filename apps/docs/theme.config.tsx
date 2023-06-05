@@ -58,12 +58,12 @@ const config: DocsThemeConfig = {
     </>
   ),
   project: {
-    link: 'https://github.com/foundation-ui/glass',
+    link: 'https://github.com/glass-lang/glass',
   },
   chat: {
     link: 'https://discord.gg/Bq67MZF3uT',
   },
-  docsRepositoryBase: 'https://github.com/foundation-ui/glass/apps/docs-next',
+  docsRepositoryBase: 'https://github.com/glass-lang/glass/tree/main/apps/docs',
   // footer: {
   //   text: '© 2023 Glass. All rights reserved.',
   // },
@@ -72,7 +72,7 @@ const config: DocsThemeConfig = {
   },
   feedback: {
     useLink: () =>
-      `https://github.com/foundation-ui/glass/issues/new?title=Feedback%20for%20%E2%80%9CGlass%E2%80%9D&labels=feedback`,
+      `https://github.com/glass-lang/glass/issues/new?title=Feedback%20for%20%E2%80%9CGlass%E2%80%9D&labels=feedback`,
   },
   navbar: {
     extraContent: (

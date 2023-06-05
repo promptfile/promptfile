@@ -230,6 +230,46 @@ hello world
 <Request model="gpt-4" />`)
     })
 
+    it('shoudl handle request without skipped blocks', () => {
+      const origDoc = `---
+language: typescript
+---
+
+<User transcript={false}>
+\${input}
+</User>
+
+<Request model="gpt-4" />`
+
+      const interpDoc = `---
+language: typescript
+---
+
+<User transcript={false}>
+hello world
+</User>
+
+<Request model="gpt-4" />`
+
+      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
+      expect(res.rawResponse).to.equal('█')
+      expect(res.finalDoc).to.equal(`---
+language: typescript
+---
+
+<Transcript>
+<Assistant model="gpt-4" temperature="1">
+█
+</Assistant>
+</Transcript>
+
+<User transcript={false}>
+\${input}
+</User>
+
+<Request model="gpt-4" />`)
+    })
+
     it('shoudl handle multiple request', () => {
       const origDoc = `<User>
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.

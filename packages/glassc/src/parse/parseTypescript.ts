@@ -232,6 +232,38 @@ export function parseTsGlassImports(code: string) {
   return importedSymbols.map(s => ({ ...s, path: s.path.replace(/'/g, '').replace(/"/g, '') }))
 }
 
+export function parseTsImports(code: string) {
+  const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
+  const importedSymbols: { name: string; path: string }[] = []
+
+  function visit(node: ts.Node) {
+    if (ts.isImportDeclaration(node)) {
+      const moduleSpecifier = node.moduleSpecifier.getText(sourceFile)
+      const importClause = node.importClause
+
+      if (importClause) {
+        if (importClause.namedBindings) {
+          if (ts.isNamedImports(importClause.namedBindings)) {
+            for (const element of importClause.namedBindings.elements) {
+              importedSymbols.push({ name: element.name.text, path: moduleSpecifier })
+            }
+          } else if (ts.isNamespaceImport(importClause.namedBindings)) {
+            importedSymbols.push({ name: importClause.namedBindings.name.text, path: moduleSpecifier })
+          }
+        }
+
+        if (importClause.name) {
+          importedSymbols.push({ name: importClause.name.text, path: moduleSpecifier })
+        }
+      }
+    }
+    ts.forEachChild(node, visit)
+  }
+
+  visit(sourceFile)
+  return importedSymbols.map(s => ({ ...s, path: s.path.replace(/'/g, '').replace(/"/g, '') }))
+}
+
 export function removeImports(code: string) {
   const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
 

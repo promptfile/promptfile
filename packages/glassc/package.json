@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/foundation-ui/glass.git"
+    "url": "https://github.com/glass-lang/glass.git"
   },
   "files": [
     "dist",
     "LICENSE"
   ],
-  "homepage": "https://github.com/foundation-ui/glass",
-  "bugs": "https://github.com/foundation-ui/glass/issues",
+  "homepage": "https://github.com/glass-lang/glass",
+  "bugs": "https://github.com/glass-lang/glass/issues",
   "keywords": [],
   "authors": [
     "John Rothfels <john@foundation-ui.com>",
@@ -70,7 +70,8 @@
   "watch": {
     "test": {
       "patterns": [
-        "./src"
+        "./src",
+        "../../apps/demo/testfiles"
       ],
       "inherit": true,
       "extensions": "ts,glass,py"
