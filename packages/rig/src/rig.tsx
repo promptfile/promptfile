@@ -203,7 +203,7 @@ function RigView() {
       />
       {tab === 'Transcript' && <TranscriptView sessionId={sessionId} blocks={blocks} />}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
-      {tab === 'Transcript' && (streaming || Object.keys(inputs).length > 0) && (
+      {tab === 'Transcript' && (
         <ComposerView
           reload={reload}
           run={run}
