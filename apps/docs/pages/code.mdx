@@ -1,0 +1,43 @@
+# Why mix code and text?
+
+LLMs are particularly good at working with code (specifically GPT-4). Including code to help construct your prompt allows you to make prompts more dynamic and powerful. You can use code to load data into a prompt or to take specific actions.
+
+However, you might also want to include code as part of your request. For example, you might want to include a code snippet to provide what code you are trying to debug alongside the LLM. Or in a different use case, you might want to include a code snippet to show examples of what code you are trying to generate.
+
+## Executable Code
+
+Anything not wrapped in a [block](/blocks) is considered executable code. You can use this to define variables, functions, or anything else you need to make your prompt work. The language defaults to TypeScript, but you can change it in the front matter or in [VScode settings](/vscode). This allows you to move easily from code to text and back again. Use code to load data into a prompt or to take specific actions.
+
+You can access your variables inside your prompt using string interpolation. `${someVariable}{:glass-ts}`.
+
+```glass-ts
+---
+language: typescript
+---
+
+// all text between prompt blocks is treated as code, including comments
+const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
+
+<System>
+${myMessage}
+</System>
+```
+
+## Fenced Code Snippets
+
+You may include non-executed code in your prompts using normal Markdown fenced code snippets.
+
+If you specify the language you are using, Glass should apply the correct syntax highlighting.
+
+````glass-ts
+<System>
+You are a python programmer. You should always respond with fenced code blocks like this:
+
+```py
+foo = 5
+bar = 10
+result = foo + bar
+print(result)
+```
+</System>
+````

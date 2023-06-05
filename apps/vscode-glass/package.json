@@ -100,31 +100,38 @@
     "commands": [
       {
         "command": "glass.openPlayground",
-        "title": "Glass: Open in Playground"
+        "title": "Glass: Open in Playground",
+        "description": "This command will open and run the current file in the Glass playground sidebar."
       },
       {
         "command": "glass.showGlassOutput",
-        "title": "Glass: Show Glass Output"
+        "title": "Glass: Show Glass Output",
+        "description": "Shows the Glass output channel."
       },
       {
         "command": "glass.runTestSuite",
-        "title": "Glass: Run tests"
+        "title": "Glass: Run tests",
+        "description": "(coming soon) Runs the tests in the current file."
       },
       {
         "command": "glass.openSettings",
-        "title": "Glass: Open Settings (UI)"
+        "title": "Glass: Open Settings (UI)",
+        "description": "Opens the Glass settings in your VSCode settings.json file."
       },
       {
         "command": "glass.openDocs",
-        "title": "Glass: Open Documentation"
+        "title": "Glass: Open Documentation",
+        "description": "Opens the Glass documentation in your browser."
       },
       {
         "command": "glass.transpileCurrentFile",
-        "title": "Glass: Transpile current file"
+        "title": "Glass: Transpile current file",
+        "description": "Similar to the Transpile all command, but only transpiles the current file."
       },
       {
         "command": "glass.transpileAll",
-        "title": "Glass: Transpile all"
+        "title": "Glass: Transpile all",
+        "description": "This command transpiles all .glass files in your workspace and writes the output to the directory of your choice which you can configure in your VSCode settings."
       }
     ],
     "keybindings": [

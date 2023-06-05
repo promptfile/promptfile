@@ -18,7 +18,7 @@ export async function executeTestSuite(
   const anthropicKey = getAnthropicKey()
 
   if (usePython) {
-    const c = await executeGlassPython(document, interpolationArgs)
+    const c = await executeGlassPython(document, document.getText(), interpolationArgs)
 
     const results: UnwrapPromise<ReturnType<typeof runGlass>>[] = []
     for (const output of c) {
@@ -28,5 +28,12 @@ export async function executeTestSuite(
     return results
   }
 
-  return await executeGlassTypescriptNew(outputChannel, document, fileName, interpolationArgs)
+  return await executeGlassTypescriptNew(
+    document.uri.fsPath,
+    outputChannel,
+    document,
+    document.getText(),
+    fileName,
+    interpolationArgs
+  )
 }
