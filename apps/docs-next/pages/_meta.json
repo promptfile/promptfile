@@ -6,15 +6,5 @@
   "blocks": "Blocks",
   "playground": "Playground",
   "languages": "Languages",
-  "models": "Models",
-  "about": {
-    "title": "About",
-    "type": "page"
-  },
-  "contact": {
-    "title": "Contact ↗",
-    "type": "page",
-    "href": "https://www.foundation-ui.com/",
-    "newWindow": true
-  }
+  "models": "Models"
 }
