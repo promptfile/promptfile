@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.6
+
+### Patch Changes
+
+- [`e3d5436`](https://github.com/foundation-ui/glass/commit/e3d54367b16a397a7eb8bf7b1f567a6e64654120) Thanks [@rothfels](https://github.com/rothfels)! - don't require installing glasslib
+
 ## 0.11.5
 
 ### Patch Changes
