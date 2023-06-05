@@ -1,20 +1,44 @@
 const timestamp = new Date().toISOString()
+const today = timestamp.split('T')[0]
+const [user, setUser] = useState('{}')
 
-// this is typescript code
-const userProfile = {
-  name: 'Elliott Burris',
-  email: 'elliott.burris@gmail.com',
+const handleResponse = (response: any) => {
+  const message = response.message
+  const messageParts = message.split('```json')
+  if (messageParts.length > 1) {
+    const updatedProfile = messageParts[1].split('```')[0]
+    setUser(updatedProfile)
+  }
 }
 
-// anything in between the opening/closing User tags sholud be markdown
+<System>
+You are MemoryGPT. You have the ability to store memories that User explicitly asks you to remember. You accomplish this by managing a JSON profile of the User.
+
+Today is ${today}. Browsing: disabled. 
+</System>
+
+<Transcript />
+
+<System>
+Here is the User's profile so far, based on information they've asked you to remember.
+
+###
+${user}
+###
+
+You should respond to the user as you normlaly would. Additionally, if you agree to remember something that the User asks you to remember, include the updated User profile (in valid JSON format) fenced by markdown-style fenced json, like this:
+
+```json
+{
+  "updatedProfile": "goesHere"
+}
+```
+</System>
+
 <User>
-This is a prompt to a LLM and should have markdown syntax highlighting.
-
-Here's the user the LLM is talking to:
-
-###
-${userProfile}
-###
-
-Here is the current time: ${timestamp}
+${input}
 </User>
+
+
+
+<Request model="gpt-3.5-turbo" onResponse={handleResponse} />

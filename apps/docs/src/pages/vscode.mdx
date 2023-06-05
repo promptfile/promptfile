@@ -9,9 +9,6 @@ Glass is designed to work seamlessly within [Visual Studio Code](https://code.vi
 <Row>
   <Col>
     <Properties>
-      <Property name="glass.defaultModel" type="string">
-        Default model for prompts. Defaults to `gpt-3.5-turbo`.
-      </Property>
       <Property name="glass.defaultLanguageMode" type="string">
         The language to transpile to. Defaults to `TypeScript`.
       </Property>
@@ -32,7 +29,6 @@ Glass is designed to work seamlessly within [Visual Studio Code](https://code.vi
   <Col sticky>
     ```json {{ 'title': '.vscode/settings.json' }}
     {
-      "glass.defaultModel": "gpt-3.5-turbo",
       "glass.defaultLanguageMode": "typescript",
       "glass.openaiKey": "sk-...",
       "glass.anthropicKey": "sk-...",

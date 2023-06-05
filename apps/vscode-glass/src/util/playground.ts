@@ -202,9 +202,7 @@ export async function createPlayground(
         async function runGlassExtension(glass: string, sessionId: string, inputs: any) {
           const elements = parseGlassBlocksRecursive(glass)
           const requestElement = elements.find(element => element.tag && ['Request', 'Chat'].includes(element.tag))
-          const model =
-            requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue ??
-            (vscode.workspace.getConfiguration('glass').get('defaultModel') as string)
+          const model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
           const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
           if (!languageModel) {
             await vscode.window.showErrorMessage(`Unable to find model ${model}`)

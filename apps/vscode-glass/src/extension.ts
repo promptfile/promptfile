@@ -123,10 +123,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
       try {
         const elements = parseGlassBlocksRecursive(activeEditor.document.getText())
-        const chatElement = elements.find(element => element.tag === 'Request')
-        const model =
-          chatElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue ??
-          (vscode.workspace.getConfiguration('glass').get('defaultModel') as string)
+        const requestElement = elements.find(element => element.tag === 'Request')
+        if (!requestElement) {
+          await vscode.window.showErrorMessage('Unable to find Request element')
+          return
+        }
+        const model = requestElement.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
         const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
         if (!languageModel) {
           await vscode.window.showErrorMessage(`Unable to find model ${model}`)
