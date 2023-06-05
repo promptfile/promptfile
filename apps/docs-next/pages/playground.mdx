@@ -1,4 +1,3 @@
-import { Callout } from 'nextra/components'
 import tabs from '@/images/screenshots/playground/tabWalkthrough.gif'
 import logs from '@/images/screenshots/playground/logs.gif'
 import Image from 'next/image'
@@ -9,10 +8,6 @@ export const description = 'Glass is a domain-specific language for prompting LL
 
 When building with Glass, you can run your Glass file directly in VSCode through our Playground. To run a Glass file in Playground, either hit `Command (⌘) Enter (↩)` or by selecting the VSCode Command Palette `Glass: Open in Playground` command. You will be able to chat directly with your prompt and see the results in real-time. You can also see the raw prompt that will be transpiled and then sent to the API and the history of your requests and responses.
 
-<Callout type="info">
-  If you make changes to your prompt, you currently have to restart the Playground, but we will be making that easier
-</Callout>
-
 There are three different tabs: chat, raw, and history.
 
 ## Parts of Playground
@@ -21,11 +16,15 @@ There are three different tabs: chat, raw, and history.
 - **Raw** this shows the raw prompt that is going to be transpiled
 - **History** this shows the history of your requests and responses. You can click the ID to open up a Glass file of the session. This is one thing we like about Glass...the output of a Glass file is another Glass file!
 
+<br />
+
 <Image src={tabs} />
 
 ## Playground Logs
 
 You can see the logs of your Playground by opening the logs button. This will keep track of all of your playground sessions and allow you to go back to a specific playground session.
+
+<br />
 
 <Image src={logs} />
 
@@ -35,6 +34,6 @@ You can keep track of the amount of tokens inside your Glass file at the bottom 
 
 Only things included after transpilation will be included against your token count. Therefore, anything outside of a block is not included in the token count. However, if you declare a variable outside of a block and then use string interpolation to include it inside a block, it will count against your token limit.
 
-For example, comments **outside** blocks are ignored by the transpiler and are only used to add notes to your prompt. Comments using ` //` **inside** blocks will be included in the prompt. The best way to include comments in the prompt without counting against your token count is through string interpolation `${/*Comment here*/}`.
+For example, comments **outside** blocks are ignored by the transpiler and are only used to add notes to your prompt. Comments using `//{:glass}` **inside** blocks will be included in the prompt. The best way to include comments in the prompt without counting against your token count is through string interpolation `${/* Comment here */}{:glass}`.
 
 Currently, the displayed token count naively counts the number of tokens in the entire Glass file, but will be updating this to be more intelligent in calculating your token count.

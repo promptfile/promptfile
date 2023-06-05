@@ -1,3 +1,4 @@
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'
 import { DocsThemeConfig } from 'nextra-theme-docs'
 
 const config: DocsThemeConfig = {
@@ -16,6 +17,18 @@ const config: DocsThemeConfig = {
     useLink: () =>
       `https://github.com/foundation-ui/glass/issues/new?title=Feedback%20for%20%E2%80%9CGlass%E2%80%9D&labels=feedback`,
   },
+  navbar: {
+    extraContent: (
+      <>
+        <ThemeToggle />
+      </>
+    ),
+  },
+  head: (
+    <>
+      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    </>
+  ),
 }
 
 export default config

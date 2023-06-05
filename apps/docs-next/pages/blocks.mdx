@@ -1,64 +1,127 @@
-import Image from 'next/image'
-import forLoop from '@/images/screenshots/finalSunnyExample.png'
-import conditional from '@/images/screenshots/finalUpdateScreenshot.png'
-import userBlock from '@/images/screenshots/userBlock.png'
-
 # What are Blocks?
 
 There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your prompts more readable and easier to maintain. Blocks also help avoid common mistakes when making requests to different models.
 
 ## Types of Blocks
 
-### `<User>` (default)
+### User
 
-In both OpenAI and Anthropic models, the user block is used to designate the text coming from the user/human. If no block is present, on save, your file will be wrapped inside a `<User>` block.
+The `<User>{:glass}` block is used to designate the text coming from the human.
 
-- **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to a user.
-- **if** <i>(optional)</i> <br/> Allows you to add conditional logic to the block
+- **name** <i>(optional)</i> <br/> Allows you to give a name to the user.
+- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
 
-<Image src={userBlock} />
+```glass-ts
+const conditionIsMet = true
 
-### `<Assistant>`
+<User name="Sam" if={conditionIsMet}>
+Hello AI!
+</User>
+```
 
-In both OpenAI and Anthropic models, the assistant block is used to designate the text coming from the model.
+### System
 
-- **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to the assistant.
-- **model** <i>(optional)</i> <br/> _String_: Allows you to track which model generated the assistant text
-- **if** <i>(optional)</i> <br/> _function_:Allows you to add conditional logic to the block
+The `<System>{:glass}` block is used to designate instructions to the LLM, rather than user input.
 
-### `<Request>`
+For Anthropic models, the `<System>{:glass}` block has the same effect `<User>{:glass}`.
 
-This block allows you to create a API request to the model.
+- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
 
-- **model** <i>(optional)</i> <br/> _enum_: The name of the model you want to inference. Defaults to `gpt-3.5-turbo`
-- **temperature** <i>(optional)</i> <br/> _enum_: The temperance of the inference to the model. Defaults to `0.0`
-- **max_tokens** <i>(optional)</i> <br/> _enum_: The maximum number of tokens to generate. Defaults to `64`
-- **onResponse** <i>(optional)</i> <br/> _function_: The name of the function to call when the response is received.
+### Assistant
 
-### `<For>`
+The `<Assistant>{:glass}` block is used to designate the text coming from the model.
 
-This block is used to repeat over elements in an array.
+- **name** <i>(optional)</i> <br/> Allows you to give a name to the assistant.
+- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+- **model** <i>(optional)</i> <br/> Tracks which model generated the assistant text
 
-- **each** <i>(required)</i> <br/> _Array_: The array you want to iterate over
-- **as** <i>(required)</i><br/> _String_: The variable name for each item in the array
-  <Image src={forLoop} />
+### Request
 
-### `<Text>`
+The `<Request>{:glass}` block makes an API request to the specified model, using all previous `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}` blocks as input.
 
-This block is used to add text inside another block. This is useful for adding text to the assistant block only if a condition is met.
+- **model** <i>(optional)</i> <br/> The name of the model you want to inference. Defaults to `gpt-3.5-turbo`
+- **temperature** <i>(optional)</i> <br/> The temperance of the inference to the model. Defaults to `0.0`
+- **max_tokens** <i>(optional)</i> <br/> The maximum number of tokens to generate. Defaults to `64`
+- **onResponse** <i>(optional)</i> <br/> Function callback for when the response is received.
 
-- **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block
+### For
 
-<Image src={conditional} />
+This `<For>{:glass}` block is used to create blocks in a loop over elements in an array. The text inside the `<For>{:glass}` block will be repeated for each item in the array.
 
-### `<Test>`
+- **each** <i>(required)</i> <br/> The array to iterate over.
+- **as** <i>(required)</i><br/> The variable name for each item in the array. This may be used as a variable in the text inside the `<For>{:glass}` block.
 
-This block is used to temporarily define test cases that will be run with the file. When you actually call the prompt, you will pass the actual values for these variables. The test variables will be overwritten with the actual values during invocation.
+```glass-ts
+const examples = [{
+  request: "Happy",
+  response: "Sad",
+}, {
+  request: "Hot",
+  response: "Cold",
+}, {
+  request: "Tall",
+  response: "Short",
+}]
+const request = "Sunny"
 
-### `<Block>`
+<For each={examples} as="ex">
+<User>
+${ex.request}
+</User>
 
-This block is used in a for loop to define the role of each block in the loop. The block will be repeated for each item in the array.
+<Assistant>
+${ex.response}
+</Assistant>
+</For>
 
-- **role** <i>(required)</i> <br/> _enum_: The type of block you want to repeat. Can be `User`, `Assistant`, or `System`.
+<User>
+${request}
+</User>
+```
 
-- **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block
+### Text
+
+The `<Text>{:glass}` block is used to add text inside another block. This is useful for adding text if a condition is met.
+
+Although you can do the same thing with a template input like `${conditionIsMet ? "Hello AI!" : ""}{:glass}`, the `<Text>{:glass}` block may be more readable and easier to maintain for longer blocks.
+
+- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+
+```glass-ts
+const conditionIsMet = true
+
+<User>
+<Text if={conditionIsMet}>
+Hello AI!
+</Text>
+</User>
+```
+
+### Test
+
+The `<Test>{:glass}` defines test data to use when running the file.
+
+If no test data is specified, and your prompt has variables in it, you will need to specify a value for each variable before running the prompt.
+
+Otherwise, the test variables will be used the arguments to your prompt.
+
+```glass-ts
+<Test>
+const input = "This is a test input"
+// you may also return a list to define a test suite; each item in the list will be used as an argument to the prompt
+// return [{input: "test input 1"}, {input: "test input 2"}]
+</Test>
+
+// input would usually be passed into the prompt as an argument, but Glass will use the test data instead when no arguments are provided
+<User>
+${input}
+</User>
+```
+
+### Block
+
+`<Block>{:glass}` is a generic version of `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`.
+
+- **role** <i>(required)</i> <br/> The type of block. Can be `User`, `Assistant`, or `System`.
+
+- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
