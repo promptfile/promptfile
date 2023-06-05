@@ -154,7 +154,16 @@ export function handleRequestNode(
       }
     }
     if (block.tag === 'User' || block.tag === 'Assistant') {
-      userAndAssistantBlocks.push(block)
+      const transcriptAttr = block.attrs?.find(attr => attr.name === 'transcript')
+      if (
+        transcriptAttr &&
+        (transcriptAttr.stringValue?.toLowerCase() === 'false' ||
+          transcriptAttr.expressionValue?.toLowerCase() === 'false')
+      ) {
+        // ignore
+      } else {
+        userAndAssistantBlocks.push(block)
+      }
     }
   }
 
@@ -165,7 +174,7 @@ export function handleRequestNode(
   if (userAndAssistantBlocks.length > 0) {
     transcriptContent += userAndAssistantBlocks.map(block => block.content).join('\n\n')
   }
-  transcriptContent += '\n\n' + newRequestNode
+  transcriptContent += (transcriptContent.length ? '\n\n' : '') + newRequestNode
 
   return {
     nextDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc, true),

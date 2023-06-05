@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
-import { parseChatCompletionBlocks, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
+import { TokenCounter, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
 import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
@@ -28,6 +28,7 @@ export interface TranspilerOutput {
 export async function runGlass(
   { fileName, model, originalDoc, interpolatedDoc, state, onResponse, interpolationArgs }: TranspilerOutput,
   options?: {
+    transcriptTokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
@@ -162,6 +163,7 @@ async function runGlassChat(
   interpolationArgs: any,
   docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
+    transcriptTokenCounter?: TokenCounter
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
   }
@@ -170,7 +172,7 @@ async function runGlassChat(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc)
+  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc, options?.transcriptTokenCounter)
   const messagesSoFar: ChatCompletionRequestMessage[] = []
 
   let i = 0
@@ -233,6 +235,7 @@ async function runGlassChatAnthropic(
   interpolationArgs: any,
   docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
+    transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
     anthropicKey?: string
@@ -243,7 +246,7 @@ async function runGlassChatAnthropic(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc)
+  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc, options?.transcriptTokenCounter)
   const messagesSoFar: ChatCompletionRequestMessage[] = []
 
   let i = 0
@@ -320,6 +323,7 @@ async function runGlassCompletion(
   interpolationArgs: any,
   docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
+    transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
@@ -329,14 +333,14 @@ async function runGlassCompletion(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc)
+  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc, options?.transcriptTokenCounter)
   const messagesSoFar: ChatCompletionRequestMessage[] = []
 
   let i = 0
   const responses: string[] = []
 
   for (; i < messageBlocks.length; i++) {
-    const messages = parseChatCompletionBlocks(docs.interpolatedDoc)
+    const messages = messageBlocks[i]
     const useChat = messages.length > 1
 
     const messagesToUse = messagesSoFar.concat(messages)

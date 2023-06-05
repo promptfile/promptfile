@@ -6,6 +6,7 @@ import { executeGlassPython } from './executeGlassPython'
 import { executeGlassTypescript, executeGlassTypescriptInVm } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
+import { countTokens, maxTokensForModel } from './util/tokenCounter'
 
 export async function executeGlassFile(
   glassfilePath: string,
@@ -25,7 +26,15 @@ export async function executeGlassFile(
   if (isDocumentPython) {
     const c = await executeGlassPython(document, content, inputs)
     checkOk(c.length >= 0, 'No transpiler output generated')
-    return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
+    return await runGlass(c[0], {
+      transcriptTokenCounter: {
+        countTokens: countTokens,
+        maxTokens: maxTokensForModel(c[0].model),
+      },
+      openaiKey: openaiKey || '',
+      anthropicKey: anthropicKey || '',
+      progress,
+    })
   }
   const parsedDoc = parseGlassDocument(content)
   const codeBlocks = parsedDoc
@@ -57,5 +66,13 @@ export async function executeGlassFile(
     progress
   )
   checkOk(c.length >= 0, 'No transpiler output generated')
-  return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
+  return await runGlass(c[0], {
+    transcriptTokenCounter: {
+      countTokens: countTokens,
+      maxTokens: maxTokensForModel(c[0].model),
+    },
+    openaiKey: openaiKey || '',
+    anthropicKey: anthropicKey || '',
+    progress,
+  })
 }

@@ -5,9 +5,22 @@ import * as vscode from 'vscode'
 
 const encoding = new Tiktoken(cl100k_base.bpe_ranks, cl100k_base.special_tokens, cl100k_base.pat_str)
 
-function countTokens(text: string) {
+export function countTokens(text: string) {
   const tokens = encoding.encode(text)
   return tokens.length
+}
+
+export function maxTokensForModel(model: string) {
+  switch (model) {
+    case 'text-davinci-003':
+      return 1000
+    case 'gpt-3.5-turbo':
+      return 4096
+    case 'gpt-4':
+      return 8000
+    default:
+      return 1000
+  }
 }
 
 export function updateTokenCount(counter: vscode.StatusBarItem) {
