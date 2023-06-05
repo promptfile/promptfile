@@ -15,10 +15,9 @@
   "folders": [
     { "path": "examples" },
     { "path": "language-features" },
-    { "path": "test" },
+    { "path": "testfiles" },
     { "path": "langchain" },
     { "path": "advanced" },
-    { "path": "scratchpad" },
-    { "path": "../../packages/glassc" }
+    { "path": "scratchpad" }
   ]
 }

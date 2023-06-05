@@ -46,7 +46,7 @@ const config: DocsThemeConfig = {
   chat: {
     link: 'https://discord.gg/Bq67MZF3uT',
   },
-  docsRepositoryBase: 'https://github.com/glass-lang/glass/apps/docs-next',
+  docsRepositoryBase: 'https://github.com/glass-lang/glass/tree/main/apps/docs',
   // footer: {
   //   text: '© 2023 Glass. All rights reserved.',
   // },

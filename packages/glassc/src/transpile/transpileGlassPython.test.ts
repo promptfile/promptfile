@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { loadTestfile } from '../testfiles/loadTestfile'
+import { loadTestFile } from '../util/loadTestfile'
 import { transpileGlassFilePython } from './transpileGlassPython'
 
 const folders = {
@@ -12,13 +12,13 @@ const folders = {
 
 describe('transpileGlassPython', () => {
   it('should transpile without interpolation variables', async () => {
-    const { input, output } = loadTestfile('basic', 'py')
+    const { input, output } = loadTestFile('testfiles/py/basic', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'basic' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with literal sequence', async () => {
-    const { input, output } = loadTestfile('literal', 'py')
+    const { input, output } = loadTestFile('testfiles/py/literal', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'literal' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
@@ -47,37 +47,37 @@ foo
   })
 
   it('should transpile with interpolation variables', async () => {
-    const { input, output } = loadTestfile('interpolation', 'py')
+    const { input, output } = loadTestFile('testfiles/py/interpolation', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'interpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile including interstitial text', async () => {
-    const { input, output } = loadTestfile('interstitial', 'py')
+    const { input, output } = loadTestFile('testfiles/py/interstitial', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'interstitial' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with non-interpolation sequences', async () => {
-    const { input, output } = loadTestfile('nonInterpolation', 'py')
+    const { input, output } = loadTestFile('testfiles/py/nonInterpolation', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'nonInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with multiple interpolation variables', async () => {
-    const { input, output } = loadTestfile('multipleInterpolation', 'py')
+    const { input, output } = loadTestFile('testfiles/py/multipleInterpolation', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'multipleInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with duplicate interpolation variables', async () => {
-    const { input, output } = loadTestfile('duplicateInterpolation', 'py')
+    const { input, output } = loadTestFile('testfiles/py/duplicateInterpolation', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'duplicateInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with testblock', async () => {
-    const { input, output } = loadTestfile('testblock', 'py')
+    const { input, output } = loadTestFile('testfiles/py/testblock', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'testblock' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
