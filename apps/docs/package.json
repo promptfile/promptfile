@@ -10,13 +10,13 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/foundation-ui/glass.git"
+    "url": "git+https://github.com/glass-lang/glass.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/foundation-ui/glass/issues"
+    "url": "https://github.com/glass-lang/glass/issues"
   },
-  "homepage": "https://github.com/foundation-ui/glass#readme",
+  "homepage": "https://github.com/glass-lang/glass#readme",
   "dependencies": {
     "next": "^13.0.6",
     "nextra": "latest",

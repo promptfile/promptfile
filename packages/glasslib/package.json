@@ -17,10 +17,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/foundation-ui/glass.git"
+    "url": "https://github.com/glass-lang/glass.git"
   },
-  "homepage": "https://github.com/foundation-ui/glass",
-  "bugs": "https://github.com/foundation-ui/glass/issues",
+  "homepage": "https://github.com/glass-lang/glass",
+  "bugs": "https://github.com/glass-lang/glass/issues",
   "authors": [
     "John Rothfels <john@foundation-ui.com>",
     "Elliott Burris <elliott@foundation-ui.com>"

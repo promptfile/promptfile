@@ -1,29 +1,70 @@
 # glass
 
-![main](https://github.com/foundation-ui/glass/actions/workflows/main.yml/badge.svg)
+![main](https://github.com/glass-lang/glass/actions/workflows/main.yml/badge.svg)
 
-ALERT: GLASS IS IN ALPHA AND IS SUBJECT TO CHANGE.
+_**ALERT: GLASS IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
 
 Getting started? Head to [docs.glass](https://docs.glass) for all of our documentation.
 
-Want some examples? Check out the [Examples folder](https://github.com/foundation-ui/glass/tree/main/apps/demo/examples).
+Want some examples? Check out the [examples](https://github.com/glass-lang/glass/tree/main/apps/demo/examples).
 
-If you are using Glass, have questions, or want to stay up to date: feel free to join our [Discord](https://discord.gg/Bq67MZF3uT).
+[Download the VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass) to quickly run and iterate on Glass files.
+
+If you are using Glass, have questions, or want to stay up to date, feel free to join our [Discord](https://discord.gg/Bq67MZF3uT).
 
 ## Apps and Packages
 
+This project uses npm workspaces and [Turborepo](https://turbo.build/).
+
+### `apps/`
+
 - `vscode-glass`: VS Code extension for Glass
+- `docs`: a Next.js/Nextra app serving [docs.glass](https://docs.glass/)
+- `demo`: examples of using Glass, some of these are in active development and may not currently work
+
+### `packages/`
+
+- `glassc`: the Glass compiler (generates `.ts`, `.js`, `.py` output from Glass files)
+- `glasslib`: Glass client library (runtime for executing Glass compiler generated code)
 - `language-server`: LSP server providing Glass intellisense
 - `rig`: a React app for the VS Code Glass playground webview
-- `docs`: a Next.js app for [the Glass documentation](https://docs.glass/)
-- `glassc`: the Glass compiler
-- `glasslib`: Glass client library
 - `ui`: a React component library shared by web applications
 - `util`: random utilities shared by packages/apps
 - `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
-Every package/app is using [TypeScript](https://www.typescriptlang.org/).
+## Development
+
+```bash
+npm ci
+npm run build
+```
+
+Usually you'll want to launch the VSCode extension in development mode. Use the `Run Extension` launch configuration (`F5` keybinding). This will automatically run the build step if necessary.
+
+### Tests
+
+To run all tests:
+
+```bash
+npm run test
+```
+
+### Watch mode
+
+Several packages contain tests that can be run in watch mode: `packages/glasslib`, `packages/glassc`, `packages/util`
+
+```bash
+cd $package
+npm run test:watch
+```
+
+For `packages/glasslib` only, the watch mode requires you also build in watch mode:
+
+```bash
+cd packages/glasslib
+npm run watch
+```
 
 ## License
 
