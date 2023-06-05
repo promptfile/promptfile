@@ -87,7 +87,8 @@ export function formatDocument(text: string, isPython: boolean) {
 
     // Add <Request /> tag if not present
     const finalBlocks = parseGlassBlocks(finalText)
-    const hasRequest = finalBlocks.some(b => b.type === 'block' && b.tag === 'Request')
+    const hasRequest =
+      finalText.includes('<Request ') || finalBlocks.some(b => b.type === 'block' && b.tag === 'Request')
     if (!hasRequest) {
       finalText = `${finalText}\n\n<Request model="gpt-3.5-turbo" />`
     }
