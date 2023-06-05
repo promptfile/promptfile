@@ -37,7 +37,7 @@ export const TopperView = (props: TopperViewProps) => {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-          <LogoView dimension="500" />
+          <LogoView dimension="20" />
           <span style={{ fontSize: '14px', fontWeight: 'bold', paddingLeft: '8px', paddingRight: '8px' }}>
             {filename.replace('.glass', '')}
             <span style={{ fontWeight: 'medium', fontStyle: 'italic', opacity: 0.5 }}>.glass</span>
