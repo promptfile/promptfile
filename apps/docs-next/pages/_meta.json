@@ -1,7 +1,12 @@
 {
   "index": "Introduction",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
+  "quickstart": "Quickstart",
+  "vscode": "VSCode Extension",
+  "code": "Code inside prompts",
+  "blocks": "Blocks",
+  "playground": "Playground",
+  "languages": "Languages",
+  "models": "Models",
   "about": {
     "title": "About",
     "type": "page"
@@ -9,7 +14,7 @@
   "contact": {
     "title": "Contact ↗",
     "type": "page",
-    "href": "https://twitter.com/shuding_",
+    "href": "https://www.foundation-ui.com/",
     "newWindow": true
   }
 }

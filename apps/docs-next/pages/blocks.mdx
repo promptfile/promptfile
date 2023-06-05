@@ -1,0 +1,64 @@
+import Image from 'next/image'
+import forLoop from '@/images/screenshots/finalSunnyExample.png'
+import conditional from '@/images/screenshots/finalUpdateScreenshot.png'
+import userBlock from '@/images/screenshots/userBlock.png'
+
+# What are Blocks?
+
+There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your prompts more readable and easier to maintain. Blocks also help avoid common mistakes when making requests to different models.
+
+## Types of Blocks
+
+### `<User>` (default)
+
+In both OpenAI and Anthropic models, the user block is used to designate the text coming from the user/human. If no block is present, on save, your file will be wrapped inside a `<User>` block.
+
+- **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to a user.
+- **if** <i>(optional)</i> <br/> Allows you to add conditional logic to the block
+
+<Image src={userBlock} />
+
+### `<Assistant>`
+
+In both OpenAI and Anthropic models, the assistant block is used to designate the text coming from the model.
+
+- **name** <i>(optional)</i> <br/> _String_: Allows you to give a name to the assistant.
+- **model** <i>(optional)</i> <br/> _String_: Allows you to track which model generated the assistant text
+- **if** <i>(optional)</i> <br/> _function_:Allows you to add conditional logic to the block
+
+### `<Request>`
+
+This block allows you to create a API request to the model.
+
+- **model** <i>(optional)</i> <br/> _enum_: The name of the model you want to inference. Defaults to `gpt-3.5-turbo`
+- **temperature** <i>(optional)</i> <br/> _enum_: The temperance of the inference to the model. Defaults to `0.0`
+- **max_tokens** <i>(optional)</i> <br/> _enum_: The maximum number of tokens to generate. Defaults to `64`
+- **onResponse** <i>(optional)</i> <br/> _function_: The name of the function to call when the response is received.
+
+### `<For>`
+
+This block is used to repeat over elements in an array.
+
+- **each** <i>(required)</i> <br/> _Array_: The array you want to iterate over
+- **as** <i>(required)</i><br/> _String_: The variable name for each item in the array
+  <Image src={forLoop} />
+
+### `<Text>`
+
+This block is used to add text inside another block. This is useful for adding text to the assistant block only if a condition is met.
+
+- **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block
+
+<Image src={conditional} />
+
+### `<Test>`
+
+This block is used to temporarily define test cases that will be run with the file. When you actually call the prompt, you will pass the actual values for these variables. The test variables will be overwritten with the actual values during invocation.
+
+### `<Block>`
+
+This block is used in a for loop to define the role of each block in the loop. The block will be repeated for each item in the array.
+
+- **role** <i>(required)</i> <br/> _enum_: The type of block you want to repeat. Can be `User`, `Assistant`, or `System`.
+
+- **if** <i>(optional)</i> <br/> _function_: Allows you to add conditional logic to the block

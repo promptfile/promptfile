@@ -1,0 +1,89 @@
+import { Callout } from 'nextra/components'
+import Image from 'next/image'
+import PlaygroundGIF from '@/images/screenshots/Playground.gif'
+import { Tab, Tabs } from 'nextra-theme-docs'
+
+# Quickstart
+
+This guide will get you all set up and ready to use the Glass language. We’ll cover how to get started, install the VS Code extension, and how to create your first Glass file.
+
+<Callout type="info">Note: the Glass language is in alpha and is subject to change.</Callout>
+
+## Installing the extension
+
+Working with Glass is easiest in Visual Studio Code via the Glass extension. This extension provides the following features:
+
+- built-in playground to test your prompts
+- syntax highlighting and diagnostics for Glass files
+- transpiling Glass files to your preferred programming language
+
+Install the Glass VS code extension <a href="https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass" class="link" target="_blank">here</a> or via the VS Code extension marketplace. [Click here](/vscode) to review all configuration settings available in the extension.
+
+## Creating your first `.glass` file
+
+{/* Need to make the example much more simpler and not show off too much, also need to have it include the chat block */}
+
+After installing the extension, create a new file called `example.glass` and copy/paste the following content:
+
+```glass-ts copy filename="example.glass"
+<System>
+You are HaikuGPT. Always respond to the user in the form of a haiku.
+</System>
+
+<User>
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+```
+
+## Running in playground
+
+If it's your first time executing a Glass file, you'll be asked to input the API key for the specific model you are using in [VSCode settings](/vscode). All of Glass runs locally on your machine — your secret keys are never sent to any server.
+
+In `example.glass`, we're using the `gpt-3.5-turbo` model, so we'll need to input the key for OpenAI `glass.openaiKey` (or set `OPENAI_API_KEY` on your environment).
+
+When you are ready to run, either hit `Command (⌘) Enter (↩)` or run the Glass file via selecting the VSCode Command Palette `Glass: Open in Playground` command.
+
+<br />
+
+{/* TODO(shreyas): update the gif */}
+
+<Image src={PlaygroundGIF} />
+
+## Transpiling `.glass`
+
+Once you've dialed in your prompt, you're now ready to transpile the `example.glass` file into your preferred programming language so it can be used within your codebase.
+
+To transpile, simply run the `Glass: Transpile all` command from the command palette. This will create a new file called `glass.ts` that contains the transpiled code. If you'd prefer to transpile to a [different language](/languages), simply change the `glass.language` configuration in your [VS Code project settings](/vscode).
+
+## Using `.glass` in code
+
+You can now call the transpiled `example` function from your codebase.
+
+<Tabs items={['JavaScript / TypeScript', 'Python']}>
+  <Tab>
+
+```ts
+import { Glass } from './glass'
+
+const prompt = Glass.example({})
+
+console.log(prompt)
+```
+
+  </Tab>
+  <Tab>
+
+```python
+import glass
+
+prompt = glass.example({})
+
+print(prompt)
+```
+
+  </Tab>
+</Tabs>
+
+As we make more complex prompts, we will see how to pass in parameters into the typesafe function the transpilation creates.

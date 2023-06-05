@@ -4,8 +4,122 @@ Glass is an open-source, declarative framework to build applications using large
 
 Glass has a number of features purpose-built for building and iterating with language models:
 
-- **Playground in VSCode** - Iterate and test your prompts where you work... in VSCode.
+- **Playground in VSCode** - Iterate and test your prompts where you work... in VSCode
 - **Create more complex, dynamic prompts** - Execute code in your prompt, create templates, add conditional logic, and chain prompts together
 - **Developer-first features** -Count tokens, switch models quickly, create test cases, import logic from your codebase, and call your prompts as a typesafe function
 
 The fastest way to learn about Glass is to follow the [Quickstart](/quickstart) and installing the VSCode extension.
+
+## Why Glass?
+
+When we were building things in production with LLMs, we were writing prompts that looked like this:
+
+```ts
+/**
+ * Construct a few-shot request to ask the LLM to write some basic code.
+ */
+function makeRequest(task: string) {
+  return [
+    {
+      role: 'system',
+      content: `You are a highly-intelligent AI that writes amazing JavaScript code.
+
+Write JavaScript code to complete the tasks below given the following schema:
+
+\`\`\`ts
+interface User {
+  firstName: string
+  lastName: string
+  age: number
+}
+\`\`\``,
+    },
+    {
+      role: 'user',
+      content: `delete the firstName field`,
+    },
+    {
+      role: 'assistant',
+      content: `\`\`\`js
+context.rows = context.rows.map(r => {
+  const newRow = Object.assign({}, r)
+  delete newRow.firstName
+  return newRow
+})
+\`\`\``,
+    },
+    {
+      role: 'user',
+      content: `update age to 22`,
+    },
+    {
+      role: 'assistant',
+      content: `\`\`\`js
+context.rows = context.rows.map(r => {
+  const newRow = Object.assign({}, r)
+  newRow.age = 22
+  return newRow
+})
+\`\`\``,
+    },
+    {
+      role: 'user',
+      content: `${task}`,
+    },
+  ]
+}
+```
+
+It was useful to separate our prompt constructors into a different file. But, that wasn't enough...we wanted something specially built for writing prompts.
+
+Glass is similar to [MDX](https://mdxjs.com/) but adds a number of features that make it easier to write prompts for LLMs.
+
+Here's what the same prompt looks like in Glass:
+
+````glass-ts
+<System>
+You are a highly-intelligent AI that writes amazing JavaScript code.
+
+Write JavaScript code to complete the tasks below given the following schema:
+
+```ts
+interface User {
+  firstName: string
+  lastName: string
+  age: number
+}
+```
+</System>
+
+<User>
+delete the firstName field
+</User>
+
+<Assistant>
+```js
+context.rows = context.rows.map(r => {
+  const newRow = Object.assign({}, r)
+  delete newRow.firstName
+  return newRow
+})
+```
+</Assistant>
+
+<User>
+update age to 22
+</User>
+
+<Assistant>
+```js
+context.rows = context.rows.map(r => {
+  const newRow = Object.assign({}, r)
+  newRow.age = 22
+  return newRow
+})
+```
+</Assistant>
+
+<User>
+${task}
+</User>
+````
