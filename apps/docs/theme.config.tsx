@@ -61,7 +61,7 @@ const config: DocsThemeConfig = {
     link: 'https://github.com/glass-lang/glass',
   },
   chat: {
-    link: 'https://discord.gg/Bq67MZF3uT',
+    link: 'https://discord.com/invite/H64PFP2DCc',
   },
   docsRepositoryBase: 'https://github.com/glass-lang/glass/tree/main/apps/docs',
   // footer: {

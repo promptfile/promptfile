@@ -10,8 +10,7 @@ Want some examples? Check out the [examples](https://github.com/glass-lang/glass
 
 [Download the VSCode extension](http://vscode.glass) to quickly run and iterate on Glass files.
 
-If you are using Glass, have questions, or want to stay up to date, feel free to join our [Discord](http://discord.glass).
-
+If you are using Glass, have questions, or want to stay up to date, feel free to join our [Discord](https://discord.com/invite/H64PFP2DCc).
 
 ## Apps and Packages
 

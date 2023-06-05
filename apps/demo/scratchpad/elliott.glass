@@ -30,7 +30,6 @@ ${input}
 
 <Request model="gpt-3.5-turbo" />
 
-
 <System>
 In your previous message, did you just agree to remember something about the User?
 - If "No", please respond `No.`
