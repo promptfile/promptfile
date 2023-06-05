@@ -12,6 +12,7 @@ import { getHtmlForWebview } from '../webview'
 import { getAnthropicKey, getOpenaiKey } from './keys'
 import { updateLanguageMode } from './languageMode'
 import { GlassSession, createSession, getSessionFilepath, loadGlass, writeGlass } from './session'
+import { getCurrentViewColumn } from './viewColumn'
 
 export interface GlassPlayground {
   filepath: string
@@ -67,7 +68,7 @@ export async function createPlayground(
     'glass.webView',
     `${filename} (playground)`,
     {
-      viewColumn: vscode.ViewColumn.Beside,
+      viewColumn: getCurrentViewColumn(playgrounds),
       preserveFocus: initialMetadata.interpolationVariables.length === 0,
     },
     {
@@ -176,7 +177,7 @@ export async function createPlayground(
         try {
           const newSessionFile = await vscode.workspace.openTextDocument(sessionFilepath)
           await vscode.window.showTextDocument(newSessionFile, {
-            viewColumn: vscode.ViewColumn.Beside,
+            viewColumn: getCurrentViewColumn(playgrounds),
           })
         } catch {
           await vscode.window.showErrorMessage('Unable to open session file')
