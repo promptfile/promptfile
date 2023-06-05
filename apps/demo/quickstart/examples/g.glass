@@ -42,7 +42,7 @@ ${example["classification"]}
 </For>
 
 <User>
-i'm so angry
+${userInput}
 </User>
 
 <Request model="gpt-3.5-turbo" />

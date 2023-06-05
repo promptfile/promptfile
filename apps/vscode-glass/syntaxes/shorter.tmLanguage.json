@@ -1,0 +1,105 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Septh/tmlanguage/master/tmlanguage.json",
+  "name": "Glass",
+  "scopeName": "source.SCOPE_NAME",
+  "patterns": [
+    {
+      "begin": "^---$",
+      "beginCaptures": {
+        "0": {
+          "name": "string.other.begin.yaml"
+        }
+      },
+      "end": "^---$",
+      "endCaptures": {
+        "0": {
+          "name": "string.other.end.yaml"
+        }
+      },
+      "contentName": "source.yaml",
+      "patterns": [
+        {
+          "include": "source.yaml"
+        }
+      ]
+    },
+    {
+      "include": "#user-element"
+    },
+    {
+      "include": "#flow-expression"
+    },
+    {
+      "include": "source.js"
+    }
+  ],
+  "repository": {
+    "flow-expression": {
+      "begin": "^(.*)(\\$\\{)",
+      "end": "(\\})(.*)$",
+      "beginCaptures": {
+        "1": { "name": "text.html.markdown" },
+        "2": { "name": "source.glass.flow.punctuation" }
+      },
+      "endCaptures": {
+        "1": { "name": "source.glass.flow.punctuation" },
+        "2": { "name": "text.html.markdown" }
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ]
+    },
+    "user-element": {
+      "begin": "^(<)(User)([^>]*)(>)$",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.user.name" },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
+      },
+      "patterns": [
+        {
+          "include": "#flow-expression"
+        },
+        {
+          "include": "text.html.markdown"
+        }
+      ],
+      "end": "^(<\\/)(User)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.user.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    }
+  }
+}

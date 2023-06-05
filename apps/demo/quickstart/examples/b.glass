@@ -1,22 +1,20 @@
-// Let's try switching to anthropic.
+// Awesome, you're well on your way to working with Glass!
 
+// Being able to run a prompt once is great, but what if you want to run it multiple times?  Language models are particularly skilled at back-and-forth conversations, so let's try that out.
+
+// Instead of typing your input into the `User` block, let's use a variable instead.
+
+
+// same System prompt as before...
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-// Edit the `model` attribute below to use an anthropic model — e.g. `claude-instant-v1`.
-// Then, enter some text and run the glass file (command+return).
-
+// ... but let's use a variable for the User's input!
 <User>
-hello!
+${myFirstVariable}
 </User>
 
-<Request model="gpt-3.5-turbo" />
 
-// Anthropic actually doesn't support System blocks via their API, so switching to the
-// `claude-instant-v1` model will trigger a diagnostic (aka "yellow squiggle").
-//
-// The file is still runnable! Glass will convert the document into a sensible prompt for whatever
-// model you want to use, including non-chat models like GPT3 `text-davinci-003`.
-//
-// The Glass extension will guide you to use the models (and their varying APIs) correctly.
+// Remember, cmd+enter (mac) / ctrl+enter (windows) to run in the Playground!
+<Request model="gpt-3.5-turbo" />
