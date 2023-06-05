@@ -59,11 +59,11 @@ cd $package
 npm run test:watch
 ```
 
-For `packages/glasslib` only, the watch mode requires you also build in watch mode:
+For `packages/glasslib` only, the `test:watch` mode requires you also build in watch mode:
 
 ```bash
 cd packages/glasslib
-npm run watch
+npm run dev
 ```
 
 ## License
