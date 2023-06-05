@@ -92,7 +92,7 @@
       "scope": "source.glass.assistant.name",
       "settings": {
         "foreground": "#4EC9B0",
-        "Style": "italic"
+        "fontStyle": "italic"
       }
     },
     {
