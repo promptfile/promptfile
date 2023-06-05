@@ -20,12 +20,17 @@ export function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic
       invalidAttributes.push(
         ...missingRequiredAttributes.map(attribute => ({ tag, attribute: attribute.name, type: 'missing' }))
       )
+      const analyzedAttributes: string[] = []
       for (const attribute of existingAttributes) {
         const validAttribute = validAttributes.find(validAttribute => validAttribute.name === attribute.name)
         if (validAttribute) {
           if (validAttribute.values && !validAttribute.values.some(a => a.name === attribute.stringValue)) {
             invalidAttributes.push({ tag, attribute: attribute.name, type: 'invalid' })
           }
+          if (analyzedAttributes.includes(attribute.name)) {
+            invalidAttributes.push({ tag, attribute: attribute.name, type: 'duplicate' })
+          }
+          analyzedAttributes.push(attribute.name)
         } else {
           invalidAttributes.push({ tag, attribute: attribute.name, type: 'unknown' })
         }
@@ -39,7 +44,9 @@ export function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic
           end: textDocument.positionAt(item.tag.position.end.offset),
         },
         message:
-          item.type === 'unknown'
+          item.type === 'duplicate'
+            ? `Duplicate attribute: "${item.attribute}"`
+            : item.type === 'unknown'
             ? `Unknown "${item.attribute}" attribute`
             : item.type === 'invalid'
             ? `Invalid value for attribute "${item.attribute}"`
