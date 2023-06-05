@@ -2,6 +2,7 @@ import { parseGlassMetadata, parseGlassMetadataPython } from '@glass-lang/glassc
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
+  parseGlassBlocks,
   parseGlassBlocksRecursive,
   parseGlassTranscriptBlocks,
 } from '@glass-lang/glasslib'
@@ -41,6 +42,7 @@ export async function createPlayground(
     existingPlayground.sessionId = session.id
     playgrounds.set(filepath, existingPlayground)
     const currentGlass = loadGlass(session)
+    const allBlocks = parseGlassBlocks(currentGlass)
     const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
     const currentMetadata =
       languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
@@ -54,6 +56,7 @@ export async function createPlayground(
         variables: currentMetadata.interpolationVariables,
         currentSource: currentGlass,
         source: currentGlass,
+        testing: allBlocks.some(block => block.tag === 'Test'),
       },
     })
     return existingPlayground
@@ -121,6 +124,7 @@ export async function createPlayground(
           return
         }
         const currentGlass = loadGlass(currentSession)
+        const allBlocks = parseGlassBlocks(currentGlass)
         const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
         const currentMetadata =
           languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
@@ -134,6 +138,7 @@ export async function createPlayground(
             variables: currentMetadata.interpolationVariables,
             currentSource: currentGlass,
             source: currentGlass,
+            testing: allBlocks.some(block => block.tag === 'Test'),
           },
         })
         break
@@ -152,6 +157,7 @@ export async function createPlayground(
         playgrounds.set(filepath, playground)
         const newGlass = loadGlass(newSession)
         const newBlocks = parseGlassTranscriptBlocks(newGlass)
+        const newAllBlocks = parseGlassBlocks(newGlass)
         const newMetadata =
           languageId === 'glass-py' ? await parseGlassMetadataPython(newGlass) : parseGlassMetadata(newGlass)
         await panel.webview.postMessage({
@@ -163,6 +169,7 @@ export async function createPlayground(
             variables: newMetadata.interpolationVariables,
             source: newGlass,
             currentSource: newGlass,
+            testing: newAllBlocks.some(block => block.tag === 'Test'),
           },
         })
         break
