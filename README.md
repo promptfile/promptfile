@@ -8,7 +8,7 @@ Getting started? Head to [docs.glass](https://docs.glass) for all of our documen
 
 Want some examples? Check out the [Examples folder](https://github.com/foundation-ui/glass/tree/main/apps/demo/examples).
 
-If you are using Glass, have questions, or want to stay up to date: feel free to join our [Discord](https://discord.gg/Bq67MZF3uT).
+If you are using Glass, have questions, or want to stay up to date: feel free to join our [Discord](https://discord.gg/H64PFP2DCc).
 
 ## Apps and Packages
 
