@@ -1,8 +1,9 @@
-import { runGlass } from '@glass-lang/glasslib'
+import { removeImports } from '@glass-lang/glassc'
+import { parseGlassDocument, runGlass } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassPython } from './executeGlassPython'
-import { executeGlassTypescriptNew } from './executeGlassTypescript'
+import { executeGlassTypescript, executeGlassTypescriptInVm } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
@@ -26,6 +27,35 @@ export async function executeGlassFile(
     checkOk(c.length >= 0, 'No transpiler output generated')
     return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
   }
+  const parsedDoc = parseGlassDocument(content)
+  const codeBlocks = parsedDoc
+    .filter(b => b.type === 'code')
+    .map(b => b.content)
+    .join('\n')
+  // if there's imports, we have to shell out to execute the code
+  const { imports } = removeImports(codeBlocks)
+  const nonGlassImports = imports
+    .split('\n')
+    .filter(i => !i.includes('.glass'))
+    .join('\n')
+  if (nonGlassImports.trim().length) {
+    // have to shell out since we have imports
+    // const parsedImports = parseTsImports(nonGlassImports)
+    // const moduleImports = parsedImports
+    //   .filter(i => !i.path.startsWith('.') && !nodeDefaultModules.has(i.path))
+    //   .map(i => i.path)
+    return await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs, progress)
+  }
 
-  return await executeGlassTypescriptNew(glassfilePath, outputChannel, document, content, fileName, inputs, progress)
+  const c = await executeGlassTypescriptInVm(
+    glassfilePath,
+    outputChannel,
+    document,
+    content,
+    fileName,
+    inputs,
+    progress
+  )
+  checkOk(c.length >= 0, 'No transpiler output generated')
+  return await runGlass(c[0], { openaiKey: openaiKey || '', anthropicKey: anthropicKey || '', progress })
 }

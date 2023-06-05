@@ -2,7 +2,7 @@ import { runGlass } from '@glass-lang/glasslib'
 import { UnwrapPromise } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassPython } from './executeGlassPython'
-import { executeGlassTypescriptNew } from './executeGlassTypescript'
+import { executeGlassTypescript } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
@@ -28,7 +28,7 @@ export async function executeTestSuite(
     return results
   }
 
-  return await executeGlassTypescriptNew(
+  return await executeGlassTypescript(
     document.uri.fsPath,
     outputChannel,
     document,
