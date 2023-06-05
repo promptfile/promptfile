@@ -8,9 +8,10 @@ Getting started? Head to [docs.glass](https://docs.glass) for all of our documen
 
 Want some examples? Check out the [examples](https://github.com/glass-lang/glass/tree/main/apps/demo/examples).
 
-[Download the VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass) to quickly run and iterate on Glass files.
+[Download the VSCode extension](http://vscode.glass) to quickly run and iterate on Glass files.
 
-If you are using Glass, have questions, or want to stay up to date, feel free to join our [Discord](https://discord.gg/Bq67MZF3uT).
+If you are using Glass, have questions, or want to stay up to date, feel free to join our [Discord](http://discord.glass).
+
 
 ## Apps and Packages
 
