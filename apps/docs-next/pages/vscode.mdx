@@ -1,3 +1,55 @@
+import vscodeSettings from '../../vscode-glass/package.json'
+
 # Visual Studio Code integration
 
 Glass is designed to work seamlessly within [Visual Studio Code](https://code.visualstudio.com). The [Glass extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass) can be easily installed from the Visual Studio Code Marketplace.
+
+## Settings
+
+<br />
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+    {Object.entries(vscodeSettings.contributes.configuration[0].properties).map(([name, val], i) => (
+      <tr key={i}>
+        <td>
+          <code>{name}</code>
+        </td>
+        <td>{val.type}</td>
+        <td>{val.description}</td>
+        <td>{JSON.stringify(val.default)}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+## Commands
+
+<br />
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {vscodeSettings.contributes.commands.map(({ title, description }, i) => (
+      <tr key={i}>
+        <td>
+          <code>{title}</code>
+        </td>
+        <td>{description || ''}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
