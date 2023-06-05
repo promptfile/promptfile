@@ -8,13 +8,10 @@ There are three different tabs: chat, raw, and history.
 
 ## Parts of Playground
 
-- **Chat** this allows you to try out your prompt.
-- **Raw** this shows the raw prompt that is going to be transpiled
+- **Transcript** this allows you to try out your prompt.
 - **History** this shows the history of your requests and responses. You can click the ID to open up a Glass file of the session. This is one thing we like about Glass...the output of a Glass file is another Glass file!
 
 <br />
-
-<Image src="/screenshots/tabWalkthrough.gif" width={750} height={750} />
 
 ## Playground Logs
 
@@ -28,8 +25,4 @@ You can see the logs of your Playground by opening the logs button. This will ke
 
 You can keep track of the amount of tokens inside your Glass file at the bottom of the editor. Currently we use <a href="https://github.com/openai/tiktoken" target="_blank"> tiktoken</a> which is the one used by OpenAI.
 
-Only things included after transpilation will be included against your token count. Therefore, anything outside of a block is not included in the token count. However, if you declare a variable outside of a block and then use string interpolation to include it inside a block, it will count against your token limit.
-
-For example, comments **outside** blocks are ignored by the transpiler and are only used to add notes to your prompt. Comments using `//{:glass}` **inside** blocks will be included in the prompt. The best way to include comments in the prompt without counting against your token count is through string interpolation `${/* Comment here */}{:glass}`.
-
-Currently, the displayed token count naively counts the number of tokens in the entire Glass file, but will be updating this to be more intelligent in calculating your token count.
+Only things included after transpilation will be included against your token count. Therefore, anything outside of a block is not included in the token count such as executable code or any locally stored state.
