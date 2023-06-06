@@ -1,5 +1,8 @@
 import { GlassContent } from '@glass-lang/glasslib'
 import { useEffect, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface TranscriptViewProps {
   blocks: GlassContent[]
@@ -10,6 +13,15 @@ export const TranscriptView = (props: TranscriptViewProps) => {
   const { blocks, sessionId } = props
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
+
+  // Define a Markdown syntax highlighting component
+  const CodeBlock = ({ language, value }: { language: string; value: string }) => {
+    return (
+      <SyntaxHighlighter language={language} style={materialOceanic}>
+        {value}
+      </SyntaxHighlighter>
+    )
+  }
 
   const colorLookup: Record<string, string> = {
     User: '#5EC5E5',
@@ -103,7 +115,22 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 </span>
                 {summary && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>}
               </div>
-              <span style={{ whiteSpace: 'pre-wrap' }}>{block.child?.content ?? ''}</span>
+              <ReactMarkdown
+                components={{
+                  code({ node, inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '')
+                    return !inline && match ? (
+                      <CodeBlock language={match[1]} value={String(children).replace(/\n$/, '')} {...props} />
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    )
+                  },
+                }}
+              >
+                {block.child?.content ?? ''}
+              </ReactMarkdown>
             </div>
           )
         })}

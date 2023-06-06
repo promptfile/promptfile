@@ -14,7 +14,9 @@
     "@glass-lang/glasslib": "^0.0.8",
     "@vscode/webview-ui-toolkit": "^1.2.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-markdown": "^8.0.7",
+    "react-syntax-highlighter": "^15.5.0"
   },
   "devDependencies": {
     "@types/vscode-webview": "^1.57.1",
