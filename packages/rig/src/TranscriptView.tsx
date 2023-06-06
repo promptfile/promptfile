@@ -16,10 +16,38 @@ export const TranscriptView = (props: TranscriptViewProps) => {
 
   // Define a Markdown syntax highlighting component
   const CodeBlock = ({ language, value }: { language: string; value: string }) => {
+    const handleCopy = () => {
+      navigator.clipboard.writeText(value).catch(err => console.error('Could not copy text: ', err))
+    }
+
     return (
-      <SyntaxHighlighter language={language} style={materialOceanic}>
-        {value}
-      </SyntaxHighlighter>
+      <div style={{ width: '100%', borderRadius: '4px', display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{
+            fontSize: '12px',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ opacity: 0.5 }}>{language}</div>
+          <div
+            onMouseEnter={(event: any) => {
+              event.target.style.opacity = '1.0'
+            }}
+            onMouseLeave={(event: any) => {
+              event.target.style.opacity = '0.5'
+            }}
+            style={{ cursor: 'pointer', opacity: 0.5 }}
+            onClick={handleCopy}
+          >
+            Copy
+          </div>
+        </div>
+        <SyntaxHighlighter language={language} style={materialOceanic}>
+          {value}
+        </SyntaxHighlighter>
+      </div>
     )
   }
 
