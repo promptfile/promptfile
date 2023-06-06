@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import React from 'react'
 
 // https://dev.to/christiankastner/integrating-p5-js-with-react-i0d
@@ -19,7 +20,7 @@ export class DemonView extends React.PureComponent {
     const hueRange = 40
 
     const fadeInOut = (t: any, m: any) => {
-      let hm = 0.5 * m
+      const hm = 0.5 * m
       return p5.abs(((t + hm) % m) - hm) / hm
     }
 
@@ -131,6 +132,7 @@ export class DemonView extends React.PureComponent {
   }
 
   componentDidMount() {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const p5 = require('p5')
     this.myP5 = new p5(this.Sketch, this.myRef.current)
   }
