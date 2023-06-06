@@ -3,8 +3,12 @@ language: typescript
 ---
 
 const handleResponse = (response: any) => {
-    // do some json validation and return valid json
-    return {}
+  const message = response.message
+  const json = message.match(/```json([\s\S]*)```/)
+  if (json) {
+    return JSON.parse(json[1])
+  }
+  return ''
 }
 
 <System>
@@ -65,8 +69,12 @@ ${profile}
 
 Message:
 ###
-${message}
+${input}
 ###
 </User>
+
+<System>
+Respond with either an updated profile (in valid JSON format) or `NO_ACTION`.
+</System>
 
 <Request model="gpt-3.5-turbo" onResponse={handleResponse} />
