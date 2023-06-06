@@ -68,12 +68,30 @@ export const TranscriptView = (props: TranscriptViewProps) => {
     }
   }, [blocks, autoScroll])
 
-  function requestSummary(block: GlassContent): string | undefined {
+  function modelName(block: GlassContent): string | undefined {
     const modelAttr = block.attrs?.find(attr => attr.name === 'model')
     if (block.tag !== 'Assistant' || !modelAttr) {
       return undefined
     }
     return modelAttr.stringValue
+  }
+
+  function requestSummary(block: GlassContent): string | undefined {
+    const requestTokens = block.attrs?.find(attr => attr.name === 'requestTokens')
+    const temperature = block.attrs?.find(attr => attr.name === 'temperature')
+    if (block.tag !== 'Assistant' || !requestTokens || !temperature) {
+      return undefined
+    }
+    return `Request: ${requestTokens.expressionValue} tokens (temperature: ${temperature.expressionValue})`
+  }
+
+  function responseSummary(block: GlassContent): string | undefined {
+    const responseTokens = block.attrs?.find(attr => attr.name === 'responseTokens')
+    const cost = block.attrs?.find(attr => attr.name === 'cost')
+    if (block.tag !== 'Assistant' || !responseTokens || !cost) {
+      return undefined
+    }
+    return `Response: ${responseTokens.expressionValue} tokens (${cost.stringValue})`
   }
 
   return (
@@ -103,7 +121,9 @@ export const TranscriptView = (props: TranscriptViewProps) => {
           {sessionId}
         </div>
         {blocks.map((block, index) => {
-          const summary = requestSummary(block)
+          const model = modelName(block)
+          const request = requestSummary(block)
+          const response = responseSummary(block)
           return (
             <div
               key={index}
@@ -126,7 +146,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 >
                   {block.tag}
                 </span>
-                {summary && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{summary}</span>}
+                {model && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{model}</span>}
               </div>
               <ReactMarkdown
                 components={{
@@ -144,6 +164,10 @@ export const TranscriptView = (props: TranscriptViewProps) => {
               >
                 {block.child?.content ?? ''}
               </ReactMarkdown>
+              <div style={{ fontSize: '10px', opacity: 0.3, display: 'flex', flexDirection: 'column' }}>
+                {request && <span>{request}</span>}
+                {response && <span>{response}</span>}
+              </div>
             </div>
           )
         })}
