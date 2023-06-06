@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.7
+
+### Patch Changes
+
+- [`8675867`](https://github.com/glass-lang/glass/commit/86758675b5aed830ca43ee468a49e7a5908ddbeb) Thanks [@rothfels](https://github.com/rothfels)! - bump glasslib
+
 ## 0.11.6
 
 ### Patch Changes
