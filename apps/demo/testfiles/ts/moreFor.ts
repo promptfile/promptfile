@@ -27,13 +27,12 @@ ${foo}
 </User>`
     return {
       fileName: 'moreFor',
-      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc:
         '---\nargs:\n    messages: "{ role: string, content: string }[]"\n---\n\n<System>\nYou are a helpful assistant.\n</System>\n\n<For each={messages} fragment={m => <Block role={m.role} content={m.content} />} />\n\n<User>\n${foo}\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      onResponse: undefined,
+      requestBlocks: [],
     }
   }
 

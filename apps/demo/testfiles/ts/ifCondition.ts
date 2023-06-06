@@ -20,12 +20,11 @@ Hello world
 ${GLASSVAR[0]}`
     return {
       fileName: 'ifCondition',
-      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: '<System>\nHello world\n</System>\n\n<User if={true}>\nGoodbye world\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      onResponse: undefined,
+      requestBlocks: [],
     }
   }
 

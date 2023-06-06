@@ -1,4 +1,5 @@
 import { GlassContent, parseGlassBlocks, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
+import { RequestData } from './runGlass'
 
 export function addNodeToDocument(content: string, index: number, doc: string, replaceOnceNodes = false) {
   const parsed = parseGlassDocument(doc)
@@ -118,7 +119,7 @@ export function handleRequestNode(
   uninterpolatedDoc: string,
   interpolatedDoc: string,
   request: {
-    model: string
+    requestBlocks: RequestData[]
     messages: string[]
     streaming: boolean
     requestTokens?: number
@@ -129,7 +130,7 @@ export function handleRequestNode(
   const parsedInterpolated = parseGlassBlocks(interpolatedDoc)
   const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
   const newRequestNode = requestNodeReplacement(
-    request.model,
+    request.requestBlocks[request.index].model,
     request.messages[request.messages.length - 1],
     request.streaming,
     {
@@ -142,10 +143,11 @@ export function handleRequestNode(
   let currRequest = 0
   for (const block of parsedInterpolated) {
     if (block.tag === 'Request') {
+      const model = request.requestBlocks[currRequest].model
       if (currRequest < request.index && request.messages[currRequest] != null) {
         userAndAssistantBlocks.push({
           tag: 'Assistant',
-          content: requestNodeReplacement(request.model, request.messages[currRequest], false),
+          content: requestNodeReplacement(model, request.messages[currRequest], false),
         } as any)
       }
       currRequest++

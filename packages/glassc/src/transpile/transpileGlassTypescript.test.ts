@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { loadTestFile } from '../util/loadTestfile'
-import { transpileGlassFileNext } from './transpileGlassNext'
+import { transpileGlassFileTypescript } from './transpileGlassTypescript'
 
 const folders = {
   workspaceFolder: '/Users/me/glassc',
@@ -13,12 +13,12 @@ const folders = {
 describe('transpileGlassTypescript', () => {
   it('should transpile without interpolation variables', () => {
     const { input, output } = loadTestFile('testfiles/ts/noInterpolation', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'noInterpolation' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'noInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   //   it('should transpile with get-prefixed named', () => {
-  //     const transpiled = transpileGlassFileNext(
+  //     const transpiled = transpileGlassFileTypescript(
   //       `<User>
   // foo
   // </User>`,
@@ -54,18 +54,18 @@ describe('transpileGlassTypescript', () => {
 
   it('should transpile with interpolation variables', () => {
     const { input, output } = loadTestFile('testfiles/ts/withInterpolation', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'withInterpolation' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'withInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile including interstitial text', () => {
     const { input, output } = loadTestFile('testfiles/ts/interstitialCode', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'interstitialCode' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'interstitialCode' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it.skip('should transpile into javascript', () => {
-    const transpiled = transpileGlassFileNext(
+    const transpiled = transpileGlassFileTypescript(
       `<User>
 \${foo}
 </User>`,
@@ -98,91 +98,91 @@ describe('transpileGlassTypescript', () => {
 
   it('should transpile with non-interpolation sequences', () => {
     const { input, output } = loadTestFile('testfiles/ts/nonInterpolationSequence', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'nonInterpolationSequence' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'nonInterpolationSequence' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with multiple interpolation variables', () => {
     const { input, output } = loadTestFile('testfiles/ts/multipleInterpolation', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'multipleInterpolation' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'multipleInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with duplicate interpolation variables', () => {
     const { input, output } = loadTestFile('testfiles/ts/duplicateInterpolation', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'duplicateInterpolation' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'duplicateInterpolation' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with Args block', () => {
     const { input, output } = loadTestFile('testfiles/ts/args', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'args' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'args' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with code block', () => {
     const { input, output } = loadTestFile('testfiles/ts/codeBlock', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'codeBlock' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'codeBlock' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with code block containing state', () => {
     const { input, output } = loadTestFile('testfiles/ts/codeBlockWithState', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'codeBlockWithState' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'codeBlockWithState' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with complex code block', () => {
     const { input, output } = loadTestFile('testfiles/ts/withImport', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'withImport' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'withImport' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with imports and code interpolations', () => {
     const { input, output } = loadTestFile('testfiles/ts/complex', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'complex' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'complex' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with dynamic for loop', () => {
     const { input, output } = loadTestFile('testfiles/ts/moreFor', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'moreFor' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'moreFor' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with dynamic for loop', () => {
     const { input, output } = loadTestFile('testfiles/ts/forLoop', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'forLoop' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'forLoop' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   // it('should transpile with single <For> loop', () => {
   //   const { input, output } = loadTestfile('testfiles/ts/forLoopAttributesOnly', 'ts')
-  //   const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'forLoopAttributesOnly' })
+  //   const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'forLoopAttributesOnly' })
   //   expect(transpiled.code.trim()).to.equal(output.trim())
   // })
 
   it('should transpile with single if condition', () => {
     const { input, output } = loadTestFile('testfiles/ts/ifCondition', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'ifCondition' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'ifCondition' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with single if condition, string value', () => {
     const { input, output } = loadTestFile('testfiles/ts/singleIfCondition', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'singleIfCondition' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'singleIfCondition' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it('should transpile with special characters', () => {
     const { input, output } = loadTestFile('testfiles/ts/specialCharacters', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'specialCharacters' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'specialCharacters' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
   it.skip('should transpile with .glass import', () => {
     const { input, output } = loadTestFile('testfiles/ts/glassImport', 'ts')
-    const transpiled = transpileGlassFileNext(input, { ...folders, fileName: 'glassImport' })
+    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'glassImport' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 })

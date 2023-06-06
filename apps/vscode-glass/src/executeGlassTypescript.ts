@@ -1,4 +1,8 @@
-import { constructGlassOutputFileNext, getGlassExportName, transpileGlassFileNext } from '@glass-lang/glassc'
+import {
+  constructGlassOutputFileTypescript,
+  getGlassExportName,
+  transpileGlassFileTypescript,
+} from '@glass-lang/glassc'
 import { TranspilerOutput } from '@glass-lang/glasslib'
 import { spawn } from 'child_process'
 import * as esbuild from 'esbuild'
@@ -38,14 +42,14 @@ export async function executeGlassTypescript(
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
   const folderPath = document.uri.fsPath.split('/').slice(0, -1).join('/')
 
-  const transpiledFunction = transpileGlassFileNext(content, {
+  const transpiledFunction = transpileGlassFileTypescript(content, {
     workspaceFolder: workspacePath,
     folderPath,
     fileName,
     language: 'typescript',
     outputDirectory: outDir,
   })
-  const transpiledCode = constructGlassOutputFileNext([transpiledFunction])
+  const transpiledCode = constructGlassOutputFileTypescript([transpiledFunction])
 
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir)
@@ -183,14 +187,14 @@ export async function executeGlassTypescriptInVm(
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
   const folderPath = document.uri.fsPath.split('/').slice(0, -1).join('/')
 
-  const transpiledFunction = transpileGlassFileNext(content, {
+  const transpiledFunction = transpileGlassFileTypescript(content, {
     workspaceFolder: workspacePath,
     folderPath,
     fileName,
     language: 'typescript',
     outputDirectory: outDir,
   })
-  const transpiledCode = constructGlassOutputFileNext([transpiledFunction])
+  const transpiledCode = constructGlassOutputFileTypescript([transpiledFunction])
 
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir)

@@ -14,12 +14,11 @@ ${bar}
 </User>`
     return {
       fileName: 'duplicateInterpolation',
-      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: '<User>\n${foo} ${bar} ${foo}\n${bar}\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      onResponse: undefined,
+      requestBlocks: [],
     }
   }
 

@@ -7,7 +7,7 @@ import { parsePythonLocalVariables, parsePythonUndeclaredSymbols } from '../pars
 import { transformDynamicBlocksPython } from '../transform/transformDynamicBlocksPython.js'
 import { transformPythonTestBlock } from '../transform/transformPyTestBlock.js'
 import { indentLines } from '../util/indentLines.js'
-import { getGlassExportName } from './transpileGlassNext.js'
+import { getGlassExportName } from './transpileGlassTypescript.js'
 
 const extension = 'glass'
 
@@ -45,7 +45,7 @@ export async function transpileGlassFilePython(
 
   // const interpolationVarNames = Array.from(new Set<string>(allInterpolationVars.map(arg => arg.split('.')[0])))
 
-  let model = 'gpt-3.5-turbo'
+  const requestBlocks: { model: string; onResponse?: string }[] = []
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
@@ -61,7 +61,14 @@ export async function transpileGlassFilePython(
       const modelAttr = jsxNode.attrs!.find(a => a.name === 'model')
       // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
       // we don't currently support dynamic model values
-      model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : model
+      const model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : 'gpt-3.5-turbo'
+
+      const onResponseAttr = jsxNode.attrs!.find(a => a.name === 'onResponse')
+      if (onResponseAttr?.expressionValue) {
+        requestBlocks.push({ model, onResponse: onResponseAttr.expressionValue })
+      } else {
+        requestBlocks.push({ model, onResponse: 'None' })
+      }
       continue
     }
     // if (builtinTags.has(jsxNode.tagName)) {
@@ -185,7 +192,9 @@ ${indentLines(codeStart.trim(), 8)}
         ${glassvar}
         return {
             "fileName": "${fileName}",
-            "model": "${model}",
+            "requestBlocks": [ ${requestBlocks
+              .map(b => `{ "model": "${b.model}", "onResponse": ${b.onResponse} }`)
+              .join(', ')} ],
             "state": {},
             "originalDoc": ${JSON.stringify(originalDoc)},
             "interpolationArgs": opt["args"],
@@ -193,9 +202,8 @@ ${indentLines(codeStart.trim(), 8)}
         }
 ${'    '}
     testData = get_test_data()
-    args = { "args": testData }
-    args.update(interpolationArgs)
-    return json.dumps(compile(args))
+    testData.update(interpolationArgs)
+    return json.dumps(compile({ "args": testData }))
 
 `
 

@@ -21,7 +21,7 @@ def getLiteralPrompt(interpolationArgs = {}):
     }
         return {
             "fileName": "literal",
-            "model": "gpt-3.5-turbo",
+            "requestBlocks": [ { "model": "gpt-3.5-turbo", "onResponse": None } ],
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\nimport requests\n\nresponse = requests.get(\"https://elliottburris.com\")\n\n<System>\nyour job is to answer questions based on the following website code:\n###\n${response.text}\n###\n</System>\n\n<User>\nwhere did elliott go to school?\n</User>\n\n<Request model=\"gpt-3.5-turbo\" />",
             "interpolationArgs": opt["args"],
@@ -38,6 +38,5 @@ response = requests.get("https://elliottburris.com")
         }
     
     testData = get_test_data()
-    args = { "args": testData }
-    args.update(interpolationArgs)
-    return json.dumps(compile(args))
+    testData.update(interpolationArgs)
+    return json.dumps(compile({ "args": testData }))

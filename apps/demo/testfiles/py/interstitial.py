@@ -13,7 +13,7 @@ def getInterstitialPrompt(interpolationArgs = {}):
     }
         return {
             "fileName": "interstitial",
-            "model": "gpt-3.5-turbo",
+            "requestBlocks": [  ],
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\nfoo = \"bar\"\n<User>\n${foo}\n</User>\nprint(foo)",
             "interpolationArgs": opt["args"],
@@ -24,6 +24,5 @@ print(foo)""".format(GLASSVAR[0]),
         }
     
     testData = get_test_data()
-    args = { "args": testData }
-    args.update(interpolationArgs)
-    return json.dumps(compile(args))
+    testData.update(interpolationArgs)
+    return json.dumps(compile({ "args": testData }))

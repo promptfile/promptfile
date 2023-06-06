@@ -83,55 +83,55 @@ foo
   })
 
   // it('should transpile with Args block', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/args')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/args')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })
 
   // it('should transpile with code block', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/codeBlock')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/codeBlock')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })
 
   // it('should transpile with complex code block', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/withImport')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/withImport')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })
 
   // it('should transpile with imports and code interpolations', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/complex')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/complex')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })
 
   // it('should transpile with dynamic for loop', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/moreFor')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/moreFor')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })
 
   // it('should transpile with dynamic for loop', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/forLoop')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/forLoop')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })
 
   // it('should transpile with single <For> loop', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/forLoopAttributesOnly')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/forLoopAttributesOnly')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })
 
   // it('should transpile with single if condition', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/ifCondition')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/ifCondition')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })
 
   // it('should transpile with single if condition, string value', () => {
-  //   const { input, output } = loadFixture('transpileGlassNext/singleIfCondition')
+  //   const { input, output } = loadFixture('transpileGlassTypescript/singleIfCondition')
   //   const transpiled = transpileGlassFilePython(input, folders)
   //   expect(transpiled.code).to.equal(output)
   // })

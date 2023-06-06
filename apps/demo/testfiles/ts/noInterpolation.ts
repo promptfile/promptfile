@@ -12,12 +12,11 @@ foo
 </User>`
     return {
       fileName: 'noInterpolation',
-      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: '<User>\nfoo\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      onResponse: undefined,
+      requestBlocks: [],
     }
   }
 

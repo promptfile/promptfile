@@ -11,7 +11,7 @@ def getMultipleInterpolationPrompt(interpolationArgs = {}):
     }
         return {
             "fileName": "multipleInterpolation",
-            "model": "gpt-3.5-turbo",
+            "requestBlocks": [  ],
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\n<User>\n${foo} ${bar}\n</User>",
             "interpolationArgs": opt["args"],
@@ -20,6 +20,5 @@ def getMultipleInterpolationPrompt(interpolationArgs = {}):
         }
     
     testData = get_test_data()
-    args = { "args": testData }
-    args.update(interpolationArgs)
-    return json.dumps(compile(args))
+    testData.update(interpolationArgs)
+    return json.dumps(compile({ "args": testData }))

@@ -207,7 +207,12 @@ hello world
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
+      const res = handleRequestNode(origDoc, interpDoc, {
+        messages: [''],
+        streaming: true,
+        requestBlocks: [{ model: 'gpt-4' }],
+        index: 0,
+      })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`---
 language: typescript
@@ -251,7 +256,12 @@ hello world
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
+      const res = handleRequestNode(origDoc, interpDoc, {
+        messages: [''],
+        streaming: true,
+        requestBlocks: [{ model: 'gpt-4' }],
+        index: 0,
+      })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`---
 language: typescript
@@ -297,12 +307,12 @@ Title: hello world
 You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
 </User>
 
-<Request model="gpt-3.5-turbo" />`
+<Request model="gpt-4" />`
 
       const res = handleRequestNode(origDoc, interpDoc, {
         messages: ['goodbye', 'world'],
         streaming: false,
-        model: 'gpt-4',
+        requestBlocks: [{ model: 'gpt-3.5-turbo' }, { model: 'gpt-4' }],
         index: 1,
       })
       expect(res.rawResponse).to.equal('world')
@@ -313,7 +323,7 @@ You are a playwright. Given the title of a play, it is your job to write a synop
 Title: hello world
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-3.5-turbo" temperature="1">
 goodbye
 </Assistant>
 
@@ -366,7 +376,12 @@ hello world
 
 <Request model="gpt-3.5-turbo" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
+      const res = handleRequestNode(origDoc, interpDoc, {
+        messages: [''],
+        streaming: true,
+        requestBlocks: [{ model: 'gpt-4' }],
+        index: 0,
+      })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`<System>
 You are a helpful assistant.
@@ -404,7 +419,12 @@ hello world
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
+      const res = handleRequestNode(origDoc, interpDoc, {
+        messages: [''],
+        streaming: true,
+        requestBlocks: [{ model: 'gpt-4' }],
+        index: 0,
+      })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`<User>
 \${input}
@@ -456,7 +476,12 @@ goodbye world
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, { messages: [''], streaming: true, model: 'gpt-4', index: 0 })
+      const res = handleRequestNode(origDoc, interpDoc, {
+        messages: [''],
+        streaming: true,
+        requestBlocks: [{ model: 'gpt-4' }],
+        index: 0,
+      })
       expect(res.rawResponse).to.equal('█')
       expect(res.finalDoc).to.equal(`<Transcript>
 <User>

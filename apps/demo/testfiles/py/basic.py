@@ -10,7 +10,7 @@ def getBasicPrompt(interpolationArgs = {}):
     }
         return {
             "fileName": "basic",
-            "model": "gpt-3.5-turbo",
+            "requestBlocks": [  ],
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\n<User>\nfoo\n</User>",
             "interpolationArgs": opt["args"],
@@ -19,6 +19,5 @@ def getBasicPrompt(interpolationArgs = {}):
         }
     
     testData = get_test_data()
-    args = { "args": testData }
-    args.update(interpolationArgs)
-    return json.dumps(compile(args))
+    testData.update(interpolationArgs)
+    return json.dumps(compile({ "args": testData }))

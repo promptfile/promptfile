@@ -15,12 +15,11 @@ ${a}
 </User>`
     return {
       fileName: 'codeBlock',
-      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: 'const a = "3"\n<User>\n${a}\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      onResponse: undefined,
+      requestBlocks: [],
     }
   }
 

@@ -1,4 +1,4 @@
-import { transpileGlassNext, transpileGlassPython } from '@glass-lang/glassc'
+import { transpileGlassPython, transpileGlassTypescript } from '@glass-lang/glassc'
 import path from 'path'
 import * as vscode from 'vscode'
 
@@ -14,7 +14,7 @@ export async function transpileCurrentFile(document: vscode.TextDocument) {
     const code =
       document.languageId === 'glass-py'
         ? await transpileGlassPython(filePath, filePath, 'python', path.join(path.dirname(filePath)))
-        : transpileGlassNext(workspacePath, filePath, 'typescript', outDir)
+        : transpileGlassTypescript(workspacePath, filePath, 'typescript', outDir)
     return code
   } catch (error) {
     console.error(error)

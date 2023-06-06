@@ -54,7 +54,7 @@ print(${getGlassExportName(fileName)}(${jsonToPython(inputs || {})}))`
     tmpFilePath,
     `${transpiledCode}
 
-print(${getGlassExportName(fileName)}())`,
+print(${getGlassExportName(fileName)}(${jsonToPython(inputs || {})}))`,
     {
       encoding: 'utf-8',
     }

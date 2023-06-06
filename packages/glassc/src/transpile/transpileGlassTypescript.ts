@@ -26,7 +26,7 @@ const extension = 'glass'
  * The directory / folder information is necessary so we can correctly re-write import paths.
  * The language is necessary so we can correctly format the output. Currently only supports 'typescript'.
  */
-export function transpileGlassFileNext(
+export function transpileGlassFileTypescript(
   doc: string,
   {
     workspaceFolder,
@@ -107,8 +107,7 @@ export function transpileGlassFileNext(
     codeSanitizedDoc += content
   }
 
-  let model = 'gpt-3.5-turbo'
-  let onResponse = ''
+  const requestBlocks: { model: string; onResponse?: string }[] = []
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
@@ -127,10 +126,14 @@ export function transpileGlassFileNext(
       const modelAttr = jsxNode.attrs!.find(a => a.name === 'model')
       // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
       // we don't currently support dynamic model values
-      model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : model
+      const model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : 'gpt-3.5-turbo'
 
       const onResponseAttr = jsxNode.attrs!.find(a => a.name === 'onResponse')
-      onResponse = onResponseAttr ? onResponseAttr.expressionValue! : ''
+      if (onResponseAttr?.expressionValue) {
+        requestBlocks.push({ model, onResponse: onResponseAttr.expressionValue })
+      } else {
+        requestBlocks.push({ model, onResponse: 'undefined' })
+      }
       continue
     }
     const jsxString = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
@@ -273,12 +276,13 @@ export function ${exportName}() {
     const TEMPLATE = \`${escapedInterpolatedDoc}\`
     return {
       fileName: '${fileName}',
-      model: '${model}',
       interpolatedDoc: TEMPLATE,
       originalDoc: ${JSON.stringify(originalDoc)},
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      onResponse: ${onResponse ? onResponse : 'undefined'}
+      requestBlocks: [
+        ${requestBlocks.map(b => `{ model: '${b.model}', onResponse: ${b.onResponse} }`).join(',\n')}
+      ],
     }
   }
 
@@ -305,17 +309,17 @@ export function ${exportName}() {
 /**
  * Takes a path, either to a file or a folder, and transpiles all glass files in that folder, or the file specified.
  */
-export function transpileGlassNext(
+export function transpileGlassTypescript(
   workspaceFolder: string,
   fileOrFolderPath: string,
   language: string,
   outputDirectory: string
 ) {
   const functions = transpileGlassHelper(workspaceFolder, fileOrFolderPath, language, outputDirectory)
-  return constructGlassOutputFileNext(functions)
+  return constructGlassOutputFileTypescript(functions)
 }
 
-export function constructGlassOutputFileNext(functions: ReturnType<typeof transpileGlassHelper>) {
+export function constructGlassOutputFileTypescript(functions: ReturnType<typeof transpileGlassHelper>) {
   const glassConstant = `export const Glass = {
     ${functions.map(f => `${f.functionName}: ${f.exportName}`).join(',\n  ')}
   }`
@@ -371,7 +375,7 @@ function transpileGlassHelper(
     // const newFilePath = path.join(folderPath, newFileName)
 
     // Transpile the glass file to the target language.
-    const codegenedResult = transpileGlassFileNext(fileContent, {
+    const codegenedResult = transpileGlassFileTypescript(fileContent, {
       workspaceFolder,
       folderPath,
       fileName,
@@ -404,8 +408,12 @@ export function getGlassExportName(filePath: string) {
     fileName = fileName.slice(0, -6)
   }
 
-  const functionName = camelcase(fileName)
+  let functionName = camelcase(fileName)
+
+  // strip all numeric prefixes from functionNmae
+  functionName = functionName.replace(/^[0-9]+/, '')
 
   const prefixGet = !(functionName.startsWith('get') && functionName[3] === functionName[3].toUpperCase())
   return `${prefixGet ? `get${functionName.slice(0, 1).toUpperCase() + functionName.slice(1)}` : functionName}Prompt`
 }
+1

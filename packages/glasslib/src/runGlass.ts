@@ -1,3 +1,4 @@
+import { checkOk } from '@glass-lang/util'
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
@@ -10,13 +11,8 @@ export interface ChatCompletionRequestMessage {
   name?: string
 }
 
-export interface TranspilerOutput {
-  fileName: string
+export interface RequestData {
   model: string
-  interpolatedDoc: string
-  originalDoc: string
-  state: any
-  interpolationArgs: any
   onResponse?: (data: {
     message: string
     addToTranscript: (tag: string, content: string) => void
@@ -25,8 +21,17 @@ export interface TranspilerOutput {
   }) => Promise<any>
 }
 
+export interface TranspilerOutput {
+  fileName: string
+  interpolatedDoc: string
+  originalDoc: string
+  state: any
+  interpolationArgs: any
+  requestBlocks: RequestData[]
+}
+
 export async function runGlass(
-  { fileName, model, originalDoc, interpolatedDoc, state, onResponse, interpolationArgs }: TranspilerOutput,
+  { fileName, originalDoc, interpolatedDoc, state, requestBlocks, interpolationArgs }: TranspilerOutput,
   options?: {
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
@@ -72,81 +77,105 @@ export async function runGlass(
     options.progress(
       handleRequestNode(transformedOriginalDoc, transformedInterpolatedDoc, {
         messages: [''],
-        model,
+        requestBlocks,
         streaming: true,
         index: 0,
       })
     )
   }
-  const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
-  if (!languageModel) {
-    throw new Error(`Language model ${model} not found`)
-  }
-  const res =
-    languageModel.creator === LanguageModelCreator.anthropic
-      ? await runGlassChatAnthropic(
-          fileName,
-          model,
-          interpolationArgs,
-          { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
-          options
-        )
-      : languageModel.type === LanguageModelType.chat
-      ? await runGlassChat(
-          fileName,
-          model,
-          interpolationArgs,
-          { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
-          options
-        )
-      : await runGlassCompletion(
-          fileName,
-          model as any,
-          interpolationArgs,
-          { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
-          options
-        )
 
-  let codeResponse: any = undefined
+  const responses: string[] = []
+  const messageBlocks = parseChatCompletionBlocks2(transformedInterpolatedDoc, options?.transcriptTokenCounter)
+  const messagesSoFar: ChatCompletionRequestMessage[] = []
+  checkOk(messageBlocks.length === requestBlocks.length)
 
-  const blocksToAdd: { tag: string; content: string }[] = []
-  const blocksToAddToDocument: { tag: string; content: string; attrs?: any }[] = []
+  let i = 0
+  let res:
+    | {
+        finalDoc: string
+        finalInterpolatedDoc: string
+        rawResponse: string
+      }
+    | undefined = undefined
+  let codeResponse: any
   let continued = false
 
-  if (onResponse) {
-    codeResponse = await onResponse({
-      message: res.rawResponse,
-      addToTranscript: (tag: string, content: string) => {
-        blocksToAdd.push({ tag, content })
-      },
-      addToDocument: (tag: string, content: string, attrs?: any) => {
-        blocksToAddToDocument.push({ tag, content, attrs })
-      },
-      continue: () => {
-        continued = true
-      },
-    })
-    if (Object.keys(state).length > 0) {
-      const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-      res.finalDoc = replaceStateNode(finalStateBlock, res.finalDoc)
-      res.finalInterpolatedDoc = replaceStateNode(finalStateBlock, res.finalInterpolatedDoc)
+  for (; i < messageBlocks.length; i++) {
+    const messages = messageBlocks[i]
+    const requestData = requestBlocks[i]
+    const model = requestData.model
+    const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
+    if (!languageModel) {
+      throw new Error(`Language model ${model} not found`)
+    }
+    res =
+      languageModel.creator === LanguageModelCreator.anthropic
+        ? await runGlassChatAnthropic(
+            messages,
+            messagesSoFar,
+            responses,
+            requestBlocks,
+            { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+            options
+          )
+        : languageModel.type === LanguageModelType.chat
+        ? await runGlassChat(
+            messages,
+            messagesSoFar,
+            responses,
+            requestBlocks,
+            { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+            options
+          )
+        : await runGlassCompletion(
+            messages,
+            messagesSoFar,
+            responses,
+            requestBlocks,
+            { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+            options
+          )
+
+    let codeResponse: any = undefined
+
+    const blocksToAdd: { tag: string; content: string }[] = []
+    const blocksToAddToDocument: { tag: string; content: string; attrs?: any }[] = []
+
+    if (requestData.onResponse) {
+      codeResponse = await requestData.onResponse({
+        message: res.rawResponse,
+        addToTranscript: (tag: string, content: string) => {
+          blocksToAdd.push({ tag, content })
+        },
+        addToDocument: (tag: string, content: string, attrs?: any) => {
+          blocksToAddToDocument.push({ tag, content, attrs })
+        },
+        continue: () => {
+          continued = true
+        },
+      })
+      if (Object.keys(state).length > 0) {
+        const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
+        res.finalDoc = replaceStateNode(finalStateBlock, res.finalDoc)
+        res.finalInterpolatedDoc = replaceStateNode(finalStateBlock, res.finalInterpolatedDoc)
+      }
+    }
+
+    if (blocksToAdd.length > 0) {
+      const added = addToTranscript(blocksToAdd, res.finalDoc, res.finalInterpolatedDoc)
+      res.finalDoc = added.doc
+      res.finalInterpolatedDoc = added.interpolatedDoc
+    }
+
+    if (blocksToAddToDocument.length > 0) {
+      const added = addToDocument(blocksToAddToDocument, res.finalDoc, res.finalInterpolatedDoc)
+      res.finalDoc = added.doc
+      res.finalInterpolatedDoc = added.interpolatedDoc
     }
   }
 
-  if (blocksToAdd.length > 0) {
-    const added = addToTranscript(blocksToAdd, res.finalDoc, res.finalInterpolatedDoc)
-    res.finalDoc = added.doc
-    res.finalInterpolatedDoc = added.interpolatedDoc
-  }
-
-  if (blocksToAddToDocument.length > 0) {
-    const added = addToDocument(blocksToAddToDocument, res.finalDoc, res.finalInterpolatedDoc)
-    res.finalDoc = added.doc
-    res.finalInterpolatedDoc = added.interpolatedDoc
-  }
-
   return {
-    ...res,
+    ...res!,
     initDoc: transformedOriginalDoc,
     initInterpolatedDoc: transformedInterpolatedDoc,
     codeResponse,
@@ -158,9 +187,10 @@ export async function runGlass(
  * Takes a glass template string and interpolation variables and outputs an array of chat messages you can use to prompt ChatGPT API (e.g. gpt-3.5-turbo or gpt-4).
  */
 async function runGlassChat(
-  fileName: string,
-  model: string,
-  interpolationArgs: any,
+  messages: ChatCompletionRequestMessage[],
+  messagesSoFar: ChatCompletionRequestMessage[],
+  responses: string[],
+  requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
     transcriptTokenCounter?: TokenCounter
@@ -172,57 +202,51 @@ async function runGlassChat(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc, options?.transcriptTokenCounter)
-  const messagesSoFar: ChatCompletionRequestMessage[] = []
+  const request = requestBlocks[responses.length]
 
-  let i = 0
-  const responses: string[] = []
-  for (; i < messageBlocks.length; i++) {
-    const messages = messageBlocks[i]
-    console.log('runGlass: chat-gpt', messages)
+  console.log('runGlass: chat-gpt', messagesSoFar.concat(messages))
 
-    const r = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        // eslint-disable-next-line turbo/no-undeclared-env-vars
-        Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messages: messagesSoFar.concat(messages),
-        model: model,
-        stream: true,
-      }),
-    })
+  const r = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      // eslint-disable-next-line turbo/no-undeclared-env-vars
+      Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      messages: messagesSoFar.concat(messages),
+      model: request.model,
+      stream: true,
+    }),
+  })
 
-    const response = await handleStream(r, handleChatChunk, next => {
-      if (!r.ok) {
-        throw new Error(`HTTP error: ${r.status}`)
-      }
-      // right now claude has a leading whitespace character
-      // we need to remove that!
-      if (options?.progress) {
-        return options.progress(
-          handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-            messages: responses.concat(next.trim()),
-            model,
-            streaming: true,
-            index: i,
-          })
-        )
-      }
-    })
+  const response = await handleStream(r, handleChatChunk, next => {
+    if (!r.ok) {
+      throw new Error(`HTTP error: ${r.status}`)
+    }
+    // right now claude has a leading whitespace character
+    // we need to remove that!
+    if (options?.progress) {
+      return options.progress(
+        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+          messages: responses.concat(next.trim()),
+          requestBlocks,
+          streaming: true,
+          index: responses.length,
+        })
+      )
+    }
+  })
 
-    responses.push(response)
-    messagesSoFar.push(...messages)
-    messagesSoFar.push({ role: 'assistant', content: response })
-  }
+  responses.push(response)
+  messagesSoFar.push(...messages)
+  messagesSoFar.push({ role: 'assistant', content: response })
 
   return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
     messages: responses,
-    model,
+    requestBlocks,
     streaming: false,
-    index: i - 1,
+    index: responses.length - 1,
   })
 }
 
@@ -230,9 +254,10 @@ async function runGlassChat(
  * Takes a glass template string and interpolation variables and outputs an array of chat messages you can use to prompt ChatGPT API (e.g. gpt-3.5-turbo or gpt-4).
  */
 async function runGlassChatAnthropic(
-  fileName: string,
-  model: string,
-  interpolationArgs: any,
+  messages: ChatCompletionRequestMessage[],
+  messagesSoFar: ChatCompletionRequestMessage[],
+  responses: string[],
+  requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
     transcriptTokenCounter?: TokenCounter
@@ -246,71 +271,63 @@ async function runGlassChatAnthropic(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc, options?.transcriptTokenCounter)
-  const messagesSoFar: ChatCompletionRequestMessage[] = []
-
-  let i = 0
-  const responses: string[] = []
-  for (; i < messageBlocks.length; i++) {
-    const messages = messageBlocks[i]
-
-    let anthropicQuery = ''
-    for (const msg of messagesSoFar.concat(messages)) {
-      if (msg.role === 'assistant') {
-        anthropicQuery += `\n\nAssistant: ${msg.content}`
-      } else if (msg.role === 'user') {
-        anthropicQuery += `\n\nHuman: ${msg.content}`
-      } else if (msg.role === 'system') {
-        anthropicQuery += `\n\nHuman: ${msg.content}`
-      } else {
-        throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
-      }
+  const request = requestBlocks[responses.length]
+  let anthropicQuery = ''
+  for (const msg of messagesSoFar.concat(messages)) {
+    if (msg.role === 'assistant') {
+      anthropicQuery += `\n\nAssistant: ${msg.content}`
+    } else if (msg.role === 'user') {
+      anthropicQuery += `\n\nHuman: ${msg.content}`
+    } else if (msg.role === 'system') {
+      anthropicQuery += `\n\nHuman: ${msg.content}`
+    } else {
+      throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
     }
-    anthropicQuery += '\n\nAssistant: '
-    console.log('runGlass: anthropic', anthropicQuery)
-
-    const r = await fetch('https://api.anthropic.com/v1/complete', {
-      method: 'POST',
-      headers: {
-        // eslint-disable-next-line turbo/no-undeclared-env-vars
-        'X-API-Key': (options?.anthropicKey || process.env.ANTHROPIC_API_KEY)!,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: model,
-        prompt: anthropicQuery,
-        max_tokens_to_sample: 2048,
-        stopSequences: ['Human:', 'Assistant:'],
-        stream: true,
-      }),
-    })
-
-    const response = await handleStream(r, handleAnthropicChunk, next => {
-      if (!r.ok) {
-        throw new Error(`HTTP error: ${r.status}`)
-      }
-      if (options?.progress) {
-        return options.progress(
-          handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-            messages: responses.concat(next.trim()),
-            model,
-            streaming: true,
-            index: i,
-          })
-        )
-      }
-    })
-
-    responses.push(response.trim())
-    messagesSoFar.push(...messages)
-    messagesSoFar.push({ role: 'assistant', content: response.trim() })
   }
+  anthropicQuery += '\n\nAssistant: '
+  console.log('runGlass: anthropic', anthropicQuery)
+
+  const r = await fetch('https://api.anthropic.com/v1/complete', {
+    method: 'POST',
+    headers: {
+      // eslint-disable-next-line turbo/no-undeclared-env-vars
+      'X-API-Key': (options?.anthropicKey || process.env.ANTHROPIC_API_KEY)!,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: request.model,
+      prompt: anthropicQuery,
+      max_tokens_to_sample: 2048,
+      stopSequences: ['Human:', 'Assistant:'],
+      stream: true,
+    }),
+  })
+
+  const response = await handleStream(r, handleAnthropicChunk, next => {
+    if (!r.ok) {
+      throw new Error(`HTTP error: ${r.status}`)
+    }
+    if (options?.progress) {
+      return options.progress(
+        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+          messages: responses.concat(next.trim()),
+          requestBlocks,
+          streaming: true,
+          index: responses.length,
+        })
+      )
+    }
+  })
+
+  responses.push(response.trim())
+  messagesSoFar.push(...messages)
+  messagesSoFar.push({ role: 'assistant', content: response.trim() })
 
   return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
     messages: responses,
-    model,
+    requestBlocks,
     streaming: false,
-    index: i - 1,
+    index: responses.length - 1,
   })
 }
 
@@ -318,9 +335,10 @@ async function runGlassChatAnthropic(
  * Takes a glass template string and interpolation variables and outputs an array of chat messages you can use to prompt ChatGPT API (e.g. gpt-3.5-turbo or gpt-4).
  */
 async function runGlassCompletion(
-  fileName: string,
-  model: 'gpt-3.5-turbo',
-  interpolationArgs: any,
+  messages: ChatCompletionRequestMessage[],
+  messagesSoFar: ChatCompletionRequestMessage[],
+  responses: string[],
+  requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options?: {
     transcriptTokenCounter?: TokenCounter
@@ -333,81 +351,73 @@ async function runGlassCompletion(
   finalInterpolatedDoc: string
   rawResponse: string
 }> {
-  const messageBlocks = parseChatCompletionBlocks2(docs.interpolatedDoc, options?.transcriptTokenCounter)
-  const messagesSoFar: ChatCompletionRequestMessage[] = []
+  const request = requestBlocks[responses.length]
 
-  let i = 0
-  const responses: string[] = []
+  const messagesToUse = messagesSoFar.concat(messages)
+  const useChat = messagesToUse.length > 1
 
-  for (; i < messageBlocks.length; i++) {
-    const messages = messageBlocks[i]
-    const useChat = messages.length > 1
-
-    const messagesToUse = messagesSoFar.concat(messages)
-
-    let prompt = ''
-    let stopSequence: string | null = null
-    if (!useChat) {
-      prompt = messagesToUse[0].content
-    } else {
-      stopSequence = '\n\nHuman:'
-      for (const msg of messagesToUse) {
-        if (msg.role === 'assistant') {
-          prompt += `\n\nAssistant: ${msg.content}`
-        } else if (msg.role === 'user') {
-          prompt += `\n\nHuman: ${msg.content}`
-        } else if (msg.role === 'system') {
-          prompt += `\n\nHuman: ${msg.content}`
-        } else {
-          throw new Error(`Unknown role for completion query: ${msg.role}`)
-        }
+  let prompt = ''
+  let stopSequence: string | null = null
+  if (!useChat) {
+    prompt = messagesToUse[0].content
+  } else {
+    stopSequence = '\n\nHuman:'
+    for (const msg of messagesToUse) {
+      if (msg.role === 'assistant') {
+        prompt += `\n\nAssistant: ${msg.content}`
+      } else if (msg.role === 'user') {
+        prompt += `\n\nHuman: ${msg.content}`
+      } else if (msg.role === 'system') {
+        prompt += `\n\nHuman: ${msg.content}`
+      } else {
+        throw new Error(`Unknown role for completion query: ${msg.role}`)
       }
-      prompt += '\n\nAssistant: '
     }
-
-    console.log('runGlass: gpt3', prompt)
-
-    const r = await fetch('https://api.openai.com/v1/completions', {
-      method: 'POST',
-      headers: {
-        // eslint-disable-next-line turbo/no-undeclared-env-vars
-        Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt,
-        model: model,
-        stream: true,
-        stop: stopSequence,
-      }),
-    })
-
-    const response = await handleStream(r, handleCompletionChunk, next => {
-      if (!r.ok) {
-        throw new Error(`HTTP error: ${r.status}`)
-      }
-      if (options?.progress) {
-        return options.progress(
-          handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-            messages: responses.concat(next.trim()),
-            model,
-            streaming: true,
-            index: i,
-          })
-        )
-      }
-    })
-
-    responses.push(response.trim())
-    messagesSoFar.push(...messages)
-    messagesSoFar.push({ role: 'assistant', content: response.trim() })
+    prompt += '\n\nAssistant: '
   }
+
+  console.log('runGlass: gpt3', prompt)
+
+  const r = await fetch('https://api.openai.com/v1/completions', {
+    method: 'POST',
+    headers: {
+      // eslint-disable-next-line turbo/no-undeclared-env-vars
+      Authorization: `Bearer ${options?.openaiKey || process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt,
+      model: request.model,
+      stream: true,
+      stop: stopSequence,
+    }),
+  })
+
+  const response = await handleStream(r, handleCompletionChunk, next => {
+    if (!r.ok) {
+      throw new Error(`HTTP error: ${r.status}`)
+    }
+    if (options?.progress) {
+      return options.progress(
+        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+          messages: responses.concat(next.trim()),
+          requestBlocks,
+          streaming: true,
+          index: responses.length,
+        })
+      )
+    }
+  })
+
+  responses.push(response.trim())
+  messagesSoFar.push(...messages)
+  messagesSoFar.push({ role: 'assistant', content: response.trim() })
 
   return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
     messages: responses,
-    model,
+    requestBlocks,
     streaming: false,
-    index: i - 1,
+    index: responses.length - 1,
   })
 }
 
@@ -427,6 +437,8 @@ async function handleStream(
   let fullResult = ''
   const decoder = new TextDecoder()
 
+  let buffer = ''
+
   await new Promise((resolve, reject) => {
     const readStream = new Readable().wrap(r.body as any)
 
@@ -439,12 +451,24 @@ async function handleStream(
           if (content === '[DONE]') {
             return
           }
+          buffer = content
           try {
-            const eventData = JSON.parse(content)
+            const eventData = JSON.parse(buffer)
             fullResult = processChunk(fullResult, eventData)
             progress(fullResult)
+            buffer = ''
           } catch (e) {
-            console.error('runGlass: error parsing event data', e)
+            // ignore
+          }
+        } else if (buffer !== '') {
+          buffer += line
+          try {
+            const eventData = JSON.parse(buffer)
+            fullResult = processChunk(fullResult, eventData)
+            progress(fullResult)
+            buffer = ''
+          } catch (e) {
+            // ignore
           }
         }
       }

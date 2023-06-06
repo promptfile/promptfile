@@ -13,12 +13,11 @@ ${foo} and {foo}
 </User>`
     return {
       fileName: 'nonInterpolationSequence',
-      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: '<User>\n${foo} and {foo}\n</User>',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      onResponse: undefined,
+      requestBlocks: [],
     }
   }
 

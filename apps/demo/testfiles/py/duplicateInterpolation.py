@@ -12,7 +12,7 @@ def getDuplicateInterpolationPrompt(interpolationArgs = {}):
     }
         return {
             "fileName": "duplicateInterpolation",
-            "model": "gpt-3.5-turbo",
+            "requestBlocks": [  ],
             "state": {},
             "originalDoc": "---\nlanguage: python\n---\n\n<User>\n${foo} ${bar} ${foo}\n${bar}\n</User>",
             "interpolationArgs": opt["args"],
@@ -21,6 +21,5 @@ def getDuplicateInterpolationPrompt(interpolationArgs = {}):
         }
     
     testData = get_test_data()
-    args = { "args": testData }
-    args.update(interpolationArgs)
-    return json.dumps(compile(args))
+    testData.update(interpolationArgs)
+    return json.dumps(compile({ "args": testData }))

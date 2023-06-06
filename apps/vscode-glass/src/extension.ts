@@ -1,8 +1,8 @@
 import {
   parseGlassMetadata,
   parseGlassMetadataPython,
-  transpileGlassNext,
   transpileGlassPython,
+  transpileGlassTypescript,
 } from '@glass-lang/glassc'
 import { LANGUAGE_MODELS, LanguageModelCreator, parseGlassBlocksRecursive } from '@glass-lang/glasslib'
 import fs from 'fs'
@@ -212,7 +212,7 @@ export async function activate(context: vscode.ExtensionContext) {
             if (languageMode === 'python') {
               output = await transpileGlassPython(folderPath, folderPath, languageMode, outDir)
             } else {
-              output = transpileGlassNext(folderPath, folderPath, languageMode, outDir)
+              output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir)
             }
 
             const extension = languageMode === 'python' ? 'py' : languageMode === 'javascript' ? 'js' : 'ts'

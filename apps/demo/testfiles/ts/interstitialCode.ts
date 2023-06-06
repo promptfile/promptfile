@@ -17,12 +17,11 @@ ${foo}
 const baz = "bar"`
     return {
       fileName: 'interstitialCode',
-      model: 'gpt-3.5-turbo',
       interpolatedDoc: TEMPLATE,
       originalDoc: 'const foo = "bar"\n<User>\n${foo}\n</User>\nconst baz = "bar"',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      onResponse: undefined,
+      requestBlocks: [],
     }
   }
 
