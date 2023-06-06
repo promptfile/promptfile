@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "foundation-ui/glass"
+      "repo": "glass-lang/glass"
     }
   ],
   "commit": false,

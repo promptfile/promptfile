@@ -68,4 +68,4 @@ npm run dev
 
 ## License
 
-MIT © [Foundation](https://foundation-ui.com)
+MIT © [Glass Platform](https://platform.glass)
