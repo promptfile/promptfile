@@ -17,7 +17,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
 
   const CodeBlock = ({ language, value }: { language: string; value: string }) => {
     return (
-      <div style={{ width: '100%', borderRadius: '4px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
         <div
           style={{
             fontSize: '12px',
@@ -115,7 +115,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 width: '100%',
               }}
             >
-              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between', paddingBottom: '4px' }}>
+              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                 <span
                   style={{
                     fontWeight: 'bold',
