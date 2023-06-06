@@ -12,7 +12,7 @@ const config: DocsThemeConfig = {
       }
     }
     return {
-      titleTemplate: 'Glass - next gen LLM framework',
+      titleTemplate: 'Glass - declarative LLM framework',
       description: 'Glass is a declarative framework for building applications using large language models (LLMs).',
     }
   },
