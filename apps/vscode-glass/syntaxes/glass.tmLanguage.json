@@ -48,9 +48,6 @@
       "include": "#for-element"
     },
     {
-      "include": "#flow-expression"
-    },
-    {
       "include": "SOURCE_LANGUAGE"
     }
   ],
@@ -59,12 +56,20 @@
       "begin": "^(.*)(\\$\\{)",
       "end": "(\\})(.*)$",
       "beginCaptures": {
-        "1": { "name": "text.html.markdown" },
-        "2": { "name": "source.glass.flow.punctuation" }
+        "1": {
+          "name": "text.html.markdown"
+        },
+        "2": {
+          "name": "source.glass.flow.punctuation"
+        }
       },
       "endCaptures": {
-        "1": { "name": "source.glass.flow.punctuation" },
-        "2": { "name": "text.html.markdown" }
+        "1": {
+          "name": "source.glass.flow.punctuation"
+        },
+        "2": {
+          "name": "text.html.markdown"
+        }
       },
       "patterns": [
         {
@@ -161,8 +166,12 @@
     "system-element": {
       "begin": "^(<)(System)([^>]*)(>)$",
       "beginCaptures": {
-        "1": { "name": "punctuation.definition.tag.end.jsx" },
-        "2": { "name": "source.glass.system.name" },
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.system.name"
+        },
         "3": {
           "patterns": [
             {
@@ -185,7 +194,9 @@
             }
           ]
         },
-        "4": { "name": "punctuation.definition.tag.end.jsx" }
+        "4": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
       },
       "patterns": [
         {
@@ -214,8 +225,12 @@
     "assistant-element": {
       "begin": "^(<)(Assistant)([^>]*)(>)$",
       "beginCaptures": {
-        "1": { "name": "punctuation.definition.tag.end.jsx" },
-        "2": { "name": "source.glass.assistant.name" },
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.assistant.name"
+        },
         "3": {
           "patterns": [
             {
@@ -238,7 +253,9 @@
             }
           ]
         },
-        "4": { "name": "punctuation.definition.tag.end.jsx" }
+        "4": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
       },
       "patterns": [
         {
@@ -298,8 +315,12 @@
     "text-element": {
       "begin": "^(<)(Text)([^>]*)(>)$",
       "beginCaptures": {
-        "1": { "name": "punctuation.definition.tag.end.jsx" },
-        "2": { "name": "source.glass.text.name" },
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.text.name"
+        },
         "3": {
           "patterns": [
             {
@@ -322,7 +343,9 @@
             }
           ]
         },
-        "4": { "name": "punctuation.definition.tag.end.jsx" }
+        "4": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
       },
       "end": "^(<\\/)(Text)(>)$",
       "endCaptures": {
@@ -348,8 +371,12 @@
     "user-element": {
       "begin": "^(<)(User)([^>]*)(>)$",
       "beginCaptures": {
-        "1": { "name": "punctuation.definition.tag.end.jsx" },
-        "2": { "name": "source.glass.user.name" },
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.user.name"
+        },
         "3": {
           "patterns": [
             {
@@ -372,7 +399,9 @@
             }
           ]
         },
-        "4": { "name": "punctuation.definition.tag.end.jsx" }
+        "4": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
       },
       "end": "^(<\\/)(User)(>)$",
       "endCaptures": {
