@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { CopyButton } from './CopyButton'
 
 interface TranscriptViewProps {
   blocks: GlassContent[]
@@ -14,12 +15,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
 
-  // Define a Markdown syntax highlighting component
   const CodeBlock = ({ language, value }: { language: string; value: string }) => {
-    const handleCopy = () => {
-      navigator.clipboard.writeText(value).catch(err => console.error('Could not copy text: ', err))
-    }
-
     return (
       <div style={{ width: '100%', borderRadius: '4px', display: 'flex', flexDirection: 'column' }}>
         <div
@@ -31,18 +27,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
           }}
         >
           <div style={{ opacity: 0.5 }}>{language}</div>
-          <div
-            onMouseEnter={(event: any) => {
-              event.target.style.opacity = '1.0'
-            }}
-            onMouseLeave={(event: any) => {
-              event.target.style.opacity = '0.5'
-            }}
-            style={{ cursor: 'pointer', opacity: 0.5 }}
-            onClick={handleCopy}
-          >
-            Copy
-          </div>
+          <CopyButton value={value} />
         </div>
         <SyntaxHighlighter language={language} style={materialOceanic}>
           {value}
