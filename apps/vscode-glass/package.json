@@ -207,7 +207,7 @@
           "comments": "on",
           "strings": "on"
         },
-        "files.insertFinalNewline": false,
+        "files.insertFinalNewline": false
       },
       "editor.tokenColorCustomizations": {
         "textMateRules": [
