@@ -240,7 +240,12 @@ context.response = ${getGlassExportName(fileName)}()`,
   const script = new vm.Script(bundledCode, { filename: 'outputFile.js' })
   const context: any = {}
   const ctx = {
-    console,
+    console: {
+      log(...args: any[]) {
+        console.log(args)
+        outputChannel.appendLine(args.join(' '))
+      },
+    },
     context,
     global,
     process,

@@ -34,6 +34,7 @@ export async function executeGlassFile(
       openaiKey: openaiKey || '',
       anthropicKey: anthropicKey || '',
       progress,
+      output: outputChannel.appendLine,
     })
   }
   const parsedDoc = parseGlassDocument(content)
@@ -51,6 +52,7 @@ export async function executeGlassFile(
     // have to shell out since we have imports
     // const parsedImports = parseTsImports(nonGlassImports)
     // const moduleImports = parsedImports
+
     //   .filter(i => !i.path.startsWith('.') && !nodeDefaultModules.has(i.path))
     //   .map(i => i.path)
     return await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs, progress)
@@ -66,7 +68,7 @@ export async function executeGlassFile(
     progress
   )
   checkOk(c.length >= 0, 'No transpiler output generated')
-  return await runGlass(c[0], {
+  const res = await runGlass(c[0], {
     transcriptTokenCounter: {
       countTokens: countTokens,
       maxTokens: maxTokensForModel,
@@ -74,5 +76,7 @@ export async function executeGlassFile(
     openaiKey: openaiKey || '',
     anthropicKey: anthropicKey || '',
     progress,
+    output: outputChannel.appendLine,
   })
+  return res
 }

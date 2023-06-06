@@ -46,6 +46,7 @@ export async function runGlass(
     openaiKey?: string
     anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+    output?: (line: string) => void
   } = {
     transcriptTokenCounter: {
       countTokens: () => 0,
@@ -214,6 +215,7 @@ async function runGlassChat(
     transcriptTokenCounter: TokenCounter
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+    output?: (line: string) => void
   }
 ): Promise<{
   finalDoc: string
@@ -223,6 +225,10 @@ async function runGlassChat(
   const request = requestBlocks[responseData.length]
 
   console.log('runGlass: chat-gpt', messagesSoFar.concat(messages))
+  if (options.output) {
+    options.output('runGlass: chat-gpt')
+    options.output(JSON.stringify(messagesSoFar.concat(messages), null, 2))
+  }
 
   const requestTokens = options.transcriptTokenCounter.countTokens(
     messagesSoFar
@@ -299,6 +305,7 @@ async function runGlassChatAnthropic(
     openaiKey?: string
     anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+    output?: (line: string) => void
   }
 ): Promise<{
   finalDoc: string
@@ -320,6 +327,10 @@ async function runGlassChatAnthropic(
   }
   anthropicQuery += '\n\nAssistant: '
   console.log('runGlass: anthropic', anthropicQuery)
+  if (options.output) {
+    options.output('runGlass: anthropic')
+    options.output(anthropicQuery)
+  }
 
   const requestTokens = options.transcriptTokenCounter.countTokens(anthropicQuery, request.model)
 
@@ -386,6 +397,7 @@ async function runGlassCompletion(
     args?: any
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+    output?: (line: string) => void
   }
 ): Promise<{
   finalDoc: string
@@ -418,6 +430,10 @@ async function runGlassCompletion(
   }
 
   console.log('runGlass: gpt3', prompt)
+  if (options.output) {
+    options.output('runGlass: gpt3')
+    options.output(prompt)
+  }
 
   console.log({
     prompt,
