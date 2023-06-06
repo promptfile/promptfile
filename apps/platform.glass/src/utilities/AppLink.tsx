@@ -3,13 +3,11 @@ import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useCallback } from 'react'
 
-export interface AppLinkProps extends React.PropsWithChildren<NextLinkProps & ChakraLinkProps> {}
-
-export function AppLink(props: AppLinkProps) {
+export function AppLink(props: React.PropsWithChildren<NextLinkProps & ChakraLinkProps>) {
   const { children, ...p } = props
   return (
     // https://dev.to/yuridevat/how-to-add-styling-to-an-active-link-in-nextjs-593e
-    <NextLink {...(p as any)} passHref>
+    <NextLink {...(p as any)} passHref legacyBehavior={true}>
       <ChakraLink _hover={{ textDecoration: 'none' }} {...p}>
         {children}
       </ChakraLink>

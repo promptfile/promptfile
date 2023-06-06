@@ -13,7 +13,7 @@ export function scrollToView(elementId: string) {
   }
 }
 
-export function openUrl(url: string, newTab: boolean = false) {
+export function openUrl(url: string, newTab = false) {
   if (newTab) {
     const openedWindow = window.open(url, '_blank')
     if (openedWindow) {

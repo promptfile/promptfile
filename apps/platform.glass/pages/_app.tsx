@@ -13,9 +13,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     theme
   )
 
+  const C = Component as any
+
   return (
     <ChakraProvider theme={myTheme} resetCSS>
-      <Component {...pageProps} />
+      <C {...pageProps} />
     </ChakraProvider>
   )
 }
