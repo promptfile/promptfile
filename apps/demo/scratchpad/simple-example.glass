@@ -2,4 +2,4 @@
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-<Chat model="gpt-3.5-turbo" />
+<Request model="gpt-3.5-turbo" />

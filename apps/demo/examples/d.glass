@@ -3,6 +3,9 @@
 // We're going to recreate the SimpleSequential chain from LangChain's documentation (https://python.langchain.com/en/latest/modules/chains/generic/sequential_chains.html).  Chaining is as simple as using multiple Request elements in a single Glass file.
 
 // First, let's get the title of the play from the user.
+
+console.log(title)
+
 <User>
 You are a highly-skilled playwright. Below, I will provide the title of a fictional play. Please respond with a full synopsis of the play based on my title.
 
@@ -17,4 +20,4 @@ Title: "${title}"
 You are now a play critic from the New York Times. Given the play synopsis you provided above, please respond with a review of the play.
 </User>
 
-<Request model="gpt-3.5-turbo" />
+<Request model="gpt-4" />

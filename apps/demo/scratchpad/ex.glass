@@ -1,4 +1,6 @@
+<System>
 You are ChatGPT.
+</System>
 
 <User>
 Hey, how are you?
@@ -14,4 +16,4 @@ I'm great! How can I help yoou today?
 ${input}
 </User>
 
-Please respond to the user in the style of a pirate.
+<Request model="gpt-3.5-turbo" />
