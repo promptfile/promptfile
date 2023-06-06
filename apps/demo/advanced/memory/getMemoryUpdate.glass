@@ -12,9 +12,11 @@ const handleResponse = (response: any) => {
 }
 
 <System>
-Read the Message provided by the user.  First, determine whether the User agreed to remember information based on the conversation.  If the User did agree to remember information, return the updated Profile as fenced JSON with the addition of the new infromation provided by the user.
+Read the Message provided by the User.  
 
-If the user did not agree to remember information, simply reply NO_ACTION
+First, determine whether the User agreed to remember information based on the conversation.  If the User did agree to remember information, return the updated Profile as fenced JSON with the addition of the new infromation provided by the user.
+
+If the user did not agree to remember information, simply reply `NO_ACTION`
 </System>
 
 <User>

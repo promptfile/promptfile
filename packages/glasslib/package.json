@@ -21,8 +21,8 @@
   "homepage": "https://github.com/glass-lang/glass",
   "bugs": "https://github.com/glass-lang/glass/issues",
   "authors": [
-    "John Rothfels <john@foundation-ui.com>",
-    "Elliott Burris <elliott@foundation-ui.com>"
+    "John Rothfels <john@platform.glass>",
+    "Elliott Burris <elliott@platform.glass>"
   ],
   "files": [
     "dist",
