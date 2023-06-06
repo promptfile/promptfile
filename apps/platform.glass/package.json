@@ -7,9 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export",
-    "deploy": "bash ./script/deploy.sh",
-    "deploy-splash": "bash ./script/deploy-splash.sh"
+    "export": "next export"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.1.7",
