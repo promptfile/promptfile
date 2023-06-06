@@ -173,9 +173,9 @@ __metadata:
   linkType: hard
 
 "@glass-lang/glasslib@npm:*":
-  version: 0.0.10
-  resolution: "@glass-lang/glasslib@npm:0.0.10"
-  checksum: 122214b8688bdca6756f0bed1533eba4bee72e05de317bf5f10c6cc7739f28f9f96391aa65f9eef78076ba819b352476b3b23f90739eaf5b322e51d23da93a90
+  version: 0.0.11
+  resolution: "@glass-lang/glasslib@npm:0.0.11"
+  checksum: 768d951405c0019851c8457ffa257414ef785225e60ff53abdd21a8b92983ff981d85cdd09077aa87b90efe0e6fc8388eb4091ecda75fb515667bf15f2a086ef
   languageName: node
   linkType: hard
 
