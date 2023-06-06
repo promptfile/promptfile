@@ -185,6 +185,7 @@ export async function createPlayground(
           const newSessionFile = await vscode.workspace.openTextDocument(sessionFilepath)
           await vscode.window.showTextDocument(newSessionFile, {
             viewColumn: getCurrentViewColumn(playgrounds),
+            preview: false,
           })
         } catch {
           await vscode.window.showErrorMessage('Unable to open session file')
