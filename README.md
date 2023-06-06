@@ -19,7 +19,8 @@ This project uses npm workspaces and [Turborepo](https://turbo.build/).
 ### `apps/`
 
 - `vscode-glass`: VS Code extension for Glass
-- `docs`: a Next.js/Nextra app serving [docs.glass](https://docs.glass/)
+- `platform.glass`: a Next.js app serving [platform.glass](https://platform.glass/)
+- `docs.glass`: a Next.js/Nextra app serving [docs.glass](https://docs.glass/)
 - `demo`: examples of using Glass, some of these are in active development and may not currently work
 
 ### `packages/`

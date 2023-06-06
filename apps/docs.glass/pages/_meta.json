@@ -6,5 +6,11 @@
   "blocks": "Blocks",
   "playground": "Playground",
   "languages": "Languages",
-  "models": "Models"
+  "models": "Models",
+  "contact": {
+    "title": "Platform ↗",
+    "type": "page",
+    "href": "https://platform.glass",
+    "newWindow": true
+  }
 }
