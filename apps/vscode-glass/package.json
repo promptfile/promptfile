@@ -191,6 +191,7 @@
       },
       "[glass-py]": {
         "editor.formatOnSave": true,
+        "editor.defaultFormatter": "foundation.vscode-glass",
         "editor.quickSuggestions": {
           "other": "on",
           "comments": "on",
@@ -200,12 +201,13 @@
       },
       "[glass-ts]": {
         "editor.formatOnSave": true,
+        "editor.defaultFormatter": "foundation.vscode-glass",
         "editor.quickSuggestions": {
           "other": "on",
           "comments": "on",
           "strings": "on"
         },
-        "files.insertFinalNewline": false
+        "files.insertFinalNewline": false,
       },
       "editor.tokenColorCustomizations": {
         "textMateRules": [

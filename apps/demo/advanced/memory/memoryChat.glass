@@ -4,22 +4,20 @@ language: typescript
 
 import getMemoryUpdate from './getMemoryUpdate.glass'
 
-const [profile, setProfile] = useState("{}")
+const [profile, setProfile] = useState('{}')
 
 // make this async so that we can await the memory update
 const handleResponse = async (response: any) => {
-  console.log("handling response: " + response.message)
   const updatedProfile = await getMemoryUpdate({
     profile: profile,
     message: response.message,
   })
   if (updatedProfile.length > 0) {
-    console.log("updating profile")
     setProfile(updatedProfile)
   }
 }
 
-console.log("TESTING")
+
 
 <System>
 You are ChatGPT. You exist to interact with the User. Here is the User's profile:

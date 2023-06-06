@@ -1,7 +1,3 @@
----
-language: typescript
----
-
 const useGandhi = true
 
 <System>

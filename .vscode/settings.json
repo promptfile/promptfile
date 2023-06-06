@@ -25,8 +25,5 @@
     "dist": true
   },
   // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-  "typescript.tsc.autoDetect": "off",
-  "[glass-ts]": {
-    "editor.defaultFormatter": "foundation.vscode-glass"
-  }
+  "typescript.tsc.autoDetect": "off"
 }
