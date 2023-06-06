@@ -73,9 +73,14 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
     const c: any = await compile({ args: { ...t, ...(${JSON.stringify(inputs || {})}) } })
     res.push(c)
   }
-  const ret = await runGlass(res[0], { progress: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => {
-    console.log('glass-progress: ' + JSON.stringify(data))
-  } })
+  const ret = await runGlass(res[0], {
+    transcriptTokenCounter: {
+      countTokens: () => 0,
+      maxTokens: () => Infinity,
+    },
+    progress: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => {
+      console.log('glass-progress: ' + JSON.stringify(data))
+    } })
   console.log('glass-result: ' +  JSON.stringify(ret))
 })()
 `,
