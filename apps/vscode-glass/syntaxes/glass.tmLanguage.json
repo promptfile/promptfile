@@ -192,6 +192,9 @@
           "include": "#flow-expression"
         },
         {
+          "include": "#text-element"
+        },
+        {
           "include": "text.html.markdown"
         }
       ],
@@ -242,6 +245,9 @@
           "include": "#flow-expression"
         },
         {
+          "include": "#text-element"
+        },
+        {
           "include": "text.html.markdown"
         }
       ],
@@ -290,47 +296,54 @@
       }
     },
     "text-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Text)(?=[\\s\\/\\>\\{])",
+      "begin": "^(<)(Text)([^>]*)(>)$",
       "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.jsx" },
+        "2": { "name": "source.glass.text.name" },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attributes-illegal"
+            }
+          ]
+        },
+        "4": { "name": "punctuation.definition.tag.end.jsx" }
+      },
+      "end": "^(<\\/)(Text)(>)$",
+      "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
+          "name": "source.glass.text.name"
         },
         "3": {
-          "name": "source.glass.text.name"
+          "name": "punctuation.definition.tag.end.jsx"
         }
       },
       "patterns": [
         {
-          "include": "source.tsx#jsx-tag-attribute-name"
+          "include": "#flow-expression"
         },
         {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attributes-illegal"
+          "include": "text.html.markdown"
         }
-      ],
-      "end": "(?:(\\/)\\s*)?(>)",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
-        },
-        "2": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
+      ]
     },
     "user-element": {
       "begin": "^(<)(User)([^>]*)(>)$",
@@ -376,6 +389,9 @@
       "patterns": [
         {
           "include": "#flow-expression"
+        },
+        {
+          "include": "#text-element"
         },
         {
           "include": "text.html.markdown"

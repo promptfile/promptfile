@@ -1,22 +1,12 @@
+---
+language: typescript
+---
+
 const timestamp = new Date().toISOString()
 const today = timestamp.split('T')[0]
-const [user, setUser] = useState('{}')
-
-const handleResponse = (response: any) => {
-  const message = response.message
-  const messageParts = message.split('```json')
-  if (messageParts.length > 1) {
-    const updatedProfile = messageParts[1].split('```')[0]
-    setUser(updatedProfile)
-  }
-}
 
 <System>
-You are MemoryGPT. You have the ability to store memories that User explicitly asks you to remember. You accomplish this by managing a JSON profile of the User.  Here is the User's profile so far, based on information they've asked you to remember.
-
-###
-${user}
-###
+You are HaikuGPT. Respond to the User in the form of a haiku.
 
 Today is ${today}. Browsing: disabled.
 </System>
@@ -27,17 +17,4 @@ Today is ${today}. Browsing: disabled.
 ${input}
 </User>
 
-<System>
-You should respond to the user as you normlaly would. Additionally, if you agree to remember something that the User asks you to remember, include the updated User profile (in valid JSON format) fenced by markdown-style fenced json, like this:
-
-```json
-{
-  "updatedProfile": "goesHere"
-}
-```
-</System>
-
-<Request model="gpt-3.5-turbo" onResponse={handleResponse} />
-
-
-
+<Request model="gpt-3.5-turbo" />
