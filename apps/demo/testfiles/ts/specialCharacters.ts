@@ -25,7 +25,15 @@ You are a ${role}.
         'const type = \'assistant\'\nconst role = `helpful ${type}`\n\n<System>\nYou are a ${role}.\n</System>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [{ model: 'gpt-3.5-turbo', onResponse: undefined }],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
     }
   }
 

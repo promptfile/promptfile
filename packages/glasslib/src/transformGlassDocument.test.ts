@@ -208,7 +208,7 @@ hello world
 <Request model="gpt-4" />`
 
       const res = handleRequestNode(origDoc, interpDoc, {
-        messages: [''],
+        responseData: [{ response: '' }],
         streaming: true,
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
@@ -223,7 +223,7 @@ language: typescript
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 █
 </Assistant>
 </Transcript>
@@ -257,7 +257,7 @@ hello world
 <Request model="gpt-4" />`
 
       const res = handleRequestNode(origDoc, interpDoc, {
-        messages: [''],
+        responseData: [{ response: '' }],
         streaming: true,
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
@@ -268,7 +268,7 @@ language: typescript
 ---
 
 <Transcript>
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 █
 </Assistant>
 </Transcript>
@@ -310,7 +310,7 @@ You are a play critic from the New York Times. Given the synopsis you provided a
 <Request model="gpt-4" />`
 
       const res = handleRequestNode(origDoc, interpDoc, {
-        messages: ['goodbye', 'world'],
+        responseData: [{ response: 'goodbye' }, { response: 'world' }],
         streaming: false,
         requestBlocks: [{ model: 'gpt-3.5-turbo' }, { model: 'gpt-4' }],
         index: 1,
@@ -323,7 +323,7 @@ You are a playwright. Given the title of a play, it is your job to write a synop
 Title: hello world
 </User>
 
-<Assistant model="gpt-3.5-turbo" temperature="1">
+<Assistant model="gpt-3.5-turbo" temperature={1}>
 goodbye
 </Assistant>
 
@@ -331,7 +331,7 @@ goodbye
 You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 world
 </Assistant>
 </Transcript>
@@ -377,7 +377,7 @@ hello world
 <Request model="gpt-3.5-turbo" />`
 
       const res = handleRequestNode(origDoc, interpDoc, {
-        messages: [''],
+        responseData: [{ response: '' }],
         streaming: true,
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
@@ -394,7 +394,7 @@ You are a helpful assistant.
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 █
 </Assistant>
 </Transcript>
@@ -420,7 +420,7 @@ hello world
 <Request model="gpt-4" />`
 
       const res = handleRequestNode(origDoc, interpDoc, {
-        messages: [''],
+        responseData: [{ response: '' }],
         streaming: true,
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
@@ -435,7 +435,7 @@ hello world
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 █
 </Assistant>
 </Transcript>
@@ -449,7 +449,7 @@ hello world
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 how are you doing?
 </Assistant>
 </Transcript>
@@ -465,7 +465,7 @@ how are you doing?
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 how are you doing?
 </Assistant>
 </Transcript>
@@ -477,7 +477,7 @@ goodbye world
 <Request model="gpt-4" />`
 
       const res = handleRequestNode(origDoc, interpDoc, {
-        messages: [''],
+        responseData: [{ response: '' }],
         streaming: true,
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
@@ -488,7 +488,7 @@ goodbye world
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 how are you doing?
 </Assistant>
 
@@ -496,7 +496,7 @@ how are you doing?
 goodbye world
 </User>
 
-<Assistant model="gpt-4" temperature="1">
+<Assistant model="gpt-4" temperature={1}>
 █
 </Assistant>
 </Transcript>

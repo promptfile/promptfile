@@ -80,10 +80,16 @@ describe('runTranspiledGlass', () => {
       },
       requestBlocks: [
         {
+          maxTokens: undefined,
+          stopSequence: undefined,
+          temperature: undefined,
           model: 'gpt-3.5-turbo',
           onResponse: undefined,
         },
         {
+          maxTokens: undefined,
+          stopSequence: undefined,
+          temperature: undefined,
           model: 'gpt-3.5-turbo',
           onResponse: undefined,
         },

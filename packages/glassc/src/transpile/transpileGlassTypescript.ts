@@ -107,7 +107,13 @@ export function transpileGlassFileTypescript(
     codeSanitizedDoc += content
   }
 
-  const requestBlocks: { model: string; onResponse?: string }[] = []
+  const requestBlocks: {
+    model: string
+    onResponse?: string
+    maxTokens?: string
+    temperature?: string
+    stopSequence?: string
+  }[] = []
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
@@ -128,12 +134,32 @@ export function transpileGlassFileTypescript(
       // we don't currently support dynamic model values
       const model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : 'gpt-3.5-turbo'
 
-      const onResponseAttr = jsxNode.attrs!.find(a => a.name === 'onResponse')
-      if (onResponseAttr?.expressionValue) {
-        requestBlocks.push({ model, onResponse: onResponseAttr.expressionValue })
-      } else {
-        requestBlocks.push({ model, onResponse: 'undefined' })
+      const maxTokensAttr = jsxNode.attrs!.find(a => a.name === 'maxTokens')
+      const maxTokens = maxTokensAttr
+        ? maxTokensAttr.stringValue || JSON.parse(maxTokensAttr.expressionValue!)
+        : 'undefined'
+
+      const temperatureAttr = jsxNode.attrs!.find(a => a.name === 'temperature')
+      const temperature = temperatureAttr
+        ? temperatureAttr.stringValue || JSON.parse(temperatureAttr.expressionValue!)
+        : 'undefined'
+
+      const stopSequenceAttr = jsxNode.attrs!.find(a => a.name === 'stopSequence')
+      let stopSequence: string[] | undefined = undefined
+      if (stopSequenceAttr?.stringValue) {
+        stopSequence = [stopSequenceAttr.stringValue]
+      } else if (stopSequenceAttr?.stringValue) {
+        const parsedStopSequence = JSON.parse(stopSequenceAttr.expressionValue!)
+        if (Array.isArray(parsedStopSequence)) {
+          stopSequence = parsedStopSequence
+        }
+        stopSequence = [parsedStopSequence]
       }
+
+      const onResponseAttr = jsxNode.attrs!.find(a => a.name === 'onResponse')
+      const onResponse = onResponseAttr ? onResponseAttr.expressionValue : 'undefined'
+
+      requestBlocks.push({ model, onResponse, maxTokens, temperature, stopSequence: JSON.stringify(stopSequence) })
       continue
     }
     const jsxString = originalDoc.substring(jsxNode.position.start.offset, jsxNode.position.end.offset)
@@ -281,7 +307,12 @@ export function ${exportName}() {
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [
-        ${requestBlocks.map(b => `{ model: '${b.model}', onResponse: ${b.onResponse} }`).join(',\n')}
+        ${requestBlocks
+          .map(
+            b =>
+              `{ model: '${b.model}', onResponse: ${b.onResponse}, temperature: ${b.temperature}, maxTokens: ${b.maxTokens}, stopSequence: ${b.stopSequence} }`
+          )
+          .join(',\n')}
       ],
     }
   }

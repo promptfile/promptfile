@@ -28,7 +28,7 @@ export async function executeTestSuite(
         await runGlass(output, {
           transcriptTokenCounter: {
             countTokens: countTokens,
-            maxTokens: maxTokensForModel(c[0].model),
+            maxTokens: maxTokensForModel,
           },
           openaiKey: openaiKey || '',
           anthropicKey: anthropicKey || '',

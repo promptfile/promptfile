@@ -1,5 +1,6 @@
 import { parseGlassBlocks } from './parseGlassBlocks'
 import { removeGlassComments } from './removeGlassComments'
+import { RequestData } from './runGlass'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
@@ -8,20 +9,14 @@ export interface ChatCompletionRequestMessage {
 }
 
 export interface TokenCounter {
-  countTokens: (str: string) => number
+  countTokens: (str: string, model: string) => number
   // maximum number of tokens allowable by model
-  maxTokens: number
+  maxTokens: (model: string) => number
   // number of tokens to reserve
   reserveCount?: number
 }
 
-export function parseChatCompletionBlocks(
-  content: string,
-  transcriptTokenCounter: TokenCounter = {
-    countTokens: () => 0,
-    maxTokens: Infinity,
-  }
-): ChatCompletionRequestMessage[] {
+export function parseChatCompletionBlocks(content: string): ChatCompletionRequestMessage[] {
   const doc = removeGlassComments(content)
 
   // first interpolate the jsx interpolations
@@ -32,23 +27,6 @@ export function parseChatCompletionBlocks(
   for (const node of nodes.filter(n => n.type === 'block')) {
     let role = node.tag?.toLowerCase()
     let blockContent = node.child!.content
-    if (role === 'transcript') {
-      const transcriptContent = node.child!.content
-      const transcriptNodes = parseChatCompletionBlocks(transcriptContent)
-
-      const transcriptNodesReversed = transcriptNodes.slice().reverse()
-      let totalNumTokensUsed = 0
-      const transcriptNodesToKeep = transcriptNodesReversed.filter(n => {
-        totalNumTokensUsed += transcriptTokenCounter.countTokens(n.content)
-        const amountToReserve = transcriptTokenCounter.reserveCount || transcriptTokenCounter.maxTokens / 5
-        return transcriptTokenCounter.maxTokens === Infinity
-          ? true
-          : transcriptTokenCounter.maxTokens - amountToReserve >= totalNumTokensUsed
-      })
-
-      res.push(...transcriptNodesToKeep.slice().reverse())
-      continue
-    }
     if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
       continue // ignore
     }
@@ -72,9 +50,10 @@ export function parseChatCompletionBlocks(
 
 export function parseChatCompletionBlocks2(
   content: string,
+  requestBlocks: RequestData[],
   transcriptTokenCounter: TokenCounter = {
     countTokens: () => 0,
-    maxTokens: Infinity,
+    maxTokens: () => Infinity,
   }
 ): ChatCompletionRequestMessage[][] {
   const doc = removeGlassComments(content)
@@ -90,9 +69,11 @@ export function parseChatCompletionBlocks2(
     if (node.tag === 'Request') {
       res.push(currBlock)
       currBlock = []
+      continue
     }
     let role = node.tag?.toLowerCase()
     let blockContent = node.child!.content
+    const currRequestBlock = requestBlocks[res.length]
     if (role === 'transcript') {
       const transcriptContent = node.child!.content
       const transcriptNodes = parseChatCompletionBlocks(transcriptContent)
@@ -100,11 +81,12 @@ export function parseChatCompletionBlocks2(
       const transcriptNodesReversed = transcriptNodes.slice().reverse()
       let totalNumTokensUsed = 0
       const transcriptNodesToKeep = transcriptNodesReversed.filter(n => {
-        totalNumTokensUsed += transcriptTokenCounter.countTokens(n.content)
-        const amountToReserve = transcriptTokenCounter.reserveCount || transcriptTokenCounter.maxTokens / 5
-        return transcriptTokenCounter.maxTokens === Infinity
+        totalNumTokensUsed += transcriptTokenCounter.countTokens(n.content, 'foo')
+        const amountToReserve =
+          transcriptTokenCounter.reserveCount || transcriptTokenCounter.maxTokens(currRequestBlock?.model) / 5
+        return transcriptTokenCounter.maxTokens(currRequestBlock?.model) === Infinity
           ? true
-          : transcriptTokenCounter.maxTokens - amountToReserve >= totalNumTokensUsed
+          : transcriptTokenCounter.maxTokens(currRequestBlock?.model) - amountToReserve >= totalNumTokensUsed
       })
 
       currBlock.push(...transcriptNodesToKeep.slice().reverse())

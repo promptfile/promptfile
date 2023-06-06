@@ -1,3 +1,4 @@
+import { LANGUAGE_MODELS } from './languageModels'
 import { GlassContent, parseGlassBlocks, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 import { RequestData } from './runGlass'
 
@@ -120,7 +121,7 @@ export function handleRequestNode(
   interpolatedDoc: string,
   request: {
     requestBlocks: RequestData[]
-    messages: string[]
+    responseData: { response: string; requestTokens?: number; responseTokens?: number }[]
     streaming: boolean
     requestTokens?: number
     responseTokens?: number
@@ -130,24 +131,19 @@ export function handleRequestNode(
   const parsedInterpolated = parseGlassBlocks(interpolatedDoc)
   const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
   const newRequestNode = requestNodeReplacement(
-    request.requestBlocks[request.index].model,
-    request.messages[request.messages.length - 1],
-    request.streaming,
-    {
-      requestTokens: request.requestTokens,
-      responseTokens: request.responseTokens,
-    }
+    request.requestBlocks[request.index],
+    request.responseData[request.responseData.length - 1],
+    request.streaming
   )
 
   const userAndAssistantBlocks: GlassContent[] = []
   let currRequest = 0
   for (const block of parsedInterpolated) {
     if (block.tag === 'Request') {
-      const model = request.requestBlocks[currRequest].model
-      if (currRequest < request.index && request.messages[currRequest] != null) {
+      if (currRequest < request.index && request.responseData[currRequest] != null) {
         userAndAssistantBlocks.push({
           tag: 'Assistant',
-          content: requestNodeReplacement(model, request.messages[currRequest], false),
+          content: requestNodeReplacement(request.requestBlocks[currRequest], request.responseData[currRequest], false),
         } as any)
       }
       currRequest++
@@ -191,31 +187,43 @@ export function handleRequestNode(
       interpolatedDoc,
       true
     ),
-    rawResponse: request.streaming ? '█' : request.messages[request.messages.length - 1],
+    rawResponse: request.streaming ? '█' : request.responseData[request.responseData.length - 1].response,
   }
 }
 
 const requestNodeReplacement = (
-  model: string,
-  message: string,
-  streaming: boolean,
-  tokens?: { requestTokens?: number; responseTokens?: number }
+  request: RequestData,
+  responseData: { response: string; requestTokens?: number; responseTokens?: number },
+  streaming: boolean
 ) => {
-  const args: Record<string, string> = {
-    model,
-    temperature: '1',
+  const args: Record<string, any> = {
+    model: request.model,
+    temperature: request.temperature || 1,
   }
-  if (tokens?.requestTokens) {
-    args.requestTokens = tokens.requestTokens.toString()
+  const model = LANGUAGE_MODELS.find(m => m.name === request.model)
+  if (request.maxTokens != null) {
+    args.maxTokens = request.maxTokens
   }
-  if (tokens?.responseTokens) {
-    args.responseTokens = tokens.responseTokens.toString()
+  if (request.stopSequence != null) {
+    args.stopSequence = request.stopSequence
+  }
+  let cost = 0
+  if (responseData.requestTokens) {
+    args.requestTokens = responseData.requestTokens
+    cost += model!.costPrompt(responseData.requestTokens)
+  }
+  if (responseData.responseTokens) {
+    args.responseTokens = responseData.responseTokens
+    cost += model!.costCompletion(responseData.responseTokens)
+  }
+  if (cost !== 0) {
+    args.cost = cost.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 5 })
   }
   const argAttributes: string = Object.entries(args).reduce((acc, [key, value]) => {
-    return acc + ` ${key}="${value}"`
+    return acc + ` ${key}=${typeof value === 'string' ? `"${value}"` : `{${JSON.stringify(value)}}`}`
   }, '')
   return `<Assistant${argAttributes}>
-${message}${streaming ? '█' : ''}
+${responseData.response}${streaming ? '█' : ''}
 </Assistant>`
 }
 

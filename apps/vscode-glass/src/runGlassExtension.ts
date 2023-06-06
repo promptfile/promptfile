@@ -29,7 +29,7 @@ export async function executeGlassFile(
     return await runGlass(c[0], {
       transcriptTokenCounter: {
         countTokens: countTokens,
-        maxTokens: maxTokensForModel(c[0].model),
+        maxTokens: maxTokensForModel,
       },
       openaiKey: openaiKey || '',
       anthropicKey: anthropicKey || '',
@@ -69,7 +69,7 @@ export async function executeGlassFile(
   return await runGlass(c[0], {
     transcriptTokenCounter: {
       countTokens: countTokens,
-      maxTokens: maxTokensForModel(c[0].model),
+      maxTokens: maxTokensForModel,
     },
     openaiKey: openaiKey || '',
     anthropicKey: anthropicKey || '',
