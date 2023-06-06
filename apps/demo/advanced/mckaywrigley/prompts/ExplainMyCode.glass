@@ -1,0 +1,19 @@
+const [first, setFirst] = useState(true)
+
+<System>
+Explain the given code. Be thorough, but explain it in a simple way that anyone could understand.
+
+Respond as a well-formatted markdown file that is organized into sections. Make sure to use code blocks.
+</System>
+
+<User if={first}>
+Explain my code:
+
+${code}
+</User>
+
+<User if={!first}>
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />

@@ -1,0 +1,10 @@
+<User>
+I need code that does the following:
+${description}
+
+Generate the code for me.
+
+Respond as a markdown code block.
+</User>
+
+<Request model="gpt-3.5-turbo" />
