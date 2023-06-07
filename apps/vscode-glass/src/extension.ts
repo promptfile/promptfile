@@ -168,10 +168,20 @@ export async function activate(context: vscode.ExtensionContext) {
       outputChannel.show()
     }),
     vscode.commands.registerCommand('glass.openPlayground', async () => {
-      const workspaceFolder = vscode.workspace.workspaceFolders?.[0]
+      const activeEditor = vscode.window.activeTextEditor
+      let workspaceFolder
+
+      if (activeEditor) {
+        workspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri)
+      } else {
+        const workspaceFolders = vscode.workspace.workspaceFolders
+        if (workspaceFolders && workspaceFolders.length > 0) {
+          workspaceFolder = workspaceFolders[workspaceFolders.length - 1]
+        }
+      }
       if (!workspaceFolder) {
         await vscode.window.showErrorMessage('No workspace opened')
-        return undefined
+        return
       }
       const defaultGlass = `---
 language: typescript
@@ -200,7 +210,6 @@ You are a programming assistant. You are helping the User inside of VSCode. If y
       let languageId = launcherDocument.languageId
       let filepath = launcherDocument.uri.fsPath
       let filename = getDocumentFilename(launcherDocument)
-      const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && hasGlassFileOpen(activeEditor)) {
         initialGlass = activeEditor.document.getText()
         languageId = activeEditor.document.languageId
