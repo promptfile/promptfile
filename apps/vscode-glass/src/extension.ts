@@ -168,26 +168,11 @@ export async function activate(context: vscode.ExtensionContext) {
       outputChannel.show()
     }),
     vscode.commands.registerCommand('glass.openPlayground', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
-        return
+      const workspaceFolder = vscode.workspace.workspaceFolders?.[0]
+      if (!workspaceFolder) {
+        await vscode.window.showErrorMessage('No workspace opened')
+        return undefined
       }
-
-      const initialGlass = activeEditor.document.getText()
-      const languageId = activeEditor.document.languageId
-      const filepath = activeEditor.document.uri.fsPath
-      const filename = getDocumentFilename(activeEditor.document)
-      outputChannel.appendLine(`${filename} — launching Glass playground`)
-      const initialMetadata =
-        languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
-      const playground = await createPlayground(filepath, playgrounds, sessions, context.extensionUri, outputChannel)
-      if (!playground) {
-        await vscode.window.showErrorMessage('Unable to create playground')
-        return
-      }
-      playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
-    }),
-    vscode.commands.registerCommand('glass.newSession', async () => {
       const defaultGlass = `---
 language: typescript
 ---
@@ -203,25 +188,37 @@ You are a programming assistant. You are helping the User inside of VSCode. If y
 </User>
 
 <Request model="gpt-4" />`
-      // get the current workspace
-      const workspaceFolder = vscode.workspace.workspaceFolders?.[0]
-      if (!workspaceFolder) {
-        await vscode.window.showErrorMessage('No workspace opened')
-        return undefined
-      }
-
       const launcherPath = path.join(workspaceFolder.uri.fsPath, 'launcher.glass')
 
       if (!fs.existsSync(launcherPath)) {
         // If launcher.glass does not exist, create it
         fs.writeFileSync(launcherPath, defaultGlass)
       }
-
-      // open launcher.glass file in editor
       const launcherUri = vscode.Uri.file(launcherPath)
-      const launcherFile = await vscode.workspace.openTextDocument(launcherUri)
-      await vscode.window.showTextDocument(launcherFile)
+      const launcherDocument = await vscode.workspace.openTextDocument(launcherUri)
+      let initialGlass = launcherDocument.getText()
+      let languageId = launcherDocument.languageId
+      let filepath = launcherDocument.uri.fsPath
+      let filename = getDocumentFilename(launcherDocument)
+      const activeEditor = vscode.window.activeTextEditor
+      if (activeEditor && hasGlassFileOpen(activeEditor)) {
+        initialGlass = activeEditor.document.getText()
+        languageId = activeEditor.document.languageId
+        filepath = activeEditor.document.uri.fsPath
+        filename = getDocumentFilename(activeEditor.document)
+      }
+
+      outputChannel.appendLine(`${filename} — launching Glass playground`)
+      const initialMetadata =
+        languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
+      const playground = await createPlayground(filepath, playgrounds, sessions, context.extensionUri, outputChannel)
+      if (!playground) {
+        await vscode.window.showErrorMessage('Unable to create playground')
+        return
+      }
+      playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
     }),
+
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),
