@@ -1,4 +1,5 @@
 import { rewriteImports } from '@glass-lang/glassc'
+import * as crypto from 'crypto'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
@@ -41,10 +42,14 @@ export async function createSession(
     await vscode.window.showErrorMessage('No workspace opened')
     return undefined
   }
-  const tempDir = path.join(workspaceFolder.uri.fsPath, '.glasslog')
+
+  const relativePath = path.relative(workspaceFolder.uri.fsPath, filepath)
+  const hashedPath = crypto.createHash('md5').update(relativePath).digest('hex')
+  const tempDir = path.join(workspaceFolder.uri.fsPath, '.glasslog', hashedPath)
   if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir)
+    fs.mkdirSync(tempDir, { recursive: true })
   }
+
   const newFilePath = path.join(tempDir, `${sessionId}.glass`)
   const updatedGlass = rewriteImports(glass, tempDir, filepath)
   fs.writeFileSync(newFilePath, updatedGlass)
