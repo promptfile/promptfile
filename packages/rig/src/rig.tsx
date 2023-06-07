@@ -5,7 +5,7 @@ import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
 import { TopperView } from './TopperView'
 import { TranscriptView } from './TranscriptView'
-import { getNonce, lastElement } from './util'
+import { lastElement } from './util'
 
 export interface GlassLog {
   id: string
@@ -100,7 +100,8 @@ function RigView() {
             break
           }
           setBlocks(() => message.data.blocks)
-          setLogs([...logs, { ...message.data, id: getNonce(), sessionId, timestamp: new Date().toISOString() }])
+          const timestamp = new Date().toISOString()
+          setLogs([...logs, { ...message.data, id: timestamp, sessionId }])
           break
         default:
           break

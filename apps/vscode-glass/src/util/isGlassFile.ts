@@ -12,15 +12,6 @@ export function getDocumentFilename(document: vscode.TextDocument) {
   return document.fileName.split('/').pop()!
 }
 
-export function getNonce() {
-  let text = ''
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length))
-  }
-  return text
-}
-
 export async function getAllGlassFiles(): Promise<vscode.TextDocument[]> {
   const glassFilePattern = '**/*.glass'
   const excludePattern = '**/.glasslog/**' // exclude any .glass files in .glasslog folder

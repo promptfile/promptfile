@@ -1,7 +1,14 @@
 import { Uri, Webview } from 'vscode'
-import { getNonce } from './util/isGlassFile'
 
 export function getHtmlForWebview(webview: Webview, extensionPath: Uri) {
+  function getNonce() {
+    let text = ''
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    for (let i = 0; i < 32; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+    return text
+  }
   // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
   // Script to handle user action
   // const scriptUri = webview.asWebviewUri(
