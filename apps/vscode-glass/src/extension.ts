@@ -169,10 +169,13 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('glass.openPlayground', async () => {
       const glassFiles = await getAllGlassFiles()
-      const glassFilesQuickPick = glassFiles.map(document => ({
-        label: getDocumentFilename(document),
-        description: document.uri.fsPath,
-      }))
+      const glassFilesQuickPick = glassFiles.map(document => {
+        const relativePath = vscode.workspace.asRelativePath(document.uri.fsPath)
+        return {
+          label: getDocumentFilename(document),
+          description: relativePath,
+        }
+      })
       const selectedFile = await vscode.window.showQuickPick(glassFilesQuickPick, {
         placeHolder: 'Select a Glass file to open',
       })

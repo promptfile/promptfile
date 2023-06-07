@@ -64,9 +64,6 @@ export const ComposerView = (props: ComposerViewProps) => {
                       reload()
                     } else if (e.metaKey && e.key === 'Enter') {
                       e.preventDefault()
-                      reload()
-                    } else if (!streaming && e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
                       run(inputs)
                     }
                   }}
