@@ -9,7 +9,9 @@ const items = [
 ]
 
 <For each={items} as="item">
-<Block role={item.role} content={item.content} />
+<Block role={item.role}>
+${item.content}
+</Block>
 </For>
 
 

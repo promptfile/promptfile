@@ -104,14 +104,9 @@
     ],
     "commands": [
       {
-        "command": "glass.newSession",
-        "title": "Glass: new session",
-        "description": "Creates a new Glass session."
-      },
-      {
         "command": "glass.openPlayground",
-        "title": "Glass: Open in Playground",
-        "description": "This command will open and run the current file in the Glass playground sidebar."
+        "title": "Glass: launch",
+        "description": "This command will launch the Glass playground."
       },
       {
         "command": "glass.showGlassOutput",

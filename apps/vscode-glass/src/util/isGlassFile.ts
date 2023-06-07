@@ -20,3 +20,14 @@ export function getNonce() {
   }
   return text
 }
+
+export async function getAllGlassFiles(): Promise<vscode.TextDocument[]> {
+  const glassFilePattern = '**/*.glass'
+  const excludePattern = '**/.glasslog/**' // exclude any .glass files in .glasslog folder
+
+  const files = await vscode.workspace.findFiles(glassFilePattern, excludePattern)
+
+  const glassTextDocumentsPromises = files.map(file => vscode.workspace.openTextDocument(file))
+  const glassTextDocuments = await Promise.all(glassTextDocumentsPromises)
+  return glassTextDocuments.filter(document => isGlassFile(document))
+}

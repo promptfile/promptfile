@@ -11,7 +11,7 @@ import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
-import { getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
+import { getAllGlassFiles, getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
 import { GlassPlayground, createPlayground } from './util/playground'
@@ -168,54 +168,73 @@ export async function activate(context: vscode.ExtensionContext) {
       outputChannel.show()
     }),
     vscode.commands.registerCommand('glass.openPlayground', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      let workspaceFolder
-
-      if (activeEditor) {
-        workspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri)
-      } else {
-        const workspaceFolders = vscode.workspace.workspaceFolders
-        if (workspaceFolders && workspaceFolders.length > 0) {
-          workspaceFolder = workspaceFolders[workspaceFolders.length - 1]
-        }
-      }
-      if (!workspaceFolder) {
-        await vscode.window.showErrorMessage('No workspace opened')
+      const glassFiles = await getAllGlassFiles()
+      const glassFilesQuickPick = glassFiles.map(document => ({
+        label: getDocumentFilename(document),
+        description: document.uri.fsPath,
+      }))
+      const selectedFile = await vscode.window.showQuickPick(glassFilesQuickPick, {
+        placeHolder: 'Select a Glass file to open',
+      })
+      if (!selectedFile) {
         return
       }
-      const defaultGlass = `---
-language: typescript
----
-
-<System>
-You are a programming assistant. You are helping the User inside of VSCode. If you write code in your response, please include Markdown-style code fencing.
-</System>
-
-<Transcript />
-
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />`
-      const launcherPath = path.join(workspaceFolder.uri.fsPath, 'launcher.glass')
-
-      if (!fs.existsSync(launcherPath)) {
-        // If launcher.glass does not exist, create it
-        fs.writeFileSync(launcherPath, defaultGlass)
+      const selectedDocument = glassFiles.find(document => document.uri.fsPath === selectedFile.description)
+      if (!selectedDocument) {
+        return
       }
-      const launcherUri = vscode.Uri.file(launcherPath)
-      const launcherDocument = await vscode.workspace.openTextDocument(launcherUri)
-      let initialGlass = launcherDocument.getText()
-      let languageId = launcherDocument.languageId
-      let filepath = launcherDocument.uri.fsPath
-      let filename = getDocumentFilename(launcherDocument)
-      if (activeEditor && hasGlassFileOpen(activeEditor)) {
-        initialGlass = activeEditor.document.getText()
-        languageId = activeEditor.document.languageId
-        filepath = activeEditor.document.uri.fsPath
-        filename = getDocumentFilename(activeEditor.document)
-      }
+
+      //       let workspaceFolder
+
+      //       if (activeEditor) {
+      //         workspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri)
+      //       } else {
+      //         const workspaceFolders = vscode.workspace.workspaceFolders
+      //         if (workspaceFolders && workspaceFolders.length > 0) {
+      //           workspaceFolder = workspaceFolders[workspaceFolders.length - 1]
+      //         }
+      //       }
+      //       if (!workspaceFolder) {
+      //         await vscode.window.showErrorMessage('No workspace opened')
+      //         return
+      //       }
+      //       const defaultGlass = `---
+      // language: typescript
+      // ---
+
+      // <System>
+      // You are a programming assistant. You are helping the User inside of VSCode. If you write code in your response, please include Markdown-style code fencing.
+      // </System>
+
+      // <Transcript />
+
+      // <User>
+      // \${input}
+      // </User>
+
+      // <Request model="gpt-4" />`
+      //       const launcherPath = path.join(workspaceFolder.uri.fsPath, 'launcher.glass')
+
+      // if (!fs.existsSync(launcherPath)) {
+      //   // If launcher.glass does not exist, create it
+      //   fs.writeFileSync(launcherPath, defaultGlass)
+      // }
+      // const launcherUri = vscode.Uri.file(launcherPath)
+      // const launcherDocument = await vscode.workspace.openTextDocument(launcherUri)
+      // let initialGlass = launcherDocument.getText()
+      // let languageId = launcherDocument.languageId
+      // let filepath = launcherDocument.uri.fsPath
+      // let filename = getDocumentFilename(launcherDocument)
+      // if (activeEditor && hasGlassFileOpen(activeEditor)) {
+      //   initialGlass = activeEditor.document.getText()
+      //   languageId = activeEditor.document.languageId
+      //   filepath = activeEditor.document.uri.fsPath
+      //   filename = getDocumentFilename(activeEditor.document)
+      // }
+      const initialGlass = selectedDocument.getText()
+      const languageId = selectedDocument.languageId
+      const filepath = selectedDocument.uri.fsPath
+      const filename = getDocumentFilename(selectedDocument)
 
       outputChannel.appendLine(`${filename} — launching Glass playground`)
       const initialMetadata =
