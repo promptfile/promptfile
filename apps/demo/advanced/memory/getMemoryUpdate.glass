@@ -2,14 +2,6 @@
 language: typescript
 ---
 
-const handleResponse = (response: any) => {
-  const message = response.message
-  const json = message.match(/```json([\s\S]*)```/)
-  if (json) {
-    return JSON.parse(json[1])
-  }
-  return ''
-}
 
 <System>
 Read the Message provided by the User.  
@@ -79,4 +71,4 @@ ${input}
 Respond with either an updated profile (in valid JSON format) or `NO_ACTION`.
 </System>
 
-<Request model="gpt-3.5-turbo" onResponse={handleResponse} />
+<Request model="gpt-4" />
