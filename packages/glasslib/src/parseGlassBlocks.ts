@@ -141,7 +141,7 @@ export function parseGlassBlocks(doc: string) {
       currTagHasClosed = Boolean(tagEndRegexMatch)
       currTagHasSelfClosed = Boolean(tagSelfCloseMatch)
     } else if (currTagHasClosed) {
-      if (currTag && innerTagStack.length === 0 && (tagSelfCloseMatch || tagCloseMatch?.[1] === currTag)) {
+      if (currTag && innerTagStack.length === 0 && tagCloseMatch?.[1] === currTag) {
         // ignore
       } else {
         // always just add to currContent if not opening tag
