@@ -51,6 +51,7 @@ export const ComposerView = (props: ComposerViewProps) => {
                   style={{ width: '100%' }}
                   value={inputs[key]}
                   resize="vertical"
+                  rows={6}
                   id={`composer-input-${index}`}
                   placeholder={keys.length === 1 ? key : ''}
                   onInput={e => {

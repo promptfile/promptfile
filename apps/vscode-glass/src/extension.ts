@@ -11,7 +11,7 @@ import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
-import { getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
+import { getDocumentFilename, getNonce, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
 import { GlassPlayground, createPlayground } from './util/playground'
@@ -187,24 +187,39 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
     }),
-    vscode.commands.registerCommand('glass.newBuffer', async () => {
-      const glassDocument = await vscode.workspace.openTextDocument({
-        language: 'glass-ts',
-        content: `---
+    vscode.commands.registerCommand('glass.newSession', async () => {
+      const defaultGlass = `---
 language: typescript
 ---
 
 <System>
-You are ChatGPT. You exist in VSCode, and you are helping the User build a DSL for prompting called 'Glass' ('.glass' file extension). Use Markdown to style your responses.
+You are ChatGPT. You exist in VSCode, and you are helping the User build a DSL for prompting called 'Glass' ('.glass' file extension). If you write code in your response, please include Markdown-style code fencing.
 </System>
+
+<Transcript />
 
 <User>
 \${input}
 </User>
 
-<Request model="gpt-4" />`,
-      })
-      await vscode.window.showTextDocument(glassDocument, { preview: false })
+<Request model="gpt-4" />`
+      // get the current workspace
+      const workspaceFolder = vscode.workspace.workspaceFolders?.[0]
+      if (!workspaceFolder) {
+        await vscode.window.showErrorMessage('No workspace opened')
+        return undefined
+      }
+      const tempDir = path.join(workspaceFolder.uri.fsPath, '.glasslog')
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir)
+      }
+      const sessionId = getNonce()
+      const newFilePath = path.join(tempDir, `${sessionId}.glass`)
+      fs.writeFileSync(newFilePath, defaultGlass)
+      // open new glass file in editor
+      const newFileUri = vscode.Uri.file(newFilePath)
+      const newFile = await vscode.workspace.openTextDocument(newFileUri)
+      await vscode.window.showTextDocument(newFile)
     }),
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')

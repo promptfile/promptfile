@@ -104,9 +104,9 @@
     ],
     "commands": [
       {
-        "command": "glass.newBuffer",
-        "title": "Glass: new buffer",
-        "description": "Creates a new buffer for Glass code."
+        "command": "glass.newSession",
+        "title": "Glass: new session",
+        "description": "Creates a new Glass session."
       },
       {
         "command": "glass.openPlayground",
@@ -152,9 +152,9 @@
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       },
       {
-        "command": "glass.newBuffer",
-        "key": "ctrl+option+n",
-        "mac": "cmd+option+n"
+        "command": "glass.newSession",
+        "key": "ctrl+shift+g",
+        "mac": "cmd+shift+g"
       }
     ],
     "configuration": [

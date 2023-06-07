@@ -6,7 +6,7 @@ interface GlassElement {
   detail?: string
   documentation?: string
   insertText?: string
-  selfClosing?: boolean
+  closingType: 'selfClosing' | 'nonSelfClosing' | 'both'
 }
 
 interface GlassAttribute {
@@ -30,6 +30,7 @@ export const glassElements: GlassElement[] = [
     name: 'Assistant',
     detail: '(block) chat block with role="assistant"',
     documentation: 'Creates an Assistant chat block with inner content',
+    closingType: 'nonSelfClosing',
     attributes: [
       {
         name: 'name',
@@ -78,6 +79,7 @@ export const glassElements: GlassElement[] = [
     insertText: 'Block role="$1">',
     documentation: 'Creates a chat block',
     detail: '(block) chat block',
+    closingType: 'nonSelfClosing',
     attributes: [
       {
         name: 'role',
@@ -114,6 +116,7 @@ export const glassElements: GlassElement[] = [
     name: 'For',
     documentation: 'Creates a for loop',
     detail: '(element) loop over elements in an array',
+    closingType: 'nonSelfClosing',
     attributes: [
       {
         name: 'each',
@@ -133,7 +136,7 @@ export const glassElements: GlassElement[] = [
     name: 'Request',
     documentation: 'Creates a model inference',
     detail: '(inference) API request to a model',
-    selfClosing: true,
+    closingType: 'selfClosing',
     attributes: [
       {
         name: 'model',
@@ -174,12 +177,14 @@ export const glassElements: GlassElement[] = [
     insertText: 'State>\n{\n\t"$1": "$2"\n}\n</State>',
     documentation: 'Creates a State tag to hold document state',
     detail: '(element) holds document state',
+    closingType: 'nonSelfClosing',
     attributes: [],
   },
   {
     name: 'System',
     documentation: 'Creates a System chat block with inner content',
     detail: '(element) raw Glass text block',
+    closingType: 'nonSelfClosing',
     attributes: [
       {
         name: 'if',
@@ -193,10 +198,12 @@ export const glassElements: GlassElement[] = [
     name: 'Test',
     documentation: 'Creates a Test tag to hold test cases',
     detail: '(element) holds test cases',
+    closingType: 'nonSelfClosing',
     attributes: [],
   },
   {
     name: 'Text',
+    closingType: 'nonSelfClosing',
     attributes: [
       {
         name: 'if',
@@ -210,14 +217,15 @@ export const glassElements: GlassElement[] = [
     name: 'Transcript',
     documentation: 'Creates a Transcript tag to hold conversation history',
     detail: '(element) holds conversation history',
+    closingType: 'both',
     attributes: [],
-    selfClosing: true,
   },
   {
     name: 'User',
     insertText: 'User>\n$1\n</User>',
     documentation: 'Creates a User tag with inner content',
     detail: '(block) chat block with role="user"',
+    closingType: 'nonSelfClosing',
     attributes: [
       {
         name: 'name',
