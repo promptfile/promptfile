@@ -19,7 +19,7 @@ async function runTests() {
 const testOutput = await runTests()
 
 <System>
-You are a superintelligent AI. You've been tasked with helping the User to write a TypeScript function. The tests are currently failing. The User will ask you for help. You can help them by modifying the code. You can also ask them for help.
+You are a superintelligent AI. You've been tasked with helping the User to write code.
 
 The current code is:
 
@@ -42,10 +42,10 @@ RESPONSE FORMAT INSTRUCTIONS
 ----------------------------
 
 **Option 1:**
-Use this if you want to replace the code with new content.
+Use this if you want to replace the code with new content (or append code to the end of the file).
 ```json
 {
-    "action": "replaceCode",
+    "action": "replaceCode", // or "appendCode"
     "action_input": "new code content"
 }
 ```
@@ -60,7 +60,27 @@ Use this if you want to modify a part of the code.
 }
 ```
 
-For both options, remember to always include the surrounding markdown code snippet delimiters (begin with "```json" and end with "```")! If multiple edits are needed, you may output multiple code snippets. Prefer using `editCode` to `replaceCode` where possible.
+**Option #3:**
+Use this if you want to replace the test with new content (or append code to the end of the test file).
+
+```json
+{
+    "action": "replaceTest", // or "appendTest"
+    "action_input": "new test content"
+}
+```
+
+**Option #4:**
+Use this if you want to replace the test with new content (or append code to the end of the test file).
+
+```json
+{
+    "action": "editTest",
+    "action_input": "test.replace(...)"
+}
+```
+
+For both options, remember to always include the surrounding markdown code snippet delimiters (begin with "```json" and end with "```")! If multiple edits are needed, you may output multiple code snippets. Prefer using `edit*` to `replace*` wherever possible.
 </System>
 
 <Transcript />
@@ -85,9 +105,18 @@ DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRU
       for (const { action, action_input } of actions) {
         if (action === 'replaceCode') {
           fs.writeFileSync(codePath, action_input)
-        } else {
+        } else if (action === 'appendCode') {
+          fs.writeFileSync(codePath, code + '\n' + action_input)
+        } else if (action === 'replaceTest') {
+          fs.writeFileSync(testPath, action_input)
+        } else if (action === 'appendTest') {
+          fs.writeFileSync(testPath, test + '\n' + action_input)
+        } else if (action === 'editCode') {
           const newCode = eval(action_input)
           fs.writeFileSync(codePath, newCode)
+        } else if (action === 'editTest') {
+          const newTest = eval(action_input)
+          fs.writeFileSync(testPath, newTest)
         }
       }
     }

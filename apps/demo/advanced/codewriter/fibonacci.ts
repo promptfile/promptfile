@@ -4,7 +4,7 @@ export function fibonacci(n: number): number {
   }
 
   if (n === 1 || n === 2) {
-    return 1
+    return 2
   }
 
   let fibPrev = 1
