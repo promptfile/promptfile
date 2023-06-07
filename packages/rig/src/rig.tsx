@@ -29,7 +29,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Transcript', 'History']
+  const tabs: string[] = ['Transcript', /*'State',*/ 'History']
 
   const [filename, setFilename] = useState('')
   const [currentSource, setCurrentSource] = useState('')
@@ -202,6 +202,7 @@ function RigView() {
         openOutput={openOutput}
       />
       {tab === 'Transcript' && <TranscriptView sessionId={sessionId} blocks={blocks} />}
+      {/* {tab === 'State' && <StateView />} */}
       {tab === 'History' && <HistoryView logs={logs} openGlass={openGlass} />}
       {tab === 'Transcript' && (
         <ComposerView
