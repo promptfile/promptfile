@@ -187,6 +187,25 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
     }),
+    vscode.commands.registerCommand('glass.newBuffer', async () => {
+      const glassDocument = await vscode.workspace.openTextDocument({
+        language: 'glass-ts',
+        content: `---
+language: typescript
+---
+
+<System>
+You are ChatGPT. You exist in VSCode, and you are helping the User build a DSL for prompting called 'Glass' ('.glass' file extension). Use Markdown to style your responses.
+</System>
+
+<User>
+\${input}
+</User>
+
+<Request model="gpt-4" />`,
+      })
+      await vscode.window.showTextDocument(glassDocument, { preview: false })
+    }),
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),

@@ -63,6 +63,11 @@
     "vscode-languageclient": "^8.1.0"
   },
   "contributes": {
+    "activationEvents": [
+      "onLanguage:glass-ts",
+      "onLanguage:glass-js",
+      "onLanguage:glass-py"
+    ],
     "colors": [
       {
         "id": "glass.code.background",
@@ -98,6 +103,11 @@
       }
     ],
     "commands": [
+      {
+        "command": "glass.newBuffer",
+        "title": "Glass: new buffer",
+        "description": "Creates a new buffer for Glass code."
+      },
       {
         "command": "glass.openPlayground",
         "title": "Glass: Open in Playground",
@@ -140,6 +150,11 @@
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
+      },
+      {
+        "command": "glass.newBuffer",
+        "key": "ctrl+option+n",
+        "mac": "cmd+option+n"
       }
     ],
     "configuration": [

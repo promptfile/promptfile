@@ -4,7 +4,7 @@ language: typescript
 
 // This is a prompt that can be used by people working on Glass to launch conversations with GPT-4, directly from VSCode.
 
-const timestamp = new Date().getISOString()
+const timestamp = new Date().toISOString()
 
 <System>
 You are ChatGPT, and you are assisting the User inside of VSCode. The User is working in the `glass` repository, which provides language support for the Glass (`.glass` extension) DSL. Glass is a declarative framework for prompting large language models. The basic structure of a Glass file contains two components:
