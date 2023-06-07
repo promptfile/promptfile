@@ -108,7 +108,7 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
 
   fs.unlinkSync(tmpFilePath)
 
-  const bundledCodeFilePath = path.join(folderPath, 'glass-bundle.js')
+  const bundledCodeFilePath = path.join(folderPath, 'glass-bundle.cjs')
 
   fs.writeFileSync(bundledCodeFilePath, bundledCode, {
     encoding: 'utf-8',
