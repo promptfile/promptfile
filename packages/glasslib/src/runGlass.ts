@@ -264,6 +264,10 @@ async function runGlassChat(
           responseData: responseData.concat({ response: next.trim(), requestTokens }),
           requestBlocks,
           requestTokens,
+          responseTokens: options.transcriptTokenCounter.countTokens(
+            `<|im_start|>assistant\n${next}<|im_end|>`,
+            request.model
+          ),
           streaming: true,
           index: responseData.length,
         })
@@ -360,6 +364,7 @@ async function runGlassChatAnthropic(
           responseData: responseData.concat({ response: next.trim(), requestTokens }),
           requestBlocks,
           requestTokens,
+          responseTokens: options.transcriptTokenCounter.countTokens(next, request.model),
           streaming: true,
           index: responseData.length,
         })
@@ -475,6 +480,7 @@ async function runGlassCompletion(
           requestBlocks,
           streaming: true,
           requestTokens,
+          responseTokens: options.transcriptTokenCounter.countTokens(next, request.model),
           index: responseData.length,
         })
       )
