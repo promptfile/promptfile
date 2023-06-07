@@ -35,10 +35,10 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
           : attribute.type === 'boolean'
           ? `\${${cursorIndex}|true,false|}`
           : attribute.type === 'string'
-          ? `"$${cursorIndex}"`
+          ? `"${cursorIndex}"`
           : attribute.type === 'array'
-          ? `{$${cursorIndex}]}`
-          : `\$${cursorIndex}`
+          ? `{${cursorIndex}]}`
+          : `\${cursorIndex}`
       return ` ${attribute.name}=${attributeValue}`
     })
     completionItems.push({
@@ -54,9 +54,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
       insertText:
         element.insertText != null
           ? element.insertText
-          : element.selfClosing != null
-          ? `${element.name}${attributesToInsert.join('')} />`
-          : `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>`,
+          : element.closingType === 'nonSelfClosing' ? `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>` : `${element.name}${attributesToInsert.join('')} />`,
       insertTextFormat: InsertTextFormat.Snippet,
     })
   }

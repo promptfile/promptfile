@@ -7,7 +7,7 @@ export function formatDocument(text: string, isPython: boolean) {
   try {
     text = wrapIfNoBlocks(text)
 
-    const nonSelfClosingTags = glassElements.filter(e => e.selfClosing !== true)
+    const nonSelfClosingTags = glassElements.filter(e => e.closingType !== 'selfClosing')
 
     const tagNames = glassElements.map(e => e.name).join('|')
 

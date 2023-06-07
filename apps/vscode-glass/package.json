@@ -63,6 +63,11 @@
     "vscode-languageclient": "^8.1.0"
   },
   "contributes": {
+    "activationEvents": [
+      "onLanguage:glass-ts",
+      "onLanguage:glass-js",
+      "onLanguage:glass-py"
+    ],
     "colors": [
       {
         "id": "glass.code.background",
@@ -98,6 +103,11 @@
       }
     ],
     "commands": [
+      {
+        "command": "glass.newSession",
+        "title": "Glass: new session",
+        "description": "Creates a new Glass session."
+      },
       {
         "command": "glass.openPlayground",
         "title": "Glass: Open in Playground",
@@ -140,6 +150,11 @@
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
+      },
+      {
+        "command": "glass.openPlayground",
+        "key": "ctrl+shift+g",
+        "mac": "cmd+shift+g"
       }
     ],
     "configuration": [

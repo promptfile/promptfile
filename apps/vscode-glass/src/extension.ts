@@ -169,14 +169,54 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('glass.openPlayground', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
+      let workspaceFolder
+
+      if (activeEditor) {
+        workspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri)
+      } else {
+        const workspaceFolders = vscode.workspace.workspaceFolders
+        if (workspaceFolders && workspaceFolders.length > 0) {
+          workspaceFolder = workspaceFolders[workspaceFolders.length - 1]
+        }
+      }
+      if (!workspaceFolder) {
+        await vscode.window.showErrorMessage('No workspace opened')
         return
       }
+      const defaultGlass = `---
+language: typescript
+---
 
-      const initialGlass = activeEditor.document.getText()
-      const languageId = activeEditor.document.languageId
-      const filepath = activeEditor.document.uri.fsPath
-      const filename = getDocumentFilename(activeEditor.document)
+<System>
+You are a programming assistant. You are helping the User inside of VSCode. If you write code in your response, please include Markdown-style code fencing.
+</System>
+
+<Transcript />
+
+<User>
+\${input}
+</User>
+
+<Request model="gpt-4" />`
+      const launcherPath = path.join(workspaceFolder.uri.fsPath, 'launcher.glass')
+
+      if (!fs.existsSync(launcherPath)) {
+        // If launcher.glass does not exist, create it
+        fs.writeFileSync(launcherPath, defaultGlass)
+      }
+      const launcherUri = vscode.Uri.file(launcherPath)
+      const launcherDocument = await vscode.workspace.openTextDocument(launcherUri)
+      let initialGlass = launcherDocument.getText()
+      let languageId = launcherDocument.languageId
+      let filepath = launcherDocument.uri.fsPath
+      let filename = getDocumentFilename(launcherDocument)
+      if (activeEditor && hasGlassFileOpen(activeEditor)) {
+        initialGlass = activeEditor.document.getText()
+        languageId = activeEditor.document.languageId
+        filepath = activeEditor.document.uri.fsPath
+        filename = getDocumentFilename(activeEditor.document)
+      }
+
       outputChannel.appendLine(`${filename} — launching Glass playground`)
       const initialMetadata =
         languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
@@ -187,6 +227,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
     }),
+
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),
