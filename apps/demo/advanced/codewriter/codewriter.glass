@@ -90,7 +90,7 @@ ${input}
 </User>
 
 <System>
-DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRUCTIONS. Respond with ```json``` fenced block(s) whenever actions related to modifying the code need to be taken.
+DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRUCTIONS. Respond with ```json``` fenced block(s) whenever actions related to modifying the code need to be taken. You MUST make sure all code wrapped in the ```json``` fenced block is valid JSON that can be parsed with `JSON.parse`. So e.g. newline characters in string values must be escaped. IF YOU WRITE INVALID JSON SOMETHING TERRIBLE WILL HAPPEN.
 </System>
 
 <Request

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { fibonacci } from './fibonacci'
 
-describe.only('fibonacci', () => {
+describe('fibonacci', () => {
   it('fibonacci(1)', () => {
     expect(fibonacci(1)).to.equal(1)
   })
