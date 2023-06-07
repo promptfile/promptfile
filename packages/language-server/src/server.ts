@@ -14,15 +14,7 @@ import {
   createConnection,
 } from 'vscode-languageserver/node'
 import { generateCompletions } from './completions'
-import {
-  findAttributeDiagnostics,
-  findEmptyBlocksDiagnostics,
-  findFrontmatterDiagnostics,
-  findModelDiagnostics,
-  findMultipleTranscriptDiagnostics,
-  findUnmatchedTagsDiagnostics,
-  findUnsupportedTagsDiagnostics,
-} from './diagnostics'
+import { getDiagnostics } from './diagnostics'
 import { findFoldableTagPairs, findMarkdownFoldingRanges } from './folding'
 import { formatDocument } from './formatting'
 
@@ -92,15 +84,7 @@ documents.onDidChangeContent(change => {
 })
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-  const diagnostics: Diagnostic[] = [
-    ...findUnmatchedTagsDiagnostics(textDocument),
-    ...findUnsupportedTagsDiagnostics(textDocument),
-    ...findAttributeDiagnostics(textDocument),
-    ...findModelDiagnostics(textDocument),
-    ...findEmptyBlocksDiagnostics(textDocument),
-    ...findFrontmatterDiagnostics(textDocument),
-    ...findMultipleTranscriptDiagnostics(textDocument),
-  ]
+  const diagnostics: Diagnostic[] = getDiagnostics(textDocument)
 
   void connection.sendDiagnostics({ uri: textDocument.uri, diagnostics })
 }

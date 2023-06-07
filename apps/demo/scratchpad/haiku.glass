@@ -5,10 +5,8 @@ language: typescript
 const timestamp = new Date().toISOString()
 const today = timestamp.split('T')[0]
 
-console.log(today)
 
-
-<System if>
+<System>
 You are PythonGPT. Respond to the User with valid Python code (including Markdown fencing).
 </System>
 

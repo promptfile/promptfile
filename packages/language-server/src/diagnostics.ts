@@ -4,7 +4,20 @@ import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from './elements'
 
-export function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
+export function getDiagnostics(textDocument: TextDocument): Diagnostic[] {
+  return [
+    ...findUnmatchedTagsDiagnostics(textDocument),
+    ...findUnsupportedTagsDiagnostics(textDocument),
+    ...findAttributeDiagnostics(textDocument),
+    ...findModelDiagnostics(textDocument),
+    ...findRequestModelDiagnostics(textDocument),
+    ...findEmptyBlocksDiagnostics(textDocument),
+    ...findFrontmatterDiagnostics(textDocument),
+    ...findMultipleTranscriptDiagnostics(textDocument),
+  ]
+}
+
+function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed = parseGlassBlocks(textDocument.getText())
     const invalidAttributes: { type: string; tag: any; attribute: string }[] = []
@@ -60,7 +73,7 @@ export function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic
   }
 }
 
-export function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnostic[] {
+function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed = parseGlassBlocks(textDocument.getText())
     const tagsToCheck = glassElements.filter(e => e.selfClosing !== true).map(e => e.name)
@@ -83,7 +96,7 @@ export function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnost
   }
 }
 
-export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnostic[] {
+function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     // get the range of the frontmatter
     const regex = /---\n([\s\S]*?)\n---/
@@ -113,7 +126,57 @@ export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnost
   }
 }
 
-export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
+function findRequestModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
+  try {
+    const parsed = parseGlassBlocks(textDocument.getText())
+    const requestElement = parsed.find(tag => tag.tag && ['Request'].includes(tag.tag))
+    if (!requestElement) {
+      return []
+    }
+
+    const maxTokensAttribute = requestElement.attrs?.find(attr => attr.name === 'maxTokens')
+
+    const modelAttribute = requestElement.attrs?.find(attr => attr.name === 'model')
+
+    if (!modelAttribute || !modelAttribute.stringValue) {
+      return []
+    }
+
+    const model = modelAttribute.stringValue
+    const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
+
+    if (!languageModel) {
+      return []
+    }
+
+    const diagnostics: Diagnostic[] = []
+
+    if (
+      maxTokensAttribute &&
+      maxTokensAttribute.expressionValue != null &&
+      parseInt(maxTokensAttribute.expressionValue) > languageModel.maxTokens
+    ) {
+      const diagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Error,
+        range: {
+          start: textDocument.positionAt(requestElement.position.start.offset),
+          end: textDocument.positionAt(requestElement.position.end.offset),
+        },
+        message: `maxTokens exceeds maximum value for ${languageModel.name}: ${languageModel.maxTokens}`,
+        source: 'glass',
+      }
+      diagnostics.push(diagnostic)
+    }
+
+    // Add more diagnostics for temperature and other attributes here if needed
+
+    return diagnostics
+  } catch {
+    return []
+  }
+}
+
+function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed = parseGlassBlocks(textDocument.getText())
     const requestElement = parsed.find(tag => tag.tag && ['Request'].includes(tag.tag))
@@ -183,7 +246,7 @@ export function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
   }
 }
 
-export function findMultipleTranscriptDiagnostics(textDocument: TextDocument): Diagnostic[] {
+function findMultipleTranscriptDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed = parseGlassBlocks(textDocument.getText())
     const transcriptTags = parsed.filter(tag => tag.tag === 'Transcript')
@@ -208,7 +271,7 @@ export function findMultipleTranscriptDiagnostics(textDocument: TextDocument): D
   }
 }
 
-export function findUnmatchedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] {
+function findUnmatchedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] {
   const unmatchedTags = extractUnmatchedTags(textDocument.getText())
   return unmatchedTags.map(({ tag, start }) => {
     const tagName = tag.startsWith('/') ? tag.slice(1) : tag
@@ -260,7 +323,7 @@ export function extractUnmatchedTags(text: string) {
   return unmatchedTags
 }
 
-export function findUnsupportedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] {
+function findUnsupportedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] {
   try {
     const parsed = parseGlassBlocks(textDocument.getText())
     const unsupportedTags = parsed.filter(tag => !glassElements.some(element => element.name === tag.tag))
