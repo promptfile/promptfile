@@ -26,7 +26,7 @@ export const BuildView = () => {
         </Text>
       </Stack>
       <Box width={['full', 'full', 'fit-content']}>
-        <AppLink href="https://app.foundation.app/start">
+        <AppLink href="https://docs.glass">
           <Button
             size="xl"
             bg="brand.500"
