@@ -1,4 +1,4 @@
-import { Fade, Flex, Stack } from '@chakra-ui/react'
+import { Fade, Flex, Stack, useColorMode } from '@chakra-ui/react'
 import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import { BuildView } from '../src/components/BuildView'
@@ -11,8 +11,10 @@ import { PricingCollabView } from '../src/components/PricingCollabView'
 
 const Home: NextPage = () => {
   const [fadeIn, setFadeIn] = useState(false)
+  const { setColorMode } = useColorMode()
 
   useEffect(() => {
+    setColorMode('dark')
     setTimeout(() => {
       setFadeIn(true)
     }, 400)
