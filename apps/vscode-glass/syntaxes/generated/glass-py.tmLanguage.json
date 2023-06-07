@@ -188,9 +188,6 @@
             },
             {
               "include": "source.tsx#jsx-evaluated-code"
-            },
-            {
-              "include": "source.tsx#jsx-tag-attributes-illegal"
             }
           ]
         },
@@ -209,7 +206,7 @@
           "include": "text.html.markdown"
         }
       ],
-      "end": "^(<\\/)(System)(>)$",
+      "end": "^(</)(System)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"

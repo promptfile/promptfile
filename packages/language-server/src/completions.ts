@@ -20,7 +20,7 @@ export function generateCompletions(
               .sort()
               .join(',')}|}"`
           : attribute.type === 'boolean'
-          ? `\${${cursorIndex}|true,false|}`
+          ? `"\${${cursorIndex}|true,false|}"`
           : attribute.type === 'string'
           ? `"$${cursorIndex}"`
           : attribute.type === 'array'
