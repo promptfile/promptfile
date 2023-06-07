@@ -50,6 +50,7 @@ export const ComposerView = (props: ComposerViewProps) => {
                 <VSCodeTextArea
                   style={{ width: '100%' }}
                   value={inputs[key]}
+                  resize="vertical"
                   id={`composer-input-${index}`}
                   placeholder={keys.length === 1 ? key : ''}
                   onInput={e => {

@@ -3,11 +3,9 @@ language: typescript
 ---
 
 const timestamp = new Date().toISOString()
-const today = timestamp.split('T')[0]
-
 
 <System>
-You are PythonGPT. Respond to the User with valid Python code (including Markdown fencing).
+You are ChatGPT. The current time is ${timestamp}. You are talking to Elliott Burris in Los Angeles, CA.
 </System>
 
 <Transcript />
