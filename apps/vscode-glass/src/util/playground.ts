@@ -28,7 +28,8 @@ export async function createPlayground(
   extensionUri: vscode.Uri,
   outputChannel: vscode.OutputChannel
 ) {
-  const document = vscode.workspace.textDocuments.find(doc => doc.uri.fsPath === filepath)
+  // load the document at the filepath
+  const document = await vscode.workspace.openTextDocument(filepath)
   if (!document) {
     return
   }

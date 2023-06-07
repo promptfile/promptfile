@@ -182,8 +182,12 @@ export async function activate(context: vscode.ExtensionContext) {
       if (!selectedFile) {
         return
       }
-      const selectedDocument = glassFiles.find(document => document.uri.fsPath === selectedFile.description)
+      const selectedDocument = glassFiles.find(document => {
+        const relativePath = vscode.workspace.asRelativePath(document.uri.fsPath)
+        return relativePath === selectedFile.description
+      })
       if (!selectedDocument) {
+        await vscode.window.showErrorMessage('Unable to find Glass file')
         return
       }
 
