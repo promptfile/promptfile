@@ -17,7 +17,7 @@ export const ComposerView = (props: ComposerViewProps) => {
 
   useEffect(() => {
     document.getElementById('composer-input-0')?.focus()
-  }, keys)
+  }, [keys.length])
 
   return (
     <div style={{ width: '100%', flexShrink: 0 }}>

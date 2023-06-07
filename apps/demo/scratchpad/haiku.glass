@@ -11,7 +11,7 @@ You are ChatGPT. The current time is ${timestamp}. You are talking to Elliott Bu
 <Transcript />
 
 <User>
-Hey, how are you?
+${input}
 </User>
 
 <Request model="gpt-4" />

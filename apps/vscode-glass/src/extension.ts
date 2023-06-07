@@ -24,6 +24,7 @@ let client: LanguageClient | null = null
 
 const sessions = new Map<string, GlassSession>()
 const playgrounds = new Map<string, GlassPlayground>()
+const fileTimestamps = new Map<string, number>()
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -73,6 +74,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     tokenCount,
+    vscode.workspace.onDidOpenTextDocument(document => {
+      if (isGlassFile(document)) {
+        const relativePath = vscode.workspace.asRelativePath(document.uri.fsPath)
+        fileTimestamps.set(relativePath, Date.now())
+      }
+    }),
     vscode.window.onDidChangeTextEditorSelection(
       event => {
         if (event.textEditor === vscode.window.activeTextEditor) {
@@ -89,6 +96,8 @@ export async function activate(context: vscode.ExtensionContext) {
           updateTokenCount(tokenCount)
           updateDecorations(editor, codeDecorations)
           await updateLanguageMode(editor.document)
+          const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
+          fileTimestamps.set(relativePath, Date.now())
         } else {
           tokenCount.hide()
         }
@@ -111,6 +120,8 @@ export async function activate(context: vscode.ExtensionContext) {
               },
             })
           }
+          const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
+          fileTimestamps.set(relativePath, Date.now())
         }
       },
       null,
@@ -176,6 +187,9 @@ export async function activate(context: vscode.ExtensionContext) {
           description: relativePath,
         }
       })
+      glassFilesQuickPick.sort((a, b) => {
+        return a.label.localeCompare(b.label)
+      })
       const selectedFile = await vscode.window.showQuickPick(glassFilesQuickPick, {
         placeHolder: 'Select a Glass file to open',
       })
@@ -191,53 +205,9 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
 
-      //       let workspaceFolder
+      const relativePath = vscode.workspace.asRelativePath(selectedDocument.uri.fsPath)
+      fileTimestamps.set(relativePath, Date.now())
 
-      //       if (activeEditor) {
-      //         workspaceFolder = vscode.workspace.getWorkspaceFolder(activeEditor.document.uri)
-      //       } else {
-      //         const workspaceFolders = vscode.workspace.workspaceFolders
-      //         if (workspaceFolders && workspaceFolders.length > 0) {
-      //           workspaceFolder = workspaceFolders[workspaceFolders.length - 1]
-      //         }
-      //       }
-      //       if (!workspaceFolder) {
-      //         await vscode.window.showErrorMessage('No workspace opened')
-      //         return
-      //       }
-      //       const defaultGlass = `---
-      // language: typescript
-      // ---
-
-      // <System>
-      // You are a programming assistant. You are helping the User inside of VSCode. If you write code in your response, please include Markdown-style code fencing.
-      // </System>
-
-      // <Transcript />
-
-      // <User>
-      // \${input}
-      // </User>
-
-      // <Request model="gpt-4" />`
-      //       const launcherPath = path.join(workspaceFolder.uri.fsPath, 'launcher.glass')
-
-      // if (!fs.existsSync(launcherPath)) {
-      //   // If launcher.glass does not exist, create it
-      //   fs.writeFileSync(launcherPath, defaultGlass)
-      // }
-      // const launcherUri = vscode.Uri.file(launcherPath)
-      // const launcherDocument = await vscode.workspace.openTextDocument(launcherUri)
-      // let initialGlass = launcherDocument.getText()
-      // let languageId = launcherDocument.languageId
-      // let filepath = launcherDocument.uri.fsPath
-      // let filename = getDocumentFilename(launcherDocument)
-      // if (activeEditor && hasGlassFileOpen(activeEditor)) {
-      //   initialGlass = activeEditor.document.getText()
-      //   languageId = activeEditor.document.languageId
-      //   filepath = activeEditor.document.uri.fsPath
-      //   filename = getDocumentFilename(activeEditor.document)
-      // }
       const initialGlass = selectedDocument.getText()
       const languageId = selectedDocument.languageId
       const filepath = selectedDocument.uri.fsPath

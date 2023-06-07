@@ -2,6 +2,7 @@ import { rewriteImports } from '@glass-lang/glassc'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
+import { generateULID } from './ulid'
 
 export interface GlassSession {
   filepath: string
@@ -30,7 +31,7 @@ export async function createSession(
   filepath: string,
   sessions: Map<string, GlassSession>
 ): Promise<GlassSession | undefined> {
-  const sessionId = new Date().toISOString()
+  const sessionId = generateULID()
   const launchFile = vscode.workspace.textDocuments.find(doc => doc.uri.fsPath === filepath)
   const savedFileText = fs.readFileSync(filepath, 'utf-8')
   const glass = launchFile?.getText() ?? savedFileText
