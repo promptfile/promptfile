@@ -11,7 +11,7 @@ import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
-import { getDocumentFilename, getNonce, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
+import { getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
 import { GlassPlayground, createPlayground } from './util/playground'
@@ -193,7 +193,7 @@ language: typescript
 ---
 
 <System>
-You are ChatGPT. You exist in VSCode, and you are helping the User build a DSL for prompting called 'Glass' ('.glass' file extension). If you write code in your response, please include Markdown-style code fencing.
+You are a programming assistant. You are helping the User inside of VSCode. If you write code in your response, please include Markdown-style code fencing.
 </System>
 
 <Transcript />
@@ -209,17 +209,18 @@ You are ChatGPT. You exist in VSCode, and you are helping the User build a DSL f
         await vscode.window.showErrorMessage('No workspace opened')
         return undefined
       }
-      const tempDir = path.join(workspaceFolder.uri.fsPath, '.glasslog')
-      if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir)
+
+      const launcherPath = path.join(workspaceFolder.uri.fsPath, 'launcher.glass')
+
+      if (!fs.existsSync(launcherPath)) {
+        // If launcher.glass does not exist, create it
+        fs.writeFileSync(launcherPath, defaultGlass)
       }
-      const sessionId = getNonce()
-      const newFilePath = path.join(tempDir, `${sessionId}.glass`)
-      fs.writeFileSync(newFilePath, defaultGlass)
-      // open new glass file in editor
-      const newFileUri = vscode.Uri.file(newFilePath)
-      const newFile = await vscode.workspace.openTextDocument(newFileUri)
-      await vscode.window.showTextDocument(newFile)
+
+      // open launcher.glass file in editor
+      const launcherUri = vscode.Uri.file(launcherPath)
+      const launcherFile = await vscode.workspace.openTextDocument(launcherUri)
+      await vscode.window.showTextDocument(launcherFile)
     }),
     vscode.commands.registerCommand('glass.openSettings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
