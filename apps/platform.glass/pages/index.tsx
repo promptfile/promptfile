@@ -7,7 +7,6 @@ import { DemonView } from '../src/components/DemonView'
 import { FooterView } from '../src/components/FooterView'
 import { HeroView } from '../src/components/HeroView'
 import { NavbarView } from '../src/components/NavbarView'
-import { PricingCollabView } from '../src/components/PricingCollabView'
 
 const Home: NextPage = () => {
   const [fadeIn, setFadeIn] = useState(false)
@@ -47,7 +46,7 @@ const Home: NextPage = () => {
         <Stack alignItems="center" width="full" spacing="0" bgGradient={'linear(to-r, #181818, #222222)'}>
           <CommitView />
           {/* <DetailsView /> */}
-          <PricingCollabView />
+          {/* <PricingCollabView /> */}
           <BuildView />
         </Stack>
         <FooterView />
