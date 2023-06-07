@@ -1,0 +1,43 @@
+ai and the return of pay-to-play models
+-----------------------------------------
+
+### the story of jigsaw
+
+jigsaw, a technology startup acquired by salesforce.com in 2010, pioneered the use of pay-to-play models in data collection. jigsaw specialized in cloud-based, crowd-sourced business contact, and company information for sales, marketing, and recruiting professionals. users could search the database, modify, and update information, earning points that could be redeemed for access to more contacts or sold to other users.
+
+while jigsaw has largely faded from memory, its innovative approach to data collection laid the groundwork for new opportunities to crowd-source data for ai models.
+
+### crowd-sourced data collection for ai models
+
+the pay-to-play model can effectively incentivize users to contribute valuable data in exchange for rewards or access to ai services. as users provide more data, ai models improve, increasing the value of the output for all users. 
+
+#### opportunities in diverse fields
+
+in addition to architecture, pay-to-play data collection models could be utilized in a variety of fields, including:
+
+- medical and health data
+- financial data
+- retail and consumer data
+- manufacturing data
+- scientific research data
+
+| category                 | types of data                                                     | user jobs                                              |
+|--------------------------|------------------------------------------------------------------|--------------------------------------------------------|
+| medical and health data  | anonymized medical records, patient histories, medical images    | doctors, nurses, medical researchers, radiologists     |
+| financial data           | portfolio holdings, trading strategies, financial projections    | investment managers, financial analysts, traders       |
+| retail and consumer data | anonymized customer data, product details, sales, promotions     | retail managers, marketing specialists, e-commerce managers  |
+| manufacturing data       | sensor data, equipment maintenance records                       | plant managers, maintenance managers, engineers       |
+| scientific research data | data from experiments, findings, simulations in various fields   | researchers, scientists, analysts                      |
+
+#### risks and downsides
+
+despite the potential benefits, there are risks and downsides to consider:
+
+1. data quality and consistency: systems need to ensure the accuracy and consistency of submissions while addressing privacy concerns.
+2. intellectual property rights: legal and contractual issues surrounding the usage and sharing of submitted data must be properly addressed.
+3. monitoring and moderation: scalable systems for monitoring and moderating user submissions are required to maintain data quality.
+4. user engagement and incentives: balancing incentives and user engagement is crucial, as too few or excessive rewards could negatively impact the ecosystem.
+
+### wrapping up
+
+the pay-to-play model, with its origins in jigsaw's innovative approach, offers exciting opportunities for ai startups to engage users in providing valuable, proprietary data. by carefully addressing risks and downsides, companies can create thriving ecosystems that combine the power of crowd-sourced data with ai technology for the benefit of all stakeholders.
