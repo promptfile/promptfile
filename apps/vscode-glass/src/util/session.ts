@@ -6,10 +6,6 @@ import path from 'path'
 import * as vscode from 'vscode'
 import { generateULID } from './ulid'
 
-export function getSessionId(sessionFilepath: string | undefined): string | undefined {
-  return sessionFilepath?.split('/')?.pop()?.replace('.glass', '')
-}
-
 export function getSessionDirectoryPath(filepath: string): string {
   let baseDir: string
   const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filepath))
@@ -35,29 +31,33 @@ export function getSessionDirectoryPath(filepath: string): string {
 export function getCurrentSessionFilepath(filepath: string): string | undefined {
   const sessionDirectory = getSessionDirectoryPath(filepath)
   const sessionFiles = fs.readdirSync(sessionDirectory).filter(file => file.endsWith('.glass'))
-  return sessionFiles.length > 0 ? sessionFiles[sessionFiles.length - 1] : undefined
+  const lastSessionFile = sessionFiles.length > 0 ? sessionFiles[sessionFiles.length - 1] : undefined
+  if (!lastSessionFile) {
+    return undefined
+  }
+  return path.join(sessionDirectory, lastSessionFile)
 }
 
-export function loadGlass(sessionId: string, filepath: string) {
-  const sessionDirectoryPath = getSessionDirectoryPath(filepath)
-  const sessionPath = path.join(sessionDirectoryPath, `${sessionId}.glass`)
-  const glass = fs.readFileSync(sessionPath, 'utf-8')
+export function loadGlass(session: string) {
+  console.log('loadGlass', session)
+  const glass = fs.readFileSync(session, 'utf-8')
   return glass
 }
 
-export function writeGlass(sessionId: string, filepath: string, glass: string) {
-  const sessionDirectoryPath = getSessionDirectoryPath(filepath)
-  const sessionPath = path.join(sessionDirectoryPath, `${sessionId}.glass`)
-  const updatedGlass = rewriteImports(glass, sessionDirectoryPath, filepath)
-  fs.writeFileSync(sessionPath, updatedGlass)
-  return sessionPath
+export function writeGlass(session: string, glass: string) {
+  fs.writeFileSync(session, glass)
+  return session
 }
 
 export async function createSession(filepath: string): Promise<string> {
+  console.log('createSession', filepath)
+  const sessionDirectory = getSessionDirectoryPath(filepath)
   const sessionId = generateULID()
+  console.log('sessionId', sessionId)
   const glass = fs.readFileSync(filepath, 'utf-8')
-  const sessionPath = writeGlass(sessionId, filepath, glass)
-  return sessionPath
+  const updatedGlass = rewriteImports(glass, sessionDirectory, filepath)
+  const sessionPath = path.join(sessionDirectory, `${sessionId}.glass`)
+  return writeGlass(sessionPath, updatedGlass)
 }
 
 export async function loadSessionDocuments(filepath: string): Promise<vscode.TextDocument[]> {
