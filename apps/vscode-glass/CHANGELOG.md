@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.9
+
+### Patch Changes
+
+- [`57b0290`](https://github.com/glass-lang/glass/commit/57b0290f7a09a588f5070c504109ee27247763bf) Thanks [@elliottburris](https://github.com/elliottburris)! - using monaco editor for input
+
 ## 0.11.8
 
 ### Patch Changes
