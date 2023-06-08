@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import rehypeMathjax from 'rehype-mathjax'
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
 import { CopyButton } from './CopyButton'
 
 interface TranscriptViewProps {
@@ -149,6 +152,8 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                 {model && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{model}</span>}
               </div>
               <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeMathjax]}
                 components={{
                   code({ node, inline, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || '')
@@ -158,6 +163,50 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                       <code className={className} {...props}>
                         {children}
                       </code>
+                    )
+                  },
+                  table({ children }) {
+                    return (
+                      <table
+                        style={{
+                          borderCollapse: 'collapse',
+                          border: '1px solid black',
+                          padding: '1rem 0.75rem',
+                          // Consider using a dark mode library to handle dark mode styles
+                        }}
+                      >
+                        {children}
+                      </table>
+                    )
+                  },
+                  th({ children }) {
+                    return (
+                      <th
+                        style={{
+                          // wordBreak: 'break-word',
+                          border: '1px solid black',
+                          backgroundColor: 'gray',
+                          padding: '1rem 0.75rem',
+                          color: 'white',
+                          // Consider using a dark mode library to handle dark mode styles
+                        }}
+                      >
+                        {children}
+                      </th>
+                    )
+                  },
+                  td({ children }) {
+                    return (
+                      <td
+                        style={{
+                          // wordBreak: 'break-word',
+                          border: '1px solid black',
+                          padding: '1rem 0.75rem',
+                          // Consider using a dark mode library to handle dark mode styles
+                        }}
+                      >
+                        {children}
+                      </td>
                     )
                   },
                 }}
