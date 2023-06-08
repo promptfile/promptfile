@@ -7,6 +7,7 @@ import {
   parseGlassTranscriptBlocks,
 } from '@glass-lang/glasslib'
 import fs from 'fs'
+import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getHtmlForWebview } from '../webview'
@@ -210,6 +211,60 @@ export async function createPlayground(
           })
         } catch {
           await vscode.window.showErrorMessage('Unable to open session file')
+        }
+        break
+      case 'saveSessionGist':
+        const sessionIdToSave = message.data.sessionId
+        const sessionToSave = sessions.get(sessionIdToSave)
+        if (!sessionToSave) {
+          await vscode.window.showErrorMessage('No session found')
+          return
+        }
+        // eslint-disable-next-line turbo/no-undeclared-env-vars
+        if (!process.env.GITHUB_API_KEY) {
+          await vscode.window.showErrorMessage('No GitHub API key found')
+          return
+        }
+        const sessionToSaveFilepath = getSessionFilepath(sessionToSave)
+        try {
+          const newSessionFile = await vscode.workspace.openTextDocument(sessionToSaveFilepath)
+          const url = 'https://api.github.com/gists'
+          // eslint-disable-next-line turbo/no-undeclared-env-vars
+          const accessToken = process.env.GITHUB_API_KEY
+
+          const description = await vscode.window.showInputBox({
+            prompt: 'Enter a description for your gist',
+          })
+
+          const gistToCreate = {
+            description: description || '(no description)',
+            public: false,
+            files: {
+              [session.filename]: {
+                content: newSessionFile.getText(),
+              },
+            },
+          }
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              Authorization: `token ${accessToken}`,
+              Accept: 'application/vnd.github.v3+json',
+            },
+            body: JSON.stringify(gistToCreate),
+          })
+
+          const data = (await response.json()) as any
+
+          if (!response.ok) {
+            throw new Error(`GitHub Gist API error: ${JSON.stringify(data)}`)
+          }
+
+          await vscode.env.clipboard.writeText(data.html_url)
+          await vscode.window.showInformationMessage(`Copied gist URL to clipboard`)
+        } catch (e: any) {
+          await vscode.window.showErrorMessage(`Unable to save gist: ${e.message}`)
         }
         break
       case 'openGlass':

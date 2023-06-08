@@ -7,6 +7,7 @@ import { generateULID } from './ulid'
 
 export interface GlassSession {
   filepath: string
+  filename: string
   id: string
   tempDir: string
   stopped: boolean
@@ -57,6 +58,7 @@ export async function createSession(
   const session: GlassSession = {
     id: sessionId,
     filepath,
+    filename: path.basename(filepath),
     tempDir,
     stopped: false,
   }

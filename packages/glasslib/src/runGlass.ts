@@ -259,15 +259,16 @@ async function runGlassChat(
     // right now claude has a leading whitespace character
     // we need to remove that!
     if (options?.progress) {
+      const responseTokens = options.transcriptTokenCounter.countTokens(
+        `<|im_start|>assistant\n${next}<|im_end|>`,
+        request.model
+      )
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens }),
+          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
           requestBlocks,
           requestTokens,
-          responseTokens: options.transcriptTokenCounter.countTokens(
-            `<|im_start|>assistant\n${next}<|im_end|>`,
-            request.model
-          ),
+          responseTokens,
           streaming: true,
           index: responseData.length,
         })
@@ -359,12 +360,13 @@ async function runGlassChatAnthropic(
       throw new Error(`HTTP error: ${r.status}`)
     }
     if (options?.progress) {
+      const responseTokens = options.transcriptTokenCounter.countTokens(next, request.model)
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens }),
+          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
           requestBlocks,
           requestTokens,
-          responseTokens: options.transcriptTokenCounter.countTokens(next, request.model),
+          responseTokens,
           streaming: true,
           index: responseData.length,
         })
@@ -474,13 +476,14 @@ async function runGlassCompletion(
       throw new Error(`HTTP error: ${r.status}`)
     }
     if (options?.progress) {
+      const responseTokens = options.transcriptTokenCounter.countTokens(next, request.model)
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens }),
+          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
           requestBlocks,
           streaming: true,
           requestTokens,
-          responseTokens: options.transcriptTokenCounter.countTokens(next, request.model),
+          responseTokens,
           index: responseData.length,
         })
       )

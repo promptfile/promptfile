@@ -11,10 +11,22 @@ interface TopperViewProps {
   dirty: boolean
   reloadable: boolean
   openCurrentSessionFile: () => void
+  saveCurrengSessionGist: () => void
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const { dirty, reloadable, filename, tabs, tab, setTab, reload, openOutput, openCurrentSessionFile } = props
+  const {
+    dirty,
+    reloadable,
+    filename,
+    tabs,
+    tab,
+    setTab,
+    reload,
+    openOutput,
+    openCurrentSessionFile,
+    saveCurrengSessionGist,
+  } = props
 
   return (
     <div
@@ -59,6 +71,18 @@ export const TopperView = (props: TopperViewProps) => {
             style={{ fontSize: '12px', paddingRight: '16px', opacity: 0.5, cursor: 'pointer' }}
           >
             Logs
+          </div>
+          <div
+            onMouseEnter={(event: any) => {
+              event.target.style.opacity = '1.0'
+            }}
+            onMouseLeave={(event: any) => {
+              event.target.style.opacity = '0.5'
+            }}
+            onClick={saveCurrengSessionGist}
+            style={{ fontSize: '12px', paddingRight: '16px', opacity: 0.5, cursor: 'pointer' }}
+          >
+            Save
           </div>
           <VSCodeButton appearance="secondary" onClick={reload} disabled={!reloadable}>
             Reload

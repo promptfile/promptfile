@@ -146,11 +146,24 @@ function RigView() {
     openSession(sessionId)
   }
 
+  const saveCurrengSessionGist = () => {
+    saveSession(sessionId)
+  }
+
   const openSession = (sessionIdToOpen: string) => {
     vscode.postMessage({
       action: 'openSessionFile',
       data: {
         sessionId: sessionIdToOpen,
+      },
+    })
+  }
+
+  const saveSession = (sessionIdToSave: string) => {
+    vscode.postMessage({
+      action: 'saveSessionGist',
+      data: {
+        sessionId: sessionIdToSave,
       },
     })
   }
@@ -194,6 +207,7 @@ function RigView() {
     >
       <TopperView
         openCurrentSessionFile={openCurrentSessionFile}
+        saveCurrengSessionGist={saveCurrengSessionGist}
         dirty={dirty}
         reloadable={assistantBlocks.length > 0 || dirty}
         tab={tab}

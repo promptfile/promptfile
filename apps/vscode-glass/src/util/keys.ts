@@ -19,3 +19,13 @@ export function getAnthropicKey() {
 
   return anthropicKey || null
 }
+
+export function getGithubKey() {
+  let githubKey: string = vscode.workspace.getConfiguration('glass').get('githubKey') as any
+  if (!githubKey) {
+    // eslint-disable-next-line turbo/no-undeclared-env-vars
+    githubKey = process.env.GITHUB_API_KEY || ''
+  }
+
+  return githubKey || null
+}
