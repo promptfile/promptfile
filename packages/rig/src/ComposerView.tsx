@@ -1,4 +1,5 @@
-import { VSCodeButton, VSCodeDivider, VSCodeTextArea } from '@vscode/webview-ui-toolkit/react'
+import MonacoEditor from '@monaco-editor/react'
+import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 import { useEffect } from 'react'
 
 interface ComposerViewProps {
@@ -47,7 +48,37 @@ export const ComposerView = (props: ComposerViewProps) => {
                 {keys.length > 1 && (
                   <div style={{ paddingTop: index === 0 ? '0px' : '8px', paddingBottom: '4px' }}>{key}</div>
                 )}
-                <VSCodeTextArea
+                <MonacoEditor
+                  width="full"
+                  height="200px"
+                  theme="vs-dark"
+                  // language="typescript"
+                  language={'markdown'}
+                  defaultValue={''}
+                  // defaultValue={Object.keys(inputs).length === 1 ? '' : JSON.stringify(inputs, null, 2)}
+                  options={{
+                    minimap: {
+                      enabled: false,
+                    },
+                    fontSize: 12,
+                    // padding: {
+                    //   top: 8,
+                    // },
+                  }}
+                  onMount={editor => {
+                    editor.focus()
+                    editor.onKeyDown(e => {
+                      const value = editor.getValue()
+                      setInputs({ ...inputs, [key]: value })
+                      if (e.browserEvent.key === 'Enter' && (e.browserEvent.metaKey || e.browserEvent.ctrlKey)) {
+                        e.preventDefault()
+                        run(inputs)
+                      }
+                    })
+                  }}
+                />
+
+                {/* <VSCodeTextArea
                   style={{ width: '100%' }}
                   value={inputs[key]}
                   resize="vertical"
@@ -67,7 +98,7 @@ export const ComposerView = (props: ComposerViewProps) => {
                       run(inputs)
                     }
                   }}
-                />
+                /> */}
               </div>
             ))}
           </div>
