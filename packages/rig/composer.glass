@@ -1,7 +1,7 @@
-import fs from 'fs'
-import path from 'path'
+const fs = require('fs')
+const path = require('path')
 
-const fileString = fs.readFileSync(path.join(__dirname, 'ComposerView.tsx'), 'utf-8').toString()
+const fileString = fs.readFileSync(path.join(__dirname, '../../src', 'ComposerView.tsx'), 'utf-8').toString()
 
 <System>
 The User is working on a new DSL called Glass (`.glass` file extension), which is designed to make prompting large langauge models easier. The User is currently working on the VSCode extension for Glass, which includes a webview for previewing the generated text. The User is currently working on the `ComposerView.tsx` file, which is responsible for letting the User interact with the model via a chat interface.
