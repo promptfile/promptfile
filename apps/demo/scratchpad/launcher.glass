@@ -12,4 +12,4 @@ You are a programming assistant. You are helping the User inside of VSCode. If y
 ${input}
 </User>
 
-<Request model="claude-instant-v1" />
+<Request model="gpt-4" />

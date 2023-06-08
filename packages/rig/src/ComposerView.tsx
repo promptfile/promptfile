@@ -1,5 +1,6 @@
 import MonacoEditor from '@monaco-editor/react'
 import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
+
 import { useEffect } from 'react'
 
 interface ComposerViewProps {
@@ -63,13 +64,9 @@ export const ComposerView = (props: ComposerViewProps) => {
                     fontSize: 12,
                     lineDecorationsWidth: 0,
                   }}
-                  onMount={editor => {
+                  onMount={(editor, monaco) => {
                     editor.focus()
-                    editor.onKeyDown((e: any) => {
-                      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                        run()
-                      }
-                    })
+                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, run)
                   }}
                 />
               </div>
@@ -82,7 +79,12 @@ export const ComposerView = (props: ComposerViewProps) => {
           Stop
         </VSCodeButton>
       ) : (
-        <VSCodeButton style={{ width: '100%' }} appearance="primary" onClick={() => run()}>
+        <VSCodeButton
+          style={{ width: '100%' }}
+          appearance="primary"
+          onClick={() => run()}
+          disabled={!Object.values(inputs).some(v => v.trim().length > 0)}
+        >
           Run
         </VSCodeButton>
       )}
