@@ -1,0 +1,22 @@
+import fs from 'fs'
+import path from 'path'
+
+const fileString = fs.readFileSync(path.join(__dirname, 'ComposerView.tsx'), 'utf-8').toString()
+
+<System>
+You are a programming assistant helping the User with the following TSX file:
+
+```tsx
+${fileString}
+```
+
+This file exists within the webview of a VSCode extension.
+</System>
+
+<Transcript />
+
+<User>
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />

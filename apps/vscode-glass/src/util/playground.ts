@@ -122,7 +122,7 @@ export async function createPlayground(
           const sessionBlocks = parseGlassTranscriptBlocks(sessionGlass)
           const lastBlock = sessionBlocks.length > 0 ? sessionBlocks[sessionBlocks.length - 1] : null
           return {
-            id: getDocumentFilename(sessionDocument),
+            id: getDocumentFilename(sessionDocument).replace('.glass', ''),
             numMessages: sessionBlocks.length,
             lastMessage: lastBlock?.child?.content ?? '(no messages)',
           }
