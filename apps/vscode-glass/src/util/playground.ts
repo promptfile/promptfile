@@ -69,7 +69,6 @@ export async function createPlayground(
   }
 
   const initialGlass = fs.readFileSync(filepath, 'utf-8')
-  const initialMetadata = parseGlassMetadata(initialGlass)
   const filename = filepath.split('/').pop()
 
   // If there's no existing panel, create a new one
@@ -78,11 +77,12 @@ export async function createPlayground(
     `${filename} (playground)`,
     {
       viewColumn: getCurrentViewColumn(playgrounds),
-      preserveFocus: initialMetadata.interpolationVariables.length === 0,
+      preserveFocus: true,
     },
     {
       enableScripts: true,
       retainContextWhenHidden: true,
+      enableFindWidget: true,
     }
   )
 
