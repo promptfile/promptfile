@@ -236,15 +236,16 @@ export async function activate(context: vscode.ExtensionContext) {
         await vscode.window.showErrorMessage('Unable to find any Glass files')
         return
       } else if (glassFiles.length === 1) {
-        await launchGlassDocument(glassFiles[0], outputChannel)
+        const doc = await vscode.workspace.openTextDocument(glassFiles[0])
+        await launchGlassDocument(doc, outputChannel)
         return
       }
-      const glassFilesQuickPick = glassFiles.map(document => {
-        const relativePath = vscode.workspace.asRelativePath(document.uri.fsPath)
+      const glassFilesQuickPick = glassFiles.map(documentUri => {
+        const relativePath = vscode.workspace.asRelativePath(documentUri.fsPath)
         return {
-          label: getDocumentFilename(document),
+          label: path.basename(documentUri.fsPath),
           description: relativePath,
-          uri: document.uri,
+          uri: documentUri,
         }
       })
       glassFilesQuickPick.sort((a, b) => {
@@ -267,16 +268,17 @@ export async function activate(context: vscode.ExtensionContext) {
       if (!selectedFile) {
         return
       }
-      const selectedDocument = glassFiles.find(document => {
-        const relativePath = vscode.workspace.asRelativePath(document.uri.fsPath)
+      const selectedDocument = glassFiles.find(documentUri => {
+        const relativePath = vscode.workspace.asRelativePath(documentUri.fsPath)
         return relativePath === selectedFile.description
       })
       if (!selectedDocument) {
         await vscode.window.showErrorMessage('Unable to find Glass file')
         return
       }
-      await updateRecentlySelectedFiles(selectedDocument.uri)
-      await launchGlassDocument(selectedDocument, outputChannel)
+      await updateRecentlySelectedFiles(selectedDocument)
+      const doc = await vscode.workspace.openTextDocument(selectedDocument)
+      await launchGlassDocument(doc, outputChannel)
     }),
 
     vscode.commands.registerCommand('glass.openSettings', async () => {

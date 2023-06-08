@@ -12,11 +12,22 @@ export function getDocumentFilename(document: vscode.TextDocument) {
   return document.fileName.split('/').pop()!
 }
 
-export async function getAllGlassFiles(): Promise<vscode.TextDocument[]> {
+export async function getAllGlassFiles(): Promise<vscode.Uri[]> {
   const glassFilePattern = '**/*.glass'
-  const excludePattern = '**/.glasslog/**' // exclude any .glass files in .glasslog folder
+  // const excludePattern = '**/.glasslog/**' // exclude any .glass files in .glasslog folder
 
-  const files = await vscode.workspace.findFiles(glassFilePattern, excludePattern)
-  const glassTextDocuments = await Promise.all(files.map(file => vscode.workspace.openTextDocument(file)))
-  return glassTextDocuments.filter(document => isGlassFile(document))
+  const config = vscode.workspace.getConfiguration()
+
+  // Get the current value of the `search.exclude` setting
+  const searchExclude = config.get('search.exclude') as any
+
+  let excludePattern = ''
+  if (searchExclude) {
+    const patterns = Object.keys(searchExclude)
+      .filter(key => searchExclude[key]) // Get properties with true value
+      .map(key => (key.endsWith('/**') ? key : key + '/**')) // Add '/**' to patterns if not exists
+    excludePattern = patterns.join(',')
+  }
+
+  return await vscode.workspace.findFiles(glassFilePattern, excludePattern)
 }
