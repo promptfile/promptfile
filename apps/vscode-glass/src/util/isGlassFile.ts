@@ -29,5 +29,9 @@ export async function getAllGlassFiles(): Promise<vscode.Uri[]> {
     excludePattern = patterns.join(',')
   }
 
-  return await vscode.workspace.findFiles(glassFilePattern, excludePattern)
+  if (excludePattern) excludePattern += ','
+  excludePattern += '**/.glasslog/**' // exclude any .glass files in .glasslog folder
+
+  // for some reason, the exclude pattern doesn't work, so we have to filter out the results
+  return await vscode.workspace.findFiles(glassFilePattern, '**/.glasslog/**')
 }
