@@ -22,6 +22,7 @@ import { getCurrentViewColumn } from './util/viewColumn'
 
 let client: LanguageClient | null = null
 
+const stoppedRequestIds = new Set<string>()
 const sessions = new Map<string, GlassSession>()
 const playgrounds = new Map<string, GlassPlayground>()
 const fileTimestamps = new Map<string, number>()
@@ -84,7 +85,14 @@ export async function activate(context: vscode.ExtensionContext) {
     outputChannel.appendLine(`${filename} — launching Glass playground`)
     const initialMetadata =
       languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
-    const playground = await createPlayground(filepath, playgrounds, sessions, context.extensionUri, outputChannel)
+    const playground = await createPlayground(
+      filepath,
+      playgrounds,
+      sessions,
+      context.extensionUri,
+      outputChannel,
+      stoppedRequestIds
+    )
     if (!playground) {
       await vscode.window.showErrorMessage('Unable to create playground')
       return

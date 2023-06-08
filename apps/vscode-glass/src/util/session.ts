@@ -10,7 +10,6 @@ export interface GlassSession {
   filename: string
   id: string
   tempDir: string
-  stopped: boolean
 }
 
 export function getSessionFilepath(session: GlassSession) {
@@ -60,7 +59,6 @@ export async function createSession(
     filepath,
     filename: path.basename(filepath),
     tempDir,
-    stopped: false,
   }
   sessions.set(session.id, session)
   return session

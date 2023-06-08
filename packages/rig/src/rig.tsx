@@ -27,6 +27,7 @@ render(<RigView />, container)
 function RigView() {
   const tabs: string[] = ['Transcript', 'History']
 
+  const [requestId, setRequestId] = useState('')
   const [filename, setFilename] = useState('')
   const [currentSource, setCurrentSource] = useState('')
   const [source, setSource] = useState('')
@@ -98,6 +99,9 @@ function RigView() {
             break
           }
           setBlocks(() => message.data.blocks)
+          if (message.data.requestId) {
+            setRequestId(() => message.data.requestId)
+          }
           break
         case 'onResponse':
           if (message.data.sessionId !== sessionId) {
@@ -185,6 +189,7 @@ function RigView() {
       action: 'stopSession',
       data: {
         sessionId,
+        requestId,
       },
     })
   }

@@ -15,6 +15,7 @@ import { getDocumentFilename } from './isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './keys'
 import { updateLanguageMode } from './languageMode'
 import { GlassSession, createSession, getSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
+import { generateULID } from './ulid'
 import { getCurrentViewColumn } from './viewColumn'
 
 export interface GlassPlayground {
@@ -28,7 +29,8 @@ export async function createPlayground(
   playgrounds: Map<string, GlassPlayground>,
   sessions: Map<string, GlassSession>,
   extensionUri: vscode.Uri,
-  outputChannel: vscode.OutputChannel
+  outputChannel: vscode.OutputChannel,
+  stoppedRequestIds: Set<string>
 ) {
   // load the document at the filepath
   const document = await vscode.workspace.openTextDocument(filepath)
@@ -92,6 +94,7 @@ export async function createPlayground(
   panel.webview.onDidReceiveMessage(async (message: any) => {
     switch (message.action) {
       case 'stopSession':
+        const stopRequestId = message.data.requestId
         const stopSessionId = message.data.sessionId
         const stoppedSession = sessions.get(stopSessionId)
         if (!stoppedSession) {
@@ -99,7 +102,7 @@ export async function createPlayground(
         }
         let stoppedGlass = loadGlass(stoppedSession)
         stoppedGlass = stoppedGlass.replace('█', '')
-        stoppedSession.stopped = true
+        stoppedRequestIds.add(stopRequestId)
         sessions.set(stopSessionId, stoppedSession)
         writeGlass(stoppedSession, stoppedGlass)
         const stoppedBlocks = parseGlassTranscriptBlocks(stoppedGlass)
@@ -329,6 +332,7 @@ export async function createPlayground(
           const sessionDocument = await vscode.workspace.openTextDocument(newFilePath)
 
           try {
+            const requestId = generateULID()
             await updateLanguageMode(sessionDocument)
             const resp = await executeGlassFile(
               origFilePath,
@@ -342,7 +346,7 @@ export async function createPlayground(
                   return false
                 }
                 const session = sessions.get(existingPlayground.sessionId)
-                if (!session || session.stopped) {
+                if (!session || stoppedRequestIds.has(requestId)) {
                   return false
                 }
                 writeGlass(session, nextDoc)
@@ -355,6 +359,7 @@ export async function createPlayground(
                     sessionId: session.id,
                     blocks: blocksForGlass,
                     variables: metadataForGlass.interpolationVariables,
+                    requestId,
                   },
                 })
                 return true
@@ -366,7 +371,7 @@ export async function createPlayground(
               return false
             }
             const session = sessions.get(existingPlayground.sessionId)
-            if (!session || session.stopped) {
+            if (!session || stoppedRequestIds.has(requestId)) {
               return false
             }
             const blocksForGlass = parseGlassTranscriptBlocks(resp.finalDoc)
@@ -403,7 +408,6 @@ export async function createPlayground(
           await vscode.window.showErrorMessage('No session provided')
           return
         }
-        activeSession.stopped = false
         sessions.set(sessionId, activeSession)
         const glass = loadGlass(activeSession)
         const inputs = message.data.inputs

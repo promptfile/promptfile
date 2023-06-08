@@ -86,7 +86,7 @@ export const ComposerView = (props: ComposerViewProps) => {
         )}
       </div>
       {streaming ? (
-        <VSCodeButton style={{ width: '100%' }} appearance="secondary" onClick={stop}>
+        <VSCodeButton style={{ width: '100%' }} appearance="secondary" onClick={stop} disabled={false}>
           Stop
         </VSCodeButton>
       ) : (
