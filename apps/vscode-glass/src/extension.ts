@@ -33,6 +33,22 @@ export async function activate(context: vscode.ExtensionContext) {
   // The server is implemented in node
   const languageServerModule = context.asAbsolutePath('out/language-server.js')
 
+  // https://gist.github.com/rothfels/19f9bb9c38eee4af786dea515b1f455e
+  const recentlySelectedFilesKey = 'recentlySelectedFiles'
+  let recentlySelectedFiles: vscode.Uri[] = context.workspaceState.get(recentlySelectedFilesKey, [])
+
+  async function updateRecentlySelectedFiles(selectedUri: vscode.Uri) {
+    // Remove any existing instance of the selected file.
+    recentlySelectedFiles = recentlySelectedFiles.filter(uri => uri.toString() !== selectedUri.toString())
+
+    // Add the selected file to the beginning of the array.
+    recentlySelectedFiles.unshift(selectedUri)
+    console.log(recentlySelectedFiles)
+
+    // Save the updated array.
+    await context.workspaceState.update(recentlySelectedFilesKey, recentlySelectedFiles)
+  }
+
   client = new LanguageClient(
     'Glass',
     // If the extension is launched in debug mode then the debug server options are used
@@ -212,6 +228,7 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
       await launchGlassDocument(activeEditor.document, outputChannel)
+      await updateRecentlySelectedFiles(activeEditor.document.uri)
     }),
     vscode.commands.registerCommand('glass.selectFile', async () => {
       const glassFiles = await getAllGlassFiles()
@@ -227,10 +244,22 @@ export async function activate(context: vscode.ExtensionContext) {
         return {
           label: getDocumentFilename(document),
           description: relativePath,
+          uri: document.uri,
         }
       })
       glassFilesQuickPick.sort((a, b) => {
-        return a.label.localeCompare(b.label)
+        const indexA = recentlySelectedFiles.findIndex(uri => uri.fsPath === a.uri.fsPath)
+        const indexB = recentlySelectedFiles.findIndex(uri => uri.fsPath === b.uri.fsPath)
+
+        if (indexA === -1 && indexB === -1) {
+          return a.label.localeCompare(b.label)
+        } else if (indexA === -1) {
+          return 1
+        } else if (indexB === -1) {
+          return -1
+        } else {
+          return indexA - indexB
+        }
       })
       const selectedFile = await vscode.window.showQuickPick(glassFilesQuickPick, {
         placeHolder: 'Launch a Glass file',
@@ -246,6 +275,7 @@ export async function activate(context: vscode.ExtensionContext) {
         await vscode.window.showErrorMessage('Unable to find Glass file')
         return
       }
+      await updateRecentlySelectedFiles(selectedDocument.uri)
       await launchGlassDocument(selectedDocument, outputChannel)
     }),
 

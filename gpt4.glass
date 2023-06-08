@@ -1,0 +1,9 @@
+---
+language: typescript
+---
+
+<User>
+${input}
+</User>
+
+<Request model="gpt-4" />
