@@ -17,7 +17,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
 
   const CodeBlock = ({ language, value }: { language: string; value: string }) => {
     return (
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div
           style={{
             fontSize: '12px',
@@ -29,7 +29,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
           <div style={{ opacity: 0.5 }}>{language}</div>
           <CopyButton value={value} />
         </div>
-        <SyntaxHighlighter language={language} style={materialOceanic}>
+        <SyntaxHighlighter language={language} style={materialOceanic} wrapLongLines>
           {value}
         </SyntaxHighlighter>
       </div>

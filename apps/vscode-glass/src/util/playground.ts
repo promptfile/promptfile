@@ -213,10 +213,10 @@ export async function createPlayground(
           await vscode.window.showErrorMessage('Unable to open session file')
         }
         break
-      case 'saveSessionGist':
-        const sessionIdToSave = message.data.sessionId
-        const sessionToSave = sessions.get(sessionIdToSave)
-        if (!sessionToSave) {
+      case 'shareSessionGist':
+        const sessionIdToShare = message.data.sessionId
+        const sessionToShare = sessions.get(sessionIdToShare)
+        if (!sessionToShare) {
           await vscode.window.showErrorMessage('No session found')
           return
         }
@@ -225,9 +225,9 @@ export async function createPlayground(
           await vscode.window.showErrorMessage('No GitHub API key found')
           return
         }
-        const sessionToSaveFilepath = getSessionFilepath(sessionToSave)
+        const sessionToShareFilepath = getSessionFilepath(sessionToShare)
         try {
-          const newSessionFile = await vscode.workspace.openTextDocument(sessionToSaveFilepath)
+          const newSessionFile = await vscode.workspace.openTextDocument(sessionToShareFilepath)
           const url = 'https://api.github.com/gists'
           // eslint-disable-next-line turbo/no-undeclared-env-vars
           const accessToken = process.env.GITHUB_API_KEY

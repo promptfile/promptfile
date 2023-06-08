@@ -146,8 +146,8 @@ function RigView() {
     openSession(sessionId)
   }
 
-  const saveCurrengSessionGist = () => {
-    saveSession(sessionId)
+  const shareCurrentSessionGist = () => {
+    shareSession(sessionId)
   }
 
   const openSession = (sessionIdToOpen: string) => {
@@ -159,11 +159,11 @@ function RigView() {
     })
   }
 
-  const saveSession = (sessionIdToSave: string) => {
+  const shareSession = (sessionIdToShare: string) => {
     vscode.postMessage({
-      action: 'saveSessionGist',
+      action: 'shareSessionGist',
       data: {
-        sessionId: sessionIdToSave,
+        sessionId: sessionIdToShare,
       },
     })
   }
@@ -207,7 +207,7 @@ function RigView() {
     >
       <TopperView
         openCurrentSessionFile={openCurrentSessionFile}
-        saveCurrengSessionGist={saveCurrengSessionGist}
+        shareCurrentSessionGist={shareCurrentSessionGist}
         dirty={dirty}
         reloadable={assistantBlocks.length > 0 || dirty}
         tab={tab}
