@@ -148,8 +148,8 @@
       },
       {
         "command": "glass.openPlayground",
-        "key": "ctrl+shift+g",
-        "mac": "cmd+shift+g"
+        "key": "ctrl+shift+enter",
+        "mac": "cmd+shift+enter"
       }
     ],
     "configuration": [
