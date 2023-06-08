@@ -8,6 +8,7 @@ import {
 } from '@glass-lang/glasslib'
 import fs from 'fs'
 import fetch from 'node-fetch'
+import path from 'path'
 import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getHtmlForWebview } from '../webview'
@@ -199,13 +200,18 @@ export async function createPlayground(
         })
         break
       case 'openSessionFile':
+        const currentPlayground = playgrounds.get(filepath)
+        if (!currentPlayground) {
+          await vscode.window.showErrorMessage('No playground found')
+          return
+        }
         const sessionIdToOpen = message.data.sessionId
-        const sessionToOpen = sessions.get(sessionIdToOpen)
-        if (!sessionToOpen) {
+        const currentActiveSession = sessions.get(currentPlayground.sessionId)
+        if (!currentActiveSession) {
           await vscode.window.showErrorMessage('No session found')
           return
         }
-        const sessionFilepath = getSessionFilepath(sessionToOpen)
+        const sessionFilepath = path.join(currentActiveSession.tempDir, `${sessionIdToOpen}.glass`)
         try {
           const newSessionFile = await vscode.workspace.openTextDocument(sessionFilepath)
           await vscode.window.showTextDocument(newSessionFile, {
