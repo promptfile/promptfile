@@ -72,6 +72,26 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const outputChannel = vscode.window.createOutputChannel('Glass')
 
+  async function launchGlassDocument(selectedDocument: vscode.TextDocument, outputChannel: vscode.OutputChannel) {
+    const relativePath = vscode.workspace.asRelativePath(selectedDocument.uri.fsPath)
+    fileTimestamps.set(relativePath, Date.now())
+
+    const initialGlass = selectedDocument.getText()
+    const languageId = selectedDocument.languageId
+    const filepath = selectedDocument.uri.fsPath
+    const filename = getDocumentFilename(selectedDocument)
+
+    outputChannel.appendLine(`${filename} — launching Glass playground`)
+    const initialMetadata =
+      languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
+    const playground = await createPlayground(filepath, playgrounds, sessions, context.extensionUri, outputChannel)
+    if (!playground) {
+      await vscode.window.showErrorMessage('Unable to create playground')
+      return
+    }
+    playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
+  }
+
   context.subscriptions.push(
     tokenCount,
     vscode.workspace.onDidOpenTextDocument(document => {
@@ -178,38 +198,20 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('glass.showGlassOutput', async () => {
       outputChannel.show()
     }),
-    vscode.commands.registerCommand('glass.openPlayground', async () => {
-      async function launchGlassDocument(selectedDocument: vscode.TextDocument) {
-        const relativePath = vscode.workspace.asRelativePath(selectedDocument.uri.fsPath)
-        fileTimestamps.set(relativePath, Date.now())
-
-        const initialGlass = selectedDocument.getText()
-        const languageId = selectedDocument.languageId
-        const filepath = selectedDocument.uri.fsPath
-        const filename = getDocumentFilename(selectedDocument)
-
-        outputChannel.appendLine(`${filename} — launching Glass playground`)
-        const initialMetadata =
-          languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
-        const playground = await createPlayground(filepath, playgrounds, sessions, context.extensionUri, outputChannel)
-        if (!playground) {
-          await vscode.window.showErrorMessage('Unable to create playground')
-          return
-        }
-        playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
-      }
-
+    vscode.commands.registerCommand('glass.runCurrentFile', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (activeEditor && isGlassFile(activeEditor.document)) {
-        await launchGlassDocument(activeEditor.document)
+      if (!activeEditor || !isGlassFile(activeEditor.document)) {
         return
       }
+      await launchGlassDocument(activeEditor.document, outputChannel)
+    }),
+    vscode.commands.registerCommand('glass.selectFile', async () => {
       const glassFiles = await getAllGlassFiles()
       if (glassFiles.length === 0) {
         await vscode.window.showErrorMessage('Unable to find any Glass files')
         return
       } else if (glassFiles.length === 1) {
-        await launchGlassDocument(glassFiles[0])
+        await launchGlassDocument(glassFiles[0], outputChannel)
         return
       }
       const glassFilesQuickPick = glassFiles.map(document => {
@@ -223,7 +225,7 @@ export async function activate(context: vscode.ExtensionContext) {
         return a.label.localeCompare(b.label)
       })
       const selectedFile = await vscode.window.showQuickPick(glassFilesQuickPick, {
-        placeHolder: 'Select a Glass file to open',
+        placeHolder: 'Launch a Glass file',
       })
       if (!selectedFile) {
         return
@@ -236,7 +238,7 @@ export async function activate(context: vscode.ExtensionContext) {
         await vscode.window.showErrorMessage('Unable to find Glass file')
         return
       }
-      await launchGlassDocument(selectedDocument)
+      await launchGlassDocument(selectedDocument, outputChannel)
     }),
 
     vscode.commands.registerCommand('glass.openSettings', async () => {

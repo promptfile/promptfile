@@ -104,9 +104,9 @@
     ],
     "commands": [
       {
-        "command": "glass.openPlayground",
-        "title": "Glass: launch",
-        "description": "This command will launch the Glass playground."
+        "command": "glass.selectFile",
+        "title": "Glass: launch a file",
+        "description": "Select a Glass file to launch."
       },
       {
         "command": "glass.showGlassOutput",
@@ -141,13 +141,13 @@
     ],
     "keybindings": [
       {
-        "command": "glass.openPlayground",
+        "command": "glass.runCurrentFile",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       },
       {
-        "command": "glass.openPlayground",
+        "command": "glass.selectFile",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter"
       }
