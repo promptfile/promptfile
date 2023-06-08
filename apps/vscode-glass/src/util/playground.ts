@@ -11,7 +11,6 @@ import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getHtmlForWebview } from '../webview'
-import { getDocumentFilename } from './isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './keys'
 import { updateLanguageMode } from './languageMode'
 import { createSession, getCurrentSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
@@ -118,7 +117,7 @@ export async function createPlayground(
           const sessionBlocks = parseGlassTranscriptBlocks(sessionGlass)
           const lastBlock = sessionBlocks.length > 0 ? sessionBlocks[sessionBlocks.length - 1] : null
           return {
-            id: getDocumentFilename(sessionDocument).replace('.glass', ''),
+            session: sessionDocument.uri.fsPath,
             numMessages: sessionBlocks.length,
             lastMessage: lastBlock?.child?.content ?? '(no messages)',
           }

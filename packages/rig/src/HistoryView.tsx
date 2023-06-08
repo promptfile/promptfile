@@ -48,10 +48,10 @@ export const HistoryView = (props: HistoryViewProps) => {
             .slice()
             .reverse()
             .map(session => (
-              <VSCodeDataGridRow key={session.id}>
+              <VSCodeDataGridRow key={session.session}>
                 <VSCodeDataGridCell grid-column="1">
-                  <VSCodeLink href={'#'} onClick={() => openSession(session.id)}>
-                    {session.id}
+                  <VSCodeLink href={'#'} onClick={() => openSession(session.session)}>
+                    {session.session.split('/').pop()?.replace('.glass', '')}
                   </VSCodeLink>
                 </VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="2">{session.numMessages}</VSCodeDataGridCell>

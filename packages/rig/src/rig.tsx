@@ -8,7 +8,7 @@ import { TranscriptView } from './TranscriptView'
 import { lastElement } from './util'
 
 export interface GlassSession {
-  id: string
+  session: string
   numMessages: number
   lastMessage: string
 }
