@@ -3,7 +3,7 @@ import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 import { useEffect } from 'react'
 
 interface ComposerViewProps {
-  run: (inputs: Record<string, string>) => void
+  run: () => void
   stop: () => void
   reload: () => void
   streaming: boolean
@@ -12,7 +12,7 @@ interface ComposerViewProps {
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { inputs, setInputs, streaming, stop } = props
+  const { inputs, setInputs, streaming, run, stop } = props
 
   const keys: string[] = Object.keys(inputs)
 
@@ -22,10 +22,6 @@ export const ComposerView = (props: ComposerViewProps) => {
 
   const setValue = (key: string, value: string) => {
     setInputs({ ...inputs, [key]: value })
-  }
-
-  const run = () => {
-    props.run(inputs)
   }
 
   return (

@@ -129,7 +129,9 @@ function RigView() {
     })
   }
 
-  const run = (inputs: Record<string, string>) => {
+  const run = () => {
+    console.log('RUNNING')
+    console.log(inputs)
     vscode.postMessage({
       action: 'runSession',
       data: {
@@ -137,7 +139,7 @@ function RigView() {
         sessionId,
       },
     })
-    updateInputsWithVariables(Object.keys(inputs), true)
+    // updateInputsWithVariables(Object.keys(inputs), true)
   }
 
   const openCurrentSessionFile = () => {
@@ -203,7 +205,7 @@ function RigView() {
       />
       {tab === 'Transcript' && <TranscriptView sessionId={sessionId} blocks={blocks} />}
       {/* {tab === 'State' && <StateView />} */}
-      {tab === 'History' && <HistoryView sessions={sessions} />}
+      {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
       {tab === 'Transcript' && (
         <ComposerView
           reload={reload}
