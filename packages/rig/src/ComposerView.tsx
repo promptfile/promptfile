@@ -63,6 +63,14 @@ export const ComposerView = (props: ComposerViewProps) => {
                     fontSize: 12,
                     lineDecorationsWidth: 0,
                   }}
+                  onMount={editor => {
+                    editor.focus()
+                    editor.onKeyDown((e: any) => {
+                      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        run()
+                      }
+                    })
+                  }}
                 />
               </div>
             ))}
