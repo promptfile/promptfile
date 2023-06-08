@@ -53,7 +53,8 @@ export const ComposerView = (props: ComposerViewProps) => {
                   height="200px"
                   theme="vs-dark"
                   language={'markdown'}
-                  defaultValue={''}
+                  value={inputs[key]}
+                  onChange={value => setValue(key, value ?? '')}
                   options={{
                     minimap: {
                       enabled: false,
@@ -61,17 +62,6 @@ export const ComposerView = (props: ComposerViewProps) => {
                     wordWrap: 'on',
                     fontSize: 12,
                     lineDecorationsWidth: 0,
-                  }}
-                  onMount={editor => {
-                    editor.focus()
-                    editor.onKeyDown(e => {
-                      const value = editor.getValue()
-                      setValue(key, value)
-                      if (e.browserEvent.key === 'Enter' && (e.browserEvent.metaKey || e.browserEvent.ctrlKey)) {
-                        e.preventDefault()
-                        run()
-                      }
-                    })
                   }}
                 />
               </div>

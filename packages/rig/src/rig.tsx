@@ -139,7 +139,7 @@ function RigView() {
         sessionId,
       },
     })
-    // updateInputsWithVariables(Object.keys(inputs), true)
+    updateInputsWithVariables(Object.keys(inputs), true)
   }
 
   const openCurrentSessionFile = () => {
