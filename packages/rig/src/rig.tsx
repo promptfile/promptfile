@@ -36,6 +36,11 @@ function RigView() {
   const [sessions, setSessions] = useState<GlassSession[]>([])
   const [tab, setTab] = useState(tabs[0])
 
+  const setValue = (key: string, value: string) => {
+    console.log('SETTING VALUE', key, value)
+    setInputs({ ...inputs, [key]: value })
+  }
+
   const updateInputsWithVariables = (variables: string[], clearAllValues?: boolean) => {
     const newInputs: Record<string, string> = {}
     variables.forEach(v => {
@@ -129,17 +134,18 @@ function RigView() {
     })
   }
 
-  const run = () => {
-    console.log('RUNNING')
-    console.log(inputs)
+  const run = (inputsToRun: Record<string, string>) => {
+    if (!Object.values(inputsToRun).some(v => v.trim().length > 0)) {
+      return
+    }
     vscode.postMessage({
       action: 'runSession',
       data: {
-        inputs,
+        inputs: inputsToRun,
         sessionId,
       },
     })
-    updateInputsWithVariables(Object.keys(inputs), true)
+    updateInputsWithVariables(Object.keys(inputsToRun), true)
   }
 
   const openCurrentSessionFile = () => {
@@ -221,14 +227,7 @@ function RigView() {
       {/* {tab === 'State' && <StateView />} */}
       {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
       {tab === 'Transcript' && (
-        <ComposerView
-          reload={reload}
-          run={run}
-          stop={stop}
-          streaming={streaming}
-          inputs={inputs}
-          setInputs={setInputs}
-        />
+        <ComposerView reload={reload} run={run} stop={stop} streaming={streaming} inputs={inputs} setValue={setValue} />
       )}
     </div>
   )

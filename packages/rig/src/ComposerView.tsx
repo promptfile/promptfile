@@ -1,19 +1,21 @@
 import MonacoEditor from '@monaco-editor/react'
 import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface ComposerViewProps {
-  run: () => void
+  run: (inputsToRun: Record<string, string>) => void
   stop: () => void
   reload: () => void
   streaming: boolean
   inputs: Record<string, string>
-  setInputs: (inputs: Record<string, string>) => void
+  setValue: (key: string, value: string) => void
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { inputs, setInputs, streaming, run, stop } = props
+  const { inputs, setValue, streaming, run, stop } = props
+
+  const inputsRef = useRef(inputs)
 
   const keys: string[] = Object.keys(inputs)
 
@@ -21,8 +23,12 @@ export const ComposerView = (props: ComposerViewProps) => {
     document.getElementById('composer-input-0')?.focus()
   }, [keys.length])
 
-  const setValue = (key: string, value: string) => {
-    setInputs({ ...inputs, [key]: value })
+  useEffect(() => {
+    inputsRef.current = inputs
+  }, [inputs])
+
+  const runCurrent = () => {
+    run(inputsRef.current)
   }
 
   return (
@@ -60,13 +66,18 @@ export const ComposerView = (props: ComposerViewProps) => {
                     minimap: {
                       enabled: false,
                     },
+                    padding: {
+                      top: 4,
+                    },
                     wordWrap: 'on',
                     fontSize: 12,
                     lineDecorationsWidth: 0,
                   }}
                   onMount={(editor, monaco) => {
                     editor.focus()
-                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, run)
+                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                      run(inputsRef.current)
+                    })
                   }}
                 />
               </div>
@@ -82,7 +93,7 @@ export const ComposerView = (props: ComposerViewProps) => {
         <VSCodeButton
           style={{ width: '100%' }}
           appearance="primary"
-          onClick={() => run()}
+          onClick={() => run(inputsRef.current)}
           disabled={!Object.values(inputs).some(v => v.trim().length > 0)}
         >
           Run
