@@ -442,9 +442,10 @@ export function getGlassExportName(filePath: string) {
   let functionName = camelcase(fileName)
 
   // strip all numeric prefixes from functionNmae
-  functionName = functionName.replace(/^[0-9]+/, '')
+  if (functionName.replace(/^[0-9]+/, '') !== functionName) {
+    functionName = '_' + functionName
+  }
 
   const prefixGet = !(functionName.startsWith('get') && functionName[3] === functionName[3].toUpperCase())
   return `${prefixGet ? `get${functionName.slice(0, 1).toUpperCase() + functionName.slice(1)}` : functionName}Prompt`
 }
-1
