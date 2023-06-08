@@ -1,13 +1,13 @@
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow, VSCodeLink } from '@vscode/webview-ui-toolkit/react'
-import { GlassLog } from './rig'
+import { GlassSession } from './rig'
 
 interface HistoryViewProps {
-  logs: GlassLog[]
-  openGlass: (glass: string) => void
+  sessions: GlassSession[]
+  openSession: (sessionId: string) => void
 }
 
 export const HistoryView = (props: HistoryViewProps) => {
-  const { logs, openGlass } = props
+  const { sessions, openSession } = props
 
   function truncate(str: string | undefined, max = 36): string {
     if (!str) {
@@ -19,17 +19,6 @@ export const HistoryView = (props: HistoryViewProps) => {
     return str
   }
 
-  const inputSummary = (inputs: Record<string, string>) => {
-    const keys = Object.keys(inputs)
-    if (keys.length === 0) {
-      return ''
-    }
-    if (keys.length === 1) {
-      return inputs[keys[0]]
-    }
-    return keys.map(key => `${key}: ${inputs[key]}`).join(', ')
-  }
-
   return (
     <div
       style={{
@@ -38,7 +27,7 @@ export const HistoryView = (props: HistoryViewProps) => {
         overflow: 'auto',
       }}
     >
-      {logs.length === 0 ? (
+      {sessions.length === 0 ? (
         <div style={{ fontStyle: 'italic', fontWeight: 'bold', width: '100%', textAlign: 'center', opacity: 0.5 }}>
           No history yet
         </div>
@@ -46,35 +35,27 @@ export const HistoryView = (props: HistoryViewProps) => {
         <VSCodeDataGrid>
           <VSCodeDataGridRow row-type="header">
             <VSCodeDataGridCell cell-type="columnheader" grid-column="1">
-              ID
-            </VSCodeDataGridCell>
-            <VSCodeDataGridCell cell-type="columnheader" grid-column="2">
               Session
             </VSCodeDataGridCell>
+            <VSCodeDataGridCell cell-type="columnheader" grid-column="2">
+              Messages
+            </VSCodeDataGridCell>
             <VSCodeDataGridCell cell-type="columnheader" grid-column="3">
-              Model
-            </VSCodeDataGridCell>
-            <VSCodeDataGridCell cell-type="columnheader" grid-column="4">
-              Inputs
-            </VSCodeDataGridCell>
-            <VSCodeDataGridCell cell-type="columnheader" grid-column="5">
-              Output
+              Last
             </VSCodeDataGridCell>
           </VSCodeDataGridRow>
-          {logs
+          {sessions
             .slice()
             .reverse()
-            .map(log => (
-              <VSCodeDataGridRow key={log.id}>
+            .map(session => (
+              <VSCodeDataGridRow key={session.id}>
                 <VSCodeDataGridCell grid-column="1">
-                  <VSCodeLink href={'#'} onClick={() => openGlass(log.glass)}>
-                    {log.id}
+                  <VSCodeLink href={'#'} onClick={() => openSession(session.id)}>
+                    {session.id}
                   </VSCodeLink>
                 </VSCodeDataGridCell>
-                <VSCodeDataGridCell grid-column="2">{log.sessionId}</VSCodeDataGridCell>
-                <VSCodeDataGridCell grid-column="3">{log.model}</VSCodeDataGridCell>
-                <VSCodeDataGridCell grid-column="4">{inputSummary(log.inputs)}</VSCodeDataGridCell>
-                <VSCodeDataGridCell grid-column="5">{truncate(log.output)}</VSCodeDataGridCell>
+                <VSCodeDataGridCell grid-column="2">{session.numMessages}</VSCodeDataGridCell>
+                <VSCodeDataGridCell grid-column="3">{truncate(session.lastMessage)}</VSCodeDataGridCell>
               </VSCodeDataGridRow>
             ))}
         </VSCodeDataGrid>

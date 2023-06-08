@@ -63,3 +63,33 @@ export async function createSession(
   sessions.set(session.id, session)
   return session
 }
+
+export async function loadSessionDocuments(filepath: string): Promise<vscode.TextDocument[]> {
+  const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(filepath))
+  if (!workspaceFolder) {
+    return []
+  }
+
+  const relativePath = path.relative(workspaceFolder.uri.fsPath, filepath)
+  const hashedPath = crypto.createHash('md5').update(relativePath).digest('hex')
+  const tempDir = path.join(workspaceFolder.uri.fsPath, '.glasslog', hashedPath)
+
+  if (!fs.existsSync(tempDir)) {
+    return []
+  }
+
+  const sessionFiles = fs.readdirSync(tempDir).filter(file => file.endsWith('.glass'))
+  const sessionDocuments: vscode.TextDocument[] = []
+
+  for (const sessionFile of sessionFiles) {
+    const sessionFilePath = path.join(tempDir, sessionFile)
+    try {
+      const doc = await vscode.workspace.openTextDocument(sessionFilePath)
+      sessionDocuments.push(doc)
+    } catch (error) {
+      console.error(`Failed to load session document: ${sessionFilePath}`, error)
+    }
+  }
+
+  return sessionDocuments
+}
