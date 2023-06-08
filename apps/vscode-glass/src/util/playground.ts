@@ -154,6 +154,7 @@ export async function createPlayground(
         const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
         const currentMetadata =
           languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
+        const theme = vscode.workspace.getConfiguration('workbench').get('colorTheme')
         await panel.webview.postMessage({
           action: 'setGlass',
           data: {
@@ -165,6 +166,7 @@ export async function createPlayground(
             currentSource: currentGlass,
             source: currentGlass,
             testing: allBlocks.some(block => block.tag === 'Test'),
+            theme,
           },
         })
         break

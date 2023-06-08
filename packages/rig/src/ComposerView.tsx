@@ -4,6 +4,7 @@ import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 import { useEffect, useRef } from 'react'
 
 interface ComposerViewProps {
+  theme: string
   run: (inputsToRun: Record<string, string>) => void
   stop: () => void
   reload: () => void
@@ -13,7 +14,7 @@ interface ComposerViewProps {
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { inputs, setValue, streaming, run, stop } = props
+  const { inputs, setValue, streaming, run, stop, theme } = props
 
   const inputsRef = useRef(inputs)
 
@@ -27,8 +28,20 @@ export const ComposerView = (props: ComposerViewProps) => {
     inputsRef.current = inputs
   }, [inputs])
 
-  const runCurrent = () => {
-    run(inputsRef.current)
+  function mapVSCodeThemeToMonaco(theme: string) {
+    const themeMapping: Record<string, string> = {
+      'Default Dark Modern': 'vs-dark',
+      'Default Light Modern': 'vs',
+      'Default Dark+': 'vs-dark',
+      'Default Light+': 'vs',
+      Monokai: 'monokai',
+      'Solarized Dark': 'solarized-dark',
+      'Solarized Light': 'solarized-light',
+    }
+    if (themeMapping[theme]) {
+      return themeMapping[theme]
+    }
+    return 'vs-dark'
   }
 
   return (
@@ -58,7 +71,7 @@ export const ComposerView = (props: ComposerViewProps) => {
                 <MonacoEditor
                   width="100%"
                   height={`200px`}
-                  theme="vs-dark"
+                  theme={mapVSCodeThemeToMonaco(theme)}
                   language={'markdown'}
                   value={inputs[key]}
                   onChange={value => setValue(key, value ?? '')}
@@ -92,7 +105,7 @@ export const ComposerView = (props: ComposerViewProps) => {
       ) : (
         <VSCodeButton
           style={{ width: '100%' }}
-          appearance="primary"
+          appearance="secondary"
           onClick={() => run(inputsRef.current)}
           disabled={!Object.values(inputs).some(v => v.trim().length > 0)}
         >

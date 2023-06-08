@@ -27,6 +27,7 @@ render(<RigView />, container)
 function RigView() {
   const tabs: string[] = ['Transcript', 'History']
 
+  const [theme, setTheme] = useState('')
   const [requestId, setRequestId] = useState('')
   const [filename, setFilename] = useState('')
   const [currentSource, setCurrentSource] = useState('')
@@ -77,6 +78,9 @@ function RigView() {
           }
           if (message.data.sessionId) {
             setSession(() => message.data.sessionId)
+          }
+          if (message.data.theme) {
+            setTheme(() => message.data.theme)
           }
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
@@ -232,7 +236,15 @@ function RigView() {
       {/* {tab === 'State' && <StateView />} */}
       {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
       {tab === 'Transcript' && (
-        <ComposerView reload={reload} run={run} stop={stop} streaming={streaming} inputs={inputs} setValue={setValue} />
+        <ComposerView
+          theme={theme}
+          reload={reload}
+          run={run}
+          stop={stop}
+          streaming={streaming}
+          inputs={inputs}
+          setValue={setValue}
+        />
       )}
     </div>
   )
