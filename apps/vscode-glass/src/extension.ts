@@ -205,6 +205,13 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       }
       const glassFiles = await getAllGlassFiles()
+      if (glassFiles.length === 0) {
+        await vscode.window.showErrorMessage('Unable to find any Glass files')
+        return
+      } else if (glassFiles.length === 1) {
+        await launchGlassDocument(glassFiles[0])
+        return
+      }
       const glassFilesQuickPick = glassFiles.map(document => {
         const relativePath = vscode.workspace.asRelativePath(document.uri.fsPath)
         return {
