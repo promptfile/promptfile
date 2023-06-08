@@ -15,7 +15,6 @@ import { getAllGlassFiles, getDocumentFilename, hasGlassFileOpen, isGlassFile } 
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { updateLanguageMode } from './util/languageMode'
 import { GlassPlayground, createPlayground } from './util/playground'
-import { GlassSession } from './util/session'
 import { updateTokenCount } from './util/tokenCounter'
 import { transpileCurrentFile } from './util/transpile'
 import { getCurrentViewColumn } from './util/viewColumn'
@@ -23,7 +22,6 @@ import { getCurrentViewColumn } from './util/viewColumn'
 let client: LanguageClient | null = null
 
 const stoppedRequestIds = new Set<string>()
-const sessions = new Map<string, GlassSession>()
 const playgrounds = new Map<string, GlassPlayground>()
 const fileTimestamps = new Map<string, number>()
 
@@ -104,7 +102,6 @@ export async function activate(context: vscode.ExtensionContext) {
     const playground = await createPlayground(
       filepath,
       playgrounds,
-      sessions,
       context.extensionUri,
       outputChannel,
       stoppedRequestIds
