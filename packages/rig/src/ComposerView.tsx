@@ -28,10 +28,6 @@ export const ComposerView = (props: ComposerViewProps) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          paddingTop: '16px',
-          paddingBottom: '8px',
-          paddingLeft: '16px',
-          paddingRight: '16px',
         }}
       >
         {keys.length > 0 && (
@@ -52,18 +48,14 @@ export const ComposerView = (props: ComposerViewProps) => {
                   width="full"
                   height="200px"
                   theme="vs-dark"
-                  // language="typescript"
                   language={'markdown'}
                   defaultValue={''}
-                  // defaultValue={Object.keys(inputs).length === 1 ? '' : JSON.stringify(inputs, null, 2)}
                   options={{
                     minimap: {
                       enabled: false,
                     },
+                    wordWrap: 'on',
                     fontSize: 12,
-                    // padding: {
-                    //   top: 8,
-                    // },
                   }}
                   onMount={editor => {
                     editor.focus()
@@ -77,46 +69,20 @@ export const ComposerView = (props: ComposerViewProps) => {
                     })
                   }}
                 />
-
-                {/* <VSCodeTextArea
-                  style={{ width: '100%' }}
-                  value={inputs[key]}
-                  resize="vertical"
-                  rows={6}
-                  id={`composer-input-${index}`}
-                  placeholder={keys.length === 1 ? key : ''}
-                  onInput={e => {
-                    const value = (e.target as any).value
-                    setInputs({ ...inputs, [key]: value })
-                  }}
-                  onKeyDown={e => {
-                    if (e.metaKey && e.key === 'r') {
-                      e.preventDefault()
-                      reload()
-                    } else if (e.metaKey && e.key === 'Enter') {
-                      e.preventDefault()
-                      run(inputs)
-                    }
-                  }}
-                /> */}
               </div>
             ))}
           </div>
         )}
-        {streaming ? (
-          <VSCodeButton style={{ width: keys.length === 0 ? '100%' : undefined }} appearance="secondary" onClick={stop}>
-            Stop
-          </VSCodeButton>
-        ) : (
-          <VSCodeButton
-            style={{ width: keys.length === 0 ? '100%' : undefined }}
-            appearance="primary"
-            onClick={() => run(inputs)}
-          >
-            Run
-          </VSCodeButton>
-        )}
       </div>
+      {streaming ? (
+        <VSCodeButton style={{ width: '100%' }} appearance="secondary" onClick={stop}>
+          Stop
+        </VSCodeButton>
+      ) : (
+        <VSCodeButton style={{ width: '100%' }} appearance="primary" onClick={() => run(inputs)}>
+          Run
+        </VSCodeButton>
+      )}
     </div>
   )
 }
