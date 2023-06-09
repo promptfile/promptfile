@@ -13,19 +13,22 @@ export function getSessionDirectoryPath(filepath: string): string {
   if (workspaceFolder) {
     baseDir = workspaceFolder.uri.fsPath
   } else {
-    // Use the home directory if no workspace is open
     baseDir = os.homedir()
-    const glasslogDir = path.join(baseDir, '.glasslog')
+  }
+  const glasslogDir = path.join(baseDir, '.glasslog')
 
-    // Create the .glasslog directory if it doesn't exist
-    if (!fs.existsSync(glasslogDir)) {
-      fs.mkdirSync(glasslogDir)
-    }
+  // Create the .glasslog directory if it doesn't exist
+  if (!fs.existsSync(glasslogDir)) {
+    fs.mkdirSync(glasslogDir)
   }
 
   const relativePath = path.relative(baseDir, filepath)
   const hashedPath = crypto.createHash('md5').update(relativePath).digest('hex')
-  return path.join(baseDir, '.glasslog', hashedPath)
+  const finalPath = path.join(glasslogDir, hashedPath)
+  if (!fs.existsSync(finalPath)) {
+    fs.mkdirSync(finalPath)
+  }
+  return finalPath
 }
 
 export function getCurrentSessionFilepath(filepath: string): string | undefined {
