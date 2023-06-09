@@ -8,7 +8,7 @@ import { TranscriptView } from './TranscriptView'
 import { lastElement } from './util'
 
 export interface GlassSession {
-  id: string
+  session: string
   numMessages: number
   lastMessage: string
 }
@@ -34,7 +34,7 @@ function RigView() {
   const [source, setSource] = useState('')
   const [blocks, setBlocks] = useState<GlassContent[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
-  const [sessionId, setSession] = useState('')
+  const [session, setSession] = useState('')
   const [sessions, setSessions] = useState<GlassSession[]>([])
   const [tab, setTab] = useState(tabs[0])
 
@@ -76,8 +76,8 @@ function RigView() {
           if (message.data.filename) {
             setFilename(() => message.data.filename)
           }
-          if (message.data.sessionId) {
-            setSession(() => message.data.sessionId)
+          if (message.data.session) {
+            setSession(() => message.data.session)
           }
           if (message.data.theme) {
             setTheme(() => message.data.theme)
@@ -93,13 +93,13 @@ function RigView() {
               action: 'runSession',
               data: {
                 inputs: {},
-                sessionId: message.data.sessionId,
+                session: message.data.session,
               },
             })
           }
           break
         case 'onStream':
-          if (message.data.sessionId !== sessionId) {
+          if (message.data.session !== session) {
             break
           }
           setBlocks(() => message.data.blocks)
@@ -108,7 +108,7 @@ function RigView() {
           }
           break
         case 'onResponse':
-          if (message.data.sessionId !== sessionId) {
+          if (message.data.session !== session) {
             break
           }
           setBlocks(() => message.data.blocks)
@@ -121,7 +121,7 @@ function RigView() {
     return () => {
       window.removeEventListener('message', cb)
     }
-  }, [sessionId, sessions])
+  }, [session, sessions])
 
   useEffect(() => {
     vscode.postMessage({
@@ -150,34 +150,34 @@ function RigView() {
       action: 'runSession',
       data: {
         inputs: inputsToRun,
-        sessionId,
+        session,
       },
     })
     updateInputsWithVariables(Object.keys(inputsToRun), true)
   }
 
   const openCurrentSessionFile = () => {
-    openSession(sessionId)
+    openSession(session)
   }
 
   const shareCurrentSessionGist = () => {
-    shareSession(sessionId)
+    shareSession(session)
   }
 
-  const openSession = (sessionIdToOpen: string) => {
+  const openSession = (sessionToOpen: string) => {
     vscode.postMessage({
       action: 'openSessionFile',
       data: {
-        sessionId: sessionIdToOpen,
+        session: sessionToOpen,
       },
     })
   }
 
-  const shareSession = (sessionIdToShare: string) => {
+  const shareSession = (sessionToShare: string) => {
     vscode.postMessage({
       action: 'shareSessionGist',
       data: {
-        sessionId: sessionIdToShare,
+        session: sessionToShare,
       },
     })
   }
@@ -192,7 +192,7 @@ function RigView() {
     vscode.postMessage({
       action: 'stopSession',
       data: {
-        sessionId,
+        session,
         requestId,
       },
     })
@@ -232,7 +232,7 @@ function RigView() {
         reload={reload}
         openOutput={openOutput}
       />
-      {tab === 'Transcript' && <TranscriptView sessionId={sessionId} blocks={blocks} />}
+      {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
       {/* {tab === 'State' && <StateView />} */}
       {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
       {tab === 'Transcript' && (

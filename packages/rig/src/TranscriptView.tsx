@@ -10,11 +10,12 @@ import { CopyButton } from './CopyButton'
 
 interface TranscriptViewProps {
   blocks: GlassContent[]
-  sessionId: string
+  session: string
 }
 
 export const TranscriptView = (props: TranscriptViewProps) => {
-  const { blocks, sessionId } = props
+  const { blocks, session } = props
+  const sessionId = session.split('/').pop()
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
 

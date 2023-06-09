@@ -9,5 +9,3 @@ ${foo}
 </User>
 
 <Request model="claude-instant-v1" />
-
-print(foo)

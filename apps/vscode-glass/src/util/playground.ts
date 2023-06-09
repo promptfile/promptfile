@@ -8,27 +8,23 @@ import {
 } from '@glass-lang/glasslib'
 import fs from 'fs'
 import fetch from 'node-fetch'
-import path from 'path'
 import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getHtmlForWebview } from '../webview'
-import { getDocumentFilename } from './isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './keys'
 import { updateLanguageMode } from './languageMode'
-import { GlassSession, createSession, getSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
+import { createSession, getCurrentSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
 import { generateULID } from './ulid'
 import { getCurrentViewColumn } from './viewColumn'
 
 export interface GlassPlayground {
   filepath: string
   panel: vscode.WebviewPanel
-  sessionId: string
 }
 
 export async function createPlayground(
   filepath: string,
   playgrounds: Map<string, GlassPlayground>,
-  sessions: Map<string, GlassSession>,
   extensionUri: vscode.Uri,
   outputChannel: vscode.OutputChannel,
   stoppedRequestIds: Set<string>
@@ -38,15 +34,15 @@ export async function createPlayground(
   if (!document) {
     return
   }
-  const session = await createSession(filepath, sessions)
+  const session = await createSession(filepath)
   if (!session) {
     return
   }
+  console.log('checking for existing playground')
   const languageId = document.languageId
   const existingPlayground = playgrounds.get(filepath)
   if (existingPlayground) {
-    existingPlayground.sessionId = session.id
-    playgrounds.set(filepath, existingPlayground)
+    console.log('found existing playground', existingPlayground)
     const currentGlass = loadGlass(session)
     const allBlocks = parseGlassBlocks(currentGlass)
     const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
@@ -56,7 +52,7 @@ export async function createPlayground(
       action: 'setGlass',
       data: {
         filename: filepath.split('/').pop(),
-        sessionId: existingPlayground.sessionId,
+        session: session,
         glass: currentGlass,
         blocks: currentBlocks,
         variables: currentMetadata.interpolationVariables,
@@ -96,23 +92,18 @@ export async function createPlayground(
     switch (message.action) {
       case 'stopSession':
         const stopRequestId = message.data.requestId
-        const stopSessionId = message.data.sessionId
-        const stoppedSession = sessions.get(stopSessionId)
-        if (!stoppedSession) {
-          return
-        }
-        let stoppedGlass = loadGlass(stoppedSession)
+        const stopSession = message.data.session
+        let stoppedGlass = loadGlass(stopSession)
         stoppedGlass = stoppedGlass.replace('█', '')
         stoppedRequestIds.add(stopRequestId)
-        sessions.set(stopSessionId, stoppedSession)
-        writeGlass(stoppedSession, stoppedGlass)
+        writeGlass(stopSession, stoppedGlass)
         const stoppedBlocks = parseGlassTranscriptBlocks(stoppedGlass)
         const stoppedMetadata =
           languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(stoppedGlass)
         await panel.webview.postMessage({
           action: 'onStream',
           data: {
-            sessionId: stopSessionId,
+            session: stopSession,
             glass: stoppedGlass,
             blocks: stoppedBlocks,
             variables: stoppedMetadata.interpolationVariables,
@@ -126,7 +117,7 @@ export async function createPlayground(
           const sessionBlocks = parseGlassTranscriptBlocks(sessionGlass)
           const lastBlock = sessionBlocks.length > 0 ? sessionBlocks[sessionBlocks.length - 1] : null
           return {
-            id: getDocumentFilename(sessionDocument).replace('.glass', ''),
+            session: sessionDocument.uri.fsPath,
             numMessages: sessionBlocks.length,
             lastMessage: lastBlock?.child?.content ?? '(no messages)',
           }
@@ -139,14 +130,10 @@ export async function createPlayground(
         })
         break
       case 'getCurrentSession':
-        const playgroundToLoad = playgrounds.get(filepath)
-        if (!playgroundToLoad) {
-          await vscode.window.showErrorMessage('No playground found')
-          return
-        }
-        const currentSession = sessions.get(playgroundToLoad.sessionId)
+        const currentSession = getCurrentSessionFilepath(filepath)
+        console.log('getCurrentSession currentSession', currentSession)
         if (!currentSession) {
-          await vscode.window.showErrorMessage('No current session')
+          await vscode.window.showErrorMessage('No session found')
           return
         }
         const currentGlass = loadGlass(currentSession)
@@ -159,7 +146,7 @@ export async function createPlayground(
           action: 'setGlass',
           data: {
             filename: filepath.split('/').pop(),
-            sessionId: currentSession.id,
+            session: currentSession,
             glass: currentGlass,
             blocks: currentBlocks,
             variables: currentMetadata.interpolationVariables,
@@ -171,18 +158,11 @@ export async function createPlayground(
         })
         break
       case 'resetSession':
-        const newSession = await createSession(filepath, sessions)
+        const newSession = await createSession(filepath)
         if (!newSession) {
           await vscode.window.showErrorMessage('Unable to reset session')
           return
         }
-        const playground = playgrounds.get(filepath)
-        if (!playground) {
-          await vscode.window.showErrorMessage('No playground found')
-          return
-        }
-        playground.sessionId = newSession.id
-        playgrounds.set(filepath, playground)
         const newGlass = loadGlass(newSession)
         const newBlocks = parseGlassTranscriptBlocks(newGlass)
         const newAllBlocks = parseGlassBlocks(newGlass)
@@ -191,7 +171,7 @@ export async function createPlayground(
         await panel.webview.postMessage({
           action: 'setGlass',
           data: {
-            sessionId: newSession.id,
+            session: newSession,
             glass: newGlass,
             blocks: newBlocks,
             variables: newMetadata.interpolationVariables,
@@ -202,20 +182,8 @@ export async function createPlayground(
         })
         break
       case 'openSessionFile':
-        const currentPlayground = playgrounds.get(filepath)
-        if (!currentPlayground) {
-          await vscode.window.showErrorMessage('No playground found')
-          return
-        }
-        const sessionIdToOpen = message.data.sessionId
-        const currentActiveSession = sessions.get(currentPlayground.sessionId)
-        if (!currentActiveSession) {
-          await vscode.window.showErrorMessage('No session found')
-          return
-        }
-        const sessionFilepath = path.join(currentActiveSession.tempDir, `${sessionIdToOpen}.glass`)
         try {
-          const newSessionFile = await vscode.workspace.openTextDocument(sessionFilepath)
+          const newSessionFile = await vscode.workspace.openTextDocument(message.data.session)
           await vscode.window.showTextDocument(newSessionFile, {
             viewColumn: getCurrentViewColumn(playgrounds),
             preview: false,
@@ -225,20 +193,14 @@ export async function createPlayground(
         }
         break
       case 'shareSessionGist':
-        const sessionIdToShare = message.data.sessionId
-        const sessionToShare = sessions.get(sessionIdToShare)
-        if (!sessionToShare) {
-          await vscode.window.showErrorMessage('No session found')
-          return
-        }
+        const sessionToShare = message.data.session
         // eslint-disable-next-line turbo/no-undeclared-env-vars
         if (!process.env.GITHUB_API_KEY) {
           await vscode.window.showErrorMessage('No GitHub API key found')
           return
         }
-        const sessionToShareFilepath = getSessionFilepath(sessionToShare)
         try {
-          const newSessionFile = await vscode.workspace.openTextDocument(sessionToShareFilepath)
+          const newSessionFile = await vscode.workspace.openTextDocument(sessionToShare)
           const url = 'https://api.github.com/gists'
           // eslint-disable-next-line turbo/no-undeclared-env-vars
           const accessToken = process.env.GITHUB_API_KEY
@@ -251,7 +213,7 @@ export async function createPlayground(
             description: description || '(no description)',
             public: false,
             files: {
-              [session.filename]: {
+              [filename ?? 'unknown']: {
                 content: newSessionFile.getText(),
               },
             },
@@ -295,7 +257,7 @@ export async function createPlayground(
         outputChannel.show()
         break
       case 'runSession':
-        async function runGlassExtension(glass: string, sessionId: string, inputs: any) {
+        async function runGlassExtension(glass: string, session: string, inputs: any) {
           const elements = parseGlassBlocksRecursive(glass)
           const requestElement = elements.find(element => element.tag && ['Request', 'Chat'].includes(element.tag))
           const model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
@@ -329,32 +291,20 @@ export async function createPlayground(
             return
           }
 
-          const session = sessions.get(sessionId)
-          if (!session) {
-            await vscode.window.showErrorMessage('No session found')
-            return
-          }
-
-          const origFilePath = session.filepath
-          const newFilePath = getSessionFilepath(session)
-          const sessionDocument = await vscode.workspace.openTextDocument(newFilePath)
+          const sessionDocument = await vscode.workspace.openTextDocument(session)
 
           try {
             const requestId = generateULID()
             await updateLanguageMode(sessionDocument)
             const resp = await executeGlassFile(
-              origFilePath,
+              filepath,
               outputChannel,
               sessionDocument,
               glass,
               inputs,
               async ({ nextDoc }) => {
                 const existingPlayground = playgrounds.get(filepath)
-                if (!existingPlayground || sessionId !== existingPlayground.sessionId) {
-                  return false
-                }
-                const session = sessions.get(existingPlayground.sessionId)
-                if (!session || stoppedRequestIds.has(requestId)) {
+                if (!existingPlayground || stoppedRequestIds.has(requestId)) {
                   return false
                 }
                 writeGlass(session, nextDoc)
@@ -364,7 +314,7 @@ export async function createPlayground(
                 await panel.webview.postMessage({
                   action: 'onStream',
                   data: {
-                    sessionId: session.id,
+                    session: session,
                     blocks: blocksForGlass,
                     variables: metadataForGlass.interpolationVariables,
                     requestId,
@@ -375,11 +325,7 @@ export async function createPlayground(
             )
 
             const existingPlayground = playgrounds.get(filepath)
-            if (!existingPlayground || sessionId !== existingPlayground.sessionId) {
-              return false
-            }
-            const session = sessions.get(existingPlayground.sessionId)
-            if (!session || stoppedRequestIds.has(requestId)) {
+            if (!existingPlayground || stoppedRequestIds.has(requestId)) {
               return false
             }
             const blocksForGlass = parseGlassTranscriptBlocks(resp.finalDoc)
@@ -392,7 +338,7 @@ export async function createPlayground(
             await panel.webview.postMessage({
               action: 'onResponse',
               data: {
-                sessionId: sessionId,
+                session: session,
                 glass: resp.finalDoc,
                 blocks: blocksForGlass,
                 variables: metadataForGlass.interpolationVariables,
@@ -403,27 +349,21 @@ export async function createPlayground(
             })
             if (resp.continued) {
               console.log('continuing execution...')
-              await runGlassExtension(resp.finalDoc, sessionId, inputs)
+              await runGlassExtension(resp.finalDoc, session, inputs)
             }
           } catch (error) {
             console.error(error)
             void vscode.window.showErrorMessage(`ERROR: ${error}`)
           }
         }
-        const sessionId = message.data.sessionId
-        const activeSession = sessions.get(sessionId)
-        if (sessionId == null || !activeSession) {
-          await vscode.window.showErrorMessage('No session provided')
-          return
-        }
-        sessions.set(sessionId, activeSession)
-        const glass = loadGlass(activeSession)
+        const sessionToRun = message.data.session
+        const glass = loadGlass(sessionToRun)
         const inputs = message.data.inputs
         if (inputs == null) {
           await vscode.window.showErrorMessage('No inputs provided')
           return
         }
-        await runGlassExtension(glass, sessionId, inputs)
+        await runGlassExtension(glass, sessionToRun, inputs)
         break
       case 'showMessage':
         const level = message.data.level
@@ -440,11 +380,9 @@ export async function createPlayground(
         break
     }
   })
-
   const newPlayground = {
     filepath,
     panel,
-    sessionId: session.id,
   }
   playgrounds.set(filepath, newPlayground)
   return newPlayground
