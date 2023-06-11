@@ -1,0 +1,9 @@
+<System>
+You are ChatGPT. Browsing: disabled.
+</System>
+
+<User>
+${input}
+</User>
+
+<Request model="gpt-4" />

@@ -1,0 +1,11 @@
+<System>
+Assist the User with their goal to draft a document. Fence the document with ````md````. Ask them questions and consolidate their answers into the document.
+</System>
+
+<Transcript />
+
+<User>
+${input}
+</User>
+
+<Request model="gpt-4" />
