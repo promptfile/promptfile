@@ -1,6 +1,5 @@
-import { parseGlassBlocks } from './parseGlassBlocks'
+import { RequestData, parseGlassBlocks } from './parseGlassBlocks'
 import { removeGlassComments } from './removeGlassComments'
-import { RequestData } from './runGlass'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
