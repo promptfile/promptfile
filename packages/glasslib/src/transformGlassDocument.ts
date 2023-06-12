@@ -179,6 +179,11 @@ export function handleRequestNode(
   }
   transcriptContent += (transcriptContent.length ? '\n\n' : '') + newRequestNode
 
+  let rawResponse = request.responseData[request.responseData.length - 1].response
+  if (request.streaming) {
+    rawResponse += '█'
+  }
+
   return {
     nextDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc, true),
     finalDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc, true),
@@ -192,7 +197,7 @@ export function handleRequestNode(
       interpolatedDoc,
       true
     ),
-    rawResponse: request.streaming ? '█' : request.responseData[request.responseData.length - 1].response,
+    rawResponse,
   }
 }
 
