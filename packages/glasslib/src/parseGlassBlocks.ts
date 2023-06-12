@@ -246,3 +246,47 @@ export function parseGlassTranscriptBlocks(glass: string): GlassContent[] {
   }
   return parseGlassBlocks(transcript.child.content)
 }
+
+export interface RequestData {
+  model: string
+  temperature?: number
+  maxTokens?: number
+  stopSequence?: string[]
+  onResponse?: (data: {
+    message: string
+    addToTranscript: (tag: string, content: string) => void
+    addToDocument: (tag: string, content: string, attrs?: any) => void
+    continue: () => void
+  }) => Promise<any>
+}
+
+export function parseGlassRequestBlock(node: GlassContent): RequestData {
+  const modelAttr = node.attrs!.find(a => a.name === 'model')
+  // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
+  // we don't currently support dynamic model values
+  const model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : 'gpt-3.5-turbo'
+
+  const maxTokensAttr = node.attrs!.find(a => a.name === 'maxTokens')
+  const maxTokens = maxTokensAttr
+    ? maxTokensAttr.stringValue || JSON.parse(maxTokensAttr.expressionValue!)
+    : 'undefined'
+
+  const temperatureAttr = node.attrs!.find(a => a.name === 'temperature')
+  const temperature = temperatureAttr
+    ? temperatureAttr.stringValue || JSON.parse(temperatureAttr.expressionValue!)
+    : 'undefined'
+
+  const stopSequenceAttr = node.attrs!.find(a => a.name === 'stopSequence')
+  let stopSequence: string[] | undefined = undefined
+  if (stopSequenceAttr?.stringValue) {
+    stopSequence = [stopSequenceAttr.stringValue]
+  } else if (stopSequenceAttr?.stringValue) {
+    const parsedStopSequence = JSON.parse(stopSequenceAttr.expressionValue!)
+    if (Array.isArray(parsedStopSequence)) {
+      stopSequence = parsedStopSequence
+    }
+    stopSequence = [parsedStopSequence]
+  }
+
+  return { model, maxTokens, temperature, stopSequence }
+}

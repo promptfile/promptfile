@@ -2,33 +2,14 @@ import { checkOk } from '@glass-lang/util'
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
-import { TokenCounter, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
-import { RequestData } from './parseGlassBlocks'
-import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
+import { ChatCompletionRequestMessage, TokenCounter, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
+import { RequestData, parseGlassBlocks, parseGlassRequestBlock } from './parseGlassBlocks'
+import { ResponseData } from './runGlass'
+import { handleRequestNode } from './transformGlassDocument'
 
-export interface ChatCompletionRequestMessage {
-  role: 'system' | 'user' | 'assistant'
-  content: string
-  name?: string
-}
-
-export interface ResponseData {
-  response: string
-  requestTokens?: number
-  responseTokens?: number
-}
-
-export interface TranspilerOutput {
-  fileName: string
-  interpolatedDoc: string
-  originalDoc: string
-  state: any
-  interpolationArgs: any
-  requestBlocks: RequestData[]
-}
-
-export async function runGlass(
-  { fileName, originalDoc, interpolatedDoc, state, requestBlocks, interpolationArgs }: TranspilerOutput,
+export async function runGlassV2(
+  glassfile: string,
+  args: Record<string, string>,
   options: {
     transcriptTokenCounter: TokenCounter
     openaiKey?: string
@@ -43,12 +24,10 @@ export async function runGlass(
   }
 ): Promise<{
   rawResponse: string
-  codeResponse?: any
   initDoc: string
   initInterpolatedDoc: string
   finalDoc: string
   finalInterpolatedDoc: string
-  continued: boolean
 }> {
   // replace initDoc instances of
   //
@@ -66,15 +45,24 @@ export async function runGlass(
   // </User>
 
   // eslint-disable-next-line prefer-const
-  let transformedOriginalDoc = originalDoc
-  let transformedInterpolatedDoc = interpolatedDoc
+  let transformedOriginalDoc = glassfile
+  let transformedInterpolatedDoc = glassfile
 
-  const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-
-  if (Object.keys(state).length > 0) {
-    transformedOriginalDoc = replaceStateNode(newStateNode, transformedOriginalDoc)
-    transformedInterpolatedDoc = replaceStateNode(newStateNode, transformedInterpolatedDoc)
+  for (const [k, v] of Object.entries(args)) {
+    // replace all instances of `${k}` with `v`
+    transformedInterpolatedDoc = transformedInterpolatedDoc.replace(new RegExp(`\\$\\{${k}\\}`, 'g'), v)
   }
+
+  const blocks = parseGlassBlocks(transformedInterpolatedDoc)
+  // const state = blocks.find(b => b.tag === 'State')?.child?.content || '{}'
+  const requestBlocks = blocks.filter(b => b.tag === 'Request').map(parseGlassRequestBlock)
+
+  // const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
+
+  // if (Object.keys(state).length > 0) {
+  //   transformedOriginalDoc = replaceStateNode(newStateNode, transformedOriginalDoc)
+  //   transformedInterpolatedDoc = replaceStateNode(newStateNode, transformedInterpolatedDoc)
+  // }
 
   if (options?.progress) {
     options.progress(
@@ -104,8 +92,6 @@ export async function runGlass(
         rawResponse: string
       }
     | undefined = undefined
-  let codeResponse: any
-  let continued = false
 
   for (; i < messageBlocks.length; i++) {
     const messages = messageBlocks[i]
@@ -142,51 +128,12 @@ export async function runGlass(
             { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
             options
           )
-
-    let codeResponse: any = undefined
-
-    const blocksToAdd: { tag: string; content: string }[] = []
-    const blocksToAddToDocument: { tag: string; content: string; attrs?: any }[] = []
-
-    if (requestData.onResponse) {
-      codeResponse = await requestData.onResponse({
-        message: res.rawResponse,
-        addToTranscript: (tag: string, content: string) => {
-          blocksToAdd.push({ tag, content })
-        },
-        addToDocument: (tag: string, content: string, attrs?: any) => {
-          blocksToAddToDocument.push({ tag, content, attrs })
-        },
-        continue: () => {
-          continued = true
-        },
-      })
-      if (Object.keys(state).length > 0) {
-        const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-        res.finalDoc = replaceStateNode(finalStateBlock, res.finalDoc)
-        res.finalInterpolatedDoc = replaceStateNode(finalStateBlock, res.finalInterpolatedDoc)
-      }
-    }
-
-    if (blocksToAdd.length > 0) {
-      const added = addToTranscript(blocksToAdd, res.finalDoc, res.finalInterpolatedDoc)
-      res.finalDoc = added.doc
-      res.finalInterpolatedDoc = added.interpolatedDoc
-    }
-
-    if (blocksToAddToDocument.length > 0) {
-      const added = addToDocument(blocksToAddToDocument, res.finalDoc, res.finalInterpolatedDoc)
-      res.finalDoc = added.doc
-      res.finalInterpolatedDoc = added.interpolatedDoc
-    }
   }
 
   return {
     ...res!,
     initDoc: transformedOriginalDoc,
     initInterpolatedDoc: transformedInterpolatedDoc,
-    codeResponse,
-    continued,
   }
 }
 

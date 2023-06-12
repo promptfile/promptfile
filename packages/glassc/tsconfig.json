@@ -18,8 +18,8 @@
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "types": ["node", "mocha"],
-    "typeRoots": ["./types"]
+    "types": ["node", "mocha"]
+    // "typeRoots": ["./types"]
   },
   "compileOnSave": false,
   "exclude": ["node_modules", "dist"],
