@@ -208,7 +208,7 @@ const requestNodeReplacement = (
 ) => {
   const args: Record<string, any> = {
     model: request.model,
-    temperature: request.temperature || 1,
+    temperature: request.temperature != null ? request.temperature : 1,
   }
   const model = LANGUAGE_MODELS.find(m => m.name === request.model)
   if (request.maxTokens != null) {
