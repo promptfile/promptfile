@@ -6,6 +6,7 @@ import {
   parseGlassDocument,
   reconstructGlassDocument,
 } from './parseGlassBlocks'
+import { updateGlassBlockAttributes } from './updateGlassBlockAttributes'
 
 export function addNodeToDocument(content: string, index: number, doc: string, replaceOnceNodes = false) {
   const parsed = parseGlassDocument(doc)
@@ -131,7 +132,8 @@ export function handleRequestNode(
     requestTokens?: number
     responseTokens?: number
     index: number
-  }
+  },
+  ids?: bigint[]
 ) {
   const parsedInterpolated = parseGlassBlocks(interpolatedDoc)
   const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
@@ -175,7 +177,13 @@ export function handleRequestNode(
     transcriptContent += '\n\n'
   }
   if (userAndAssistantBlocks.length > 0) {
-    transcriptContent += userAndAssistantBlocks.map(block => block.content).join('\n\n')
+    if (ids) {
+      transcriptContent += userAndAssistantBlocks
+        .map((block, i) => updateGlassBlockAttributes(block, { name: 'id', expressionValue: ids[i].toString() }))
+        .join('\n\n')
+    } else {
+      transcriptContent += userAndAssistantBlocks.map(block => block.content).join('\n\n')
+    }
   }
   transcriptContent += (transcriptContent.length ? '\n\n' : '') + newRequestNode
 

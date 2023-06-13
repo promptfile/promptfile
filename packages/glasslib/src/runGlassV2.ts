@@ -16,6 +16,7 @@ export async function runGlassV2(
     anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
+    ids?: bigint[]
   } = {
     transcriptTokenCounter: {
       countTokens: () => 0,
@@ -66,12 +67,17 @@ export async function runGlassV2(
 
   if (options?.progress) {
     options.progress(
-      handleRequestNode(transformedOriginalDoc, transformedInterpolatedDoc, {
-        responseData: [{ response: '' }],
-        requestBlocks,
-        streaming: true,
-        index: 0,
-      })
+      handleRequestNode(
+        transformedOriginalDoc,
+        transformedInterpolatedDoc,
+        {
+          responseData: [{ response: '' }],
+          requestBlocks,
+          streaming: true,
+          index: 0,
+        },
+        options.ids
+      )
     )
   }
 
@@ -151,6 +157,7 @@ async function runGlassChat(
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
+    ids?: bigint[]
   }
 ): Promise<{
   finalDoc: string
@@ -199,14 +206,19 @@ async function runGlassChat(
         request.model
       )
       return options.progress(
-        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
-          requestBlocks,
-          requestTokens,
-          responseTokens,
-          streaming: true,
-          index: responseData.length,
-        })
+        handleRequestNode(
+          docs.originalDoc,
+          docs.interpolatedDoc,
+          {
+            responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+            requestBlocks,
+            requestTokens,
+            responseTokens,
+            streaming: true,
+            index: responseData.length,
+          },
+          options.ids
+        )
       )
     }
   })
@@ -220,14 +232,19 @@ async function runGlassChat(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response })
 
-  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-    responseData,
-    requestBlocks,
-    requestTokens,
-    responseTokens,
-    streaming: false,
-    index: responseData.length - 1,
-  })
+  return handleRequestNode(
+    docs.originalDoc,
+    docs.interpolatedDoc,
+    {
+      responseData,
+      requestBlocks,
+      requestTokens,
+      responseTokens,
+      streaming: false,
+      index: responseData.length - 1,
+    },
+    options.ids
+  )
 }
 
 /**
@@ -246,6 +263,7 @@ async function runGlassChatAnthropic(
     anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
+    ids?: bigint[]
   }
 ): Promise<{
   finalDoc: string
@@ -297,14 +315,19 @@ async function runGlassChatAnthropic(
     if (options?.progress) {
       const responseTokens = options.transcriptTokenCounter.countTokens(next, request.model)
       return options.progress(
-        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
-          requestBlocks,
-          requestTokens,
-          responseTokens,
-          streaming: true,
-          index: responseData.length,
-        })
+        handleRequestNode(
+          docs.originalDoc,
+          docs.interpolatedDoc,
+          {
+            responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+            requestBlocks,
+            requestTokens,
+            responseTokens,
+            streaming: true,
+            index: responseData.length,
+          },
+          options.ids
+        )
       )
     }
   })
@@ -315,14 +338,19 @@ async function runGlassChatAnthropic(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response.trim() })
 
-  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-    responseData,
-    requestBlocks,
-    streaming: false,
-    requestTokens,
-    responseTokens,
-    index: responseData.length - 1,
-  })
+  return handleRequestNode(
+    docs.originalDoc,
+    docs.interpolatedDoc,
+    {
+      responseData,
+      requestBlocks,
+      streaming: false,
+      requestTokens,
+      responseTokens,
+      index: responseData.length - 1,
+    },
+    options.ids
+  )
 }
 
 /**
@@ -340,6 +368,7 @@ async function runGlassCompletion(
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
+    ids?: bigint[]
   }
 ): Promise<{
   finalDoc: string
@@ -413,14 +442,19 @@ async function runGlassCompletion(
     if (options?.progress) {
       const responseTokens = options.transcriptTokenCounter.countTokens(next, request.model)
       return options.progress(
-        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
-          requestBlocks,
-          streaming: true,
-          requestTokens,
-          responseTokens,
-          index: responseData.length,
-        })
+        handleRequestNode(
+          docs.originalDoc,
+          docs.interpolatedDoc,
+          {
+            responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+            requestBlocks,
+            streaming: true,
+            requestTokens,
+            responseTokens,
+            index: responseData.length,
+          },
+          options.ids
+        )
       )
     }
   })
@@ -431,14 +465,19 @@ async function runGlassCompletion(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response.trim() })
 
-  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-    responseData,
-    requestBlocks,
-    streaming: false,
-    requestTokens,
-    responseTokens,
-    index: responseData.length - 1,
-  })
+  return handleRequestNode(
+    docs.originalDoc,
+    docs.interpolatedDoc,
+    {
+      responseData,
+      requestBlocks,
+      streaming: false,
+      requestTokens,
+      responseTokens,
+      index: responseData.length - 1,
+    },
+    options.ids
+  )
 }
 
 async function handleStream(
