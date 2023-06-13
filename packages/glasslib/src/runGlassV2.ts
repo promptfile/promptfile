@@ -16,7 +16,6 @@ export async function runGlassV2(
     anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
-    ids?: bigint[]
   } = {
     transcriptTokenCounter: {
       countTokens: () => 0,
@@ -76,7 +75,7 @@ export async function runGlassV2(
           streaming: true,
           index: 0,
         },
-        options.ids
+        true
       )
     )
   }
@@ -157,7 +156,6 @@ async function runGlassChat(
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
-    ids?: bigint[]
   }
 ): Promise<{
   finalDoc: string
@@ -217,7 +215,7 @@ async function runGlassChat(
             streaming: true,
             index: responseData.length,
           },
-          options.ids
+          true
         )
       )
     }
@@ -243,7 +241,7 @@ async function runGlassChat(
       streaming: false,
       index: responseData.length - 1,
     },
-    options.ids
+    true
   )
 }
 
@@ -263,7 +261,6 @@ async function runGlassChatAnthropic(
     anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
-    ids?: bigint[]
   }
 ): Promise<{
   finalDoc: string
@@ -326,7 +323,7 @@ async function runGlassChatAnthropic(
             streaming: true,
             index: responseData.length,
           },
-          options.ids
+          true
         )
       )
     }
@@ -349,7 +346,7 @@ async function runGlassChatAnthropic(
       responseTokens,
       index: responseData.length - 1,
     },
-    options.ids
+    true
   )
 }
 
@@ -368,7 +365,6 @@ async function runGlassCompletion(
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
-    ids?: bigint[]
   }
 ): Promise<{
   finalDoc: string
@@ -453,7 +449,7 @@ async function runGlassCompletion(
             responseTokens,
             index: responseData.length,
           },
-          options.ids
+          true
         )
       )
     }
@@ -476,7 +472,7 @@ async function runGlassCompletion(
       responseTokens,
       index: responseData.length - 1,
     },
-    options.ids
+    true
   )
 }
 

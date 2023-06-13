@@ -1,9 +1,6 @@
 import { GlassContent } from './parseGlassBlocks'
 
-export function updateGlassBlockAttributes(
-  block: GlassContent,
-  attr: { name: string; expressionValue: string }
-): string {
+export function updateGlassBlockAttributes(block: GlassContent, attr: { name: string; stringValue: string }): string {
   if (block.attrs?.some(a => a.name === attr.name)) {
     return block.content
   }
@@ -19,7 +16,5 @@ export function updateGlassBlockAttributes(
     })
     .join(' ')
 
-  return `<${block.tag} ${attrs} ${attr.name}={${attr.expressionValue}}>\n${block.child?.content || ''}\n</${
-    block.tag
-  }>`
+  return `<${block.tag} ${attrs} ${attr.name}="${attr.stringValue}">\n${block.child?.content || ''}\n</${block.tag}>`
 }

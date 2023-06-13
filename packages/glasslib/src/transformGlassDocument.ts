@@ -1,3 +1,4 @@
+import { ulid } from 'ulid'
 import { LANGUAGE_MODELS } from './languageModels'
 import {
   GlassContent,
@@ -133,7 +134,7 @@ export function handleRequestNode(
     responseTokens?: number
     index: number
   },
-  ids?: bigint[]
+  useId?: boolean
 ) {
   const parsedInterpolated = parseGlassBlocks(interpolatedDoc)
   const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
@@ -177,9 +178,9 @@ export function handleRequestNode(
     transcriptContent += '\n\n'
   }
   if (userAndAssistantBlocks.length > 0) {
-    if (ids) {
+    if (useId) {
       transcriptContent += userAndAssistantBlocks
-        .map((block, i) => updateGlassBlockAttributes(block, { name: 'id', expressionValue: ids[i].toString() }))
+        .map((block, i) => updateGlassBlockAttributes(block, { name: 'id', stringValue: ulid() }))
         .join('\n\n')
     } else {
       transcriptContent += userAndAssistantBlocks.map(block => block.content).join('\n\n')

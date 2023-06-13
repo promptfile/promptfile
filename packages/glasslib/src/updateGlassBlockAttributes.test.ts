@@ -9,9 +9,9 @@ blah blah
 </System>`
 
     const blocks = parseGlassBlocks(doc)
-    const newBlock = updateGlassBlockAttributes(blocks[0], { name: 'id', expressionValue: BigInt(1).toString() })
+    const newBlock = updateGlassBlockAttributes(blocks[0], { name: 'id', stringValue: 'hi' })
 
-    expect(newBlock).to.equal(`<System hello="world" foo={bar} id={1}>
+    expect(newBlock).to.equal(`<System hello="world" foo={bar} id="hi">
 blah blah
 </System>`)
   })
