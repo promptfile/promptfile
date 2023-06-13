@@ -39,7 +39,6 @@ function RigView() {
   const [tab, setTab] = useState(tabs[0])
 
   const setValue = (key: string, value: string) => {
-    console.log('SETTING VALUE', key, value)
     setInputs({ ...inputs, [key]: value })
   }
 
@@ -67,6 +66,7 @@ function RigView() {
           setSessions(() => message.data.sessions)
           break
         case 'setGlass':
+          console.log(message.data)
           if (message.data.currentSource) {
             setCurrentSource(() => message.data.currentSource)
           }
@@ -142,7 +142,7 @@ function RigView() {
     })
   }
 
-  const run = (inputsToRun: Record<string, string>) => {
+  const run = (inputsToRun: Record<string, string>, sessionToRun: string) => {
     if (!Object.values(inputsToRun).some(v => v.trim().length > 0)) {
       return
     }
@@ -150,7 +150,7 @@ function RigView() {
       action: 'runSession',
       data: {
         inputs: inputsToRun,
-        session,
+        session: sessionToRun,
       },
     })
     updateInputsWithVariables(Object.keys(inputsToRun), true)
@@ -244,6 +244,7 @@ function RigView() {
           streaming={streaming}
           inputs={inputs}
           setValue={setValue}
+          session={session}
         />
       )}
     </div>

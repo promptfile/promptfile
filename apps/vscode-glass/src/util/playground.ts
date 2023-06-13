@@ -257,7 +257,7 @@ export async function createPlayground(
         outputChannel.show()
         break
       case 'runSession':
-        async function runGlassExtension(glass: string, session: string, inputs: any) {
+        async function runGlassExtension(glass: string, sessionToRun: string, inputs: any) {
           const elements = parseGlassBlocksRecursive(glass)
           const requestElement = elements.find(element => element.tag && ['Request', 'Chat'].includes(element.tag))
           const model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
@@ -291,7 +291,7 @@ export async function createPlayground(
             return
           }
 
-          const sessionDocument = await vscode.workspace.openTextDocument(session)
+          const sessionDocument = await vscode.workspace.openTextDocument(sessionToRun)
 
           try {
             const requestId = generateULID()
@@ -307,14 +307,14 @@ export async function createPlayground(
                 if (!existingPlayground || stoppedRequestIds.has(requestId)) {
                   return false
                 }
-                writeGlass(session, nextDoc)
+                writeGlass(sessionToRun, nextDoc)
                 const blocksForGlass = parseGlassTranscriptBlocks(nextDoc)
                 const metadataForGlass =
                   languageId === 'glass-py' ? await parseGlassMetadataPython(nextDoc) : parseGlassMetadata(nextDoc)
                 await panel.webview.postMessage({
                   action: 'onStream',
                   data: {
-                    session: session,
+                    session: sessionToRun,
                     blocks: blocksForGlass,
                     variables: metadataForGlass.interpolationVariables,
                     requestId,
@@ -334,11 +334,11 @@ export async function createPlayground(
                 ? await parseGlassMetadataPython(resp.finalDoc)
                 : parseGlassMetadata(resp.finalDoc)
 
-            writeGlass(session, resp.finalDoc) // wait for this?
+            writeGlass(sessionToRun, resp.finalDoc) // wait for this?
             await panel.webview.postMessage({
               action: 'onResponse',
               data: {
-                session: session,
+                session: sessionToRun,
                 glass: resp.finalDoc,
                 blocks: blocksForGlass,
                 variables: metadataForGlass.interpolationVariables,
@@ -349,7 +349,7 @@ export async function createPlayground(
             })
             if (resp.continued) {
               console.log('continuing execution...')
-              await runGlassExtension(resp.finalDoc, session, inputs)
+              await runGlassExtension(resp.finalDoc, sessionToRun, inputs)
             }
           } catch (error) {
             console.error(error)

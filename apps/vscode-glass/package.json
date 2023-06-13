@@ -109,6 +109,11 @@
         "description": "Select a Glass file to launch."
       },
       {
+        "command": "glass.runCurrentFile",
+        "title": "Glass: run current file",
+        "description": "Runs the currently open file."
+      },
+      {
         "command": "glass.showGlassOutput",
         "title": "Glass: Show Glass Output",
         "description": "Shows the Glass output channel."

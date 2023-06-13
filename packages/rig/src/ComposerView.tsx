@@ -5,18 +5,20 @@ import { useEffect, useRef } from 'react'
 
 interface ComposerViewProps {
   theme: string
-  run: (inputsToRun: Record<string, string>) => void
+  run: (inputsToRun: Record<string, string>, sessionToRun: string) => void
   stop: () => void
   reload: () => void
   streaming: boolean
   inputs: Record<string, string>
   setValue: (key: string, value: string) => void
+  session: string
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { inputs, setValue, streaming, run, stop, theme } = props
+  const { inputs, setValue, streaming, run, stop, theme, session } = props
 
   const inputsRef = useRef(inputs)
+  const sessionRef = useRef(session)
 
   const keys: string[] = Object.keys(inputs)
 
@@ -26,7 +28,8 @@ export const ComposerView = (props: ComposerViewProps) => {
 
   useEffect(() => {
     inputsRef.current = inputs
-  }, [inputs])
+    sessionRef.current = session
+  }, [inputs, session])
 
   function mapVSCodeThemeToMonaco(theme: string) {
     const themeMapping: Record<string, string> = {
@@ -89,7 +92,7 @@ export const ComposerView = (props: ComposerViewProps) => {
                   onMount={(editor, monaco) => {
                     editor.focus()
                     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-                      run(inputsRef.current)
+                      run(inputsRef.current, sessionRef.current)
                     })
                   }}
                 />
@@ -106,7 +109,7 @@ export const ComposerView = (props: ComposerViewProps) => {
         <VSCodeButton
           style={{ width: '100%' }}
           appearance="secondary"
-          onClick={() => run(inputsRef.current)}
+          onClick={() => run(inputsRef.current, sessionRef.current)}
           disabled={!Object.values(inputs).some(v => v.trim().length > 0)}
         >
           Run
