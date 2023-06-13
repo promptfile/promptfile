@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.11
+
+### Patch Changes
+
+- [`a17ecbc`](https://github.com/glass-lang/glass/commit/a17ecbcbbdfbb2518828089eba88d69f03f514cf) Thanks [@rothfels](https://github.com/rothfels)! - bump glasslib
+
 ## 0.11.10
 
 ### Patch Changes
