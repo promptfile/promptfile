@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.11.12
+
+### Patch Changes
+
+- [`39ca8d7`](https://github.com/glass-lang/glass/commit/39ca8d71eb0fa214d170f9b5bb69d112bedb7d13) Thanks [@elliottburris](https://github.com/elliottburris)! - fixing bugs
+
 ## 0.11.11
 
 ### Patch Changes
