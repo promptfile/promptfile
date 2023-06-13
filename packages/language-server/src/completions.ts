@@ -3,6 +3,23 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import { extractUnmatchedTags } from './diagnostics'
 import { glassElements } from './elements'
 
+function generateAttributeValueSuggestions(attribute: any, cursorIndex: number) {
+  return attribute.values && attribute.values.length > 0
+    ? `"\${${cursorIndex}|${attribute.values
+        .map(value => value.name)
+        .sort()
+        .join(',')}|}"`
+    : attribute.type === 'boolean'
+    ? `"\${${cursorIndex}|true,false|}"`
+    : attribute.type === 'number'
+    ? `{$${cursorIndex}}`
+    : attribute.type === 'string'
+    ? `"$${cursorIndex}"`
+    : attribute.type === 'array'
+    ? `{$${cursorIndex}}`
+    : `\$${cursorIndex}`
+}
+
 export function generateCompletions(
   document: TextDocument,
   textDocumentPosition: TextDocumentPositionParams
@@ -13,19 +30,7 @@ export function generateCompletions(
     const requiredAttributes = element.attributes.filter(a => a.optional !== true)
     const attributesToInsert: string[] = requiredAttributes.map((attribute, index) => {
       const cursorIndex = index + 1
-      const attributeValue =
-        attribute.values && attribute.values.length > 0
-          ? `"\${${cursorIndex}|${attribute.values
-              .map(value => value.name)
-              .sort()
-              .join(',')}|}"`
-          : attribute.type === 'boolean'
-          ? `"\${${cursorIndex}|true,false|}"`
-          : attribute.type === 'string'
-          ? `"$${cursorIndex}"`
-          : attribute.type === 'array'
-          ? `{$${cursorIndex}}`
-          : `\$${cursorIndex}`
+      const attributeValue = generateAttributeValueSuggestions(attribute, cursorIndex)
       return ` ${attribute.name}=${attributeValue}`
     })
     completionItems.push({
@@ -111,25 +116,13 @@ export function generateCompletions(
     if (element && element.attributes) {
       // Filter out already existing attributes
       const remainingAttributes = element.attributes.filter(a => !existingAttributeNames.includes(a.name))
-
       return remainingAttributes.map(attribute => {
-        if (attribute.values) {
-          return {
-            label: attribute.name,
-            kind: CompletionItemKind.Property,
-            insertText: `${attribute.name}="\${1|${attribute.values
-              .map(a => a.name)
-              .sort()
-              .join(',')}|}"`,
-            insertTextFormat: InsertTextFormat.Snippet,
-          }
-        } else {
-          return {
-            label: attribute.name,
-            kind: CompletionItemKind.Property,
-            insertText: `${attribute.name}="$1"`,
-            insertTextFormat: InsertTextFormat.Snippet,
-          }
+        const attributeValueSuggestions = generateAttributeValueSuggestions(attribute, 1)
+        return {
+          label: attribute.name,
+          kind: CompletionItemKind.Property,
+          insertText: `${attribute.name}=${attributeValueSuggestions}`,
+          insertTextFormat: InsertTextFormat.Snippet,
         }
       })
     }
