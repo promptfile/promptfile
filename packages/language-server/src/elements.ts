@@ -45,7 +45,9 @@ export const glassElements: GlassElement[] = [
         documentation: 'The `model` attribute allows you to track which model generated the assistant text.',
         type: 'enum',
         optional: true,
-        values: LANGUAGE_MODELS.map(model => ({
+        values: LANGUAGE_MODELS.filter(
+          m => !m.deprecatedOn || m.deprecatedOn < new Date().toISOString().split('T')[0]
+        ).map(model => ({
           name: model.name,
           detail: model.creator,
           documentation: model.description,
@@ -142,7 +144,9 @@ export const glassElements: GlassElement[] = [
         detail: 'model for inference',
         documentation: 'The `model` attribute determines which model to inference',
         type: 'enum',
-        values: LANGUAGE_MODELS.map(model => ({
+        values: LANGUAGE_MODELS.filter(
+          m => !m.deprecatedOn || m.deprecatedOn < new Date().toISOString().split('T')[0]
+        ).map(model => ({
           name: model.name,
           detail: model.creator,
           documentation: model.description,
