@@ -41,7 +41,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Add the selected file to the beginning of the array.
     recentlySelectedFiles.unshift(selectedUri)
-    console.log(recentlySelectedFiles)
 
     // Save the updated array.
     await context.workspaceState.update(recentlySelectedFilesKey, recentlySelectedFiles)

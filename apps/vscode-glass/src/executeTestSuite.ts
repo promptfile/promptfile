@@ -23,7 +23,6 @@ export async function executeTestSuite(
 
     const results: UnwrapPromise<ReturnType<typeof runGlass>>[] = []
     for (const output of c) {
-      console.log('running glass', output)
       results.push(
         await runGlass(output, {
           transcriptTokenCounter: {

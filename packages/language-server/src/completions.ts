@@ -81,7 +81,6 @@ export function generateCompletions(
         },
         end: textDocumentPosition.position,
       }
-      console.log(attribute.values)
 
       return attribute.values.map(value => ({
         label: value.name,

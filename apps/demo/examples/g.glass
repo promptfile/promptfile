@@ -2,7 +2,7 @@
 language: python
 ---
 
-# Here's the same example, but running python instead of typescript.
+# Here's the same example, but running Python instead of TypeScript.
 # You can set a default language for glass in vscode preferences (`glass.defaultLanguageMode`).
 # You can also set the language in a glass document itself (see above).
 
@@ -30,7 +30,6 @@ You are an AI community moderator. Your job is to read and process comments on a
 </System>
 
 <For each={examples} as="example">
-
 <User>
 ${example["message"]}
 </User>
@@ -38,7 +37,6 @@ ${example["message"]}
 <Assistant>
 ${example["classification"]}
 </Assistant>
-
 </For>
 
 <User>

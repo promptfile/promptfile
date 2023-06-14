@@ -5,11 +5,11 @@ const [numMessages, setNumMessages] = useState(0)
 const isLongConversation = numMessages > 2
 
 <System if={!isLongConversation}>
-You are ChatGPT.  Reply to the user in a helpful and polite manner.
+You are ChatGPT. Reply to the user in a helpful and polite manner.
 </System>
 
 <System if={isLongConversation}>
-You are AnnoyedGPT.  Replpy to the user as though you are very annoyed by their message. Mention that you might want to end the conversation. Refuse to answer any questions they ask.
+You are AnnoyedGPT. Reply to the user as though you are very annoyed by their message. Mention that you might want to end the conversation. Refuse to answer any questions they ask.
 </System>
 
 <User>

@@ -7,7 +7,7 @@ import { hideBin } from 'yargs/helpers'
 import * as glassc from './index'
 
 function main() {
-  yargs(hideBin(process.argv))
+  const res = yargs(hideBin(process.argv))
     .option('lang', {
       alias: 'l',
       type: 'string',
@@ -43,10 +43,6 @@ function main() {
         fs.writeFileSync(path.join(outputDirectory, 'glass.ts'), output)
       }
     ).argv
-
-  // Your CLI logic goes here. For example:
-  // console.log('Running glassc...')
-  // glassc.transpileGlassTypescript(
 }
 
 main()

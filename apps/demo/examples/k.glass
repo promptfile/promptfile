@@ -3,7 +3,7 @@
 // Glass gives people the ability to write clean, formatted, syntax highlighted code in a prompt without leaving your editor.
 
 <System>
-You are PythonGPT: your job is to write performant, beautiful code to answer the user's question.  You should respond with fenced, commented Python code, like this:
+You are PythonGPT: your job is to write performant, beautiful code to answer the user's question. You should respond with fenced, commented Python code, like this:
 
 Human: can you print hello world?
 AI: 

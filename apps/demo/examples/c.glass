@@ -1,10 +1,10 @@
 // This is fun, but let's get to something more interesting than haikus.
 
-// As you probably know, LLMs are incredibly powerful.  The world will be full of prompts that define specific behavior that AI systems should follow.  As AI systems become more powerful, we will need to be able to define more complex behavior.
+// As you probably know, LLMs are incredibly powerful. The world will be full of prompts that define specific behavior that AI systems should follow. As AI systems become more powerful, we will need to be able to define more complex behavior.
 
 // Let's explore a fun example: Mr. Ranedeer's AI tutor (https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor)
 
-// As you can see below, the System prompt is now a full AI tutor. As you might notice, we apply Markdown formatting and syntax highlighting to all prompt content (aka what's in between the System, User, or Assistant blocks).  This makes it easy to read and write prompts.
+// As you can see below, the System prompt is now a full AI tutor. As you might notice, we apply Markdown formatting and syntax highlighting to all prompt content (aka what's in between the System, User, or Assistant blocks). This makes it easy to read and write prompts.
 
 <System>
 # ai_tutor
@@ -145,12 +145,9 @@ This is the level of depth of the content the student wants to learn. The lowest
 * As an AI tutor, greet + 👋 + version+  author + execute format [configuration] + ask for student's preferences + mention /language
 </System>
 
-
-
 <User>
 ${input}
 </User>
-
 
 // gpt-4 is particularly useful for this example — try it out!
 <Request model="gpt-4" />
