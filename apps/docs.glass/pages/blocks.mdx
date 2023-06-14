@@ -8,8 +8,12 @@ There are different kinds of blocks available in Glass to help you make properly
 
 The `<User>{:glass}` block is used to designate the text coming from the human.
 
-- **name** <i>(optional)</i> <br/> Allows you to give a name to the user.
-- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+- **name** <i>(optional string)</i> <br/> Allows you to give a name to the user.
+- **if** <i>(optional condition)</i> <br/> Allows you to conditionally include the block.
+- **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once, even if the condition is met multiple times.
+- **transcript** <i>(optional boolean)</i> <br/> Allows you to optionally add the User block to the Transcript
+
+```glass-ts
 
 ```glass-ts
 const conditionIsMet = true
@@ -25,15 +29,17 @@ The `<System>{:glass}` block is used to designate instructions to the LLM, rathe
 
 For Anthropic models, the `<System>{:glass}` block has the same effect `<User>{:glass}`.
 
-- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+- **if** <i>(optional condition)</i> <br/> Allows you to conditionally include the block.
 
 ### Assistant
 
 The `<Assistant>{:glass}` block is used to designate the text coming from the model.
 
-- **name** <i>(optional)</i> <br/> Allows you to give a name to the assistant.
-- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
-- **model** <i>(optional)</i> <br/> Tracks which model generated the assistant text
+- **name** <i>(optional string)</i> <br/> Allows you to give a name to the assistant.
+- **if** <i>(optional condition)</i> <br/> Allows you to conditionally include the block.
+- **model** <i>(optional enum)</i> <br/> Tracks which model generated the assistant text
+- **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once, even if the condition is met multiple times.
+- **transcript** <i>(optional boolean)</i> <br/> Allows you to optionally add the User block to the Transcript
 
 ### Request
 
