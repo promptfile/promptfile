@@ -104,13 +104,8 @@
     ],
     "commands": [
       {
-        "command": "glass.selectFile",
-        "title": "Glass: launch a file",
-        "description": "Select a Glass file to launch."
-      },
-      {
         "command": "glass.runCurrentFile",
-        "title": "Glass: run current file",
+        "title": "Glass: Run current file",
         "description": "Runs the currently open file."
       },
       {
