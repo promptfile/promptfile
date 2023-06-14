@@ -8,7 +8,7 @@ Glass is an open-source, declarative framework to write prompts for large langua
 
 The fastest way to learn about Glass is to install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass) and copy the examples in this [folder](https://github.com/glass-lang/glass/tree/main/apps/demo/examples). The examples in this folder get increasingly more complex and show off various features of Glass. We also recommend reading the [Quickstart](/quickstart).
 
-## Why Glass?
+## Before Glass
 
 We started with putting gigantic strings in our codebase... and it was a mess. We separated it into a `.yaml` file and that was better, but as our prompts started to get more complex, we wanted more. We started using [MDX](https://mdxjs.com/) and that was a masssive improvement. We started to build extensions of MDX specifically for writing prompts and that's how Glass was born.
 
@@ -69,6 +69,8 @@ context.rows = context.rows.map(r => {
   ]
 }
 ```
+## After Glass
+
 Here's what the same prompt looks like in Glass:
 
 ````glass-ts
