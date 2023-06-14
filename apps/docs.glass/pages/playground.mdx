@@ -2,27 +2,43 @@ import Image from 'next/image'
 
 # What is the Playground?
 
-When building with Glass, you can run your Glass file directly in VSCode through our Playground. To run a Glass file in Playground, either hit `Command (⌘) Enter (↩)` or by selecting the VSCode Command Palette `Glass: Open in Playground` command. You will be able to chat directly with your prompt and see the results in real-time. You can also see the raw prompt that will be transpiled and then sent to the API and the history of your requests and responses.
+When building with Glass, you can run your Glass file directly in VSCode through our Playground. To run a Glass file in Playground, either hit `Command (⌘) Enter (↩)` or by selecting the VSCode Command Palette `Glass: run current file` command. You will be able to chat directly with your prompt and see the results in real-time. You can also see the raw prompt that will be transpiled and then sent to the API and the history of your requests and responses.
+
+<br />
+
+The playground allows you to render your responses in a Monaco editor (which is the code editor that powers VSCode) which is particularly helpful when you are receiving responses that are code or writing code to the LLM. You can also easily copy the code response from the playground to your clipboard by clicking the `Copy code` button.
+
+<br />
+
+<Image src="/screenshots/playgroundEditor.png" width={450} height={450} />
+
+## Playground Status
+
+Next to your file name, once you have edited your Glass file, you will see a status indicator that will show you if your playground is synced up to the changes in your file. If you see an orange dot, it means you are not using your most up to date Glass file. Click `New Session` to restart the playground with the updated Glass file.
+
+## Playground Tabs
 
 There are two different tabs: transcript and history.
 
-- **Transcript** this allows you to try out your prompt.
-
-<Image src="/screenshots/Playground.gif" width={750} height={750} />
+- **Transcript** this allows you to try out your prompt and look at the history of a conversation in a single session.
 
 - **History** this shows the history of your requests and responses. You can click the ID to open up a Glass file of the session. This is one thing we like about Glass...the output of a Glass file is another Glass file!
 
-<Image src="/screenshots/history.gif" width={750} height={750} />
+<Image src="/screenshots/playground_history.gif" width={750} height={750} />
 
 <br />
 
 ## Playground Logs
 
-You can see the logs of your Playground by opening the logs button. This will keep track of all of your playground sessions and allow you to go back to a specific playground session.
+You can see the logs of your Playground by opening the logs button. This will show you the logs of your Playground. This is useful for debugging and seeing what is happening under the hood. Here, you cna see the exact request you are making to the API.
+
+You can see the exact file that is used to generate the Playground by clicking the `Open session file`.
 
 <br />
 
-<Image src="/screenshots/logs.gif" width={750} height={750} />
+## Share
+
+You can share your prompt with others by clicking the share button. This will create a sharable GitHub Gist you can share with other people. Currently, the way to do this is set your GitHub access token that allows you to create a Gist via the [GitHub REST API](https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28). You can set this token as `GITHUB_API_KEY` in your environment or in `.zshrc` file.
 
 ## Token counting
 
