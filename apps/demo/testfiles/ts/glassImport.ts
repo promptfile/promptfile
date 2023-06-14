@@ -45,7 +45,7 @@ export function getGlassImportPrompt() {
     return {}
   }
 
-  const compile = async (opt: {}) => {
+  const compile = async (opt: { args: {} } = { args: {} }) => {
     const GLASS_STATE = {}
 
     const [field, setField] = useState('', GLASS_STATE, 'field')

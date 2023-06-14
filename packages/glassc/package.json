@@ -1,16 +1,19 @@
 {
   "name": "@glass-lang/glassc",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "Glass language compiler",
   "type": "module",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "glassc": "./dist/cli.js"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "test": "mocha --exit",
     "test:watch": "npm-watch test",
     "test:watchAll": "mocha --watch",
-    "build": "tsup src/index.ts",
+    "build": "tsup src/index.ts src/cli.ts",
     "dev": "npm run build -- --watch",
     "lint:skip": "eslint src --ext ts"
   },
@@ -42,13 +45,15 @@
     "micromark-extension-mdxjs": "^1.0.0",
     "prettier": "^2.8.8",
     "typescript": "^5.0.4",
-    "yaml": "^2.3.0"
+    "yaml": "^2.3.0",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "18.11.18",
     "@types/prettier": "^2.7.2",
+    "@types/yargs": "^17.0.24",
     "chai": "^4.3.7",
     "eslint-config-custom": "*",
     "mocha": "^10.2.0",
