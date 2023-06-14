@@ -68,7 +68,6 @@ export const glassElements: GlassElement[] = [
         name: 'transcript',
         detail: 'whether the Assistant block should be added to the transcript',
         documentation: 'The `transcript` attribute allows you to optionally add the Assistant block to the transcript.',
-
         type: 'boolean',
         optional: true,
       },

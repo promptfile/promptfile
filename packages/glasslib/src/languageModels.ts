@@ -18,6 +18,7 @@ export interface LanguageModel {
   maxTokens: number
   costPrompt: (numTokens: number) => number
   costCompletion: (numTokens: number) => number
+  deprecatedOn?: string
 }
 
 export const LANGUAGE_MODELS: LanguageModel[] = [
@@ -36,6 +37,17 @@ export const LANGUAGE_MODELS: LanguageModel[] = [
     creator: LanguageModelCreator.openai,
     description:
       'Snapshot of gpt-4 from March 14th 2023. Unlike gpt-4, this model will not receive updates, and will be deprecated 3 months after a new version is released.',
+    type: LanguageModelType.chat,
+    maxTokens: 8192,
+    costPrompt: numTokens => (numTokens / 1000) * 0.03,
+    costCompletion: numTokens => (numTokens / 1000) * 0.06,
+    deprecatedOn: '2023-09-13',
+  },
+  {
+    name: 'gpt-4-0613',
+    creator: LanguageModelCreator.openai,
+    description:
+      'Snapshot of gpt-4 from June 13th 2023 with function calling data. Unlike gpt-4, this model will not receive updates, and will be deprecated 3 months after a new version is released.',
     type: LanguageModelType.chat,
     maxTokens: 8192,
     costPrompt: numTokens => (numTokens / 1000) * 0.03,
@@ -60,6 +72,17 @@ export const LANGUAGE_MODELS: LanguageModel[] = [
     maxTokens: 32768,
     costPrompt: numTokens => (numTokens / 1000) * 0.06,
     costCompletion: numTokens => (numTokens / 1000) * 0.12,
+    deprecatedOn: '2023-09-13',
+  },
+  {
+    name: 'gpt-4-32k-0613',
+    creator: LanguageModelCreator.openai,
+    description:
+      'Snapshot of gpt-4-32 from June 13th 2023. Unlike gpt-4-32k, this model will not receive updates, and will be deprecated 3 months after a new version is released.',
+    type: LanguageModelType.chat,
+    maxTokens: 32768,
+    costPrompt: numTokens => (numTokens / 1000) * 0.06,
+    costCompletion: numTokens => (numTokens / 1000) * 0.12,
   },
   {
     name: 'gpt-3.5-turbo',
@@ -80,6 +103,26 @@ export const LANGUAGE_MODELS: LanguageModel[] = [
     maxTokens: 4096,
     costPrompt: numTokens => (numTokens / 1000) * 0.002,
     costCompletion: numTokens => (numTokens / 1000) * 0.002,
+    deprecatedOn: '2023-09-13',
+  },
+  {
+    name: 'gpt-3.5-turbo-16k',
+    creator: LanguageModelCreator.openai,
+    description: 'Same capabilities as the standard gpt-3.5-turbo model but with 4 times the context.',
+    type: LanguageModelType.chat,
+    maxTokens: 16384,
+    costPrompt: numTokens => (numTokens / 1000) * 0.008,
+    costCompletion: numTokens => (numTokens / 1000) * 0.008,
+  },
+  {
+    name: 'gpt-3.5-turbo-16k-0613',
+    creator: LanguageModelCreator.openai,
+    description:
+      'Snapshot of gpt-3.5-turbo-16k from June 13th 2023. Unlike gpt-3.5-turbo-16k, this model will not receive updates, and will be deprecated 3 months after a new version is released.',
+    type: LanguageModelType.chat,
+    maxTokens: 16384,
+    costPrompt: numTokens => (numTokens / 1000) * 0.008,
+    costCompletion: numTokens => (numTokens / 1000) * 0.008,
   },
   {
     name: 'text-davinci-003',
