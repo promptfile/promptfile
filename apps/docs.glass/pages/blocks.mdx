@@ -17,6 +17,8 @@ const conditionIsMet = true
 <User name="Sam" if={conditionIsMet}>
 Hello AI!
 </User>
+
+<Request model="gpt-3.5-turbo" />
 ```
 
 ### System
@@ -37,7 +39,7 @@ The `<Assistant>{:glass}` block is used to designate the text coming from the mo
 
 ### Request
 
-The `<Request>{:glass}` block makes an API request to the specified model, using all previous `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}` blocks as input.
+The `<Request />{:glass}` block makes an API request to the specified model, using all previous `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}` blocks as input.
 
 - **model** <i>(optional)</i> <br/> The name of the model you want to inference. Defaults to `gpt-3.5-turbo`
 - **temperature** <i>(optional)</i> <br/> The temperance of the inference to the model. Defaults to `0.0`
@@ -77,6 +79,8 @@ ${ex.response}
 <User>
 ${request}
 </User>
+
+<Request model="gpt-3.5-turbo" />
 ```
 
 ### Text
@@ -94,7 +98,9 @@ const conditionIsMet = true
 <Text if={conditionIsMet}>
 Hello AI!
 </Text>
-</User>
+</User>'
+
+<Request model="gpt-3.5-turbo" />
 ```
 
 ### Test
@@ -116,12 +122,14 @@ const input = "This is a test input"
 <User>
 ${input}
 </User>
+
+<Request model="gpt-3.5-turbo" />
 ```
 
 ### Block
 
 `<Block>{:glass}` is a generic version of `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`.
 
-- **role** <i>(required)</i> <br/> The type of block. Can be `User`, `Assistant`, or `System`.
+- **role** <i>(required)</i> <br/> The type of block. Can be `user`, `assistant`, or `system`.
 
 - **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
