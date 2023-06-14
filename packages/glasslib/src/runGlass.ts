@@ -2,8 +2,9 @@ import { checkOk } from '@glass-lang/util'
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
-import { TokenCounter, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
+import { parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
 import { RequestData } from './parseGlassBlocks'
+import { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'
 import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
@@ -30,17 +31,12 @@ export interface TranspilerOutput {
 export async function runGlass(
   { fileName, originalDoc, interpolatedDoc, state, requestBlocks, interpolationArgs }: TranspilerOutput,
   options: {
-    transcriptTokenCounter: TokenCounter
+    transcriptTokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
-  } = {
-    transcriptTokenCounter: {
-      countTokens: () => 0,
-      maxTokens: () => Infinity,
-    },
-  }
+  } = {}
 ): Promise<{
   rawResponse: string
   codeResponse?: any
@@ -200,7 +196,7 @@ async function runGlassChat(
   requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
-    transcriptTokenCounter: TokenCounter
+    transcriptTokenCounter?: TokenCounter
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
     output?: (line: string) => void
@@ -218,7 +214,9 @@ async function runGlassChat(
     options.output(JSON.stringify(messagesSoFar.concat(messages), null, 2))
   }
 
-  const requestTokens = options.transcriptTokenCounter.countTokens(
+  const tokenCounter = options.transcriptTokenCounter || DEFAULT_TOKEN_COUNTER
+
+  const requestTokens = tokenCounter.countTokens(
     messagesSoFar
       .concat(messages)
       .map(b => `<|im_start|>${b.role}\n${b.content}<|im_end|>`)
@@ -247,10 +245,7 @@ async function runGlassChat(
     // right now claude has a leading whitespace character
     // we need to remove that!
     if (options?.progress) {
-      const responseTokens = options.transcriptTokenCounter.countTokens(
-        `<|im_start|>assistant\n${next}<|im_end|>`,
-        request.model
-      )
+      const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${next}<|im_end|>`, request.model)
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
           responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
@@ -264,10 +259,7 @@ async function runGlassChat(
     }
   })
 
-  const responseTokens = options.transcriptTokenCounter.countTokens(
-    `<|im_start|>assistant\n${response}<|im_end|>`,
-    request.model
-  )
+  const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${response}<|im_end|>`, request.model)
 
   responseData.push({ response, requestTokens, responseTokens })
   messagesSoFar.push(...messages)
@@ -293,7 +285,7 @@ async function runGlassChatAnthropic(
   requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
-    transcriptTokenCounter: TokenCounter
+    transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
     anthropicKey?: string
@@ -325,7 +317,9 @@ async function runGlassChatAnthropic(
     options.output(anthropicQuery)
   }
 
-  const requestTokens = options.transcriptTokenCounter.countTokens(anthropicQuery, request.model)
+  const tokenCounter = options.transcriptTokenCounter || DEFAULT_TOKEN_COUNTER
+
+  const requestTokens = tokenCounter.countTokens(anthropicQuery, request.model)
 
   const r = await fetch('https://api.anthropic.com/v1/complete', {
     method: 'POST',
@@ -348,7 +342,7 @@ async function runGlassChatAnthropic(
       throw new Error(`HTTP error: ${r.status}`)
     }
     if (options?.progress) {
-      const responseTokens = options.transcriptTokenCounter.countTokens(next, request.model)
+      const responseTokens = tokenCounter.countTokens(next, request.model)
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
           responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
@@ -362,7 +356,7 @@ async function runGlassChatAnthropic(
     }
   })
 
-  const responseTokens = options.transcriptTokenCounter.countTokens(response, request.model)
+  const responseTokens = tokenCounter.countTokens(response, request.model)
 
   responseData.push({ response: response.trim(), requestTokens, responseTokens })
   messagesSoFar.push(...messages)
@@ -388,7 +382,7 @@ async function runGlassCompletion(
   requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
-    transcriptTokenCounter: TokenCounter
+    transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
     progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
@@ -439,7 +433,9 @@ async function runGlassCompletion(
     stop: (request.stopSequence || []).concat(stopSequence ? [stopSequence] : []),
   })
 
-  const requestTokens = options.transcriptTokenCounter.countTokens(prompt, request.model)
+  const tokenCounter = options.transcriptTokenCounter || DEFAULT_TOKEN_COUNTER
+
+  const requestTokens = tokenCounter.countTokens(prompt, request.model)
   const stop = (request.stopSequence || []).concat(stopSequence ? [stopSequence] : [])
 
   const r = await fetch('https://api.openai.com/v1/completions', {
@@ -464,7 +460,7 @@ async function runGlassCompletion(
       throw new Error(`HTTP error: ${r.status}`)
     }
     if (options?.progress) {
-      const responseTokens = options.transcriptTokenCounter.countTokens(next, request.model)
+      const responseTokens = tokenCounter.countTokens(next, request.model)
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
           responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
@@ -478,7 +474,7 @@ async function runGlassCompletion(
     }
   })
 
-  const responseTokens = options.transcriptTokenCounter.countTokens(response, request.model)
+  const responseTokens = tokenCounter.countTokens(response, request.model)
 
   responseData.push({ response: response.trim(), requestTokens, responseTokens })
   messagesSoFar.push(...messages)
