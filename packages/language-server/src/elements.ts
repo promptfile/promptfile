@@ -145,7 +145,7 @@ export const glassElements: GlassElement[] = [
         documentation: 'The `model` attribute determines which model to inference',
         type: 'enum',
         values: LANGUAGE_MODELS.filter(
-          m => !m.deprecatedOn || m.deprecatedOn < new Date().toISOString().split('T')[0]
+          m => m.deprecatedOn == null || m.deprecatedOn > new Date().toISOString().split('T')[0]
         ).map(model => ({
           name: model.name,
           detail: model.creator,
