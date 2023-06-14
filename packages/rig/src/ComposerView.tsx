@@ -68,9 +68,7 @@ export const ComposerView = (props: ComposerViewProps) => {
           >
             {keys.map((key, index) => (
               <div key={key} style={{ width: '100%' }}>
-                {keys.length > 1 && (
-                  <div style={{ paddingTop: index === 0 ? '0px' : '8px', paddingBottom: '4px' }}>{key}</div>
-                )}
+                <div style={{ paddingTop: index === 0 ? '0px' : '8px', paddingBottom: '4px' }}>{key}</div>
                 <MonacoEditor
                   width="100%"
                   height={`100px`}
