@@ -5,6 +5,7 @@ export function updateGlassBlockAttributes(block: GlassContent, attr: { name: st
     return block.content
   }
   const attrs = (block.attrs || [])
+    .concat(attr)
     .map(attr => {
       if (attr.expressionValue != null) {
         return `${attr.name}={${attr.expressionValue}}`
@@ -16,5 +17,5 @@ export function updateGlassBlockAttributes(block: GlassContent, attr: { name: st
     })
     .join(' ')
 
-  return `<${block.tag} ${attrs} ${attr.name}="${attr.stringValue}">\n${block.child?.content || ''}\n</${block.tag}>`
+  return `<${block.tag} ${attrs}>\n${block.child?.content || ''}\n</${block.tag}>`
 }
