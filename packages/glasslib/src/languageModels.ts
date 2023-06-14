@@ -91,7 +91,7 @@ export const LANGUAGE_MODELS: LanguageModel[] = [
       'Most capable GPT-3.5 model and optimized for chat at 1/10th the cost of text-davinci-003. Will be updated with our latest model iteration.',
     type: LanguageModelType.chat,
     maxTokens: 4096,
-    costPrompt: numTokens => (numTokens / 1000) * 0.002,
+    costPrompt: numTokens => (numTokens / 1000) * 0.0015,
     costCompletion: numTokens => (numTokens / 1000) * 0.002,
   },
   {
@@ -111,8 +111,8 @@ export const LANGUAGE_MODELS: LanguageModel[] = [
     description: 'Same capabilities as the standard gpt-3.5-turbo model but with 4 times the context.',
     type: LanguageModelType.chat,
     maxTokens: 16384,
-    costPrompt: numTokens => (numTokens / 1000) * 0.008,
-    costCompletion: numTokens => (numTokens / 1000) * 0.008,
+    costPrompt: numTokens => (numTokens / 1000) * 0.003,
+    costCompletion: numTokens => (numTokens / 1000) * 0.004,
   },
   {
     name: 'gpt-3.5-turbo-16k-0613',
@@ -121,8 +121,8 @@ export const LANGUAGE_MODELS: LanguageModel[] = [
       'Snapshot of gpt-3.5-turbo-16k from June 13th 2023. Unlike gpt-3.5-turbo-16k, this model will not receive updates, and will be deprecated 3 months after a new version is released.',
     type: LanguageModelType.chat,
     maxTokens: 16384,
-    costPrompt: numTokens => (numTokens / 1000) * 0.008,
-    costCompletion: numTokens => (numTokens / 1000) * 0.008,
+    costPrompt: numTokens => (numTokens / 1000) * 0.003,
+    costCompletion: numTokens => (numTokens / 1000) * 0.004,
   },
   {
     name: 'text-davinci-003',
