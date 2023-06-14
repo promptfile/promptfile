@@ -267,14 +267,12 @@ export function parseGlassRequestBlock(node: GlassContent): RequestData {
   const model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : 'gpt-3.5-turbo'
 
   const maxTokensAttr = node.attrs!.find(a => a.name === 'maxTokens')
-  const maxTokens = maxTokensAttr
-    ? maxTokensAttr.stringValue || JSON.parse(maxTokensAttr.expressionValue!)
-    : 'undefined'
+  const maxTokens = maxTokensAttr ? maxTokensAttr.stringValue || JSON.parse(maxTokensAttr.expressionValue!) : undefined
 
   const temperatureAttr = node.attrs!.find(a => a.name === 'temperature')
   const temperature = temperatureAttr
     ? temperatureAttr.stringValue || JSON.parse(temperatureAttr.expressionValue!)
-    : 'undefined'
+    : undefined
 
   const stopSequenceAttr = node.attrs!.find(a => a.name === 'stopSequence')
   let stopSequence: string[] | undefined = undefined
