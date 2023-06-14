@@ -73,7 +73,7 @@ export const ComposerView = (props: ComposerViewProps) => {
                 )}
                 <MonacoEditor
                   width="100%"
-                  height={`200px`}
+                  height={`100px`}
                   theme={mapVSCodeThemeToMonaco(theme)}
                   language={'markdown'}
                   value={inputs[key]}

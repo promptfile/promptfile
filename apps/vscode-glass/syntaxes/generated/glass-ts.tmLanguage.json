@@ -60,7 +60,14 @@
       "end": "(\\})(.*)$",
       "beginCaptures": {
         "1": {
-          "name": "text.html.markdown"
+          "patterns": [
+            {
+              "include": "#flow-expression"
+            },
+            {
+              "include": "text.html.markdown"
+            }
+          ]
         },
         "2": {
           "name": "source.glass.flow.punctuation"
@@ -71,7 +78,14 @@
           "name": "source.glass.flow.punctuation"
         },
         "2": {
-          "name": "text.html.markdown"
+          "patterns": [
+            {
+              "include": "#flow-expression"
+            },
+            {
+              "include": "text.html.markdown"
+            }
+          ]
         }
       },
       "patterns": [
