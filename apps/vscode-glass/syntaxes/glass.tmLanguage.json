@@ -45,6 +45,9 @@
       "include": "#system-element"
     },
     {
+      "include": "#block-element"
+    },
+    {
       "include": "#for-element"
     },
     {
@@ -153,6 +156,62 @@
           "name": "punctuation.definition.tag.self-closing.jsx"
         },
         "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "block-element": {
+      "begin": "^(<)(Block)([^>]*)(>)$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.block.name"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#flow-expression"
+        },
+        {
+          "include": "#text-element"
+        },
+        {
+          "include": "text.html.markdown"
+        }
+      ],
+      "end": "^(<\\/)(Block)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.block.name"
+        },
+        "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       }

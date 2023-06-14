@@ -4,6 +4,10 @@ Assist the User with their goal to draft a document. Fence the document with ```
 
 <Transcript />
 
+<Block role="user">
+Text
+</Block>
+
 <User>
 ${input}
 </User>
