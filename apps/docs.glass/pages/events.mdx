@@ -1,0 +1,37 @@
+import Image from 'next/image'
+
+# Event Handling: OnResponse
+
+Just like React's event handling, Glass has a similar event handling system. The `OnResponse` function evaluates when the request has been made and the response is received. This is most useful for taking actions after a response has been received, such as updating the state of the Glass file.
+
+An example of a request with an `OnResponse` function is shown below. You can access the response from the request by using the `.message` attribute of the response object.
+
+```glass
+<Request model="gpt-4" onResponse = {response => {someFunction(response.message)}} />
+```
+
+# State Management: useState
+
+Just like React's [`useState`](https://react.dev/reference/react/useState) hook that allows you to add a state variable to your component. Glass also allows `useState`. By declaring a state variable:
+
+```glass
+const [stateVariable, setStateVariable] = useState(initialValue)
+```
+
+You can then update the state variable by calling the `setStateVariable` function. This will add the updated state variable to the Glass file.
+
+```glass
+setStateVariable(newValue)
+```
+
+Here is an example of `onResponse` and `useState` being used together:
+
+###
+
+<Image src="/screenshots/events_state.png" width={750} height={750} />
+
+When you look at the History tab in the [Playground](/playground), you can see the state variables being updated. You can also see the state variables being updated in the Glass file. The messages in the session are added to the `<Transcript>` block which keeps a running transcript of the conversation in the session.
+
+###
+
+<Image src="/screenshots/events_state_transcript.png" width={750} height={750} />
