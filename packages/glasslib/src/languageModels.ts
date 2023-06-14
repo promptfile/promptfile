@@ -106,6 +106,16 @@ export const LANGUAGE_MODELS: LanguageModel[] = [
     deprecatedOn: '2023-09-13',
   },
   {
+    name: 'gpt-3.5-turbo-0613',
+    creator: LanguageModelCreator.openai,
+    description:
+      'Snapshot of gpt-3.5-turbo from June 13th 2023 with function calling data. Unlike gpt-3.5-turbo, this model will not receive updates, and will be deprecated 3 months after a new version is released.',
+    type: LanguageModelType.chat,
+    maxTokens: 4096,
+    costPrompt: numTokens => (numTokens / 1000) * 0.0015,
+    costCompletion: numTokens => (numTokens / 1000) * 0.002,
+  },
+  {
     name: 'gpt-3.5-turbo-16k',
     creator: LanguageModelCreator.openai,
     description: 'Same capabilities as the standard gpt-3.5-turbo model but with 4 times the context.',
