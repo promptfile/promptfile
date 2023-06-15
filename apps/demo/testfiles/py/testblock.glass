@@ -3,7 +3,7 @@ language: python
 ---
 
 <Test>
-foo = "tell me a story"
+return [{"foo": "tell me a story"}]
 </Test>
 
 <System>

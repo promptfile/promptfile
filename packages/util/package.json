@@ -12,7 +12,6 @@
     "dev": "npm run build -- --watch",
     "lint": "eslint src --ext ts"
   },
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/glass-lang/glass.git"

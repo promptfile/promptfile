@@ -14,6 +14,7 @@
     "@glass-lang/glasslib": "^0.0.8",
     "@monaco-editor/react": "^4.5.1",
     "@vscode/webview-ui-toolkit": "^1.2.2",
+    "re-resizable": "^6.9.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.7",

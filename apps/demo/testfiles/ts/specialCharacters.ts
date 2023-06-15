@@ -3,7 +3,7 @@ export function getSpecialCharactersPrompt() {
     return {}
   }
 
-  const compile = async (opt: {}) => {
+  const compile = async (opt: { args: {} } = { args: {} }) => {
     const GLASS_STATE = {}
 
     const type = 'assistant'

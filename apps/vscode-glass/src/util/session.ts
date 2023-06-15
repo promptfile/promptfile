@@ -42,7 +42,6 @@ export function getCurrentSessionFilepath(filepath: string): string | undefined 
 }
 
 export function loadGlass(session: string) {
-  console.log('loadGlass', session)
   const glass = fs.readFileSync(session, 'utf-8')
   return glass
 }
@@ -53,10 +52,8 @@ export function writeGlass(session: string, glass: string) {
 }
 
 export async function createSession(filepath: string): Promise<string> {
-  console.log('createSession', filepath)
   const sessionDirectory = getSessionDirectoryPath(filepath)
   const sessionId = generateULID()
-  console.log('sessionId', sessionId)
   const glass = fs.readFileSync(filepath, 'utf-8')
   const updatedGlass = rewriteImports(glass, sessionDirectory, filepath)
   const sessionPath = path.join(sessionDirectory, `${sessionId}.glass`)

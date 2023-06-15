@@ -66,7 +66,6 @@ function RigView() {
           setSessions(() => message.data.sessions)
           break
         case 'setGlass':
-          console.log(message.data)
           if (message.data.currentSource) {
             setCurrentSource(() => message.data.currentSource)
           }

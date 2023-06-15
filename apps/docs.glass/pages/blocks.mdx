@@ -19,6 +19,8 @@ const conditionIsMet = true
 <User name="Shreyas" if={conditionIsMet}>
 Hello AI!
 </User>
+
+<Request model="gpt-3.5-turbo" />
 ```
 
 ### System
@@ -57,7 +59,7 @@ Hello human!
 
 ### Request
 
-Use the `<Request>{:glass}` block to make an API request to a specified model, using all previous `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}` blocks as input.
+Use the `<Request />{:glass}` block to make an API request to a specified model, using all previous `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}` blocks as input.
 
 - **model** <i>(required)</i> <br/> The name of the model to inference. Defaults to `gpt-3.5-turbo`
 - **temperature** <i>(optional)</i> <br/> The temperance of the inference to the model.
@@ -119,6 +121,8 @@ const conditionIsMet = true
 Hello AI!
 </Text>
 </User>
+
+<Request model="gpt-3.5-turbo" />
 ```
 
 ### Test
@@ -127,7 +131,7 @@ Use `<Test>{:glass}` to define test data to use when running the file.
 
 ```glass-ts
 <Test>
-const input = "This is a test input"
+return [{input: "test input 1"}, {input: "test input 2"}]
 </Test>
 
 // input would usually be passed into the prompt as an argument, but Glass will use the test data instead when no arguments are provided
@@ -142,7 +146,7 @@ ${input}
 
 Use `<Block>{:glass}` as a generic version of `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`.
 
-- **role** <i>(required)</i> <br/> The type of block. Can be `User`, `Assistant`, or `System`.
+- **role** <i>(required)</i> <br/> The type of block. Can be `user`, `assistant`, or `system`.
 
 - **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
 

@@ -1,3 +1,7 @@
+---
+language: typescript
+---
+
 // You may be wondering what's happening outside of the blocks themselves. Let's learn about that now!
 
 // Everything outside of the code blocks is actually just code. The default language is TypeScript, but Glass also supports Python and JavaScript (with more coming soon).
@@ -19,7 +23,7 @@ const userProfile = {
 You are having a conversation with the following User:
 
 ###
-${userProfile}
+${JSON.stringify(userProfile)}
 ###
 
 Only answer questions from the User based on the information above. Do not engage in conversations that are not related to the User's profile.

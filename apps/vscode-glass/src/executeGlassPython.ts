@@ -37,19 +37,6 @@ export async function executeGlassPython(
   }
   const tmpFilePath = path.join(outDir, 'glass-tmp.py')
 
-  console.log(
-    'code is',
-    `${transpiledCode}
-
-print(${getGlassExportName(fileName)}(${jsonToPython(inputs || {})}))`
-  )
-  // console.log(
-  //   'code is',
-  //   `${transpiledCode}
-
-  // print(${getGlassExportName(fileName)}(${jsonToPython(interpolationArgs || {})}))`
-  // )
-
   fs.writeFileSync(
     tmpFilePath,
     `${transpiledCode}
@@ -62,7 +49,7 @@ print(${getGlassExportName(fileName)}(${jsonToPython(inputs || {})}))`,
 
   const output = await executePythonScript(tmpFilePath)
 
-  console.log('got python output', JSON.stringify({ output }))
+  console.log('python output', JSON.stringify({ output }))
 
   const c = JSON.parse(output)
 
@@ -115,7 +102,7 @@ export function jsonToPython(json: any): string {
   }
 
   if (typeof json === 'string') {
-    return `'${json}'`
+    return `'${json.replace(/'/g, "\\'")}'`
   }
 
   if (Array.isArray(json)) {

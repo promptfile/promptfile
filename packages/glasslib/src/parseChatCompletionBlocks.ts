@@ -1,18 +1,11 @@
 import { RequestData, parseGlassBlocks } from './parseGlassBlocks'
 import { removeGlassComments } from './removeGlassComments'
+import { DEFAULT_TOKEN_COUNTER } from './tokenCounter'
 
 export interface ChatCompletionRequestMessage {
   role: 'system' | 'user' | 'assistant'
   content: string
   name?: string
-}
-
-export interface TokenCounter {
-  countTokens: (str: string, model: string) => number
-  // maximum number of tokens allowable by model
-  maxTokens: (model: string) => number
-  // number of tokens to reserve
-  reserveCount?: number
 }
 
 export function parseChatCompletionBlocks(content: string): ChatCompletionRequestMessage[] {
@@ -50,10 +43,7 @@ export function parseChatCompletionBlocks(content: string): ChatCompletionReques
 export function parseChatCompletionBlocks2(
   content: string,
   requestBlocks: RequestData[],
-  transcriptTokenCounter: TokenCounter = {
-    countTokens: () => 0,
-    maxTokens: () => Infinity,
-  }
+  transcriptTokenCounter = DEFAULT_TOKEN_COUNTER
 ): ChatCompletionRequestMessage[][] {
   const doc = removeGlassComments(content)
 

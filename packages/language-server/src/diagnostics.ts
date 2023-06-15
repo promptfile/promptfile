@@ -206,6 +206,33 @@ function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
     }
 
     const diagnostics: Diagnostic[] = []
+
+    const today = new Date().toISOString().split('T')[0]
+    if (languageModel.deprecatedOn) {
+      const isDeprecated = today >= languageModel.deprecatedOn
+      if (isDeprecated) {
+        diagnostics.push({
+          severity: DiagnosticSeverity.Error,
+          range: {
+            start: textDocument.positionAt(requestElement.position.start.offset),
+            end: textDocument.positionAt(requestElement.position.end.offset),
+          },
+          message: `${languageModel.name} was deprecated on ${languageModel.deprecatedOn} and is no longer supported.`,
+          source: 'glass',
+        })
+      } else {
+        diagnostics.push({
+          severity: DiagnosticSeverity.Warning,
+          range: {
+            start: textDocument.positionAt(requestElement.position.start.offset),
+            end: textDocument.positionAt(requestElement.position.end.offset),
+          },
+          message: `${languageModel.name} will be deprecated on ${languageModel.deprecatedOn}.`,
+          source: 'glass',
+        })
+      }
+    }
+
     const systemBlocks = parsed.filter(tag => tag.tag === 'System')
     if (languageModel.creator === LanguageModelCreator.anthropic) {
       diagnostics.push(

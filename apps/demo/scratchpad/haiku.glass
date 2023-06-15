@@ -14,4 +14,4 @@ You are ChatGPT. The current time is ${timestamp}. You are talking to Elliott Bu
 ${input}
 </User>
 
-<Request model="gpt-4" />
+<Request model="gpt-3.5-turbo" />

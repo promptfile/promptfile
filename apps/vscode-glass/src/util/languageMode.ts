@@ -24,7 +24,7 @@ export async function updateLanguageMode(textDocument: vscode.TextDocument) {
       targetLanguage = lookup[frontmatter.language]
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 
   if (targetLanguage && textDocument.languageId !== targetLanguage) {

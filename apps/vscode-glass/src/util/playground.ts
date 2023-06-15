@@ -38,11 +38,9 @@ export async function createPlayground(
   if (!session) {
     return
   }
-  console.log('checking for existing playground')
   const languageId = document.languageId
   const existingPlayground = playgrounds.get(filepath)
   if (existingPlayground) {
-    console.log('found existing playground', existingPlayground)
     const currentGlass = loadGlass(session)
     const allBlocks = parseGlassBlocks(currentGlass)
     const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
@@ -131,7 +129,6 @@ export async function createPlayground(
         break
       case 'getCurrentSession':
         const currentSession = getCurrentSessionFilepath(filepath)
-        console.log('getCurrentSession currentSession', currentSession)
         if (!currentSession) {
           await vscode.window.showErrorMessage('No session found')
           return
@@ -348,7 +345,6 @@ export async function createPlayground(
               },
             })
             if (resp.continued) {
-              console.log('continuing execution...')
               await runGlassExtension(resp.finalDoc, sessionToRun, inputs)
             }
           } catch (error) {

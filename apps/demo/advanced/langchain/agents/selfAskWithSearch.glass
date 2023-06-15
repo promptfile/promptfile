@@ -15,7 +15,6 @@ Intermediate answer: Alan Turing was 41 years old when he died.
 So the final answer is: Muhammad Ali
 </Assistant>
 
-
 <User>
 When was the founder of craigslist born?
 </User>
@@ -58,5 +57,9 @@ Follow up: Where is Martin Campbell from?
 Intermediate answer: New Zealand.
 So the final answer is: No
 </Assistant>
+
+<User>
+${input}
+</User>
 
 <Request model="gpt-3.5-turbo" />

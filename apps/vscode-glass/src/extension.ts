@@ -4,15 +4,12 @@ import {
   transpileGlassPython,
   transpileGlassTypescript,
 } from '@glass-lang/glassc'
-import { LANGUAGE_MODELS, LanguageModelCreator, parseGlassBlocksRecursive } from '@glass-lang/glasslib'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
-import { executeTestSuite } from './executeTestSuite'
 import { updateDecorations } from './util/decorations'
-import { getAllGlassFiles, getDocumentFilename, hasGlassFileOpen, isGlassFile } from './util/isGlassFile'
-import { getAnthropicKey, getOpenaiKey } from './util/keys'
+import { getAllGlassFiles, getDocumentFilename, isGlassFile } from './util/isGlassFile'
 import { updateLanguageMode } from './util/languageMode'
 import { GlassPlayground, createPlayground } from './util/playground'
 import { updateTokenCount } from './util/tokenCounter'
@@ -41,7 +38,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Add the selected file to the beginning of the array.
     recentlySelectedFiles.unshift(selectedUri)
-    console.log(recentlySelectedFiles)
 
     // Save the updated array.
     await context.workspaceState.update(recentlySelectedFilesKey, recentlySelectedFiles)
@@ -168,66 +164,16 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    vscode.commands.registerCommand('glass.runTestSuite', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
-        return
-      }
-
-      try {
-        const elements = parseGlassBlocksRecursive(activeEditor.document.getText())
-        const requestElement = elements.find(element => element.tag === 'Request')
-        if (!requestElement) {
-          await vscode.window.showErrorMessage('Unable to find Request element')
-          return
-        }
-        const model = requestElement.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
-        const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
-        if (!languageModel) {
-          await vscode.window.showErrorMessage(`Unable to find model ${model}`)
-          return
-        }
-        switch (languageModel.creator) {
-          case LanguageModelCreator.anthropic:
-            const anthropicKey = getAnthropicKey()
-            if (anthropicKey == null || anthropicKey === '') {
-              await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
-              await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
-              return
-            }
-            break
-          case LanguageModelCreator.openai:
-            const openaiKey = getOpenaiKey()
-            if (openaiKey == null || openaiKey === '') {
-              await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
-              await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
-              return
-            }
-            break
-        }
-      } catch (e) {
-        console.error(e)
-      }
-
-      const resp = await executeTestSuite(
-        outputChannel,
-        activeEditor.document,
-        {},
-        activeEditor.document.languageId === 'glass-py'
-      )
-    }),
     vscode.commands.registerCommand('glass.showGlassOutput', async () => {
       outputChannel.show()
     }),
-    vscode.commands.registerCommand('glass.runCurrentFile', async () => {
+    vscode.commands.registerCommand('glass.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !isGlassFile(activeEditor.document)) {
+      if (activeEditor && isGlassFile(activeEditor.document)) {
+        await launchGlassDocument(activeEditor.document, outputChannel)
+        await updateRecentlySelectedFiles(activeEditor.document.uri)
         return
       }
-      await launchGlassDocument(activeEditor.document, outputChannel)
-      await updateRecentlySelectedFiles(activeEditor.document.uri)
-    }),
-    vscode.commands.registerCommand('glass.selectFile', async () => {
       const glassFiles = await getAllGlassFiles()
       if (glassFiles.length === 0) {
         await vscode.window.showErrorMessage('Unable to find any Glass files')
@@ -260,7 +206,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       })
       const selectedFile = await vscode.window.showQuickPick(glassFilesQuickPick, {
-        placeHolder: 'Launch a Glass file',
+        placeHolder: 'Select a Glass file to run',
       })
       if (!selectedFile) {
         return
@@ -277,59 +223,79 @@ export async function activate(context: vscode.ExtensionContext) {
       const doc = await vscode.workspace.openTextDocument(selectedDocument)
       await launchGlassDocument(doc, outputChannel)
     }),
-
-    vscode.commands.registerCommand('glass.openSettings', async () => {
+    vscode.commands.registerCommand('glass.settings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Glass')
     }),
-    vscode.commands.registerCommand('glass.openDocs', async () => {
-      await vscode.env.openExternal(vscode.Uri.parse('https://docs.glass'))
-    }),
-    vscode.commands.registerCommand('glass.transpileAll', async () => {
-      const workspaceFolders = vscode.workspace.workspaceFolders
-      if (workspaceFolders) {
-        for (const workspaceFolder of workspaceFolders) {
-          const outputDirectory: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
-          const languageMode: string = vscode.workspace.getConfiguration('glass').get('defaultLanguageMode') as any
-          const folderPath = workspaceFolder.uri.fsPath
-          /* eslint no-template-curly-in-string: "off" */
-          const outDir = outputDirectory.replace('${workspaceFolder}', folderPath)
+    vscode.commands.registerCommand('glass.transpile', async () => {
+      const languageMode: string = vscode.workspace.getConfiguration('glass').get('defaultLanguageMode') as any
+      async function transpileAll() {
+        const workspaceFolders = vscode.workspace.workspaceFolders
+        if (workspaceFolders) {
+          for (const workspaceFolder of workspaceFolders) {
+            const outputDirectory: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
 
-          if (!fs.existsSync(outDir)) {
-            fs.mkdirSync(outDir)
-          }
+            const folderPath = workspaceFolder.uri.fsPath
+            /* eslint no-template-curly-in-string: "off" */
+            const outDir = outputDirectory.replace('${workspaceFolder}', folderPath)
 
-          try {
-            let output = ''
-            if (languageMode === 'python') {
-              output = await transpileGlassPython(folderPath, folderPath, languageMode, outDir)
-            } else {
-              output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir)
+            if (!fs.existsSync(outDir)) {
+              fs.mkdirSync(outDir)
             }
 
-            const extension = languageMode === 'python' ? 'py' : languageMode === 'javascript' ? 'js' : 'ts'
+            try {
+              let output = ''
+              if (languageMode === 'python') {
+                output = await transpileGlassPython(folderPath, folderPath, languageMode, outDir)
+              } else {
+                output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir)
+              }
 
-            fs.writeFileSync(path.join(outDir, `glass.${extension}`), output)
-          } catch (error) {
-            console.error(error)
+              const extension = languageMode === 'python' ? 'py' : languageMode === 'javascript' ? 'js' : 'ts'
+
+              fs.writeFileSync(path.join(outDir, `glass.${extension}`), output)
+            } catch (error) {
+              console.error(error)
+            }
           }
         }
+
+        await vscode.window.showInformationMessage(`Transpiled all glass files!`)
       }
 
-      await vscode.window.showInformationMessage(`Transpiled all glass files!`)
-    }),
-    vscode.commands.registerCommand('glass.transpileCurrentFile', async () => {
-      const editor = vscode.window.activeTextEditor
-
-      if (editor) {
-        try {
-          const code = await transpileCurrentFile(editor.document)
-          await vscode.env.clipboard.writeText(code)
-          await vscode.window.showInformationMessage(`Transpiled to clipboard.`)
-        } catch (error) {
-          console.error(error)
-          throw error
+      const activeEditor = vscode.window.activeTextEditor
+      if (activeEditor && isGlassFile(activeEditor.document)) {
+        const transpilationModes = [
+          {
+            label: `Transpile current file`,
+            description: `Transpile current file to ${languageMode} and copy to clipboard`,
+            action: 'current',
+          },
+          {
+            label: `Transpile all files`,
+            description: `Transpile all files in workspace to ${languageMode}`,
+            action: 'all',
+          },
+        ]
+        const transpilationMode = await vscode.window.showQuickPick(transpilationModes, {
+          placeHolder: `Transpile to ${languageMode}`,
+        })
+        if (transpilationMode?.action === 'current') {
+          try {
+            const code = await transpileCurrentFile(activeEditor.document)
+            await vscode.env.clipboard.writeText(code)
+            await vscode.window.showInformationMessage(`Transpiled to clipboard.`)
+          } catch (error) {
+            await vscode.window.showErrorMessage(`Unable to transpile file: ${error}`)
+            throw error
+          }
+          return
+        } else if (transpilationMode?.action === 'all') {
+          await transpileAll()
+          return
         }
       }
+
+      await transpileAll()
     })
   )
 }

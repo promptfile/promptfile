@@ -104,55 +104,30 @@
     ],
     "commands": [
       {
-        "command": "glass.selectFile",
-        "title": "Glass: launch a file",
-        "description": "Select a Glass file to launch."
+        "command": "glass.run",
+        "title": "Glass: run in Playground",
+        "description": "Runs a Glass file in Playground mode."
       },
       {
-        "command": "glass.runCurrentFile",
-        "title": "Glass: run current file",
-        "description": "Runs the currently open file."
-      },
-      {
-        "command": "glass.showGlassOutput",
-        "title": "Glass: Show Glass Output",
-        "description": "Shows the Glass output channel."
-      },
-      {
-        "command": "glass.runTestSuite",
-        "title": "Glass: Run tests",
-        "description": "(coming soon) Runs the tests in the current file."
-      },
-      {
-        "command": "glass.openSettings",
-        "title": "Glass: Open Settings (UI)",
+        "command": "glass.settings",
+        "title": "Glass: open settings",
         "description": "Opens the Glass settings in your VSCode settings.json file."
       },
       {
-        "command": "glass.openDocs",
-        "title": "Glass: Open Documentation",
-        "description": "Opens the Glass documentation in your browser."
-      },
-      {
-        "command": "glass.transpileCurrentFile",
-        "title": "Glass: Transpile current file",
-        "description": "Similar to the Transpile all command, but only transpiles the current file."
-      },
-      {
-        "command": "glass.transpileAll",
-        "title": "Glass: Transpile all",
-        "description": "This command transpiles all .glass files in your workspace and writes the output to the directory of your choice which you can configure in your VSCode settings."
+        "command": "glass.transpile",
+        "title": "Glass: transpile code",
+        "description": "This command transpiles all .glass files in your workspace to the language of your choice."
       }
     ],
     "keybindings": [
       {
-        "command": "glass.runCurrentFile",
+        "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && (editorLangId == glass-js || editorLangId == glass-ts || editorLangId == glass-py)"
       },
       {
-        "command": "glass.selectFile",
+        "command": "glass.run",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter"
       }
@@ -236,6 +211,13 @@
           {
             "scope": "source.glass.text.name",
             "settings": {
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "scope": "source.glass.block.name",
+            "settings": {
+              "foreground": "#9373DE",
               "fontStyle": "italic"
             }
           },

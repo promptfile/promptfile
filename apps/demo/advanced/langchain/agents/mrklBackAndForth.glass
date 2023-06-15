@@ -3,7 +3,7 @@ language: typescript
 ---
 
 <Test>
-const input = "Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?"
+return [{question: "Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?"}]
 </Test>
 
 const tools = [
@@ -76,18 +76,18 @@ Markdown code snippet formatted in the following schema:
 
 ```json
 {
-    "action": "string", // The action to take. Must be one of [${tools.map(tool => tool.name).join(', ')}]
-    "action_input": "string" // The input to the action. May be a stringified object.
+    "action": string // The action to take. Must be one of [${tools.map(tool => tool.name).join(', ')}]
+    "action_input": string // The input to the action. May be a stringified object.
 }
 ```
 
-**Option 2:**
+**Option #2:**
 Use this if you want to respond directly and conversationally to the human. Markdown code snippet formatted in the following schema:
 
 ```json
 {
     "action": "Final Answer",
-    "action_input": "string" // You should put what you want to return to use here and make sure to use valid json newline characters.
+    "action_input": string // You should put what you want to return to use here and make sure to use valid json newline characters.
 }
 ```
 
@@ -114,6 +114,8 @@ DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRU
       const observation = await runAction({ action, action_input })
       res.addToTranscript('User', observation)
       res.continue()
+    } else {
+      res.addToDocument('User', '${input}', { once: true })
     }
   }}
 />
