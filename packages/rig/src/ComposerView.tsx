@@ -162,7 +162,7 @@ export const ComposerView = (props: ComposerViewProps) => {
                       enabled: false,
                     },
                     padding: {
-                      top: 4,
+                      top: 8,
                     },
                     wordWrap: 'on',
                     fontSize: 12,

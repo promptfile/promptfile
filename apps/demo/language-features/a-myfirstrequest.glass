@@ -1,5 +1,0 @@
-<User>
-Could you tell me a story?
-</User>
-
-<Request model="text-davinci-003" />
