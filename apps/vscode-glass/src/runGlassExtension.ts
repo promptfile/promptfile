@@ -1,9 +1,8 @@
-import { removeImports } from '@glass-lang/glassc'
-import { parseGlassDocument, runGlass } from '@glass-lang/glasslib'
+import { runGlass } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassPython } from './executeGlassPython'
-import { executeGlassTypescript, executeGlassTypescriptInVm } from './executeGlassTypescript'
+import { executeGlassTypescriptInVm } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { countTokens, maxTokensForModel } from './util/tokenCounter'
@@ -37,26 +36,26 @@ export async function executeGlassFile(
       output: outputChannel.appendLine,
     })
   }
-  const parsedDoc = parseGlassDocument(content)
-  const codeBlocks = parsedDoc
-    .filter(b => b.type === 'code')
-    .map(b => b.content)
-    .join('\n')
-  // if there's imports, we have to shell out to execute the code
-  const { imports } = removeImports(codeBlocks)
-  const nonGlassImports = imports
-    .split('\n')
-    .filter(i => !i.includes('.glass'))
-    .join('\n')
-  if (nonGlassImports.trim().length) {
-    // have to shell out since we have imports
-    // const parsedImports = parseTsImports(nonGlassImports)
-    // const moduleImports = parsedImports
+  // const parsedDoc = parseGlassDocument(content)
+  // const codeBlocks = parsedDoc
+  //   .filter(b => b.type === 'code')
+  //   .map(b => b.content)
+  //   .join('\n')
+  // // if there's imports, we have to shell out to execute the code
+  // const { imports } = removeImports(codeBlocks)
+  // const nonGlassImports = imports
+  //   .split('\n')
+  //   .filter(i => !i.includes('.glass'))
+  //   .join('\n')
+  // if (nonGlassImports.trim().length) {
+  //   // have to shell out since we have imports
+  //   // const parsedImports = parseTsImports(nonGlassImports)
+  //   // const moduleImports = parsedImports
 
-    //   .filter(i => !i.path.startsWith('.') && !nodeDefaultModules.has(i.path))
-    //   .map(i => i.path)
-    return await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs, progress)
-  }
+  //   //   .filter(i => !i.path.startsWith('.') && !nodeDefaultModules.has(i.path))
+  //   //   .map(i => i.path)
+  //   return await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs, progress)
+  // }
 
   const c = await executeGlassTypescriptInVm(
     glassfilePath,
