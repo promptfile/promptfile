@@ -1,13 +1,15 @@
 import Image from 'next/image'
 
-# Event Handling: OnResponse
+# Event Handling: onResponse
 
-Just like React's event handling, Glass has a similar event handling system. The `OnResponse` function evaluates when the request has been made and the response is received. This is most useful for taking actions after a response has been received, such as updating the state of the Glass file.
+Just like React's event handling, Glass has a similar event handling system. The `onResponse` function evaluates when the request has been made and the response is received. This is most useful for taking actions after a response has been received, such as updating the state of the Glass file.
 
-An example of a request with an `OnResponse` function is shown below. You can access the response from the request by using the `.message` attribute of the response object.
+An example of a request with an `onResponse` function is shown below. You can access the response from the request by using the `.message` attribute of the response object.
 
 ```glass
-<Request model="gpt-4" onResponse = {response => {someFunction(response.message)}} />
+<Request model="gpt-4" onResponse = {response => {
+    someFunction(response.message)
+}} />
 ```
 
 # State Management: useState
