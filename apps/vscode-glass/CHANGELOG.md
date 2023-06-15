@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.12.1
+
+### Patch Changes
+
+- [`3895e0e`](https://github.com/glass-lang/glass/commit/3895e0ebe6d47ea499d95b87275ede8efb86aac8) Thanks [@elliottburris](https://github.com/elliottburris)! - better transpiler workflow
+
 ## 0.12.0
 
 ### Minor Changes
