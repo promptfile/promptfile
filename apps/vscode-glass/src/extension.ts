@@ -251,28 +251,29 @@ export async function activate(context: vscode.ExtensionContext) {
               }
 
               const extension = languageMode === 'python' ? 'py' : languageMode === 'javascript' ? 'js' : 'ts'
-
-              fs.writeFileSync(path.join(outDir, `glass.${extension}`), output)
+              const outputPath = path.join(outDir, `glass.${extension}`)
+              fs.writeFileSync(outputPath, output)
+              const doc = await vscode.workspace.openTextDocument(outputPath)
+              await vscode.window.showTextDocument(doc)
             } catch (error) {
-              console.error(error)
+              await vscode.window.showErrorMessage(`Unable to transpile files: ${error}`)
             }
           }
         }
-
-        await vscode.window.showInformationMessage(`Transpiled all glass files!`)
       }
 
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && isGlassFile(activeEditor.document)) {
+        const filename = getDocumentFilename(activeEditor.document)
         const transpilationModes = [
           {
-            label: `Transpile current file`,
-            description: `Transpile current file to ${languageMode} and copy to clipboard`,
+            label: `Transpile ${filename}`,
+            description: `Converts ${filename} to ${languageMode}`,
             action: 'current',
           },
           {
             label: `Transpile all files`,
-            description: `Transpile all files in workspace to ${languageMode}`,
+            description: `Converts all Glass files in this workspace to ${languageMode}`,
             action: 'all',
           },
         ]

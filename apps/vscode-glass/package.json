@@ -115,7 +115,7 @@
       },
       {
         "command": "glass.transpile",
-        "title": "Glass: transpile code",
+        "title": "Glass: transpile",
         "description": "This command transpiles all .glass files in your workspace to the language of your choice."
       }
     ],
