@@ -2,7 +2,6 @@
 language: typescript
 ---
 
-
 // Let's try combining some of these concepts to create a multi-part prompt.
 // This introduces conditionals — the idea that parts of the prompt can be used depending on certain conditions.
 

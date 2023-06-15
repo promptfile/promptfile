@@ -7,7 +7,7 @@ const lines = sotu.split('\n').filter(line => Boolean(line))
 const context = await vectorSearch('sotu', lines, input)
 
 <Test>
-const input = 'what kept us apart last year?'
+return [{ input: 'what kept us apart last year?' }]
 </Test>
 
 <System>

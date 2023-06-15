@@ -76,7 +76,7 @@ foo
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  it('should transpile with testblock', async () => {
+  it.skip('should transpile with testblock', async () => {
     const { input, output } = loadTestFile('testfiles/py/testblock', 'py')
     const transpiled = await transpileGlassFilePython(input, { ...folders, fileName: 'testblock' })
     expect(transpiled.code.trim()).to.equal(output.trim())

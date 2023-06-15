@@ -12,12 +12,5 @@
     },
     "editor.formatOnSave": true
   },
-  "folders": [
-    { "path": "examples" },
-    { "path": "language-features" },
-    { "path": "testfiles" },
-    { "path": "langchain" },
-    { "path": "advanced" },
-    { "path": "scratchpad" }
-  ]
+  "folders": [{ "path": "examples" }, { "path": "testfiles" }, { "path": "advanced" }, { "path": "scratchpad" }]
 }

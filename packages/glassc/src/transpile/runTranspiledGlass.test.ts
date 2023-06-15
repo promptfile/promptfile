@@ -66,7 +66,7 @@ describe('runTranspiledGlass', () => {
   })
 
   it('langchain: sequentialNext', async () => {
-    const { input } = loadDemoFile('langchain/sequential/sequentialNext', 'ts')
+    const { input } = loadDemoFile('advanced/langchain/sequential/sequentialNext', 'ts')
     const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'args' })
     const output = await eval(
       `${transpiled.code.replace(/^export /gm, '')}\ngetArgsPrompt().compile({ args: { title: 'hello' } })`
