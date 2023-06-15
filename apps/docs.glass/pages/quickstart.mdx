@@ -42,18 +42,19 @@ If it's your first time executing a Glass file, you'll be asked to input the API
 
 In `example.glass`, we're using the `gpt-3.5-turbo` model, so we'll need to input the key for OpenAI `glass.openaiKey` (or set `OPENAI_API_KEY` on your environment).
 
-When you are ready to run, either hit `Command (⌘) Enter (↩)` or run the Glass file via selecting the VSCode Command Palette `Glass: run current file ` command.
+When you are ready to run, either hit `Command (⌘) Enter (↩)` or run the Glass file via selecting the VSCode Command Palette `Glass: run in Playground` command.
 
 <br />
 
 <Image src="/screenshots/updated_playground.gif" width={750} height={750} />
 
-{/*
+{/\*
+
 ## Transpiling `.glass`
 
 Once you've dialed in your prompt, you're now ready to transpile the `example.glass` file into your preferred programming language so it can be used within your codebase.
 
-To transpile, simply run the `Glass: Transpile all` command from the command palette. This will transpile the `Glass file` and copy it onto your clipboard. You can copy that generated code into a new file or somewhere else in your code.
+To transpile, simply run the `Glass: transpile` command from the command palette. This will transpile the `Glass file` and copy it onto your clipboard. You can copy that generated code into a new file or somewhere else in your code.
 
 If you'd prefer to transpile to a [different language](/languages), simply change the `glass.language` configuration in your [VS Code project settings](/vscode).
 
@@ -87,4 +88,4 @@ print(prompt)
 </Tabs>
 
 As we make more complex prompts, we will see how to pass in parameters into the typesafe function the transpilation creates.
-*/}
+\*/}
