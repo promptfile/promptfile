@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.12.0
+
+### Minor Changes
+
+- [`8eaa0a3`](https://github.com/glass-lang/glass/commit/8eaa0a3c78c5a626d572a9a803c99871e564737b) Thanks [@rothfels](https://github.com/rothfels)! - playground improvements
+
 ## 0.11.12
 
 ### Patch Changes
