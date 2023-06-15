@@ -37,7 +37,7 @@ ${foo}
     }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
-    return await runGlassTranspilerOutput(c, options)
+    return await glasslib.runGlassTranspilerOutput(c, options)
   }
 
   return { getTestData, compile, run }
