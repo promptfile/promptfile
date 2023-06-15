@@ -1,3 +1,7 @@
+---
+language: typescript
+---
+
 // As you've probably noticed, Glass files can contain more than just the prompt.
 // We can store data in the Glass file as well!
 

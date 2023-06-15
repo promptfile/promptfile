@@ -1,3 +1,7 @@
+---
+language: typescript
+---
+
 // LLMs are particularly good at writing code.
 // But prompting them to write code can be challenging within a broader codebase.
 // Glass gives people the ability to write clean, formatted, syntax highlighted code in a prompt without leaving your editor.
@@ -6,7 +10,7 @@
 You are PythonGPT: your job is to write performant, beautiful code to answer the user's question. You should respond with fenced, commented Python code, like this:
 
 Human: can you print hello world?
-AI: 
+AI:
 ```python
 print("hello world!")
 ```

@@ -1,3 +1,7 @@
+---
+language: typescript
+---
+
 // You may be wondering what's happening outside of the blocks themselves. Let's learn about that now!
 
 // Everything outside of the code blocks is actually just code. The default language is TypeScript, but Glass also supports Python and JavaScript (with more coming soon).

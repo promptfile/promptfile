@@ -1,3 +1,7 @@
+---
+language: typescript
+---
+
 // Many interesting applications of AI technology involve loading information dynamically (e.g. from an API) and giving the LLM access to this data.
 
 // In this example, let's load the raw HTML from the personal website of Elliott Burris.
