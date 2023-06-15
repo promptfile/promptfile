@@ -1,8 +1,11 @@
 import { Callout } from 'nextra/components'
-import {Tabs, Tab} from 'nextra-theme-docs'
+import { Tabs, Tab } from 'nextra-theme-docs'
 
-<Callout type="info">Note: Executing code inside your Glass file or transpiling your Glass prompt to use in your project is highly experimental and presents challenges to some users. We are actively working on improving it.
-If you want to use Glass in your project, message us on [Discord](https://discord.com/invite/H64PFP2DCc) </Callout>
+<Callout type="info">
+  Note: Executing code inside your Glass file or transpiling your Glass prompt to use in your project is highly
+  experimental and presents challenges to some users. We are actively working on improving it. If you want to use Glass
+  in your project, message us on [Discord](https://discord.com/invite/H64PFP2DCc){' '}
+</Callout>
 
 ## Executable Code
 
@@ -10,23 +13,23 @@ Anything not wrapped inside of a block is evaluated as code. This means you can 
 
 You can update your default langauge in [VSCode settings](/vscode) or by adding a language to the frontmatter of your file.
 
-```glass
+```glass-ts
 ---
 language: typescript
 ---
 
 // all text between prompt blocks is treated as code, including comments
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
-
 <System>
 ${myMessage}
 </System>
 ```
+
 ## Fenced Code Snippets
 
 Glass supports normal Markdown fenced code snippets. You can specify the language of the code snippet by adding the language name after the opening backticks. For example, to create a fenced code block with JavaScript syntax highlighting, you could use:
 
-```glass
+````glass-py
 <System>
 You are a python programmer. You should always respond with fenced code blocks like this:
 
@@ -35,17 +38,19 @@ foo = 5
 bar = 10
 result = foo + bar
 print(result)
-```
 </System>
-```
+````
 
 ## Transpiling `.glass`
 
-Once you've dialed in your prompt, you're now ready to transpile the `example.glass` file into your preferred programming language so it can be used within your codebase.
+After perfecting your prompt, transpile it to your preferred language for integration with your codebase.
 
-To transpile, simply run the `Glass: Transpile all` command from the command palette. This will transpile the `Glass file` and copy it onto your clipboard. You can copy that generated code into a new file or somewhere else in your code.
+To transpile:
 
-If you'd prefer to transpile to a [different language](/languages), simply change the `glass.language` configuration in your [VS Code project settings](/vscode). Python transpilation is not as heavily tested as our JavaScript / TypeScript transpilation, so please let us know the issues you run into.
+- Run Glass: Transpile all from the VS Code Command Palette.
+- Paste the copied code into your project.
+
+For an alternative language, modify the `Default Language Mode` setting in Glass settings. Note that Python transpilation is less tested than JavaScript or TypeScript transpilation. If you run into issues, please let us know on [Discord](https://discord.com/invite/H64PFP2DCc).
 
 ## Using `.glass` in code
 
@@ -54,7 +59,7 @@ You can now call the transpiled `example` function from your codebase.
 <Tabs items={['JavaScript / TypeScript', 'Python']}>
   <Tab>
 
-```ts
+```glass-ts
 import { Glass } from './glass'
 
 const prompt = Glass.example({})
@@ -63,6 +68,7 @@ console.log(prompt)
 ```
 
   </Tab>
+
   <Tab>
 
 ```python
@@ -75,7 +81,3 @@ print(prompt)
 
   </Tab>
 </Tabs>
-
-As we make more complex prompts, we will see how to pass in parameters into the typesafe function the transpilation creates.
-
-
