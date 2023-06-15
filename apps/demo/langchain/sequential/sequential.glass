@@ -5,7 +5,7 @@ language: typescript
 import Playwright from './playwright.glass'
 
 <Test>
-const input = "Shall I declare my love for thee"
+return [{input: "Shall I declare my love for thee"}]
 </Test>
 
 const synopsis = await Playwright({ title: input })

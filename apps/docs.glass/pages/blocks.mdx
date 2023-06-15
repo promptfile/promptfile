@@ -113,9 +113,7 @@ Otherwise, the test variables will be used the arguments to your prompt.
 
 ```glass-ts
 <Test>
-const input = "This is a test input"
-// you may also return a list to define a test suite; each item in the list will be used as an argument to the prompt
-// return [{input: "test input 1"}, {input: "test input 2"}]
+return [{input: "test input 1"}, {input: "test input 2"}]
 </Test>
 
 // input would usually be passed into the prompt as an argument, but Glass will use the test data instead when no arguments are provided

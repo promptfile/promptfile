@@ -1,5 +1,5 @@
 <Test>
-const title = "Tragedy at sunset on the beach"
+return [{title: "Tragedy at sunset on the beach"}]
 </Test>
 
 <System>

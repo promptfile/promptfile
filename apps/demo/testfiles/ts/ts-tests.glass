@@ -3,13 +3,15 @@ language: typescript
 ---
 
 <Test>
-const url = "https://elliottburris.com"
+=
 // const question = "where did elliott go to school"
 // return an array of objects to run a list of tests; no need to return if you just want a single test
 return [{
     question: "where did elliott go to school",
+    url: "https://elliottburris.com"
 },{
     question: "what is elliott's last name",
+    url: "https://elliottburris.com"
 }]
 </Test>
 

@@ -3,7 +3,9 @@ language: typescript
 ---
 
 <Test>
-const input = "Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?"
+return [{
+  input: "Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?"
+}]
 </Test>
 
 const tools = [
