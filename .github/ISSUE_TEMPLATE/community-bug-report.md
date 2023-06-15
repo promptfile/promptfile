@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: Community Bug Report
 about: Create a report to help us improve Glass
 title: ''
 labels: community-reported-bug
