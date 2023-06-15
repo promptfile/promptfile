@@ -3,7 +3,7 @@ export function getIfConditionPrompt() {
     return {}
   }
 
-  const compile = async (opt: { args: {} } = { args: {} }) => {
+  const compile = async (opt: { args?: {} } = { args: {} }) => {
     const GLASS_STATE = {}
 
     const GLASSVAR = {
@@ -28,5 +28,24 @@ ${GLASSVAR[0]}`
     }
   }
 
-  return { getTestData, compile }
+  const run = async (options: {
+    args?: {}
+    transcriptTokenCounter?: {
+      countTokens: (str: string, model: string) => number
+      maxTokens: (model: string) => number
+      reserveCount?: number
+    }
+    openaiKey?: string
+    anthropicKey?: string
+    progress?: (data: {
+      nextDocument: string
+      transcript: { role: string; content: string; id: string }[]
+      response: string
+    }) => void
+  }) => {
+    const c = await compile({ args: options.args || {} })
+    return await runGlassTranspilerOutput(c, options)
+  }
+
+  return { getTestData, compile, run }
 }

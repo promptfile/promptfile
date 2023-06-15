@@ -17,41 +17,6 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  //   it('should transpile with get-prefixed named', () => {
-  //     const transpiled = transpileGlassFileTypescript(
-  //       `<User>
-  // foo
-  // </User>`,
-  //       {
-  //         workspaceFolder: '/Users/me/glassc',
-  //         folderPath: '/Users/me/glassc',
-  //         fileName: 'get-foo',
-  //         language: 'typescript',
-  //         outputDirectory: '/Users/me/glassc/src',
-  //       }
-  //     )
-
-  //     expect(transpiled.code).to.equal(`export async function getFooPrompt(opt?: {
-  //   options?: { openaiKey?: string, progress?: (data: { nextDoc: string; rawResponse?: string }) => void },
-  // }) {
-  //   const GLASS_STATE = {}
-
-  //   const GLASSVAR = {}
-  //   const TEMPLATE = \`<User>
-  // foo
-  // </User>\`
-  //   return await runGlass(
-  //     'get-foo',
-  //     'text-davinci-003',
-  //     { interpolatedDoc: TEMPLATE, originalDoc },
-  //     {
-  //       ...(opt?.options || {}),
-  //       ...{ state: GLASS_STATE, onResponse: undefined },
-  //     }
-  //   )
-  // }`)
-  //   })
-
   it('should transpile with interpolation variables', () => {
     const { input, output } = loadTestFile('testfiles/ts/withInterpolation', 'ts')
     const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'withInterpolation' })

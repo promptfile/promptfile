@@ -1,5 +1,3 @@
-import { runGlass, useState } from '@glass-lang/glasslib'
-
 export function getQuestionAnswerPrompt() {
   function getTestData() {
     return {}
@@ -26,18 +24,45 @@ ${question}
         '<System>\nYou are a helpful assistant.\n</System>\n\n<User>\n${question}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
     }
   }
 
-  return { getTestData, compile }
+  const run = async (options: {
+    args: { question: string }
+    transcriptTokenCounter?: {
+      countTokens: (str: string, model: string) => number
+      maxTokens: (model: string) => number
+      reserveCount?: number
+    }
+    openaiKey?: string
+    anthropicKey?: string
+    progress?: (data: {
+      nextDocument: string
+      transcript: { role: string; content: string; id: string }[]
+      response: string
+    }) => void
+  }) => {
+    const c = await compile({ args: options.args || {} })
+    return await runGlassTranspilerOutput(c, options)
+  }
+
+  return { getTestData, compile, run }
 }
 
 async function questionAnswer(args: any) {
   const { getTestData, compile } = getQuestionAnswerPrompt()
   const c = await compile({ args })
-  const res = await runGlass(c as any)
-  return res.codeResponse !== undefined ? res.codeResponse : res.rawResponse
+  const res = await runGlassTranspilerOutput(c as any)
+  return res.response
 }
 
 export function getGlassImportPrompt() {
@@ -45,7 +70,7 @@ export function getGlassImportPrompt() {
     return {}
   }
 
-  const compile = async (opt: { args: {} } = { args: {} }) => {
+  const compile = async (opt: { args?: {} } = { args: {} }) => {
     const GLASS_STATE = {}
 
     const [field, setField] = useState('', GLASS_STATE, 'field')
@@ -81,10 +106,32 @@ Make a question about United States history.
             const answer = await questionAnswer({ question: message })
             setField(answer)
           },
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
         },
       ],
     }
   }
 
-  return { getTestData, compile }
+  const run = async (options: {
+    args?: {}
+    transcriptTokenCounter?: {
+      countTokens: (str: string, model: string) => number
+      maxTokens: (model: string) => number
+      reserveCount?: number
+    }
+    openaiKey?: string
+    anthropicKey?: string
+    progress?: (data: {
+      nextDocument: string
+      transcript: { role: string; content: string; id: string }[]
+      response: string
+    }) => void
+  }) => {
+    const c = await compile({ args: options.args || {} })
+    return await runGlassTranspilerOutput(c, options)
+  }
+
+  return { getTestData, compile, run }
 }

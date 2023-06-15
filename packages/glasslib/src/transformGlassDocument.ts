@@ -5,6 +5,7 @@ import {
   RequestData,
   parseGlassBlocks,
   parseGlassDocument,
+  parseGlassTranscriptBlocks,
   reconstructGlassDocument,
 } from './parseGlassBlocks'
 import { updateGlassBlockAttributes } from './updateGlassBlockAttributes'
@@ -64,11 +65,7 @@ export function replaceStateNode(newStateNode: string, doc: string) {
   return replaceDocumentNode(newStateNode, stateIndex, doc)
 }
 
-export function addToTranscript(
-  addToTranscript: { tag: string; content: string }[],
-  doc: string,
-  interpolatedDoc: string
-) {
+export function addToTranscript(addToTranscript: { tag: string; content: string }[], doc: string) {
   const parsedDoc = parseGlassDocument(doc)
   const transcriptNodeDoc = parsedDoc.find(node => node.tag === 'Transcript')
   const newDocTranscript =
@@ -78,26 +75,12 @@ export function addToTranscript(
     addToTranscript.map(block => `<${block.tag}>\n${block.content}\n</${block.tag}>`).join('\n\n') +
     '\n</Transcript>'
 
-  const parsedInterpolated = parseGlassDocument(interpolatedDoc)
-  const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
-  const newInterpolatedTranscript =
-    '<Transcript>\n' +
-    (transcriptNode?.child?.content || '') +
-    '\n\n' +
-    addToTranscript.map(block => `<${block.tag}>\n${block.content}\n</${block.tag}>`).join('\n\n') +
-    '\n</Transcript>'
-
   return {
     doc: replaceTranscriptNode(newDocTranscript, doc, false),
-    interpolatedDoc: replaceTranscriptNode(newInterpolatedTranscript, interpolatedDoc, false),
   }
 }
 
-export function addToDocument(
-  addToDocument: { tag: string; content: string; attrs?: any }[],
-  doc: string,
-  interpolatedDoc: string
-) {
+export function addToDocument(addToDocument: { tag: string; content: string; attrs?: any }[], doc: string) {
   const bs = addToDocument
     .map(b => {
       const attrs = b.attrs
@@ -113,13 +96,8 @@ export function addToDocument(
   const transcriptNodeDoc = parsedDoc.find(node => node.tag === 'Transcript')
   const transcriptNodeIndex = parsedDoc.indexOf(transcriptNodeDoc!)
 
-  const parsedInterpolated = parseGlassDocument(interpolatedDoc)
-  const transcriptInterpNode = parsedInterpolated.find(node => node.tag === 'Transcript')
-  const transcriptNodeInterpIndex = parsedDoc.indexOf(transcriptInterpNode!)
-
   return {
     doc: addNodeToDocument('\n\n' + bs + '\n\n', transcriptNodeIndex + 1, doc),
-    interpolatedDoc: addNodeToDocument('\n\n' + bs + '\n\n', transcriptNodeInterpIndex + 1, interpolatedDoc),
   }
 }
 
@@ -188,25 +166,30 @@ export function handleRequestNode(
   }
   transcriptContent += (transcriptContent.length ? '\n\n' : '') + newRequestNode
 
-  let rawResponse = request.responseData[request.responseData.length - 1].response
+  let response = request.responseData[request.responseData.length - 1].response
   if (request.streaming) {
-    rawResponse += '█'
+    response += '█'
   }
 
+  const nextDocument = replaceTranscriptNode(
+    '<Transcript>\n' + transcriptContent + '\n</Transcript>',
+    uninterpolatedDoc,
+    true
+  )
+
+  const transcript = parseGlassTranscriptBlocks(nextDocument)
+  const transcriptNodes = transcript.map(t => {
+    return {
+      role: t.tag === 'User' ? 'user' : 'assistant',
+      content: t.child?.content || '',
+      id: t.attrs?.find(a => a.name === 'id')?.stringValue || ulid(),
+    }
+  })
+
   return {
-    nextDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc, true),
-    finalDoc: replaceTranscriptNode('<Transcript>\n' + transcriptContent + '\n</Transcript>', uninterpolatedDoc, true),
-    nextInterpolatedDoc: replaceTranscriptNode(
-      '<Transcript>\n' + transcriptContent + '\n</Transcript>',
-      interpolatedDoc,
-      true
-    ),
-    finalInterpolatedDoc: replaceTranscriptNode(
-      '<Transcript>\n' + transcriptContent + '\n</Transcript>',
-      interpolatedDoc,
-      true
-    ),
-    rawResponse,
+    nextDocument,
+    transcript: transcriptNodes,
+    response,
   }
 }
 

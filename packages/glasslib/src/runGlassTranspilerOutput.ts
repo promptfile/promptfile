@@ -2,28 +2,52 @@ import { checkOk } from '@glass-lang/util'
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
-import { ChatCompletionRequestMessage, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
-import { RequestData, parseGlassBlocks, parseGlassRequestBlock } from './parseGlassBlocks'
-import { ResponseData } from './runGlass'
+import { parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
+import { RequestData } from './parseGlassBlocks'
 import { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'
-import { handleRequestNode } from './transformGlassDocument'
+import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
-export async function runGlassV2(
-  glassfile: string,
-  args: Record<string, string>,
+export interface ChatCompletionRequestMessage {
+  role: 'system' | 'user' | 'assistant'
+  content: string
+  name?: string
+}
+
+export interface ResponseData {
+  response: string
+  requestTokens?: number
+  responseTokens?: number
+}
+
+export interface TranspilerOutput {
+  fileName: string
+  interpolatedDoc: string
+  originalDoc: string
+  state: any
+  interpolationArgs: any
+  requestBlocks: RequestData[]
+}
+
+export interface TranscriptNode {
+  role: string
+  content: string
+  id: string
+}
+
+export async function runGlassTranspilerOutput(
+  { fileName, originalDoc, interpolatedDoc, state, requestBlocks, interpolationArgs }: TranspilerOutput,
   options: {
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   } = {}
 ): Promise<{
-  rawResponse: string
-  initDoc: string
-  initInterpolatedDoc: string
-  finalDoc: string
-  finalInterpolatedDoc: string
+  response: string
+  nextDocument: string
+  transcript: TranscriptNode[]
+  continued: boolean
 }> {
   // replace initDoc instances of
   //
@@ -41,38 +65,24 @@ export async function runGlassV2(
   // </User>
 
   // eslint-disable-next-line prefer-const
-  let transformedOriginalDoc = glassfile
-  let transformedInterpolatedDoc = glassfile
+  let transformedOriginalDoc = originalDoc
+  let transformedInterpolatedDoc = interpolatedDoc
 
-  for (const [k, v] of Object.entries(args)) {
-    // replace all instances of `${k}` with `v`
-    transformedInterpolatedDoc = transformedInterpolatedDoc.replace(new RegExp(`\\$\\{${k}\\}`, 'g'), v)
+  const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
+
+  if (Object.keys(state).length > 0) {
+    transformedOriginalDoc = replaceStateNode(newStateNode, transformedOriginalDoc)
+    transformedInterpolatedDoc = replaceStateNode(newStateNode, transformedInterpolatedDoc)
   }
-
-  const blocks = parseGlassBlocks(transformedInterpolatedDoc)
-  // const state = blocks.find(b => b.tag === 'State')?.child?.content || '{}'
-  const requestBlocks = blocks.filter(b => b.tag === 'Request').map(parseGlassRequestBlock)
-
-  // const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-
-  // if (Object.keys(state).length > 0) {
-  //   transformedOriginalDoc = replaceStateNode(newStateNode, transformedOriginalDoc)
-  //   transformedInterpolatedDoc = replaceStateNode(newStateNode, transformedInterpolatedDoc)
-  // }
 
   if (options?.progress) {
     options.progress(
-      handleRequestNode(
-        transformedOriginalDoc,
-        transformedInterpolatedDoc,
-        {
-          responseData: [{ response: '' }],
-          requestBlocks,
-          streaming: true,
-          index: 0,
-        },
-        true
-      )
+      handleRequestNode(transformedOriginalDoc, transformedInterpolatedDoc, {
+        responseData: [{ response: '' }],
+        requestBlocks,
+        streaming: true,
+        index: 0,
+      })
     )
   }
 
@@ -88,11 +98,13 @@ export async function runGlassV2(
   let i = 0
   let res:
     | {
-        finalDoc: string
-        finalInterpolatedDoc: string
-        rawResponse: string
+        response: string
+        nextDocument: string
+        transcript: TranscriptNode[]
       }
     | undefined = undefined
+  let codeResponse: any
+  let continued = false
 
   for (; i < messageBlocks.length; i++) {
     const messages = messageBlocks[i]
@@ -129,12 +141,43 @@ export async function runGlassV2(
             { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
             options
           )
+
+    const blocksToAdd: { tag: string; content: string }[] = []
+    const blocksToAddToDocument: { tag: string; content: string; attrs?: any }[] = []
+
+    if (requestData.onResponse) {
+      await requestData.onResponse({
+        message: res.response,
+        addToTranscript: (tag: string, content: string) => {
+          blocksToAdd.push({ tag, content })
+        },
+        addToDocument: (tag: string, content: string, attrs?: any) => {
+          blocksToAddToDocument.push({ tag, content, attrs })
+        },
+        continue: () => {
+          continued = true
+        },
+      })
+      if (Object.keys(state).length > 0) {
+        const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
+        res.nextDocument = replaceStateNode(finalStateBlock, res.nextDocument)
+      }
+    }
+
+    if (blocksToAdd.length > 0) {
+      const added = addToTranscript(blocksToAdd, res.nextDocument)
+      res.nextDocument = added.doc
+    }
+
+    if (blocksToAddToDocument.length > 0) {
+      const added = addToDocument(blocksToAddToDocument, res.nextDocument)
+      res.nextDocument = added.doc
+    }
   }
 
   return {
     ...res!,
-    initDoc: transformedOriginalDoc,
-    initInterpolatedDoc: transformedInterpolatedDoc,
+    continued,
   }
 }
 
@@ -150,13 +193,13 @@ async function runGlassChat(
   options: {
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
-    progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  finalDoc: string
-  finalInterpolatedDoc: string
-  rawResponse: string
+  response: string
+  nextDocument: string
+  transcript: TranscriptNode[]
 }> {
   const request = requestBlocks[responseData.length]
 
@@ -199,19 +242,14 @@ async function runGlassChat(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${next}<|im_end|>`, request.model)
       return options.progress(
-        handleRequestNode(
-          docs.originalDoc,
-          docs.interpolatedDoc,
-          {
-            responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
-            requestBlocks,
-            requestTokens,
-            responseTokens,
-            streaming: true,
-            index: responseData.length,
-          },
-          true
-        )
+        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+          requestBlocks,
+          requestTokens,
+          responseTokens,
+          streaming: true,
+          index: responseData.length,
+        })
       )
     }
   })
@@ -222,19 +260,14 @@ async function runGlassChat(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response })
 
-  return handleRequestNode(
-    docs.originalDoc,
-    docs.interpolatedDoc,
-    {
-      responseData,
-      requestBlocks,
-      requestTokens,
-      responseTokens,
-      streaming: false,
-      index: responseData.length - 1,
-    },
-    true
-  )
+  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+    responseData,
+    requestBlocks,
+    requestTokens,
+    responseTokens,
+    streaming: false,
+    index: responseData.length - 1,
+  })
 }
 
 /**
@@ -251,13 +284,13 @@ async function runGlassChatAnthropic(
     args?: any
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  finalDoc: string
-  finalInterpolatedDoc: string
-  rawResponse: string
+  response: string
+  nextDocument: string
+  transcript: TranscriptNode[]
 }> {
   const request = requestBlocks[responseData.length]
   let anthropicQuery = ''
@@ -306,19 +339,14 @@ async function runGlassChatAnthropic(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(next, request.model)
       return options.progress(
-        handleRequestNode(
-          docs.originalDoc,
-          docs.interpolatedDoc,
-          {
-            responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
-            requestBlocks,
-            requestTokens,
-            responseTokens,
-            streaming: true,
-            index: responseData.length,
-          },
-          true
-        )
+        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+          requestBlocks,
+          requestTokens,
+          responseTokens,
+          streaming: true,
+          index: responseData.length,
+        })
       )
     }
   })
@@ -329,19 +357,14 @@ async function runGlassChatAnthropic(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response.trim() })
 
-  return handleRequestNode(
-    docs.originalDoc,
-    docs.interpolatedDoc,
-    {
-      responseData,
-      requestBlocks,
-      streaming: false,
-      requestTokens,
-      responseTokens,
-      index: responseData.length - 1,
-    },
-    true
-  )
+  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+    responseData,
+    requestBlocks,
+    streaming: false,
+    requestTokens,
+    responseTokens,
+    index: responseData.length - 1,
+  })
 }
 
 /**
@@ -357,13 +380,13 @@ async function runGlassCompletion(
     transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
-    progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  finalDoc: string
-  finalInterpolatedDoc: string
-  rawResponse: string
+  response: string
+  nextDocument: string
+  transcript: TranscriptNode[]
 }> {
   const request = requestBlocks[responseData.length]
 
@@ -434,19 +457,14 @@ async function runGlassCompletion(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(next, request.model)
       return options.progress(
-        handleRequestNode(
-          docs.originalDoc,
-          docs.interpolatedDoc,
-          {
-            responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
-            requestBlocks,
-            streaming: true,
-            requestTokens,
-            responseTokens,
-            index: responseData.length,
-          },
-          true
-        )
+        handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+          requestBlocks,
+          streaming: true,
+          requestTokens,
+          responseTokens,
+          index: responseData.length,
+        })
       )
     }
   })
@@ -457,19 +475,14 @@ async function runGlassCompletion(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response.trim() })
 
-  return handleRequestNode(
-    docs.originalDoc,
-    docs.interpolatedDoc,
-    {
-      responseData,
-      requestBlocks,
-      streaming: false,
-      requestTokens,
-      responseTokens,
-      index: responseData.length - 1,
-    },
-    true
-  )
+  return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
+    responseData,
+    requestBlocks,
+    streaming: false,
+    requestTokens,
+    responseTokens,
+    index: responseData.length - 1,
+  })
 }
 
 async function handleStream(

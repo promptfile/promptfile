@@ -299,15 +299,17 @@ export async function createPlayground(
               sessionDocument,
               glass,
               inputs,
-              async ({ nextDoc }) => {
+              async ({ nextDocument }) => {
                 const existingPlayground = playgrounds.get(filepath)
                 if (!existingPlayground || stoppedRequestIds.has(requestId)) {
                   return false
                 }
-                writeGlass(sessionToRun, nextDoc)
-                const blocksForGlass = parseGlassTranscriptBlocks(nextDoc)
+                writeGlass(sessionToRun, nextDocument)
+                const blocksForGlass = parseGlassTranscriptBlocks(nextDocument)
                 const metadataForGlass =
-                  languageId === 'glass-py' ? await parseGlassMetadataPython(nextDoc) : parseGlassMetadata(nextDoc)
+                  languageId === 'glass-py'
+                    ? await parseGlassMetadataPython(nextDocument)
+                    : parseGlassMetadata(nextDocument)
                 await panel.webview.postMessage({
                   action: 'onStream',
                   data: {
@@ -325,27 +327,27 @@ export async function createPlayground(
             if (!existingPlayground || stoppedRequestIds.has(requestId)) {
               return false
             }
-            const blocksForGlass = parseGlassTranscriptBlocks(resp.finalDoc)
+            const blocksForGlass = parseGlassTranscriptBlocks(resp.nextDocument)
             const metadataForGlass =
               languageId === 'glass-py'
-                ? await parseGlassMetadataPython(resp.finalDoc)
-                : parseGlassMetadata(resp.finalDoc)
+                ? await parseGlassMetadataPython(resp.nextDocument)
+                : parseGlassMetadata(resp.nextDocument)
 
-            writeGlass(sessionToRun, resp.finalDoc) // wait for this?
+            writeGlass(sessionToRun, resp.nextDocument) // wait for this?
             await panel.webview.postMessage({
               action: 'onResponse',
               data: {
                 session: sessionToRun,
-                glass: resp.finalDoc,
+                glass: resp.nextDocument,
                 blocks: blocksForGlass,
                 variables: metadataForGlass.interpolationVariables,
                 model,
                 inputs,
-                output: resp.rawResponse,
+                output: resp.response,
               },
             })
             if (resp.continued) {
-              await runGlassExtension(resp.finalDoc, sessionToRun, inputs)
+              await runGlassExtension(resp.nextDocument, sessionToRun, inputs)
             }
           } catch (error) {
             console.error(error)

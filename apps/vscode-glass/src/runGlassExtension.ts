@@ -1,8 +1,8 @@
-import { runGlass } from '@glass-lang/glasslib'
+import { runGlassTranspilerOutput } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassPython } from './executeGlassPython'
-import { executeGlassTypescriptInVm } from './executeGlassTypescript'
+import { executeGlassTypescript } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { countTokens, maxTokensForModel } from './util/tokenCounter'
@@ -13,7 +13,7 @@ export async function executeGlassFile(
   document: vscode.TextDocument,
   content: string, // use this instead of document.getText because it may be stale wtf
   inputs: any,
-  progress?: (data: { nextDoc: string; nextInterpolatedDoc: string; rawResponse?: string }) => void
+  progress?: (data: { nextDocument: string; response?: string }) => void
 ) {
   const fileName = getDocumentFilename(document)
 
@@ -25,7 +25,7 @@ export async function executeGlassFile(
   if (isDocumentPython) {
     const c = await executeGlassPython(document, content, inputs)
     checkOk(c.length >= 0, 'No transpiler output generated')
-    return await runGlass(c[0], {
+    return await runGlassTranspilerOutput(c[0], {
       transcriptTokenCounter: {
         countTokens: countTokens,
         maxTokens: maxTokensForModel,
@@ -36,38 +36,10 @@ export async function executeGlassFile(
       output: outputChannel.appendLine,
     })
   }
-  // const parsedDoc = parseGlassDocument(content)
-  // const codeBlocks = parsedDoc
-  //   .filter(b => b.type === 'code')
-  //   .map(b => b.content)
-  //   .join('\n')
-  // // if there's imports, we have to shell out to execute the code
-  // const { imports } = removeImports(codeBlocks)
-  // const nonGlassImports = imports
-  //   .split('\n')
-  //   .filter(i => !i.includes('.glass'))
-  //   .join('\n')
-  // if (nonGlassImports.trim().length) {
-  //   // have to shell out since we have imports
-  //   // const parsedImports = parseTsImports(nonGlassImports)
-  //   // const moduleImports = parsedImports
 
-  //   //   .filter(i => !i.path.startsWith('.') && !nodeDefaultModules.has(i.path))
-  //   //   .map(i => i.path)
-  //   return await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs, progress)
-  // }
-
-  const c = await executeGlassTypescriptInVm(
-    glassfilePath,
-    outputChannel,
-    document,
-    content,
-    fileName,
-    inputs,
-    progress
-  )
+  const c = await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs)
   checkOk(c.length >= 0, 'No transpiler output generated')
-  const res = await runGlass(c[0], {
+  const res = await runGlassTranspilerOutput(c[0], {
     transcriptTokenCounter: {
       countTokens: countTokens,
       maxTokens: maxTokensForModel,

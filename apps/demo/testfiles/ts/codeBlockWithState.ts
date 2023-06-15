@@ -3,7 +3,7 @@ export function getCodeBlockWithStatePrompt() {
     return {}
   }
 
-  const compile = async (opt: { args: {} } = { args: {} }) => {
+  const compile = async (opt: { args?: {} } = { args: {} }) => {
     const GLASS_STATE = {}
 
     const initProfile = { firstName: '', lastName: '', hasChatted: false }
@@ -15,14 +15,12 @@ export function getCodeBlockWithStatePrompt() {
 const [profile, setProfile] = useState(initProfile)
 const [moreState, setMoreState] = useState('')
 
-<Request model="gpt-4" onResponse={() => setProfile({ hasChatted: true})}>
-hello world
-</Request>`
+<Request model="gpt-4" onResponse={() => setProfile({ hasChatted: true })} />`
     return {
       fileName: 'codeBlockWithState',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        "const initProfile = { firstName: '', lastName: '', hasChatted: false }\nconst [profile, setProfile] = useState(initProfile)\nconst [moreState, setMoreState] = useState('')\n\n<Request model=\"gpt-4\" onResponse={() => setProfile({ hasChatted: true})}>\nhello world\n</Request>",
+        "const initProfile = { firstName: '', lastName: '', hasChatted: false }\nconst [profile, setProfile] = useState(initProfile)\nconst [moreState, setMoreState] = useState('')\n\n<Request model=\"gpt-4\" onResponse={() => setProfile({ hasChatted: true })} />",
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [
@@ -37,5 +35,24 @@ hello world
     }
   }
 
-  return { getTestData, compile }
+  const run = async (options: {
+    args?: {}
+    transcriptTokenCounter?: {
+      countTokens: (str: string, model: string) => number
+      maxTokens: (model: string) => number
+      reserveCount?: number
+    }
+    openaiKey?: string
+    anthropicKey?: string
+    progress?: (data: {
+      nextDocument: string
+      transcript: { role: string; content: string; id: string }[]
+      response: string
+    }) => void
+  }) => {
+    const c = await compile({ args: options.args || {} })
+    return await runGlassTranspilerOutput(c, options)
+  }
+
+  return { getTestData, compile, run }
 }

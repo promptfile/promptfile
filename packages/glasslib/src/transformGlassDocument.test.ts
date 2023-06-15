@@ -213,8 +213,8 @@ hello world
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
       })
-      expect(res.rawResponse).to.equal('█')
-      expect(res.finalDoc).to.equal(`---
+      expect(res.response).to.equal('█')
+      expect(res.nextDocument).to.equal(`---
 language: typescript
 ---
 
@@ -262,8 +262,8 @@ hello world
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
       })
-      expect(res.rawResponse).to.equal('█')
-      expect(res.finalDoc).to.equal(`---
+      expect(res.response).to.equal('█')
+      expect(res.nextDocument).to.equal(`---
 language: typescript
 ---
 
@@ -315,8 +315,8 @@ You are a play critic from the New York Times. Given the synopsis you provided a
         requestBlocks: [{ model: 'gpt-3.5-turbo' }, { model: 'gpt-4' }],
         index: 1,
       })
-      expect(res.rawResponse).to.equal('world')
-      expect(res.finalDoc).to.equal(`<Transcript>
+      expect(res.response).to.equal('world')
+      expect(res.nextDocument).to.equal(`<Transcript>
 <User>
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
 
@@ -382,8 +382,8 @@ hello world
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
       })
-      expect(res.rawResponse).to.equal('█')
-      expect(res.finalDoc).to.equal(`<System>
+      expect(res.response).to.equal('█')
+      expect(res.nextDocument).to.equal(`<System>
 You are a helpful assistant.
 </System>
 
@@ -425,8 +425,8 @@ hello world
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
       })
-      expect(res.rawResponse).to.equal('█')
-      expect(res.finalDoc).to.equal(`<User>
+      expect(res.response).to.equal('█')
+      expect(res.nextDocument).to.equal(`<User>
 \${input}
 </User>
 
@@ -482,8 +482,8 @@ goodbye world
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
       })
-      expect(res.rawResponse).to.equal('█')
-      expect(res.finalDoc).to.equal(`<Transcript>
+      expect(res.response).to.equal('█')
+      expect(res.nextDocument).to.equal(`<Transcript>
 <User>
 hello world
 </User>
@@ -515,7 +515,7 @@ goodbye world
 hello
 </User>
 </Transcript>`
-    expect(addToTranscript([{ tag: 'User', content: 'hello world' }], doc, doc).doc).to.equal(`<Transcript>
+    expect(addToTranscript([{ tag: 'User', content: 'hello world' }], doc).doc).to.equal(`<Transcript>
 <User>
 hello
 </User>

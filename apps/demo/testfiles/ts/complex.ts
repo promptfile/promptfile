@@ -53,5 +53,24 @@ ${transcript}
     }
   }
 
-  return { getTestData, compile }
+  const run = async (options: {
+    args: { agentName: string; instructions: string; transcript: string }
+    transcriptTokenCounter?: {
+      countTokens: (str: string, model: string) => number
+      maxTokens: (model: string) => number
+      reserveCount?: number
+    }
+    openaiKey?: string
+    anthropicKey?: string
+    progress?: (data: {
+      nextDocument: string
+      transcript: { role: string; content: string; id: string }[]
+      response: string
+    }) => void
+  }) => {
+    const c = await compile({ args: options.args || {} })
+    return await runGlassTranspilerOutput(c, options)
+  }
+
+  return { getTestData, compile, run }
 }

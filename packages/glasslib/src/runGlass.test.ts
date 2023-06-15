@@ -1,5 +1,4 @@
-import { expect } from 'chai'
-import { runGlassV2 } from './runGlassV2'
+import { runGlass } from './runGlass'
 
 describe.skip('runGlass', () => {
   it('should run a glass document', async () => {
@@ -13,7 +12,6 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 
 <Request model="claude-instant-v1" />`
 
-    const res = await runGlassV2(doc, { input: 'Tell me about the ocean.' })
-    expect(res.initInterpolatedDoc).to.equal(doc.replace('${input}', 'Tell me about the ocean.'))
+    const res = await runGlass(doc, { input: 'Tell me about the ocean.' })
   })
 })
