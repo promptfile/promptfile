@@ -267,8 +267,8 @@ export async function activate(context: vscode.ExtensionContext) {
         const filename = getDocumentFilename(activeEditor.document)
         const transpilationModes = [
           {
-            label: `Transpile ${filename}`,
-            description: `Converts ${filename} to ${languageMode}`,
+            label: `Transpile current file`,
+            description: `Converts current file (${filename}) to ${languageMode}`,
             action: 'current',
           },
           {
@@ -283,11 +283,14 @@ export async function activate(context: vscode.ExtensionContext) {
         if (transpilationMode?.action === 'current') {
           try {
             const code = await transpileCurrentFile(activeEditor.document)
-            await vscode.env.clipboard.writeText(code)
-            await vscode.window.showInformationMessage(`Transpiled to clipboard.`)
+            // open a new buffer with this transpiled code
+            const doc = await vscode.workspace.openTextDocument({
+              language: languageMode,
+              content: code,
+            })
+            await vscode.window.showTextDocument(doc)
           } catch (error) {
             await vscode.window.showErrorMessage(`Unable to transpile file: ${error}`)
-            throw error
           }
           return
         } else if (transpilationMode?.action === 'all') {
