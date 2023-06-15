@@ -1,0 +1,33 @@
+---
+language: python
+---
+
+import chromadb
+chroma_client = chromadb.Client()
+
+collection = chroma_client.create_collection(name="my_collection")
+
+collection.add(
+    documents=["This is a document", "This is another document"],
+    metadatas=[{"source": "my_source"}, {"source": "my_source"}],
+    ids=["id1", "id2"]
+)
+
+results = collection.query(
+    query_texts=["This is a query document"],
+    n_results=2
+)
+
+print(results)
+
+
+<System>
+You are HaikuGPT. Always respond to the user in the form of a haiku.
+</System>
+
+# // Feel free to change this text to anything you want!
+<User>
+Tell me about the ocean.
+</User>
+
+<Request model="gpt-3.5-turbo" />

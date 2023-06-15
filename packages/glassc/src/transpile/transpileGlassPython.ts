@@ -3,7 +3,7 @@ import { UnwrapPromise } from '@glass-lang/util'
 import camelcase from 'camelcase'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import { parsePythonLocalVariables, parsePythonUndeclaredSymbols } from '../parse/parsePython.js'
+import { parsePyCode } from '../parse/parsePyCode.js'
 import { transformDynamicBlocksPython } from '../transform/transformDynamicBlocksPython.js'
 import { transformPythonTestBlock } from '../transform/transformPyTestBlock.js'
 import { indentLines } from '../util/indentLines.js'
@@ -146,12 +146,13 @@ export async function transpileGlassFilePython(
   // codeSanitizedDoc = unescapeGlass(codeSanitizedDoc)
 
   const undeclaredSymbols = new Set(dynamicTransform.undeclaredSymbols)
+
+  const { symbolsAddedToScope, undeclaredValuesNeededInScope } = await parsePyCode(toplevelCode)
   // parse the code blocks to remove undeclared symbols
-  const localVars = parsePythonLocalVariables(toplevelCode)
-  for (const localVar of localVars) {
+  for (const localVar of symbolsAddedToScope) {
     undeclaredSymbols.delete(localVar)
   }
-  for (const undeclaredVar of parsePythonUndeclaredSymbols(toplevelCode)) {
+  for (const undeclaredVar of undeclaredValuesNeededInScope) {
     undeclaredSymbols.add(undeclaredVar)
   }
 

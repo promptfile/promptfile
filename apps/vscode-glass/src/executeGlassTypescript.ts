@@ -252,7 +252,8 @@ context.response = ${getGlassExportName(fileName)}()`,
     module: { exports: {} },
     require: require,
     __filename: 'outputFile.js',
-    __dirname: folderPath,
+    // __dirname: folderPath,
+    __dirname: `${path.join(glassfilePath, '..')}`,
     fetch,
   }
   vm.createContext(ctx)
