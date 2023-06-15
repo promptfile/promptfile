@@ -1,20 +1,22 @@
 # What are Blocks?
 
-There are different kinds of blocks available in Glass to help you make properly formatted requests to the LLM depending on the model you are using. Blocks help make your prompts more readable and easier to maintain. Blocks also help avoid common mistakes when making requests to different models.
+Blocks in Glass simplify LLM requests, making them easy to read, understand and add complexity. They prevent common mistakes and give more power to create complicated interactions with the LLM.
 
 ## Types of Blocks
 
 ### User
 
-The `<User>{:glass}` block is used to designate the text coming from the human.
+Use the `<User>{:glass}` to designate the text coming from a human user.
 
-- **name** <i>(optional)</i> <br/> Allows you to give a name to the user.
-- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+- **name** <i>(optional string)</i> <br/> Assigns a name to the user.
+- **if** <i>(optional condition)</i> <br/> Includes the block in the request only if the condition is met.
+- **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once in the request, even if the condition is met multiple times.
+- **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the `<Transcript>{:glass}` block.
 
 ```glass-ts
 const conditionIsMet = true
 
-<User name="Sam" if={conditionIsMet}>
+<User name="Shreyas" if={conditionIsMet}>
 Hello AI!
 </User>
 
@@ -23,35 +25,57 @@ Hello AI!
 
 ### System
 
-The `<System>{:glass}` block is used to designate instructions to the LLM, rather than user input.
+Use the `<System>{:glass}` block to designate instructions to the LLM.
 
 For Anthropic models, the `<System>{:glass}` block has the same effect `<User>{:glass}`.
 
-- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+- **if** <i>(optional condition)</i> <br/> Allows you to conditionally include the block.
+
+```glass-ts
+const conditionIsMet = false
+<System if={conditionIsMet}>
+This will not be included in the prompt :(
+</System>
+```
 
 ### Assistant
 
-The `<Assistant>{:glass}` block is used to designate the text coming from the model.
+Use the `<Assistant>{:glass}` to designate the text coming from the model.
 
-- **name** <i>(optional)</i> <br/> Allows you to give a name to the assistant.
-- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
-- **model** <i>(optional)</i> <br/> Tracks which model generated the assistant text
+- **name** <i>(optional string)</i> <br/> Assigns a name to the assistant.
+- **if** <i>(optional condition)</i> <br/> Includes the block in the request only if the condition is met.
+- **model** <i>(optional enum)</i> <br/> This is an automatically generated condition that is visible in the editor. It is used to track the model that generated the block.
+- **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once in the request, even if the condition is met multiple times.
+- **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the running `<Transcript>{:glass}` block.
+
+```glass-ts
+const name = "GPT-3.5"
+const conditionIsMet = true
+
+<Assistant name={name} if={conditionIsMet}>
+Hello human!
+</Assistant>
+```
 
 ### Request
 
-The `<Request />{:glass}` block makes an API request to the specified model, using all previous `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}` blocks as input.
+Use the `<Request />{:glass}` block to make an API request to a specified model, using all previous `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}` blocks as input.
 
-- **model** <i>(optional)</i> <br/> The name of the model you want to inference. Defaults to `gpt-3.5-turbo`
-- **temperature** <i>(optional)</i> <br/> The temperance of the inference to the model. Defaults to `0.0`
-- **max_tokens** <i>(optional)</i> <br/> The maximum number of tokens to generate. Defaults to `64`
+- **model** <i>(required)</i> <br/> The name of the model to inference. Defaults to `gpt-3.5-turbo`
+- **temperature** <i>(optional)</i> <br/> The temperance of the inference to the model.
+- **max_tokens** <i>(optional)</i> <br/> The maximum number of tokens to generate.
 - **onResponse** <i>(optional)</i> <br/> Function callback for when the response is received.
+
+```glass-ts
+<Request model="gpt-4" maxTokens={50} temperature={0.05} />
+```
 
 ### For
 
-This `<For>{:glass}` block is used to create blocks in a loop over elements in an array. The text inside the `<For>{:glass}` block will be repeated for each item in the array.
+Use the `<For>{:glass}` block to loop over elements in an array. The text inside the `<For>{:glass}` block will be repeated for each item in the array.
 
 - **each** <i>(required)</i> <br/> The array to iterate over.
-- **as** <i>(required)</i><br/> The variable name for each item in the array. This may be used as a variable in the text inside the `<For>{:glass}` block.
+- **as** <i>(required)</i><br/> The variable name for each item in the array. Use this variable within the `<For>{:glass}`
 
 ```glass-ts
 const examples = [{
@@ -85,11 +109,9 @@ ${request}
 
 ### Text
 
-The `<Text>{:glass}` block is used to add text inside another block. This is useful for adding text if a condition is met.
+Use the `<Text>{:glass}` to add text inside another block. This is useful for adding text if a condition is met.
 
-Although you can do the same thing with a template input like `${conditionIsMet ? "Hello AI!" : ""}{:glass}`, the `<Text>{:glass}` block may be more readable and easier to maintain for longer blocks.
-
-- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+- **if** <i>(optional)</i> <br/> Includes the block in the request only if the condition is met.
 
 ```glass-ts
 const conditionIsMet = true
@@ -105,11 +127,7 @@ Hello AI!
 
 ### Test
 
-The `<Test>{:glass}` defines test data to use when running the file.
-
-If no test data is specified, and your prompt has variables in it, you will need to specify a value for each variable before running the prompt.
-
-Otherwise, the test variables will be used the arguments to your prompt.
+Use `<Test>{:glass}` to define test data to use when running the file.
 
 ```glass-ts
 <Test>
@@ -126,8 +144,16 @@ ${input}
 
 ### Block
 
-`<Block>{:glass}` is a generic version of `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`.
+Use `<Block>{:glass}` as a generic version of `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`.
 
 - **role** <i>(required)</i> <br/> The type of block. Can be `user`, `assistant`, or `system`.
 
 - **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+
+## State
+
+This is an automatically generated block that is used to track the state of the conversation. You should not modify this block.
+
+## Transcript
+
+This is an automatically generated block that is used to track the history of the conversation. You should not modify this block.

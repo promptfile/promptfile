@@ -1,18 +1,27 @@
-# Glass
+# Glass: a better playground for writing prompts
 
-Glass is an open-source, declarative framework to build applications using large language models (LLMs).
+Glass is an open-source templating syntax and VSCode playground for constructing prompts for large language models (LLMs). Although Glass is still in early alpha and we hope to support its usage in projects, we're excited to share it as an improved playground alternative for OpenAI and Anthropic models.
 
-Glass has a number of features purpose-built for building and iterating with language models:
+## Key Features
 
-- **Playground in VSCode** - Iterate and test your prompts where you work... in VSCode
-- **Create more complex, dynamic prompts** - Execute code in your prompt, create templates, add conditional logic, and chain prompts together
-- **Developer-first features** -Count tokens, switch models quickly, create test cases, import logic from your codebase, and call your prompts as a typesafe function
+- **Integrated VSCode experience** -Test and iterate prompts within VSCode
+- **Design sophisticated prompts** -Create dynamic templates with conditional logic and multiple model requests
+- **Made for developers** -Count tokens, switch between models, and get diagnostics for your requests
 
-The fastest way to learn about Glass is to install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass) and follow the [Quickstart](/quickstart).
+## Getting Started
 
-## Why Glass?
+1. Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
+2. Clone the [demo folder](https://github.com/glass-lang/glass/tree/main/apps/demo/examples)
+3. Read through the examples which show some of Glass' features and try running them in the [playground](/playground) by pressing `Cmd+Enter`
+4. For a detiled walkthrough, refer to the [Quickstart](/quickstart) guide.
 
-When we were building things in production with LLMs, we were writing prompts that looked like this:
+## Before Glass
+
+Before Glass, we wrote all of our prompts in the OpenAI playground. When we felt like we had a good prompt, we would copy it into our codebase and store it as a convoluted string. We found ourselves secretly avoiding changing the prompt because it was so annoying to deal with.
+
+We then separated our file into a [MDX](https://mdxjs.com/) file which made our prompts much more readable and easy to debug. It was when we started to extend certain aspects of MDX to help us write prompts that Glass was born.
+
+Here is the exact prompt that made us want something like Glass. We found ourselves realizing that prompts would become a much bigger part of our projects. We wanted our prompts to **LOOK** and **FEEL** more like code.
 
 ```ts
 /**
@@ -70,9 +79,7 @@ context.rows = context.rows.map(r => {
 }
 ```
 
-It was useful to separate our prompt constructors into a different file. But, that wasn't enough... we wanted something specially built for writing prompts.
-
-Glass was originally based on [MDX](https://mdxjs.com/) but has now evolved into a full-fledged framework with a number of features purpose-built for building and iterating with language models.
+## After Glass
 
 Here's what the same prompt looks like in Glass:
 

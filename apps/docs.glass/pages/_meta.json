@@ -2,11 +2,12 @@
   "index": "Introduction",
   "quickstart": "Quickstart",
   "vscode": "VSCode Extension",
-  "code": "Code inside prompts",
   "blocks": "Blocks",
   "playground": "Playground",
+  "events": "Events and State",
   "languages": "Languages",
   "models": "Models",
+  "code": "Code & transpilation",
   "contact": {
     "title": "Platform ↗",
     "type": "page",
