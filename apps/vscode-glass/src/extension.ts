@@ -8,7 +8,6 @@ import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
-import { updateDecorations } from './util/decorations'
 import { getAllGlassFiles, getDocumentFilename, isGlassFile } from './util/isGlassFile'
 import { updateLanguageMode } from './util/languageMode'
 import { GlassPlayground, createPlayground } from './util/playground'
@@ -68,14 +67,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
   let activeEditor = vscode.window.activeTextEditor
 
-  const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
-    backgroundColor: new vscode.ThemeColor('glass.code.background'),
-    isWholeLine: true,
-  })
+  // const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
+  //   backgroundColor: new vscode.ThemeColor('glass.code.background'),
+  //   isWholeLine: true,
+  // })
 
-  if (activeEditor) {
-    updateDecorations(activeEditor, codeDecorations)
-  }
+  // if (activeEditor) {
+  //   updateDecorations(activeEditor, codeDecorations)
+  // }
 
   const tokenCount = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000000)
   tokenCount.command = undefined
@@ -131,7 +130,7 @@ export async function activate(context: vscode.ExtensionContext) {
         activeEditor = editor
         if (editor && isGlassFile(editor.document)) {
           updateTokenCount(tokenCount)
-          updateDecorations(editor, codeDecorations)
+          // updateDecorations(editor, codeDecorations)
           await updateLanguageMode(editor.document)
           const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
           fileTimestamps.set(relativePath, Date.now())
@@ -145,7 +144,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidChangeTextDocument(
       async editor => {
         if (activeEditor && editor.document === activeEditor.document) {
-          updateDecorations(activeEditor, codeDecorations)
+          // updateDecorations(activeEditor, codeDecorations)
           updateTokenCount(tokenCount)
           await updateLanguageMode(editor.document)
           const existingPlayground = playgrounds.get(editor.document.uri.fsPath)
