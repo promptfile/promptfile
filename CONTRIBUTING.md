@@ -16,8 +16,9 @@ Once the pull request is made, a Glass main contributor will review the PR and w
 
 ## Contributing Bug Reports/Feature Requests
 
-Open a detailed issue report [here](https://github.com/glass-lang/glass/issues). Follow the issue templates to help provide the most amount of context to get help.
-
+Open a detailed issue report [here](https://github.com/glass-lang/glass/issues). Follow the issue templates to help provide the most amount of context to get help. There are two different types of issues:
+- Bug Reports: Please open a `Community Bug Report`. Follow the issue template and provide as much context as you can 
+- Feature Requests: Please open an issue  to suggest a new feature. It's helpful if you can provide details on the problem you're trying to solve and how the proposed feature would work. This allows us to have a discussion to determine if the feature is a good fit for the project.
 
 
 
@@ -28,3 +29,4 @@ If you want to make an adjustment to documentation with a quick fix, feel free t
 Our current CI pipline should help run some checks and tests and we are actively working on improving CI/CD.
 
 Once the pull request is made, a Glass main contributor will review the PR and work with you on getting the PR merged.
+
