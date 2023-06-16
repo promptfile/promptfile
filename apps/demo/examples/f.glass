@@ -1,6 +1,6 @@
 Glass provides a powerful way to work with few shots. We can load up our examples in code and then loop through them using a For block.
 
-<Code>
+<Code language="typescript">
 const examples = [
   {
     message: 'ur product never works, def want my money back',

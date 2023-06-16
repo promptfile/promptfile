@@ -99,8 +99,39 @@
       ]
     },
     "code-element": {
-      "begin": "^(<)(Code)(>)$",
+      "begin": "^(<)(Code)([^>]*)(>)$",
       "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.code.name"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "end": "^(<\\/)(Code)(>)$",
+      "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
@@ -115,19 +146,7 @@
         {
           "include": "source.js"
         }
-      ],
-      "end": "^(<\\/)(Code)(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.glass.code.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
+      ]
     },
     "for-element": {
       "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(For)(?=[\\s\\/\\>\\{])",

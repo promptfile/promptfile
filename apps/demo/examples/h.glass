@@ -1,7 +1,7 @@
 As you've probably noticed, Glass files can contain more than just the prompt.
 We can store data in the Glass file as well!
 
-<Code>
+<Code language="typescript">
 // This works just like `useState` in React
 const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
