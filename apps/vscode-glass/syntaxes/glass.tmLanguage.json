@@ -51,6 +51,9 @@
       "include": "#for-element"
     },
     {
+      "include": "#code-element"
+    },
+    {
       "match": ".",
       "name": "source.glass.void"
     }
@@ -94,6 +97,37 @@
           "include": "source.js"
         }
       ]
+    },
+    "code-element": {
+      "begin": "^(<)(Code)(>)$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.code.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ],
+      "end": "^(<\\/)(Code)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.code.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
     },
     "for-element": {
       "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(For)(?=[\\s\\/\\>\\{])",
@@ -539,7 +573,7 @@
       },
       "patterns": [
         {
-          "include": "SOURCE_LANGUAGE"
+          "include": "source.js"
         }
       ],
       "end": "(<\\/)(Test)(>)",

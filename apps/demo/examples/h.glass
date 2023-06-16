@@ -10,6 +10,9 @@ const [numMessages, setNumMessages] = useState(0)
 setNumMessages(numMessages + 1)
 </Code>
 
+awesome! we've now set state in the file itself. pretty crazy!
+
+let's actually use the state in a prompt
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
 </System>

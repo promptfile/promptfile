@@ -205,6 +205,13 @@
             }
           },
           {
+            "scope": "source.glass.code.name",
+            "settings": {
+              "foreground": "#FFB454",
+              "fontStyle": "italic"
+            }
+          },
+          {
             "scope": "source.glass.system.name",
             "settings": {
               "foreground": "#f467c6",

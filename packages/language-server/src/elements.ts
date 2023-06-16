@@ -114,6 +114,27 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
+    name: 'Code',
+    documentation: 'Execute custom code',
+    detail: '(element) write custom code',
+    closingType: 'nonSelfClosing',
+    attributes: [
+      // {
+      //   name: 'language',
+      //   detail: 'language of the code',
+      //   documentation: 'The `language` attribute defines the programming language of the code.',
+      //   type: 'enum',
+      //   values: [
+      //     {
+      //       name: 'typescript',
+      //       detail: 'TypeScript (.ts)',
+      //       documentation: 'Sets the language of this block to TypeScript.',
+      //     },
+      //   ],
+      // },
+    ],
+  },
+  {
     name: 'For',
     documentation: 'Creates a for loop',
     detail: '(element) loop over elements in an array',
