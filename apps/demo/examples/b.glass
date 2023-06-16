@@ -9,7 +9,7 @@ same System prompt as before...
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-... but let's use a variable for the User's input!
+...but let's use a variable for the User's input!
 <User>
 ${myFirstVariable}
 </User>
