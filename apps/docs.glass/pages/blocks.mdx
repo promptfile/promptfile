@@ -1,6 +1,6 @@
 # What are Blocks?
 
-Blocks in Glass simplify LLM requests, making them easy to read, understand and add complexity. They prevent common mistakes and give more power to create complicated interactions with the LLM.
+Blocks in Glass simplify LLM requests, making them easy to read and understand. They prevent common mistakes and give more power to create complicated interactions with the LLM.
 
 ## Types of Blocks
 
@@ -14,9 +14,7 @@ Use the `<User>{:glass}` to designate the text coming from a human user.
 - **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the `<Transcript>{:glass}` block.
 
 ```glass
-const conditionIsMet = true
-
-<User name="Shreyas" if={conditionIsMet}>
+<User name="Shreyas" if={true}>
 Hello AI!
 </User>
 
@@ -32,8 +30,7 @@ For Anthropic models, the `<System>{:glass}` block has the same effect `<User>{:
 - **if** <i>(optional condition)</i> <br/> Allows you to conditionally include the block.
 
 ```glass
-const conditionIsMet = false
-<System if={conditionIsMet}>
+<System if={false}>
 This will not be included in the prompt :(
 </System>
 ```
@@ -49,10 +46,7 @@ Use the `<Assistant>{:glass}` to designate the text coming from the model.
 - **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the running `<Transcript>{:glass}` block.
 
 ```glass
-const name = "GPT-3.5"
-const conditionIsMet = true
-
-<Assistant name={name} if={conditionIsMet}>
+<Assistant name={"FriendlyGPT"} if={true}>
 Hello human!
 </Assistant>
 ```
@@ -78,6 +72,7 @@ Use the `<For>{:glass}` block to loop over elements in an array. The text inside
 - **as** <i>(required)</i><br/> The variable name for each item in the array. Use this variable within the `<For>{:glass}`
 
 ```glass
+<Code language="typescript">
 const examples = [{
   request: "Happy",
   response: "Sad",
@@ -88,7 +83,10 @@ const examples = [{
   request: "Tall",
   response: "Short",
 }]
-const request = "Sunny"
+
+const input = "Sunny"
+</Code>
+
 
 <For each={examples} as="ex">
 <User>
@@ -101,7 +99,7 @@ ${ex.response}
 </For>
 
 <User>
-${request}
+${input}
 </User>
 
 <Request model="gpt-3.5-turbo" />
@@ -114,11 +112,13 @@ Use the `<Text>{:glass}` to add text inside another block. This is useful for ad
 - **if** <i>(optional)</i> <br/> Includes the block in the request only if the condition is met.
 
 ```glass
-const conditionIsMet = true
-
 <User>
-<Text if={conditionIsMet}>
-Hello AI!
+<Text if={true}>
+I love you!
+</Text>
+
+<Text if={false}>
+I hate you!
 </Text>
 </User>
 
@@ -131,10 +131,11 @@ Use `<Test>{:glass}` to define test data to use when running the file.
 
 ```glass
 <Test>
+// input would usually be passed into the prompt as an argument
+// but Glass will use the test data instead when no arguments are provided
 return [{input: "test input 1"}, {input: "test input 2"}]
 </Test>
 
-// input would usually be passed into the prompt as an argument, but Glass will use the test data instead when no arguments are provided
 <User>
 ${input}
 </User>

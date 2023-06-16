@@ -28,20 +28,20 @@ export const languages: ICards = {
       'JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.',
     href: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_overview',
   },
-  python: {
-    title: 'Python',
-    image: 'python',
-    lightIcon: {
-      width: 24,
-    },
-    darkIcon: {
-      width: 24,
-      fill: '#f0f0f0',
-    },
-    description:
-      'Python is a high-level, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation.',
-    href: 'https://www.python.org/',
-  },
+  // python: {
+  //   title: 'Python',
+  //   image: 'python',
+  //   lightIcon: {
+  //     width: 24,
+  //   },
+  //   darkIcon: {
+  //     width: 24,
+  //     fill: '#f0f0f0',
+  //   },
+  //   description:
+  //     'Python is a high-level, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation.',
+  //   href: 'https://www.python.org/',
+  // },
   // ruby: {
   //   title: 'Ruby (coming soon)',
   //   image: 'ruby',

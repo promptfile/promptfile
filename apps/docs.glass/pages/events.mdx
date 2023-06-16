@@ -17,13 +17,18 @@ An example of a request with an `onResponse` function is shown below. You can ac
 Just like React's [`useState`](https://react.dev/reference/react/useState) hook that allows you to add a state variable to your component. Glass also allows `useState`. By declaring a state variable:
 
 ```glass
+<Code language="typescript">
 const [stateVariable, setStateVariable] = useState(initialValue)
+</Code>
 ```
 
 You can then update the state variable by calling the `setStateVariable` function. This will add the updated state variable to the Glass file.
 
 ```glass
+<Code language="typescript">
+const [stateVariable, setStateVariable] = useState(initialValue)
 setStateVariable(newValue)
+</Code>
 ```
 
 Here is an example of `onResponse` and `useState` being used together:

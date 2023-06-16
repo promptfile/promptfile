@@ -9,38 +9,24 @@ import { Tabs, Tab } from 'nextra-theme-docs'
 
 ## Executable Code
 
-Anything not wrapped inside of a block is evaluated as code. This means you can define variables and functions.
+Glass has experimental support for an element called `<Code>` which lets you write code to be executed before the prompt is evaluated. This is useful for fetching data, running calculations, or executing any other code that you want to run before prompting the LLM.
 
 You can update your default langauge in [VSCode settings](/vscode) or by adding a language to the frontmatter of your file.
 
 ```glass
----
-language: typescript
----
+all text between prompt blocks is treated as code, including comments
 
-// all text between prompt blocks is treated as code, including comments
+<Code language="typescript">
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
+</Code>
+
+
 <System>
 ${myMessage}
 </System>
+
+<Request model="gpt-3.5-turbo" />
 ```
-
-## Fenced Code Snippets
-
-Glass supports normal Markdown fenced code snippets. You can specify the language of the code snippet by adding the language name after the opening backticks. For example, to create a fenced code block with JavaScript syntax highlighting, you could use:
-
-````glass-py
-<System>
-You are a python programmer. You should always respond with fenced code blocks like this:
-
-```py
-foo = 5
-bar = 10
-result = foo + bar
-print(result)
-```
-</System>
-````
 
 ## Transpiling `.glass`
 
@@ -54,10 +40,10 @@ For an alternative language, modify the `Default Language Mode` setting in Glass
 
 You can now call the transpiled `example` function from your codebase.
 
-<Tabs items={['JavaScript / TypeScript', 'Python']}>
+<Tabs items={['JavaScript / TypeScript']}>
   <Tab>
 
-```glass
+```typescript
 import { Glass } from './glass'
 
 const prompt = Glass.example({})
@@ -67,15 +53,4 @@ console.log(prompt)
 
   </Tab>
 
-  <Tab>
-
-```python
-import glass
-
-prompt = glass.example({})
-
-print(prompt)
-```
-
-  </Tab>
 </Tabs>
