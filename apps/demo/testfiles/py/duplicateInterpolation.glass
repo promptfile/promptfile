@@ -1,8 +1,0 @@
----
-language: python
----
-
-<User>
-${foo} ${bar} ${foo}
-${bar}
-</User>

@@ -1,9 +1,0 @@
----
-language: python
----
-
-foo = "bar"
-<User>
-${foo}
-</User>
-print(foo)

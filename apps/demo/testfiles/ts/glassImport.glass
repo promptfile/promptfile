@@ -1,6 +1,8 @@
+<Code>
 import questionAnswer from './questionAnswer.glass'
 
 const [field, setField] = useState('')
+</Code>
 
 <Assistant>
 You are an assistant that creates questions for Jeopardy.

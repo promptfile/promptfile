@@ -1,4 +1,6 @@
+<Code language="typescript>
 const items = [{role: 'user', content: 'who was gandhi?'}]
+</Code>
 
 <For each={items} as="item">
 <Block role={item.role}>

@@ -1,9 +1,4 @@
----
-language: typescript
----
-
 <Test>
-=
 // const question = "where did elliott go to school"
 // return an array of objects to run a list of tests; no need to return if you just want a single test
 return [{
@@ -15,8 +10,10 @@ return [{
 }]
 </Test>
 
+<Code>
 const res = await fetch(url)
 const website = await res.text()
+</Code>
 
 <System>
 your job is to answer questions based on the following website code:

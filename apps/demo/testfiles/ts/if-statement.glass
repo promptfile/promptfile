@@ -1,5 +1,7 @@
+<Code language="typescript">
 const useMe = true
 const subject = "Einstein"
+</Code>
 
 <System>
 You are a helpful assistant.

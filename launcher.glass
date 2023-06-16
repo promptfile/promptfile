@@ -1,7 +1,3 @@
----
-language: typescript
----
-
 // This is a prompt that can be used by people working on Glass to launch conversations with GPT-4, directly from VSCode.
 
 const timestamp = new Date().toISOString()

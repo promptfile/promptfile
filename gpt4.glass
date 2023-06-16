@@ -1,7 +1,3 @@
----
-language: typescript
----
-
 <User>
 ${input}
 </User>

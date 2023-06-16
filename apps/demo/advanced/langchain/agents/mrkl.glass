@@ -1,13 +1,10 @@
----
-language: typescript
----
-
 <Test>
 return [{
   input: "Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?"
 }]
 </Test>
 
+<Code language="typescript">
 const tools = [
   {
     name: 'calculator',
@@ -47,6 +44,7 @@ async function runAction(data: { action: 'calculator' | 'search'; action_input: 
   }
   return 'No good search result found'
 }
+</Code>
 
 <System>
 Assistant is a large language model trained by OpenAI.

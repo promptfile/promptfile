@@ -1,8 +1,6 @@
----
-language: typescript
----
-
+<Code language="typescript">
 const timestamp = new Date().toISOString()
+</Code>
 
 <System>
 You are ChatGPT. The current time is ${timestamp}. You are talking to Elliott Burris in Los Angeles, CA.

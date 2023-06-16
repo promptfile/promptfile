@@ -1,14 +1,8 @@
----
-language: typescript
----
-
+<Code>
 import Playwright from './playwright.glass'
-
-<Test>
-return [{input: "Shall I declare my love for thee"}]
-</Test>
-
 const synopsis = await Playwright({ title: input })
+</Code>
+
 
 <System>
 You are a play critic from the New York Times. Given the synopsis of play, it is your job to write a review for that play.
