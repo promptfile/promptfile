@@ -8,13 +8,14 @@ Blocks in Glass simplify LLM requests, making them easy to read and understand. 
 
 Use the `<User>{:glass}` to designate the text coming from a human user.
 
-- **name** <i>(optional string)</i> <br/> Assigns a name to the user.
+{/* - **name** <i>(optional string)</i> <br/> Assigns a name to the user. */}
+
 - **if** <i>(optional condition)</i> <br/> Includes the block in the request only if the condition is met.
 - **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once in the request, even if the condition is met multiple times.
 - **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the `<Transcript>{:glass}` block.
 
 ```glass
-<User name="Shreyas" if={true}>
+<User if={true}>
 Hello AI!
 </User>
 
@@ -39,14 +40,15 @@ This will not be included in the prompt :(
 
 Use the `<Assistant>{:glass}` to designate the text coming from the model.
 
-- **name** <i>(optional string)</i> <br/> Assigns a name to the assistant.
+{/* - **name** <i>(optional string)</i> <br/> Assigns a name to the assistant. */}
+
 - **if** <i>(optional condition)</i> <br/> Includes the block in the request only if the condition is met.
 - **model** <i>(optional enum)</i> <br/> This is an automatically generated condition that is visible in the editor. It is used to track the model that generated the block.
 - **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once in the request, even if the condition is met multiple times.
 - **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the running `<Transcript>{:glass}` block.
 
 ```glass
-<Assistant name={"FriendlyGPT"} if={true}>
+<Assistant if={true}>
 Hello human!
 </Assistant>
 ```

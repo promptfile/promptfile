@@ -32,13 +32,13 @@ export const glassElements: GlassElement[] = [
     documentation: 'Creates an Assistant chat block with inner content',
     closingType: 'nonSelfClosing',
     attributes: [
-      {
-        name: 'name',
-        detail: 'name of the assistant',
-        documentation: 'The `name` attribute allows you to assign a name to an assistant.',
-        type: 'string',
-        optional: true,
-      },
+      // {
+      //   name: 'name',
+      //   detail: 'name of the assistant',
+      //   documentation: 'The `name` attribute allows you to assign a name to an assistant.',
+      //   type: 'string',
+      //   optional: true,
+      // },
       {
         name: 'model',
         detail: 'model used to generate the content',
@@ -256,13 +256,13 @@ export const glassElements: GlassElement[] = [
     detail: '(block) chat block with role="user"',
     closingType: 'nonSelfClosing',
     attributes: [
-      {
-        name: 'name',
-        detail: 'name of the user',
-        documentation: 'The `name` attribute allows you to assign a name to a user.',
-        type: 'string',
-        optional: true,
-      },
+      // {
+      //   name: 'name',
+      //   detail: 'name of the user',
+      //   documentation: 'The `name` attribute allows you to assign a name to a user.',
+      //   type: 'string',
+      //   optional: true,
+      // },
       {
         name: 'if',
         detail: 'conditional expression',
