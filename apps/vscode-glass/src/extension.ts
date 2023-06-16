@@ -49,7 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     },
     {
-      documentSelector: [{ scheme: 'file', language: 'glass`' }],
+      documentSelector: [{ scheme: 'file', language: 'glass' }],
       outputChannelName: 'Glass Language Server',
     }
   )
