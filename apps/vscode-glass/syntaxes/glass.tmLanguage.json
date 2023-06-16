@@ -27,6 +27,9 @@
       "include": "#transcript-element"
     },
     {
+      "include": "#function-element"
+    },
+    {
       "include": "#request-element"
     },
     {

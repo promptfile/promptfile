@@ -164,6 +164,7 @@ export const glassElements: GlassElement[] = [
     documentation: 'Sets a function the Glass runtime can call',
     detail: '(element) define a function',
     closingType: 'selfClosing',
+    insertText: 'Function name="$1" description="$2" schema={z.object({$3})} run={(arg) => $4} />',
     attributes: [
       {
         name: 'name',
