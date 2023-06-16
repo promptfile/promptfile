@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.13.2
+
+### Patch Changes
+
+- [`1d11521`](https://github.com/glass-lang/glass/commit/1d115213f86bbff233e4aec96526f2df3c1b7b77) Thanks [@rothfels](https://github.com/rothfels)! - fix glasslib import
+
 ## 0.13.1
 
 ### Patch Changes
