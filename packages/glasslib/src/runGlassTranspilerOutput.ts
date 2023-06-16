@@ -9,7 +9,7 @@ import { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'
 import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
 export interface ChatCompletionRequestMessage {
-  role: 'system' | 'user' | 'assistant'
+  role: 'system' | 'user' | 'assistant' | 'function'
   content: string
   name?: string
 }
@@ -260,7 +260,6 @@ async function runGlassChat(
     if (!r.ok) {
       throw new Error(`HTTP error: ${r.status}`)
     }
-    console.log('next value is', JSON.stringify(next, null, 2))
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${next}<|im_end|>`, request.model)
       return options.progress(
@@ -280,6 +279,15 @@ async function runGlassChat(
       )
     }
   })
+
+  let functionObservation: string | undefined = undefined
+  if (response.function_call != null) {
+    const fn = functions.find(f => f.name === response.function_call!.name)
+    checkOk(fn, `Function ${response.function_call!.name} not found`)
+    const args = fn.schema.parse(response.function_call!.arguments)
+    const result = await fn.run(args)
+    functionObservation = JSON.stringify(result, null, 2)
+  }
 
   // TODO: handle counting tokens for function response
   const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${response.content}<|im_end|>`, request.model)
@@ -303,6 +311,7 @@ async function runGlassChat(
     responseTokens,
     streaming: false,
     index: responseData.length - 1,
+    functionObservation,
   })
 }
 
@@ -600,7 +609,7 @@ function handleChatChunk(
     }[]
   }
 ) {
-  // console.log('handling chat chunk', eventData)
+  console.log('handling chat chunk', eventData)
   const choice = eventData.choices[0]
   if (choice.delta.function_call) {
     const newResult: LLMResponse = { ...currResult }

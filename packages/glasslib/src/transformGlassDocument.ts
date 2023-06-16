@@ -114,6 +114,7 @@ export function handleRequestNode(
     }[]
     streaming: boolean
     requestTokens?: number
+    functionObservation?: string
     responseTokens?: number
     index: number
   },
@@ -124,7 +125,8 @@ export function handleRequestNode(
   const newRequestNode = requestNodeReplacement(
     request.requestBlocks[request.index],
     request.responseData[request.responseData.length - 1],
-    request.streaming
+    request.streaming,
+    request.functionObservation
   )
 
   const userAndAssistantBlocks: GlassContent[] = []
@@ -134,7 +136,12 @@ export function handleRequestNode(
       if (currRequest < request.index && request.responseData[currRequest] != null) {
         userAndAssistantBlocks.push({
           tag: 'Assistant',
-          content: requestNodeReplacement(request.requestBlocks[currRequest], request.responseData[currRequest], false),
+          content: requestNodeReplacement(
+            request.requestBlocks[currRequest],
+            request.responseData[currRequest],
+            false,
+            request.functionObservation
+          ),
         } as any)
       }
       currRequest++
@@ -206,7 +213,8 @@ const requestNodeReplacement = (
     requestTokens?: number
     responseTokens?: number
   },
-  streaming: boolean
+  streaming: boolean,
+  functionObservation?: string
 ) => {
   const args: Record<string, any> = {
     model: request.model,
@@ -235,12 +243,18 @@ const requestNodeReplacement = (
   const response =
     responseData.function_call != null ? JSON.stringify(responseData.function_call, null, 2) : responseData.response
 
+  if (responseData.function_call != null) {
+    args.type = 'function_call'
+  }
+
   const argAttributes: string = Object.entries(args).reduce((acc, [key, value]) => {
     return acc + ` ${key}=${typeof value === 'string' ? `"${value}"` : `{${JSON.stringify(value)}}`}`
   }, '')
-  return `<Assistant${argAttributes}>
+  return (
+    `<Assistant${argAttributes}>
 ${response}${streaming ? '█' : ''}
-</Assistant>`
+</Assistant>` + (functionObservation ? `\n\n<Function>\n${functionObservation}\n</Function>` : '')
+  )
 }
 
 export function replaceRequestNode(newRequestNode: string, doc: string) {
