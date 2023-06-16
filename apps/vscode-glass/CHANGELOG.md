@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.13.3
+
+### Patch Changes
+
+- [`7fc6ecf`](https://github.com/glass-lang/glass/commit/7fc6ecf7c9790c5e03d25fb8450d125d0c4caa59) Thanks [@elliottburris](https://github.com/elliottburris)! - better diagnostics in language server
+
 ## 0.13.2
 
 ### Patch Changes
