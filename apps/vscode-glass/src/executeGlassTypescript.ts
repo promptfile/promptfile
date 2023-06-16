@@ -121,10 +121,10 @@ export async function executeGlassTypescriptWithRunner(
   content: string, // may be fresher than document.getText() wtf
   fileName: string,
   inputs: any,
-  progress?: (data: { nextDocument: string; response?: string }) => void
+  progress?: (data: { nextGlassfile: string; response?: string }) => void
 ): Promise<{
   response: string
-  nextDocument: string
+  nextGlassfile: string
   continued: boolean
   addToTranscript: { tag: string; content: string }[] | null
 }> {

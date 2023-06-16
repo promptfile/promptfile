@@ -214,7 +214,7 @@ hello world
         index: 0,
       })
       expect(res.response).to.equal('█')
-      expect(res.nextDocument).to.equal(`---
+      expect(res.nextGlassfile).to.equal(`---
 language: typescript
 ---
 
@@ -263,7 +263,7 @@ hello world
         index: 0,
       })
       expect(res.response).to.equal('█')
-      expect(res.nextDocument).to.equal(`---
+      expect(res.nextGlassfile).to.equal(`---
 language: typescript
 ---
 
@@ -316,7 +316,7 @@ You are a play critic from the New York Times. Given the synopsis you provided a
         index: 1,
       })
       expect(res.response).to.equal('world')
-      expect(res.nextDocument).to.equal(`<Transcript>
+      expect(res.nextGlassfile).to.equal(`<Transcript>
 <User>
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
 
@@ -383,7 +383,7 @@ hello world
         index: 0,
       })
       expect(res.response).to.equal('█')
-      expect(res.nextDocument).to.equal(`<System>
+      expect(res.nextGlassfile).to.equal(`<System>
 You are a helpful assistant.
 </System>
 
@@ -426,7 +426,7 @@ hello world
         index: 0,
       })
       expect(res.response).to.equal('█')
-      expect(res.nextDocument).to.equal(`<User>
+      expect(res.nextGlassfile).to.equal(`<User>
 \${input}
 </User>
 
@@ -483,7 +483,7 @@ goodbye world
         index: 0,
       })
       expect(res.response).to.equal('█')
-      expect(res.nextDocument).to.equal(`<Transcript>
+      expect(res.nextGlassfile).to.equal(`<Transcript>
 <User>
 hello world
 </User>

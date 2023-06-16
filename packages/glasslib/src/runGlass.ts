@@ -15,13 +15,13 @@ export async function runGlass(
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
+    progress?: (data: { nextGlassfile: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   } = {}
 ): Promise<{
   response: string
   transcript: TranscriptNode[]
-  nextDocument: string
+  nextGlassfile: string
 }> {
   // replace initDoc instances of
   //
@@ -88,7 +88,7 @@ export async function runGlass(
     | {
         response: string
         transcript: TranscriptNode[]
-        nextDocument: string
+        nextGlassfile: string
       }
     | undefined = undefined
 
@@ -144,13 +144,13 @@ async function runGlassChat(
   options: {
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
-    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
+    progress?: (data: { nextGlassfile: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
   response: string
   transcript: TranscriptNode[]
-  nextDocument: string
+  nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
 
@@ -245,13 +245,13 @@ async function runGlassChatAnthropic(
     args?: any
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
+    progress?: (data: { nextGlassfile: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
   response: string
   transcript: TranscriptNode[]
-  nextDocument: string
+  nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
   let anthropicQuery = ''
@@ -351,13 +351,13 @@ async function runGlassCompletion(
     transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
-    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
+    progress?: (data: { nextGlassfile: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
   response: string
   transcript: TranscriptNode[]
-  nextDocument: string
+  nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
 

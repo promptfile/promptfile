@@ -12,7 +12,7 @@ export async function executeGlassFile(
   document: vscode.TextDocument,
   content: string, // use this instead of document.getText because it may be stale wtf
   inputs: any,
-  progress?: (data: { nextDocument: string; response?: string }) => void
+  progress?: (data: { nextGlassfile: string; response?: string }) => void
 ) {
   const fileName = getDocumentFilename(document)
 

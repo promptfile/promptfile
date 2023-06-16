@@ -293,14 +293,14 @@ export async function createPlayground(
               sessionDocument,
               glass,
               inputs,
-              async ({ nextDocument }) => {
+              async ({ nextGlassfile }) => {
                 const existingPlayground = playgrounds.get(filepath)
                 if (!existingPlayground || stoppedRequestIds.has(requestId)) {
                   return false
                 }
-                writeGlass(sessionToRun, nextDocument)
-                const blocksForGlass = parseGlassTranscriptBlocks(nextDocument)
-                const metadataForGlass = parseGlassMetadata(nextDocument)
+                writeGlass(sessionToRun, nextGlassfile)
+                const blocksForGlass = parseGlassTranscriptBlocks(nextGlassfile)
+                const metadataForGlass = parseGlassMetadata(nextGlassfile)
                 await panel.webview.postMessage({
                   action: 'onStream',
                   data: {
@@ -318,15 +318,15 @@ export async function createPlayground(
             if (!existingPlayground || stoppedRequestIds.has(requestId)) {
               return false
             }
-            const blocksForGlass = parseGlassTranscriptBlocks(resp.nextDocument)
-            const metadataForGlass = parseGlassMetadata(resp.nextDocument)
+            const blocksForGlass = parseGlassTranscriptBlocks(resp.nextGlassfile)
+            const metadataForGlass = parseGlassMetadata(resp.nextGlassfile)
 
-            writeGlass(sessionToRun, resp.nextDocument) // wait for this?
+            writeGlass(sessionToRun, resp.nextGlassfile) // wait for this?
             await panel.webview.postMessage({
               action: 'onResponse',
               data: {
                 session: sessionToRun,
-                glass: resp.nextDocument,
+                glass: resp.nextGlassfile,
                 blocks: blocksForGlass,
                 variables: metadataForGlass.interpolationVariables,
                 model,
@@ -335,7 +335,7 @@ export async function createPlayground(
               },
             })
             if (resp.continued) {
-              await runGlassExtension(resp.nextDocument, sessionToRun, inputs)
+              await runGlassExtension(resp.nextGlassfile, sessionToRun, inputs)
             }
           } catch (error) {
             console.error(error)

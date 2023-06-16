@@ -47,7 +47,7 @@ const [moreState, setMoreState] = useState('')
     openaiKey?: string
     anthropicKey?: string
     progress?: (data: {
-      nextDocument: string
+      nextGlassfile: string
       transcript: { role: string; content: string; id: string }[]
       response: string
     }) => void

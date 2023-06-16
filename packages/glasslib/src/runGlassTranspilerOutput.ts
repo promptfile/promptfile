@@ -40,12 +40,12 @@ export async function runGlassTranspilerOutput(
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
+    progress?: (data: { nextGlassfile: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   } = {}
 ): Promise<{
   response: string
-  nextDocument: string
+  nextGlassfile: string
   transcript: TranscriptNode[]
   continued: boolean
 }> {
@@ -99,7 +99,7 @@ export async function runGlassTranspilerOutput(
   let res:
     | {
         response: string
-        nextDocument: string
+        nextGlassfile: string
         transcript: TranscriptNode[]
       }
     | undefined = undefined
@@ -160,18 +160,18 @@ export async function runGlassTranspilerOutput(
       })
       if (Object.keys(state).length > 0) {
         const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-        res.nextDocument = replaceStateNode(finalStateBlock, res.nextDocument)
+        res.nextGlassfile = replaceStateNode(finalStateBlock, res.nextGlassfile)
       }
     }
 
     if (blocksToAdd.length > 0) {
-      const added = addToTranscript(blocksToAdd, res.nextDocument)
-      res.nextDocument = added.doc
+      const added = addToTranscript(blocksToAdd, res.nextGlassfile)
+      res.nextGlassfile = added.doc
     }
 
     if (blocksToAddToDocument.length > 0) {
-      const added = addToDocument(blocksToAddToDocument, res.nextDocument)
-      res.nextDocument = added.doc
+      const added = addToDocument(blocksToAddToDocument, res.nextGlassfile)
+      res.nextGlassfile = added.doc
     }
   }
 
@@ -193,12 +193,12 @@ async function runGlassChat(
   options: {
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
-    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
+    progress?: (data: { nextGlassfile: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
   response: string
-  nextDocument: string
+  nextGlassfile: string
   transcript: TranscriptNode[]
 }> {
   const request = requestBlocks[responseData.length]
@@ -284,12 +284,12 @@ async function runGlassChatAnthropic(
     args?: any
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
+    progress?: (data: { nextGlassfile: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
   response: string
-  nextDocument: string
+  nextGlassfile: string
   transcript: TranscriptNode[]
 }> {
   const request = requestBlocks[responseData.length]
@@ -380,12 +380,12 @@ async function runGlassCompletion(
     transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
-    progress?: (data: { nextDocument: string; transcript: TranscriptNode[]; response: string }) => void
+    progress?: (data: { nextGlassfile: string; transcript: TranscriptNode[]; response: string }) => void
     output?: (line: string) => void
   }
 ): Promise<{
   response: string
-  nextDocument: string
+  nextGlassfile: string
   transcript: TranscriptNode[]
 }> {
   const request = requestBlocks[responseData.length]

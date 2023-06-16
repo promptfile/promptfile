@@ -171,13 +171,13 @@ export function handleRequestNode(
     response += '█'
   }
 
-  const nextDocument = replaceTranscriptNode(
+  const nextGlassfile = replaceTranscriptNode(
     '<Transcript>\n' + transcriptContent + '\n</Transcript>',
     uninterpolatedDoc,
     true
   )
 
-  const transcript = parseGlassTranscriptBlocks(nextDocument)
+  const transcript = parseGlassTranscriptBlocks(nextGlassfile)
   const transcriptNodes = transcript.map(t => {
     return {
       role: t.tag === 'User' ? 'user' : 'assistant',
@@ -187,7 +187,7 @@ export function handleRequestNode(
   })
 
   return {
-    nextDocument,
+    nextGlassfile,
     transcript: transcriptNodes,
     response,
   }
