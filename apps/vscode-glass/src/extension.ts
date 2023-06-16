@@ -1,15 +1,9 @@
-import {
-  parseGlassMetadata,
-  parseGlassMetadataPython,
-  transpileGlassPython,
-  transpileGlassTypescript,
-} from '@glass-lang/glassc'
+import { parseGlassMetadata, transpileGlassTypescript } from '@glass-lang/glassc'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { getAllGlassFiles, getDocumentFilename, isGlassFile } from './util/isGlassFile'
-import { updateLanguageMode } from './util/languageMode'
 import { GlassPlayground, createPlayground } from './util/playground'
 import { updateTokenCount } from './util/tokenCounter'
 import { transpileCurrentFile } from './util/transpile'
@@ -55,11 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     },
     {
-      documentSelector: [
-        { scheme: 'file', language: 'glass-py`' },
-        { scheme: 'file', language: 'glass-ts' },
-        { scheme: 'file', language: 'glass-js' },
-      ],
+      documentSelector: [{ scheme: 'file', language: 'glass`' }],
       outputChannelName: 'Glass Language Server',
     }
   )
@@ -87,13 +77,11 @@ export async function activate(context: vscode.ExtensionContext) {
     fileTimestamps.set(relativePath, Date.now())
 
     const initialGlass = selectedDocument.getText()
-    const languageId = selectedDocument.languageId
     const filepath = selectedDocument.uri.fsPath
     const filename = getDocumentFilename(selectedDocument)
 
     outputChannel.appendLine(`${filename} — launching Glass playground`)
-    const initialMetadata =
-      languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
+    const initialMetadata = parseGlassMetadata(initialGlass)
     const playground = await createPlayground(
       filepath,
       playgrounds,
@@ -131,7 +119,6 @@ export async function activate(context: vscode.ExtensionContext) {
         if (editor && isGlassFile(editor.document)) {
           updateTokenCount(tokenCount)
           // updateDecorations(editor, codeDecorations)
-          await updateLanguageMode(editor.document)
           const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
           fileTimestamps.set(relativePath, Date.now())
         } else {
@@ -146,7 +133,6 @@ export async function activate(context: vscode.ExtensionContext) {
         if (activeEditor && editor.document === activeEditor.document) {
           // updateDecorations(activeEditor, codeDecorations)
           updateTokenCount(tokenCount)
-          await updateLanguageMode(editor.document)
           const existingPlayground = playgrounds.get(editor.document.uri.fsPath)
           if (existingPlayground) {
             await existingPlayground.panel.webview.postMessage({
@@ -243,13 +229,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
             try {
               let output = ''
-              if (languageMode === 'python') {
-                output = await transpileGlassPython(folderPath, folderPath, languageMode, outDir)
-              } else {
-                output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir)
-              }
+              output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir)
 
-              const extension = languageMode === 'python' ? 'py' : languageMode === 'javascript' ? 'js' : 'ts'
+              const extension = languageMode === 'javascript' ? 'js' : 'ts'
               const outputPath = path.join(outDir, `glass.${extension}`)
               fs.writeFileSync(outputPath, output)
               const doc = await vscode.workspace.openTextDocument(outputPath)

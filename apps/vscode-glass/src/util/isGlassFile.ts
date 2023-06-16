@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 
 export function isGlassFile(document: vscode.TextDocument) {
-  return ['glass-ts', 'glass-js', 'glass-py'].includes(document.languageId)
+  return document.languageId === 'glass'
 }
 
 export function hasGlassFileOpen(editor: vscode.TextEditor) {

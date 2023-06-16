@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/Septh/tmlanguage/master/tmlanguage.json",
   "name": "Glass",
-  "scopeName": "source.SCOPE_NAME",
+  "scopeName": "source.glass",
   "patterns": [
     {
       "begin": "^---$",
@@ -90,7 +90,7 @@
       },
       "patterns": [
         {
-          "include": "SOURCE_LANGUAGE"
+          "include": "source.js"
         }
       ]
     },

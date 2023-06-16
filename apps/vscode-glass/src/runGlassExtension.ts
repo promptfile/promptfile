@@ -1,7 +1,6 @@
 import { runGlassTranspilerOutput } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
-import { executeGlassPython } from './executeGlassPython'
 import { executeGlassTypescript } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isGlassFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
@@ -20,22 +19,22 @@ export async function executeGlassFile(
   const openaiKey = getOpenaiKey()
   const anthropicKey = getAnthropicKey()
 
-  const isDocumentPython = document.languageId === 'glass-py'
+  // const isDocumentPython = document.languageId === 'glass-py'
 
-  if (isDocumentPython) {
-    const c = await executeGlassPython(document, content, inputs)
-    checkOk(c.length >= 0, 'No transpiler output generated')
-    return await runGlassTranspilerOutput(c[0], {
-      transcriptTokenCounter: {
-        countTokens: countTokens,
-        maxTokens: maxTokensForModel,
-      },
-      openaiKey: openaiKey || '',
-      anthropicKey: anthropicKey || '',
-      progress,
-      output: outputChannel.appendLine,
-    })
-  }
+  // if (isDocumentPython) {
+  //   const c = await executeGlassPython(document, content, inputs)
+  //   checkOk(c.length >= 0, 'No transpiler output generated')
+  //   return await runGlassTranspilerOutput(c[0], {
+  //     transcriptTokenCounter: {
+  //       countTokens: countTokens,
+  //       maxTokens: maxTokensForModel,
+  //     },
+  //     openaiKey: openaiKey || '',
+  //     anthropicKey: anthropicKey || '',
+  //     progress,
+  //     output: outputChannel.appendLine,
+  //   })
+  // }
 
   const c = await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs)
   checkOk(c.length >= 0, 'No transpiler output generated')

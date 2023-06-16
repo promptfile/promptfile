@@ -1,4 +1,4 @@
-import { parseGlassMetadata, parseGlassMetadataPython } from '@glass-lang/glassc'
+import { parseGlassMetadata } from '@glass-lang/glassc'
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
@@ -12,7 +12,6 @@ import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getHtmlForWebview } from '../webview'
 import { getAnthropicKey, getOpenaiKey } from './keys'
-import { updateLanguageMode } from './languageMode'
 import { createSession, getCurrentSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
 import { generateULID } from './ulid'
 import { getCurrentViewColumn } from './viewColumn'
@@ -44,8 +43,7 @@ export async function createPlayground(
     const currentGlass = loadGlass(session)
     const allBlocks = parseGlassBlocks(currentGlass)
     const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
-    const currentMetadata =
-      languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
+    const currentMetadata = parseGlassMetadata(currentGlass)
     await existingPlayground.panel.webview.postMessage({
       action: 'setGlass',
       data: {
@@ -96,8 +94,7 @@ export async function createPlayground(
         stoppedRequestIds.add(stopRequestId)
         writeGlass(stopSession, stoppedGlass)
         const stoppedBlocks = parseGlassTranscriptBlocks(stoppedGlass)
-        const stoppedMetadata =
-          languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(stoppedGlass)
+        const stoppedMetadata = parseGlassMetadata(stoppedGlass)
         await panel.webview.postMessage({
           action: 'onStream',
           data: {
@@ -136,8 +133,7 @@ export async function createPlayground(
         const currentGlass = loadGlass(currentSession)
         const allBlocks = parseGlassBlocks(currentGlass)
         const currentBlocks = parseGlassTranscriptBlocks(currentGlass)
-        const currentMetadata =
-          languageId === 'glass-py' ? await parseGlassMetadataPython(currentGlass) : parseGlassMetadata(currentGlass)
+        const currentMetadata = parseGlassMetadata(currentGlass)
         const theme = vscode.workspace.getConfiguration('workbench').get('colorTheme')
         await panel.webview.postMessage({
           action: 'setGlass',
@@ -163,8 +159,7 @@ export async function createPlayground(
         const newGlass = loadGlass(newSession)
         const newBlocks = parseGlassTranscriptBlocks(newGlass)
         const newAllBlocks = parseGlassBlocks(newGlass)
-        const newMetadata =
-          languageId === 'glass-py' ? await parseGlassMetadataPython(newGlass) : parseGlassMetadata(newGlass)
+        const newMetadata = parseGlassMetadata(newGlass)
         await panel.webview.postMessage({
           action: 'setGlass',
           data: {
@@ -292,7 +287,6 @@ export async function createPlayground(
 
           try {
             const requestId = generateULID()
-            await updateLanguageMode(sessionDocument)
             const resp = await executeGlassFile(
               filepath,
               outputChannel,
@@ -306,10 +300,7 @@ export async function createPlayground(
                 }
                 writeGlass(sessionToRun, nextDocument)
                 const blocksForGlass = parseGlassTranscriptBlocks(nextDocument)
-                const metadataForGlass =
-                  languageId === 'glass-py'
-                    ? await parseGlassMetadataPython(nextDocument)
-                    : parseGlassMetadata(nextDocument)
+                const metadataForGlass = parseGlassMetadata(nextDocument)
                 await panel.webview.postMessage({
                   action: 'onStream',
                   data: {
@@ -328,10 +319,7 @@ export async function createPlayground(
               return false
             }
             const blocksForGlass = parseGlassTranscriptBlocks(resp.nextDocument)
-            const metadataForGlass =
-              languageId === 'glass-py'
-                ? await parseGlassMetadataPython(resp.nextDocument)
-                : parseGlassMetadata(resp.nextDocument)
+            const metadataForGlass = parseGlassMetadata(resp.nextDocument)
 
             writeGlass(sessionToRun, resp.nextDocument) // wait for this?
             await panel.webview.postMessage({

@@ -2,12 +2,10 @@ const shiki = require('shiki')
 const fs = require('fs')
 const path = require('path')
 
-const glassTs = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../vscode-glass/syntaxes/generated/glass-ts.tmLanguage.json')).toString()
+const glass = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '../vscode-glass/syntaxes/glass.tmLanguage.json')).toString()
 )
-const glassPy = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../vscode-glass/syntaxes/generated/glass-py.tmLanguage.json')).toString()
-)
+
 const syntaxTheme = JSON.parse(fs.readFileSync(path.join(__dirname, 'shiki-theme.json')).toString())
 
 const withNextra = require('nextra')({
@@ -19,16 +17,10 @@ const withNextra = require('nextra')({
       getHighlighter: async options => {
         const highlighter = await shiki.getHighlighter(options)
         await highlighter.loadLanguage({
-          id: 'glass-ts',
-          scopeName: 'source.glass-ts',
-          grammar: glassTs,
-          aliases: ['glass', 'glass-ts'],
-        })
-        await highlighter.loadLanguage({
-          id: 'glass-py',
-          scopeName: 'source.glass-py',
-          grammar: glassPy,
-          aliases: ['glass-py'],
+          id: 'glass',
+          scopeName: 'source.glass',
+          grammar: glass,
+          aliases: ['glass'],
         })
         return highlighter
       },

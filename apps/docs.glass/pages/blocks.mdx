@@ -13,7 +13,7 @@ Use the `<User>{:glass}` to designate the text coming from a human user.
 - **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once in the request, even if the condition is met multiple times.
 - **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the `<Transcript>{:glass}` block.
 
-```glass-ts
+```glass
 const conditionIsMet = true
 
 <User name="Shreyas" if={conditionIsMet}>
@@ -31,7 +31,7 @@ For Anthropic models, the `<System>{:glass}` block has the same effect `<User>{:
 
 - **if** <i>(optional condition)</i> <br/> Allows you to conditionally include the block.
 
-```glass-ts
+```glass
 const conditionIsMet = false
 <System if={conditionIsMet}>
 This will not be included in the prompt :(
@@ -48,7 +48,7 @@ Use the `<Assistant>{:glass}` to designate the text coming from the model.
 - **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once in the request, even if the condition is met multiple times.
 - **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the running `<Transcript>{:glass}` block.
 
-```glass-ts
+```glass
 const name = "GPT-3.5"
 const conditionIsMet = true
 
@@ -66,7 +66,7 @@ Use the `<Request />{:glass}` block to make an API request to a specified model,
 - **max_tokens** <i>(optional)</i> <br/> The maximum number of tokens to generate.
 - **onResponse** <i>(optional)</i> <br/> Function callback for when the response is received.
 
-```glass-ts
+```glass
 <Request model="gpt-4" maxTokens={50} temperature={0.05} />
 ```
 
@@ -77,7 +77,7 @@ Use the `<For>{:glass}` block to loop over elements in an array. The text inside
 - **each** <i>(required)</i> <br/> The array to iterate over.
 - **as** <i>(required)</i><br/> The variable name for each item in the array. Use this variable within the `<For>{:glass}`
 
-```glass-ts
+```glass
 const examples = [{
   request: "Happy",
   response: "Sad",
@@ -113,7 +113,7 @@ Use the `<Text>{:glass}` to add text inside another block. This is useful for ad
 
 - **if** <i>(optional)</i> <br/> Includes the block in the request only if the condition is met.
 
-```glass-ts
+```glass
 const conditionIsMet = true
 
 <User>
@@ -129,7 +129,7 @@ Hello AI!
 
 Use `<Test>{:glass}` to define test data to use when running the file.
 
-```glass-ts
+```glass
 <Test>
 return [{input: "test input 1"}, {input: "test input 2"}]
 </Test>
