@@ -1,14 +1,11 @@
-// the purpose of this prompt is to have the LLM write code in response to a user's input.
-// we will show the LLM exactly how it should write the code via a 1-shot example.
-// note that this prompt is for a chat-style model (e.g. `gpt-4` or `gpt-3.5-turbo`).  
-// therefore, we can use 3 possible blocks:
-// - <System />
-// - <User />
-// - <Assistant />
-// for more information on chat-style inference, see: https://platform.openai.com/docs/guides/chat
+the purpose of this prompt is to have the LLM write code in response to a user's input. we will show the LLM exactly how it should write the code via a 1-shot example. note that this prompt is for a chat-style model (e.g. `gpt-4` or `gpt-3.5-turbo`).  therefore, we can use 3 possible blocks:
+- <System />
+- <User />
+- <Assistant />
+for more information on chat-style inference, see: https://platform.openai.com/docs/guides/chat
 
 
-// first, we have the system prompt to include instructions on how the model should behave.
+first, we have the system prompt to include instructions on how the model should behave.
 <System>
 You are a highly-intelligent AI that writes amazing Javascript code. 
 Write JavaScript code to complete the tasks below given the following schema:
@@ -23,14 +20,13 @@ interface Schema {
 </System>
 
 
-// next, we provide an example of how the model should react to a given user input.
-// in this example, we've simulated that the `task` string was "delete the firstName field"
+next, we provide an example of how the model should react to a given user input. in this example, we've simulated that the `task` string was "delete the firstName field"
 <User>
 delete the firstName field
 </User>
 
 
-// here's the response we provide for the 1-shot. this shows the LLM how it should respond to the user's request.
+here's the response we provide for the 1-shot. this shows the LLM how it should respond to the user's request.
 <Assistant>
 ```js
 context.rows = context.rows.map((r) => {
@@ -42,7 +38,7 @@ context.rows = context.rows.map((r) => {
 </Assistant>
 
 
-// finally, here's the actual `task` input from the user.
+finally, here's the actual `task` input from the user.
 <User>
 ${task}
 </User>

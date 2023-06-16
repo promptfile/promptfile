@@ -1,8 +1,6 @@
----
-language: python
----
-
-foo = "bar"
+<Code language="typescript>
+const foo = "bar"
+</Code>
 
 <User>
 ${foo}

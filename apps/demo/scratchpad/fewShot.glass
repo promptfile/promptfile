@@ -1,3 +1,4 @@
+<Code language="typescript">
 const examples = [
   {
     message: 'ur product never works, def want my money back',
@@ -16,7 +17,7 @@ const examples = [
     classification: 'NEEDS_ATTENTION',
   },
 ]
-
+</Code>
 
 
 <System>
