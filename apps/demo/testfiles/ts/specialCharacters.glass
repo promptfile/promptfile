@@ -1,5 +1,7 @@
+<Code>
 const type = 'assistant'
 const role = `helpful ${type}`
+</Code>
 
 <System>
 You are a ${role}.

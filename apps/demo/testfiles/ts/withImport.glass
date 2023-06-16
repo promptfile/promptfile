@@ -1,6 +1,11 @@
+<Code>
 import c from "c"
 
 const a = "3"
+</Code>
+
 <User>
 ${a} ${b} ${c}
 </User>
+
+<Request model="gpt-3.5-turbo" />

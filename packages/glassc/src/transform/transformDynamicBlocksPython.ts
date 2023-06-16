@@ -17,7 +17,7 @@ export function transformDynamicBlocksPython(doc: string) {
 
   for (let i = 0; i < jsxNodes.length; i++) {
     const node = jsxNodes[i]
-    if (node.type === 'code' || node.type === 'frontmatter') {
+    if (node.type === 'comment' || node.type === 'frontmatter') {
       builtDoc += node.content.replace(/{/g, '{{').replace(/}/g, '}}')
       continue
     }

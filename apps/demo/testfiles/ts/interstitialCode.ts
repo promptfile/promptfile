@@ -10,18 +10,32 @@ export function getInterstitialCodePrompt() {
     const baz = 'bar'
 
     const GLASSVAR = {}
-    const TEMPLATE = `const foo = "bar"
+    const TEMPLATE = `<Code>
+const foo = "bar"
+const baz = "bar"
+</Code>
+
 <User>
 ${foo}
 </User>
-const baz = "bar"`
+
+<Request model="gpt-3.5-turbo" />`
     return {
       fileName: 'interstitialCode',
       interpolatedDoc: TEMPLATE,
-      originalDoc: 'const foo = "bar"\n<User>\n${foo}\n</User>\nconst baz = "bar"',
+      originalDoc:
+        '<Code>\nconst foo = "bar"\nconst baz = "bar"\n</Code>\n\n<User>\n${foo}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
     }
   }
 

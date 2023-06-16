@@ -7,9 +7,9 @@ const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block'])
 
 export function parseGlassMetadata(document: string) {
   const toplevelCode = glasslib
-    .parseGlassDocument(document)
-    .filter(t => t.type === 'code')
-    .map(t => t.content)
+    .parseGlassBlocks(document)
+    .filter(t => t.tag === 'Code')
+    .map(t => t.child!.content)
     .join('\n')
 
   const blocks = glasslib.parseGlassBlocksRecursive(document)
@@ -51,9 +51,9 @@ export function parseGlassMetadata(document: string) {
 
 export async function parseGlassMetadataPython(document: string) {
   const toplevelCode = glasslib
-    .parseGlassDocument(document)
-    .filter(t => t.type === 'code')
-    .map(t => t.content)
+    .parseGlassBlocks(document)
+    .filter(t => t.tag === 'Code')
+    .map(t => t.child!.content)
     .join('\n')
 
   const blocks = glasslib.parseGlassBlocksRecursive(document)

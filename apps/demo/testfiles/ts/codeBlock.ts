@@ -9,17 +9,30 @@ export function getCodeBlockPrompt() {
     const a = '3'
 
     const GLASSVAR = {}
-    const TEMPLATE = `const a = "3"
+    const TEMPLATE = `<Code>
+const a = "3"
+</Code>
+
 <User>
 ${a}
-</User>`
+</User>
+
+<Request model="gpt-3.5-turbo" />`
     return {
       fileName: 'codeBlock',
       interpolatedDoc: TEMPLATE,
-      originalDoc: 'const a = "3"\n<User>\n${a}\n</User>',
+      originalDoc: '<Code>\nconst a = "3"\n</Code>\n\n<User>\n${a}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
     }
   }
 

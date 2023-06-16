@@ -1,6 +1,8 @@
+<Code>
 import {sayHello} from './say-hello'
 
 sayHello({ name: 'chat' })
+</Code>
 
 <System>
 Read a Transcript and determine how to respond about the property's ${sayHello({ name: 'chat' })}. Valid responses are:
@@ -31,3 +33,5 @@ Transcript
 ${transcript}
 ###
 </User>
+
+<Request model="gpt-3.5-turbo" />

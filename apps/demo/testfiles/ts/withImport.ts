@@ -11,19 +11,33 @@ export function getWithImportPrompt() {
     const a = '3'
 
     const GLASSVAR = {}
-    const TEMPLATE = `import c from "c"
+    const TEMPLATE = `<Code>
+import c from "c"
 
 const a = "3"
+</Code>
+
 <User>
 ${a} ${b} ${c}
-</User>`
+</User>
+
+<Request model="gpt-3.5-turbo" />`
     return {
       fileName: 'withImport',
       interpolatedDoc: TEMPLATE,
-      originalDoc: 'import c from "c"\n\nconst a = "3"\n<User>\n${a} ${b} ${c}\n</User>',
+      originalDoc:
+        '<Code>\nimport c from "c"\n\nconst a = "3"\n</Code>\n\n<User>\n${a} ${b} ${c}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
     }
   }
 

@@ -1,5 +1,10 @@
+<Code>
 const foo = "bar"
+const baz = "bar"
+</Code>
+
 <User>
 ${foo}
 </User>
-const baz = "bar"
+
+<Request model="gpt-3.5-turbo" />

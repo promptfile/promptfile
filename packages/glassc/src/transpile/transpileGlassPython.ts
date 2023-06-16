@@ -80,7 +80,7 @@ export async function transpileGlassFilePython(
   doc = glasslib.removeGlassFrontmatter(doc)
 
   const toplevelCode = parsedDocument
-    .filter(d => d.type === 'code')
+    .filter(d => d.tag === 'Code')
     .map(d => d.content)
     .join('\n')
 

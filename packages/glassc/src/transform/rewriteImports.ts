@@ -38,6 +38,6 @@ function rewriteImportPaths(codeSection: string, outPath: string, filePath: stri
 export function rewriteImports(glassDocument: string, outPath: string, filePath: string) {
   return glasslib
     .parseGlassDocument(glassDocument)
-    .map(node => (node.type === 'code' ? rewriteImportPaths(node.content, outPath, filePath) : node.content))
+    .map(node => (node.tag === 'Code' ? rewriteImportPaths(node.content, outPath, filePath) : node.content))
     .join('')
 }

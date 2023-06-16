@@ -10,8 +10,10 @@ export function getSpecialCharactersPrompt() {
     const role = `helpful ${type}`
 
     const GLASSVAR = {}
-    const TEMPLATE = `const type = 'assistant'
+    const TEMPLATE = `<Code>
+const type = 'assistant'
 const role = \`helpful \${type}\`
+</Code>
 
 <System>
 You are a ${role}.
@@ -22,7 +24,7 @@ You are a ${role}.
       fileName: 'specialCharacters',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        'const type = \'assistant\'\nconst role = `helpful ${type}`\n\n<System>\nYou are a ${role}.\n</System>\n\n<Request model="gpt-3.5-turbo" />',
+        '<Code>\nconst type = \'assistant\'\nconst role = `helpful ${type}`\n</Code>\n\n<System>\nYou are a ${role}.\n</System>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [

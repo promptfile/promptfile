@@ -2,7 +2,7 @@ import { checkOk } from '@glass-lang/util'
 import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 
 export interface GlassContent {
-  type: 'block' | 'code' | 'frontmatter'
+  type: 'block' | 'comment' | 'frontmatter'
   content: string
   position: {
     start: { offset: number }
@@ -44,7 +44,7 @@ export function parseGlassDocument(doc: string): GlassContent[] {
       }
 
       nonBlocks.push({
-        type: 'code',
+        type: 'comment',
         position: { start: { offset: start }, end: { offset: block.position.start.offset } },
         content: doc.substring(start, block.position.start.offset),
       })
@@ -55,7 +55,7 @@ export function parseGlassDocument(doc: string): GlassContent[] {
 
   if (start < doc.length) {
     nonBlocks.push({
-      type: 'code',
+      type: 'comment',
       position: { start: { offset: start }, end: { offset: doc.length } },
       content: doc.substring(start, doc.length),
     })
