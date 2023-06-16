@@ -1,15 +1,14 @@
+
+<Code language="typescript">
 import fs from 'fs'
 import path from 'path'
 
 const fileString = fs.readFileSync(path.join(__dirname, 'TranscriptView.tsx'), 'utf-8').toString()
+</Code>
 
 <System>
 The User is working on a new DSL called Glass (`.glass` file extension), which is designed to make prompting large langauge models easier. The User is currently working on the VSCode extension for Glass, which includes a webview for previewing the generated text. The User is currently working on the `TranscriptView.tsx` file, which is responsible for rendering the preview. in a standard chat view format.
-</System>
 
-<Transcript />
-
-<System>
 For reference, here is the current `TranscriptView.tsx` file:
 
 ###

@@ -279,13 +279,6 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'Transcript',
-    documentation: 'Creates a Transcript tag to hold conversation history',
-    detail: '(element) holds conversation history',
-    closingType: 'both',
-    attributes: [],
-  },
-  {
     name: 'User',
     insertText: 'User>\n$1\n</User>',
     documentation: 'Creates a User tag with inner content',

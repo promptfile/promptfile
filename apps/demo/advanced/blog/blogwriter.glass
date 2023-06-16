@@ -41,8 +41,6 @@ Use this if you want to modify a part of the draft.
 For both options, remember to always include the surrounding markdown code snippet delimiters (begin with "```json" and end with "```")! If multiple edits are needed, you may output multiple code snippets. Prefer using `editDraft` to `replaceDraft` where possible.
 </System>
 
-<Transcript />
-
 <User>
 ${input}
 </User>

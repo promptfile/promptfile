@@ -13,8 +13,6 @@ ${fileString}
 This file exists within the webview of a VSCode extension.
 </System>
 
-<Transcript />
-
 <User>
 ${input}
 </User>
