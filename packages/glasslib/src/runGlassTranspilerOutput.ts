@@ -1,9 +1,10 @@
 import { checkOk } from '@glass-lang/util'
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
+import { zodToJsonSchema } from 'zod-to-json-schema'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
-import { RequestData } from './parseGlassBlocks'
+import { FunctionData, RequestData } from './parseGlassBlocks'
 import { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'
 import { addToDocument, addToTranscript, handleRequestNode, replaceStateNode } from './transformGlassDocument'
 
@@ -13,8 +14,14 @@ export interface ChatCompletionRequestMessage {
   name?: string
 }
 
+interface LLMResponse {
+  content: string
+  function_call?: { name: string; arguments: string } | null
+}
+
 export interface ResponseData {
   response: string
+  function_call?: { name: string; arguments: string } | null
   requestTokens?: number
   responseTokens?: number
 }
@@ -26,6 +33,7 @@ export interface TranspilerOutput {
   state: any
   interpolationArgs: any
   requestBlocks: RequestData[]
+  functions: FunctionData[]
 }
 
 export interface TranscriptNode {
@@ -35,7 +43,7 @@ export interface TranscriptNode {
 }
 
 export async function runGlassTranspilerOutput(
-  { fileName, originalDoc, interpolatedDoc, state, requestBlocks, interpolationArgs }: TranspilerOutput,
+  { fileName, originalDoc, interpolatedDoc, state, requestBlocks, functions, interpolationArgs }: TranspilerOutput,
   options: {
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
@@ -130,6 +138,7 @@ export async function runGlassTranspilerOutput(
             messagesSoFar,
             responseData,
             requestBlocks,
+            functions,
             { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
             options
           )
@@ -189,6 +198,7 @@ async function runGlassChat(
   messagesSoFar: ChatCompletionRequestMessage[],
   responseData: ResponseData[],
   requestBlocks: RequestData[],
+  functions: FunctionData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
     transcriptTokenCounter?: TokenCounter
@@ -219,6 +229,18 @@ async function runGlassChat(
     request.model
   )
 
+  let functionArgs = {}
+  if (functions.length > 0) {
+    functionArgs = {
+      functions: functions.map(f => ({
+        name: f.name,
+        description: f.description,
+        parameters: (zodToJsonSchema(f.schema, f.name) as any).definitions[f.name],
+      })),
+      function_call: 'auto',
+    }
+  }
+
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -230,6 +252,7 @@ async function runGlassChat(
       messages: messagesSoFar.concat(messages),
       model: request.model,
       stream: true,
+      ...functionArgs,
     }),
   })
 
@@ -237,13 +260,17 @@ async function runGlassChat(
     if (!r.ok) {
       throw new Error(`HTTP error: ${r.status}`)
     }
-    // right now claude has a leading whitespace character
-    // we need to remove that!
+    console.log('next value is', JSON.stringify(next, null, 2))
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${next}<|im_end|>`, request.model)
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+          responseData: responseData.concat({
+            response: next.content.trim(),
+            function_call: next.function_call,
+            requestTokens,
+            responseTokens,
+          }),
           requestBlocks,
           requestTokens,
           responseTokens,
@@ -254,11 +281,20 @@ async function runGlassChat(
     }
   })
 
-  const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${response}<|im_end|>`, request.model)
+  // TODO: handle counting tokens for function response
+  const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${response.content}<|im_end|>`, request.model)
 
-  responseData.push({ response, requestTokens, responseTokens })
+  responseData.push({
+    response: response.content.trim(),
+    function_call: response.function_call,
+    requestTokens,
+    responseTokens,
+  })
   messagesSoFar.push(...messages)
-  messagesSoFar.push({ role: 'assistant', content: response })
+  messagesSoFar.push({
+    role: 'assistant',
+    content: response.content.trim().length ? response.content.trim() : JSON.stringify(response.function_call, null, 2),
+  })
 
   return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
     responseData,
@@ -337,10 +373,10 @@ async function runGlassChatAnthropic(
       throw new Error(`HTTP error: ${r.status}`)
     }
     if (options?.progress) {
-      const responseTokens = tokenCounter.countTokens(next, request.model)
+      const responseTokens = tokenCounter.countTokens(next.content, request.model)
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+          responseData: responseData.concat({ response: next.content.trim(), requestTokens, responseTokens }),
           requestBlocks,
           requestTokens,
           responseTokens,
@@ -351,11 +387,11 @@ async function runGlassChatAnthropic(
     }
   })
 
-  const responseTokens = tokenCounter.countTokens(response, request.model)
+  const responseTokens = tokenCounter.countTokens(response.content, request.model)
 
-  responseData.push({ response: response.trim(), requestTokens, responseTokens })
+  responseData.push({ response: response.content.trim(), requestTokens, responseTokens })
   messagesSoFar.push(...messages)
-  messagesSoFar.push({ role: 'assistant', content: response.trim() })
+  messagesSoFar.push({ role: 'assistant', content: response.content.trim() })
 
   return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
     responseData,
@@ -455,10 +491,10 @@ async function runGlassCompletion(
       throw new Error(`HTTP error: ${r.status}`)
     }
     if (options?.progress) {
-      const responseTokens = tokenCounter.countTokens(next, request.model)
+      const responseTokens = tokenCounter.countTokens(next.content, request.model)
       return options.progress(
         handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.trim(), requestTokens, responseTokens }),
+          responseData: responseData.concat({ response: next.content.trim(), requestTokens, responseTokens }),
           requestBlocks,
           streaming: true,
           requestTokens,
@@ -469,11 +505,11 @@ async function runGlassCompletion(
     }
   })
 
-  const responseTokens = tokenCounter.countTokens(response, request.model)
+  const responseTokens = tokenCounter.countTokens(response.content, request.model)
 
-  responseData.push({ response: response.trim(), requestTokens, responseTokens })
+  responseData.push({ response: response.content.trim(), requestTokens, responseTokens })
   messagesSoFar.push(...messages)
-  messagesSoFar.push({ role: 'assistant', content: response.trim() })
+  messagesSoFar.push({ role: 'assistant', content: response.content.trim() })
 
   return handleRequestNode(docs.originalDoc, docs.interpolatedDoc, {
     responseData,
@@ -487,8 +523,8 @@ async function runGlassCompletion(
 
 async function handleStream(
   r: any,
-  processChunk: (currResult: string, eventData: any) => string,
-  progress: (nextVal: string) => void
+  processChunk: (currResult: LLMResponse, eventData: any) => LLMResponse,
+  progress: (nextVal: LLMResponse) => void
 ) {
   if (!r.ok) {
     throw new Error(`HTTP error: ${r.status}`)
@@ -498,7 +534,7 @@ async function handleStream(
     throw new Error(`Expected "text/event-stream" content type, but received "${r.headers.get('content-type')}"`)
   }
 
-  let fullResult = ''
+  let fullResult: LLMResponse = { content: '' }
   const decoder = new TextDecoder()
 
   let buffer = ''
@@ -550,24 +586,57 @@ async function handleStream(
   return fullResult
 }
 
-function handleChatChunk(currResult: string, eventData: { choices: { delta: { content: string } }[] }) {
+function handleChatChunk(
+  currResult: LLMResponse,
+  eventData: {
+    choices: {
+      delta: {
+        content: string | null
+        function_call: {
+          name: string
+          arguments: string
+        }
+      }
+    }[]
+  }
+) {
+  // console.log('handling chat chunk', eventData)
+  const choice = eventData.choices[0]
+  if (choice.delta.function_call) {
+    const newResult: LLMResponse = { ...currResult }
+    if (!newResult.function_call) {
+      newResult.function_call = {
+        name: '',
+        arguments: '',
+      }
+    }
+    if (choice.delta.function_call.name) {
+      newResult.function_call.name = choice.delta.function_call.name
+    }
+    if (choice.delta.function_call.arguments) {
+      newResult.function_call.arguments += choice.delta.function_call.arguments
+    }
+    return newResult
+  }
   if (eventData.choices[0].delta.content) {
-    const newResult = currResult + eventData.choices[0].delta.content
+    const newResult = { ...currResult }
+    newResult.content += eventData.choices[0].delta.content
     return newResult
   }
   return currResult
 }
 
-function handleAnthropicChunk(currResult: string, eventData: { completion: string }) {
+function handleAnthropicChunk(currResult: LLMResponse, eventData: { completion: string }) {
   if (eventData.completion) {
-    return eventData.completion
+    return { content: eventData.completion }
   }
   return currResult
 }
 
-function handleCompletionChunk(currResult: string, eventData: { choices: { text: string }[] }) {
+function handleCompletionChunk(currResult: LLMResponse, eventData: { choices: { text: string }[] }) {
   if (eventData.choices[0].text) {
-    const newResult = currResult + eventData.choices[0].text
+    const newResult = { ...currResult }
+    newResult.content += eventData.choices[0].text
     return newResult
   }
   return currResult

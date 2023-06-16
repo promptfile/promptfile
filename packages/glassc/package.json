@@ -46,7 +46,8 @@
     "prettier": "^2.8.8",
     "typescript": "^5.0.4",
     "yaml": "^2.3.0",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "zod-to-json-schema": "^3.21.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",

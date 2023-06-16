@@ -106,7 +106,12 @@ export function handleRequestNode(
   interpolatedDoc: string,
   request: {
     requestBlocks: RequestData[]
-    responseData: { response: string; requestTokens?: number; responseTokens?: number }[]
+    responseData: {
+      response: string
+      function_call?: { name: string; arguments: string } | null
+      requestTokens?: number
+      responseTokens?: number
+    }[]
     streaming: boolean
     requestTokens?: number
     responseTokens?: number
@@ -195,7 +200,12 @@ export function handleRequestNode(
 
 const requestNodeReplacement = (
   request: RequestData,
-  responseData: { response: string; requestTokens?: number; responseTokens?: number },
+  responseData: {
+    response: string
+    function_call?: { name: string; arguments: string } | null
+    requestTokens?: number
+    responseTokens?: number
+  },
   streaming: boolean
 ) => {
   const args: Record<string, any> = {
@@ -221,11 +231,15 @@ const requestNodeReplacement = (
   if (cost !== 0) {
     args.cost = cost.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 5 })
   }
+
+  const response =
+    responseData.function_call != null ? JSON.stringify(responseData.function_call, null, 2) : responseData.response
+
   const argAttributes: string = Object.entries(args).reduce((acc, [key, value]) => {
     return acc + ` ${key}=${typeof value === 'string' ? `"${value}"` : `{${JSON.stringify(value)}}`}`
   }, '')
   return `<Assistant${argAttributes}>
-${responseData.response}${streaming ? '█' : ''}
+${response}${streaming ? '█' : ''}
 </Assistant>`
 }
 

@@ -260,6 +260,13 @@ export interface RequestData {
   }) => Promise<any>
 }
 
+export interface FunctionData {
+  name: string
+  description: string
+  schema: any
+  run: (data: any) => Promise<any>
+}
+
 export function parseGlassRequestBlock(node: GlassContent): RequestData {
   const modelAttr = node.attrs!.find(a => a.name === 'model')
   // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
