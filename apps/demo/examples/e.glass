@@ -1,8 +1,4 @@
-You may be wondering what's happening outside of the blocks themselves. Let's learn about that now!
-
-Everything outside of the code blocks is actually just code. The default language is TypeScript, but Glass also supports Python and JavaScript (with more coming soon).
-
-You can use this code to load data, define variables, import libraries, and more. You can even use it to define your own functions and classes, which you can then use inside of the prompt blocks.
+What if you want to run code in your Glass file? Good news — there's a Code element, just for that purpose! Right now Glass only supports Typescript / Javascript in the code blocks, but we are looking to expand language support soon.
 
 <Code>
 const userProfile = {
@@ -16,8 +12,7 @@ const userProfile = {
 }
 </Code>
 
-now, use the response in code
-
+now, use the response in code:
 <System>
 You are having a conversation with the following User:
 

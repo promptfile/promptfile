@@ -149,5 +149,5 @@ This is the level of depth of the content the student wants to learn. The lowest
 ${input}
 </User>
 
-// gpt-4 is particularly useful for this example — try it out!
+gpt-4 is particularly useful for this example — try it out!
 <Request model="gpt-4" />

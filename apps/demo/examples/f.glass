@@ -1,4 +1,4 @@
-Glass provides a powerful way to work with few shots. We can load up our examples in code and then loop through them using a <For /> block.
+Glass provides a powerful way to work with few shots. We can load up our examples in code and then loop through them using a For block.
 
 <Code>
 const examples = [
