@@ -1,4 +1,4 @@
-Welcome to Glass! Glass is a domain-specific language (DSL) for working with language models. Glass combines the power of your favorite programming language (Typescript, Javascript, or Python) with a declarative syntax for constructing prompts for language models. This provides a flexible and powerful way to interact with various language models across different platforms.
+Welcome to Glass! Glass is a domain-specific language (DSL) for working with language models. Glass combines the power of your favorite programming language (Typescript & Javascript supported today) with a declarative syntax for constructing prompts for language models. This provides a flexible and powerful way to interact with various language models across different platforms.
 
 To help you learn Glass, we'll work through a few examples together and build some LLM applications. We'll start simple by using the `gpt-3.5-turbo` model from OpenAI to generate haikus.
 
