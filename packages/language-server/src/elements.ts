@@ -160,6 +160,40 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
+    name: 'Function',
+    documentation: 'Sets a function the Glass runtime can call',
+    detail: '(element) define a function',
+    closingType: 'selfClosing',
+    attributes: [
+      {
+        name: 'name',
+        detail: 'name of the function',
+        documentation: 'The `name` attribute defines the name of the function.',
+        type: 'string',
+      },
+      {
+        name: 'description',
+        detail: 'description of the function',
+        documentation: 'The `description` attribute defines the description of the function.',
+        type: 'string',
+      },
+      {
+        name: 'schema',
+        detail: 'schema of the function',
+        documentation: 'The `schema` attribute defines the schema of the function.',
+        type: 'object',
+        insertText: 'schema={z.object({$1})}',
+      },
+      {
+        name: 'run',
+        detail: 'code to run when the function is called',
+        documentation: 'The `run` attribute defines the code to run when the function is called.',
+        type: 'function',
+        insertText: 'run={(arg) => {$1}}',
+      },
+    ],
+  },
+  {
     name: 'Request',
     documentation: 'Creates a model inference',
     detail: '(inference) API request to a model',
@@ -198,6 +232,7 @@ export const glassElements: GlassElement[] = [
         documentation: 'The `onResponse` attribute allows you to define a callback for the response.',
         type: 'function',
         optional: true,
+        insertText: 'onResponse={(response) => {$1}}',
       },
     ],
   },

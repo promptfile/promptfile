@@ -59,6 +59,43 @@
     }
   ],
   "repository": {
+    "function-element": {
+      "begin": "^(<)(Function)(?=[\\s\\/\\>\\{])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.function.name"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.tsx#jsx-tag-attribute-name"
+        },
+        {
+          "include": "source.tsx#jsx-tag-attribute-assignment"
+        },
+        {
+          "include": "source.tsx#jsx-string-double-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-string-single-quoted"
+        },
+        {
+          "include": "source.tsx#jsx-evaluated-code"
+        }
+      ],
+      "end": "(?:(\\/)\\s*)?(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.self-closing.jsx"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
     "flow-expression": {
       "begin": "^(.*)(\\$\\{)",
       "end": "(\\})(.*)$",
@@ -535,10 +572,6 @@
           "include": "text.html.markdown"
         }
       ]
-    },
-    "line-comments": {
-      "name": "source.glass.highlight",
-      "match": "^//.*$"
     },
     "request-element": {
       "begin": "^(<)(Request)(?=[\\s\\/\\>\\{])",
