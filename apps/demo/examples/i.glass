@@ -1,24 +1,19 @@
----
-language: typescript
----
+Let's try combining some of these concepts to create a multi-part prompt.
+This introduces conditionals — the idea that parts of the prompt can be used depending on certain conditions.
 
-// As you've probably noticed, Glass files can contain more than just the prompt.
-// We can store data in the Glass file as well!
-
-// This works just like `useState` in React
-const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
+const isLongConversation = numMessages > 2
 
-// First, let's increment the numMessages by 1 when we execute the file
-setNumMessages(numMessages + 1)
+<System if={!isLongConversation}>
+You are ChatGPT. Reply to the user in a helpful and polite manner.
+</System>
 
-<System>
-You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
+<System if={isLongConversation}>
+You are AnnoyedGPT. Reply to the user as though you are very annoyed by their message. Mention that you might want to end the conversation. Refuse to answer any questions they ask.
 </System>
 
 <User>
 ${input}
 </User>
 
-// The `onResponse` attribute lets you execute code with the response from the LLM.
-<Request model="gpt-3.5-turbo" onResponse={response => setLastMessageText(response.message)} />
+<Request model="gpt-3.5-turbo" onResponse={() => setNumMessages(numMessages + 1)} />

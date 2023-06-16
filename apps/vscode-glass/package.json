@@ -191,6 +191,13 @@
             }
           },
           {
+            "scope": "source.glass.void",
+            "settings": {
+              "foreground": "#7a7a7a",
+              "fontStyle": "italic"
+            }
+          },
+          {
             "scope": "source.glass.test.name",
             "settings": {
               "foreground": "#FFB454",

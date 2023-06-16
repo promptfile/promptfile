@@ -1,8 +1,8 @@
-// Let's move on to prompt chaining. Glass allows you to establish a chain of prompts and responses, all within a single Glass file. This is useful for using the output of one prompt as the input for another prompt. Let's see how this works.
+Let's move on to prompt chaining. Glass allows you to establish a chain of prompts and responses, all within a single Glass file. This is useful for using the output of one prompt as the input for another prompt. Let's see how this works.
 
-// We're going to recreate the SimpleSequential chain from LangChain's documentation (https://python.langchain.com/en/latest/modules/chains/generic/sequential_chains.html). Chaining is as simple as using multiple Request elements in a single Glass file.
+We're going to recreate the SimpleSequential chain from LangChain's documentation (https://python.langchain.com/en/latest/modules/chains/generic/sequential_chains.html). Chaining is as simple as using multiple Request elements in a single Glass file.
 
-// First, let's get the title of the play from the user.
+First, let's get the title of the play from the user.
 
 <User>
 You are a highly-skilled playwright. Below, I will provide the title of a fictional play. Please respond with a full synopsis of the play based on my title.
@@ -10,10 +10,10 @@ You are a highly-skilled playwright. Below, I will provide the title of a fictio
 Title: "${title}"
 </User>
 
-// We'll use gpt-3.5-turbo to generate a synopsis based on the title.
+We'll use gpt-3.5-turbo to generate a synopsis based on the title.
 <Request model="gpt-3.5-turbo" />
 
-// Next, we'll immediately append another User prompt block to the chain.  This time, we'll ask the Assistant to respond with a review of the play.
+Next, we'll immediately append another User prompt block to the chain.  This time, we'll ask the Assistant to respond with a review of the play.
 <User>
 You are now a play critic from the New York Times. Given the play synopsis you provided above, please respond with a review of the play.
 </User>

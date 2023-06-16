@@ -1,18 +1,18 @@
-// Awesome, you're well on your way to working with Glass!
+Awesome, you're well on your way to working with Glass!
 
-// Being able to run a prompt once is great, but what if you want to run it multiple times? Language models are particularly skilled at back-and-forth conversations, so let's try that out.
+Being able to run a prompt once is great, but what if you want to run it multiple times? Language models are particularly skilled at back-and-forth conversations, so let's try that out.
 
-// Instead of typing your input into the `User` block, let's use a variable instead.
+Instead of typing your input into the `User` block, let's use a variable instead.
 
-// same System prompt as before...
+same System prompt as before...
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-// ... but let's use a variable for the User's input!
+... but let's use a variable for the User's input!
 <User>
 ${myFirstVariable}
 </User>
 
-// Remember, cmd+enter (Mac) / ctrl+enter (Windows) to run in the Playground!
+Remember, cmd+enter (Mac) / ctrl+enter (Windows) to run in the Playground!
 <Request model="gpt-3.5-turbo" />

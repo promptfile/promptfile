@@ -51,7 +51,8 @@
       "include": "#for-element"
     },
     {
-      "include": "SOURCE_LANGUAGE"
+      "match": ".",
+      "name": "source.glass.void"
     }
   ],
   "repository": {
