@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.13.0
+
+### Minor Changes
+
+- [`00dc952`](https://github.com/glass-lang/glass/commit/00dc952ec53d82ebcb0d59212f5f4d09f7cc242b) Thanks [@elliottburris](https://github.com/elliottburris)! - new syntax with code block
+
 ## 0.12.1
 
 ### Patch Changes
