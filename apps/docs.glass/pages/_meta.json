@@ -1,13 +1,12 @@
 {
   "index": "Introduction",
   "quickstart": "Quickstart",
+  "examples": "Try Some Examples",
   "vscode": "VSCode Extension",
   "blocks": "Blocks",
   "playground": "Playground",
-  "events": "Events and State",
-  "languages": "Languages",
   "models": "Models",
-  "code": "Code & transpilation",
+  "code": "Code in Glass",
   "contact": {
     "title": "Platform ↗",
     "type": "page",

@@ -1,11 +1,18 @@
 import { Callout } from 'nextra/components'
 import { Tabs, Tab } from 'nextra-theme-docs'
+import Cards from '@/components/Cards/Cards'
+import { languages } from '@/data/languages'
+import Image from 'next/image'
 
 <Callout type="info">
   Note: Executing code inside your Glass file or transpiling your Glass prompt to use in your project is highly
   experimental and presents challenges to some users. We are actively working on improving it. If you want to use Glass
-  in your project, message us on [Discord](https://discord.com/invite/H64PFP2DCc){' '}
+  in your project, message us on [Discord](https://discord.com/invite/H64PFP2DCc)
 </Callout>
+
+## Languages supported
+
+<Cards children={languages} />
 
 ## Executable Code
 
@@ -13,8 +20,7 @@ Glass has experimental support for an element called `<Code>` which lets you wri
 
 You can update your default langauge in [VSCode settings](/vscode) or by adding a language to the frontmatter of your file.
 
-```glass
-all text between prompt blocks is treated as code, including comments
+```glass copy filename="example.glass"
 
 <Code language="typescript">
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
@@ -28,29 +34,45 @@ ${myMessage}
 <Request model="gpt-3.5-turbo" />
 ```
 
-## Transpiling `.glass`
+## Event Handling: onResponse
 
-After perfecting your prompt, transpile it to your preferred language for integration with your codebase.
+Just like React's event handling, Glass has a similar event handling system. The `onResponse` function evaluates when the request has been made and the response is received. This is most useful for taking actions after a response has been received, such as updating the state of the Glass file.
 
-To transpile: run `Glass: transpile` from the VS Code Command Palette (`Command (⌘) + Shift (⇧) + P`).
+An example of a request with an `onResponse` function is shown below. You can access the response from the request by using the `.message` attribute of the response object.
 
-For an alternative language, modify the `Default Language Mode` setting in Glass settings. Note that Python transpilation is less tested than JavaScript or TypeScript transpilation. If you run into issues, please let us know on [Discord](https://discord.com/invite/H64PFP2DCc).
-
-## Using `.glass` in code
-
-You can now call the transpiled `example` function from your codebase.
-
-<Tabs items={['JavaScript / TypeScript']}>
-  <Tab>
-
-```typescript
-import { Glass } from './glass'
-
-const prompt = Glass.example({})
-
-console.log(prompt)
+```glass copy filename="example.glass"
+<Request model="gpt-4" onResponse = {response => {
+    someFunction(response.message)
+}} />
 ```
 
-  </Tab>
+## State Management: useState
 
-</Tabs>
+Just like React's [`useState`](https://react.dev/reference/react/useState) hook that allows you to add a state variable to your component. Glass also allows `useState`. By declaring a state variable:
+
+```glass copy filename="example.glass"
+<Code language="typescript">
+const [stateVariable, setStateVariable] = useState(initialValue)
+</Code>
+```
+
+You can then update the state variable by calling the `setStateVariable` function. This will add the updated state variable to the Glass file.
+
+```glass copy filename="example.glass"
+<Code language="typescript">
+const [stateVariable, setStateVariable] = useState(initialValue)
+setStateVariable(newValue)
+</Code>
+```
+
+Here is an example of `onResponse` and `useState` being used together:
+
+###
+
+<Image src="/screenshots/events_state.png" width={750} height={750} />
+
+When you look at the History tab in the [Playground](/playground), you can see the state variables being updated. You can also see the state variables being updated in the Glass file. The messages in the session are added to the `<Transcript>` block which keeps a running transcript of the conversation in the session.
+
+###
+
+<Image src="/screenshots/events_state_transcript.png" width={750} height={750} />

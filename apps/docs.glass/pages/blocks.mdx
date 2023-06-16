@@ -1,3 +1,5 @@
+import { Callout } from 'nextra/components'
+
 # What are Blocks?
 
 Blocks in Glass simplify LLM requests, making them easy to read and understand. They prevent common mistakes and give more power to create complicated interactions with the LLM.
@@ -14,7 +16,7 @@ Use the `<User>{:glass}` to designate the text coming from a human user.
 - **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once in the request, even if the condition is met multiple times.
 - **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the `<Transcript>{:glass}` block.
 
-```glass
+```glass copy filename="example.glass"
 <User if={true}>
 Hello AI!
 </User>
@@ -30,7 +32,7 @@ For Anthropic models, the `<System>{:glass}` block has the same effect `<User>{:
 
 - **if** <i>(optional condition)</i> <br/> Allows you to conditionally include the block.
 
-```glass
+```glass copy filename="example.glass"
 <System if={false}>
 This will not be included in the prompt :(
 </System>
@@ -38,7 +40,7 @@ This will not be included in the prompt :(
 
 ### Assistant
 
-Use the `<Assistant>{:glass}` to designate the text coming from the model.
+Use the `<Assistant>{:glass}` block to designate the text coming from the model.
 
 {/* - **name** <i>(optional string)</i> <br/> Assigns a name to the assistant. */}
 
@@ -47,10 +49,41 @@ Use the `<Assistant>{:glass}` to designate the text coming from the model.
 - **once** <i>(optional boolean)</i> <br/> If set to `true`, the block will only be included once in the request, even if the condition is met multiple times.
 - **transcript** <i>(optional boolean)</i> <br/> If set to `true`, the block will be added to the running `<Transcript>{:glass}` block.
 
-```glass
+```glass copy filename="example.glass"
 <Assistant if={true}>
 Hello human!
 </Assistant>
+```
+
+### Code
+
+<Callout type="info">
+  Note: Executing code inside your Glass file is still experimental and presents challenges to some users writing complex code. We encourage you to file a bug report on GitHub or message us on [Discord](https://discord.com/invite/H64PFP2DCc)
+</Callout>
+Use the `<Code>{:glass}` block to designate code to be run before the request is made. This is useful for defining variables and functions that can be used in other blocks.
+
+- **language** <i>(required enum)</i> <br/> The language of the code. Defaults to `javascript`. Currently only `javascript` and `typescript` is supported.
+
+```glass copy filename="example.glass"
+<Code language="typescript">
+const res = await fetch('https://elliottburris.com')
+const html = await res.text()
+</Code>
+
+<System>
+Your job is to answer questions based on the following website.
+
+###
+${html}
+###
+</System>
+
+<User>
+//ask a question like "Where did Elliott go to grad school?"
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
 ```
 
 ### Request
@@ -62,7 +95,7 @@ Use the `<Request />{:glass}` block to make an API request to a specified model,
 - **max_tokens** <i>(optional)</i> <br/> The maximum number of tokens to generate.
 - **onResponse** <i>(optional)</i> <br/> Function callback for when the response is received.
 
-```glass
+```glass copy filename="example.glass"
 <Request model="gpt-4" maxTokens={50} temperature={0.05} />
 ```
 
@@ -73,7 +106,7 @@ Use the `<For>{:glass}` block to loop over elements in an array. The text inside
 - **each** <i>(required)</i> <br/> The array to iterate over.
 - **as** <i>(required)</i><br/> The variable name for each item in the array. Use this variable within the `<For>{:glass}`
 
-```glass
+```glass copy filename="example.glass"
 <Code language="typescript">
 const examples = [{
   request: "Happy",
@@ -113,7 +146,7 @@ Use the `<Text>{:glass}` to add text inside another block. This is useful for ad
 
 - **if** <i>(optional)</i> <br/> Includes the block in the request only if the condition is met.
 
-```glass
+```glass copy filename="example.glass"
 <User>
 <Text if={true}>
 I love you!
@@ -131,7 +164,7 @@ I hate you!
 
 Use `<Test>{:glass}` to define test data to use when running the file.
 
-```glass
+```glass copy filename="example.glass"
 <Test>
 // input would usually be passed into the prompt as an argument
 // but Glass will use the test data instead when no arguments are provided
