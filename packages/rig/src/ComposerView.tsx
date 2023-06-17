@@ -2,41 +2,28 @@ import MonacoEditor from '@monaco-editor/react'
 import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 import { Resizable } from 're-resizable'
 import { useEffect, useRef, useState } from 'react'
-import { firstElement } from './util'
 
 interface ComposerViewProps {
   theme: string
-  run: (inputsToRun: Record<string, string>, sessionToRun: string) => void
+  run: (messageText: string | null) => void
   stop: () => void
   streaming: boolean
-  inputs: Record<string, string>
-  setValue: (key: string, value: string) => void
   session: string
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { inputs, setValue, streaming, run, stop, theme, session } = props
+  const { inputs, streaming, run, stop, theme, session } = props
 
   const inputsRef = useRef(inputs)
   const sessionRef = useRef(session)
 
-  const keys: string[] = Object.keys(inputs)
-  const firstKey = firstElement(keys)
-  const [activeKey, setActiveKey] = useState(firstKey ?? '')
+  useEffect(() => {
+    document.getElementById('composer-monaco')?.focus()
+  }, [])
 
   useEffect(() => {
-    if (!keys.includes(activeKey)) {
-      setActiveKey(firstElement(keys) ?? '')
-    }
-  }, [keys])
-
-  useEffect(() => {
-    document.getElementById('composer-input-0')?.focus()
-  }, [keys.length])
-
-  useEffect(() => {
-    inputsRef.current = inputs
     sessionRef.current = session
+    inputsRef.current = inputs
   }, [inputs, session])
 
   function mapVSCodeThemeToMonaco(theme: string) {
@@ -58,8 +45,7 @@ export const ComposerView = (props: ComposerViewProps) => {
   const [resizing, setResizing] = useState(false)
   const [height, setHeight] = useState(200)
   const [heightOnStart, setHeightOnStart] = useState(200)
-
-  const disabled = !Object.values(inputs).some(v => v.trim().length > 0)
+  const disabled = !Object.values(inputs).some(v => v.trim().length === 0)
 
   return (
     <Resizable
@@ -103,80 +89,31 @@ export const ComposerView = (props: ComposerViewProps) => {
             alignItems: 'center',
           }}
         >
-          {keys.length > 0 && (
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div style={{ display: 'flex', paddingLeft: '8px' }}>
-                {keys.map(key => {
-                  const isCurrentTab = key === activeKey
-                  const opacity = isCurrentTab ? 1 : 0.5
-                  const color = isCurrentTab ? 'white' : undefined
-                  const borderBottomColor = isCurrentTab ? 'white' : 'transparent'
-                  return (
-                    <div style={{ paddingRight: '24px' }} key={key}>
-                      <div
-                        style={{
-                          opacity,
-                          color,
-                          borderBottomStyle: 'solid',
-                          borderBottomWidth: '2px',
-                          borderBottomColor,
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          paddingBottom: '4px',
-                          paddingTop: '4px',
-                          paddingLeft: '8px',
-                          paddingRight: '8px',
-                        }}
-                        onClick={() => setActiveKey(key)}
-                        onMouseEnter={(event: any) => {
-                          event.target.style.opacity = '1.0'
-                        }}
-                        onMouseLeave={(event: any) => {
-                          event.target.style.opacity = opacity
-                        }}
-                      >
-                        {key}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-              {activeKey.length > 0 && (
-                <MonacoEditor
-                  key={activeKey}
-                  width="100%"
-                  height={`${height - 50}px`}
-                  theme={mapVSCodeThemeToMonaco(theme)}
-                  language={'markdown'}
-                  value={inputs[activeKey]}
-                  onChange={value => setValue(activeKey, value ?? '')}
-                  options={{
-                    minimap: {
-                      enabled: false,
-                    },
-                    padding: {
-                      top: 8,
-                    },
-                    wordWrap: 'on',
-                    fontSize: 12,
-                    lineDecorationsWidth: 0,
-                  }}
-                  onMount={(editor, monaco) => {
-                    editor.focus()
-                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-                      run(inputsRef.current, sessionRef.current)
-                    })
-                  }}
-                />
-              )}
-            </div>
-          )}
+          <MonacoEditor
+            width="100%"
+            height={`${height - 50}px`}
+            theme={mapVSCodeThemeToMonaco(theme)}
+            language={'markdown'}
+            value={text}
+            onChange={value => setText(value ?? '')}
+            options={{
+              minimap: {
+                enabled: false,
+              },
+              padding: {
+                top: 8,
+              },
+              wordWrap: 'on',
+              fontSize: 12,
+              lineDecorationsWidth: 0,
+            }}
+            onMount={(editor, monaco) => {
+              editor.focus()
+              editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                run(inputsRef.current, sessionRef.current, textRef.current)
+              })
+            }}
+          />
         </div>
         {streaming ? (
           <VSCodeButton style={{ width: '100%' }} appearance="secondary" onClick={stop} disabled={false}>
@@ -186,7 +123,7 @@ export const ComposerView = (props: ComposerViewProps) => {
           <VSCodeButton
             style={{ width: '100%' }}
             appearance={disabled ? 'secondary' : 'primary'}
-            onClick={() => run(inputsRef.current, sessionRef.current)}
+            onClick={() => run(inputsRef.current, sessionRef.current, textRef.current)}
             disabled={disabled}
           >
             Run

@@ -1,9 +1,5 @@
 <System>
-qwepfoijqwefpoij
+Here is something cool: ${input}
 </System>
-
-<User>
-${input}
-</User>
 
 <Request model="gpt-4" />

@@ -54,7 +54,7 @@ export function updateTokenCount(counter: vscode.StatusBarItem) {
     const fullTextTokens = countTokens(promptText)
     let selectedTextTokensCount = 0
 
-    const counterParts: string[] = [`${fullTextTokens} prompt token${fullTextTokens === 1 ? '' : 's'}`]
+    const counterParts: string[] = [`${fullTextTokens} token${fullTextTokens === 1 ? '' : 's'}`]
 
     // Check if there is a selection
     if (!editor.selection.isEmpty) {

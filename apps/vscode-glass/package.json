@@ -103,8 +103,8 @@
     "commands": [
       {
         "command": "glass.run",
-        "title": "Glass: run in Playground",
-        "description": "Runs a Glass file in Playground mode."
+        "title": "Glass: run",
+        "description": "Runs a Glass file."
       },
       {
         "command": "glass.settings",

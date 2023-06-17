@@ -1,10 +1,26 @@
-import { rewriteImports } from '@glass-lang/glassc'
+import { parseFrontmatterFromGlass, rewriteImports } from '@glass-lang/glassc'
+import {
+  LANGUAGE_MODELS,
+  LanguageModelCreator,
+  parseGlassBlocks,
+  parseGlassBlocksRecursive,
+} from '@glass-lang/glasslib'
 import * as crypto from 'crypto'
 import fs from 'fs'
 import * as os from 'os'
 import path from 'path'
 import * as vscode from 'vscode'
-import { generateULID } from './ulid'
+import { executeGlassFile } from '../runGlassExtension'
+import { getAnthropicKey, getOpenaiKey } from './keys'
+
+function getNonce() {
+  let text = ''
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+  for (let i = 0; i < 8; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length))
+  }
+  return text
+}
 
 export function getSessionDirectoryPath(filepath: string): string {
   let baseDir: string
@@ -41,23 +57,28 @@ export function getCurrentSessionFilepath(filepath: string): string | undefined 
   return path.join(sessionDirectory, lastSessionFile)
 }
 
-export function loadGlass(session: string) {
-  const glass = fs.readFileSync(session, 'utf-8')
-  return glass
-}
+function addFrontmatter(glass: string, file: string, sessionId: string, timestamp: string | undefined) {
+  return `---
+file: ${file}
+session: ${sessionId}
+timestamp: ${timestamp ?? new Date().toISOString()}
+---
 
-export function writeGlass(session: string, glass: string) {
-  fs.writeFileSync(session, glass)
-  return session
+${glass}`
 }
 
 export async function createSession(filepath: string): Promise<string> {
   const sessionDirectory = getSessionDirectoryPath(filepath)
-  const sessionId = generateULID()
-  const glass = fs.readFileSync(filepath, 'utf-8')
-  const updatedGlass = rewriteImports(glass, sessionDirectory, filepath)
+  const filename = path.basename(filepath)
+  const sessionId = getNonce()
+  let glass = fs.readFileSync(filepath, 'utf-8')
+  const blocks = parseGlassBlocks(glass)
+  glass = blocks.map(block => block.content).join('\n\n\n')
+  glass = addFrontmatter(glass, filename, sessionId, undefined)
+  glass = rewriteImports(glass, sessionDirectory, filepath)
   const sessionPath = path.join(sessionDirectory, `${sessionId}.glass`)
-  return writeGlass(sessionPath, updatedGlass)
+  fs.writeFileSync(sessionPath, glass)
+  return sessionPath
 }
 
 export async function loadSessionDocuments(filepath: string): Promise<vscode.TextDocument[]> {
@@ -81,4 +102,84 @@ export async function loadSessionDocuments(filepath: string): Promise<vscode.Tex
   }
 
   return sessionDocuments
+}
+
+export async function runGlassExtension(document: vscode.TextDocument, outputChannel: vscode.OutputChannel) {
+  const session = document.uri.fsPath
+  const glass = fs.readFileSync(session, 'utf-8')
+  const frontmatter = parseFrontmatterFromGlass(glass)
+  const elements = parseGlassBlocksRecursive(glass)
+  const requestElement = elements.find(element => element.tag === 'Request')
+  const model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
+  const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
+  if (!languageModel) {
+    await vscode.window.showErrorMessage(`Unable to find model ${model}`)
+    return
+  }
+  switch (languageModel.creator) {
+    case LanguageModelCreator.anthropic:
+      const anthropicKey = getAnthropicKey()
+      if (anthropicKey == null || anthropicKey === '') {
+        await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
+        await vscode.window.showErrorMessage('Add Anthropic API key to run Glass files.')
+        return
+      }
+      break
+    case LanguageModelCreator.openai:
+      const openaiKey = getOpenaiKey()
+      if (openaiKey == null || openaiKey === '') {
+        await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
+        await vscode.window.showErrorMessage('Add OpenAI API key to run Glass files.')
+        return
+      }
+      break
+  }
+
+  // Ensure a workspace is opened
+  if (!vscode.workspace.workspaceFolders) {
+    await vscode.window.showErrorMessage('No workspace opened')
+    return
+  }
+
+  try {
+    const resp = await executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
+      const withFrontmatter = addFrontmatter(
+        progress.nextGlassfile,
+        frontmatter.file,
+        frontmatter.session,
+        frontmatter.timestamp
+      )
+      fs.writeFileSync(session, withFrontmatter)
+      return true
+    })
+    const withFrontmatter = addFrontmatter(
+      resp.nextGlassfile,
+      frontmatter.file,
+      frontmatter.session,
+      frontmatter.timestamp
+    )
+    fs.writeFileSync(session, withFrontmatter)
+    if (resp.continued) {
+      await runGlassExtension(document, outputChannel)
+    } else {
+      const finalGlassfile = `${withFrontmatter}
+
+<User>
+
+</User>
+
+<Request model="${model}" />`
+      fs.writeFileSync(session, finalGlassfile)
+      const lines = finalGlassfile.split('\n')
+      const position = new vscode.Position(lines.length - 4, 0)
+      const selection = new vscode.Selection(position, position)
+      const activeEditor = vscode.window.activeTextEditor
+      if (activeEditor && activeEditor.document === document) {
+        activeEditor.selection = selection
+      }
+    }
+  } catch (error) {
+    console.error(error)
+    void vscode.window.showErrorMessage(`ERROR: ${error}`)
+  }
 }

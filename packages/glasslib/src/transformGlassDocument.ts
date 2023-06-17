@@ -142,18 +142,18 @@ const requestNodeReplacement = (
   if (request.stopSequence != null) {
     args.stopSequence = request.stopSequence
   }
-  let cost = 0
-  if (responseData.requestTokens) {
-    args.requestTokens = responseData.requestTokens
-    cost += model!.costPrompt(responseData.requestTokens)
-  }
-  if (responseData.responseTokens) {
-    args.responseTokens = responseData.responseTokens
-    cost += model!.costCompletion(responseData.responseTokens)
-  }
-  if (cost !== 0) {
-    args.cost = cost.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 5 })
-  }
+  // let cost = 0
+  // if (responseData.requestTokens) {
+  //   args.requestTokens = responseData.requestTokens
+  //   cost += model!.costPrompt(responseData.requestTokens)
+  // }
+  // if (responseData.responseTokens) {
+  //   args.responseTokens = responseData.responseTokens
+  //   cost += model!.costCompletion(responseData.responseTokens)
+  // }
+  // if (cost !== 0) {
+  //   args.cost = cost.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 5 })
+  // }
 
   const response =
     responseData.function_call != null ? JSON.stringify(responseData.function_call, null, 2) : responseData.response
