@@ -24,6 +24,9 @@
       ]
     },
     {
+      "include": "#function-element"
+    },
+    {
       "include": "#tool-element"
     },
     {
@@ -424,14 +427,14 @@
         }
       }
     },
-    "functions-element": {
-      "begin": "^(<)(Functions)(>)$",
+    "function-element": {
+      "begin": "^(<)(Function)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.functions.name"
+          "name": "source.glass.function.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -439,10 +442,10 @@
       },
       "patterns": [
         {
-          "include": "source.js"
+          "include": "text.html.markdown"
         }
       ],
-      "end": "^(<\\/)(Functions)(>)$",
+      "end": "^(<\\/)(Function)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
