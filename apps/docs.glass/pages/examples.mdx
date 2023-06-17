@@ -11,7 +11,6 @@ The Glass Cookbook includes examples to help you get started with Glass. You can
 
 Here you can declare variables that you can change at each request. It is also how you create an interactive chat.
 
-
 ```glass copy filename="haiku.glass"
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
@@ -26,7 +25,7 @@ ${myFirstVariable}
 
 ### Access Code in Your Prompt
 
-Using a `<Code>{:glass}` block, you can execute code to do things like access a user's profile. In this example, you can see how you could use 
+Using a `<Code>{:glass}` block, you can execute code to do things like access a user's profile. In this example, you can see how you could use a user profile in our prompt to make the conversation more personal.
 
 ```glass copy filename="executeCode.glass"
 <Code language="typescript">
@@ -57,8 +56,9 @@ ${input}
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Fetch information from somewhere as code
+### Fetch information using code
 
+You could also fetch information from somewhere else, like your database or a website.In this example, we'll fetch the HTML from a website and use it in our prompt. Ask it something like: "Where did Elliott go to grad school?" or "Where has Elliott worked?"
 
 ```glass copy filename="websiteChat.glass"
 <Code language="typescript">
@@ -75,9 +75,7 @@ ${html}
 ###
 </System>
 
-// Ask a question about elliott burris that can be answered from his website:
-// - "where did elliott go to graduate school?"
-// - "what is elliott's email?"
+
 <User>
 ${input}
 </User>
@@ -85,21 +83,23 @@ ${input}
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Add State to your Chatbot
+### Add a state to your chat
+
+Using the `useState` hook, you can add state to your chat. This allows you to keep track of things like the number of messages sent or the last message sent by the user.
+
+In this case, we initialize an empty string as the last message sent by the user and 0 as the number of messages sent. Then, we increment the number of messages sent each time the user sends a message and update the last message sent by the user.
+
+You can also see the `onResponse` attribute which lets you execute code based on the response from the LLM request. In this case, we update the last message sent by the user with the response from the LLM request.
 
 ```glass copy filename="state.glass"
 <Code language="typescript">
-// This works just like `useState` in React
+
 const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
 
-// First, let's increment the numMessages by 1 when we execute the file
 setNumMessages(numMessages + 1)
 </Code>
 
-awesome! we've now set state in the file itself. pretty crazy!
-
-let's actually use the state in a prompt
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
 </System>
@@ -108,11 +108,12 @@ You are FunnyGPT. Respond to the user with a message that's maximally likely to 
 ${input}
 </User>
 
-// The `onResponse` attribute lets you execute code with the response from the LLM.
 <Request model="gpt-3.5-turbo" onResponse={response => setLastMessageText(response.message)} />
 ```
 
 ### Chain two prompts together
+
+For more complicated prompts, you often need the ability to make multiple requests to achieve your goal. In this example, we'll chain two prompts together to create a play synopsis and a review of the play.
 
 ```glass copy filename="promptChaining.glass"
 <User>
@@ -121,11 +122,8 @@ You are a highly-skilled playwright. Below, I will provide the title of a fictio
 Title: "${title}"
 </User>
 
-We'll use gpt-3.5-turbo to generate a synopsis based on the title.
 <Request model="gpt-3.5-turbo" />
 
-
-Next, we'll immediately append another User prompt block to the chain.  This time, we'll ask the Assistant to respond with a review of the play.
 <User>
 You are now a play critic from the New York Times. Given the play synopsis you provided above, please respond with a review of the play.
 </User>
@@ -134,6 +132,8 @@ You are now a play critic from the New York Times. Given the play synopsis you p
 ```
 
 ### Classify Comments as Questions or Complaints
+
+LLMs can also be great at understanding semantic meaning and classifying text. In this example, we see the usage of the `<For>` block which allows you to iterate through an array of examples. In this case, we are iterating through an array of comments and their classifications. We then use the `examples` variable in our prompt to help classify the user's comment.
 
 ```glass copy filename="classify.glass"
 <Code language="typescript">
@@ -178,15 +178,20 @@ ${userMessage}
 <Request model="gpt-3.5-turbo" />
 ```
 
-## Use conditional logic in your prompt
+### Use conditional logic in your prompt
+
+In this example, you can use conditional logic to change what goes into your prompt based on a condition. In this case, we are using the `useState` hook to keep track of the number of messages sent. Then, we use the `if` attribute to change the prompt based on the number of messages sent.
 
 ```glass copy filename="conditionalLogic.glass"
+<Code language="typescript">
+const [numMessages, setNumMessages] = useState(0)
+</Code>
 <System if={!isLongConversation}>
-You are ChatGPT. Reply to the user in a helpful and polite manner.
+You are NickelbackGPT. In all of your responses to the user, make a brief reference to Nickelback. Only discuss things related to Nickelback.
 </System>
 
 <System if={isLongConversation}>
-You are AnnoyedGPT. Reply to the user as though you are very annoyed by their message. Mention that you might want to end the conversation. Refuse to answer any questions they ask.
+You are TaylorSwiftGPT. In all of your responses to the user, make a brief reference to Taylor Swift. Only discuss things related to Taylor Swift.
 </System>
 
 <User>
