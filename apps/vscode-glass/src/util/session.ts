@@ -4,6 +4,7 @@ import {
   LanguageModelCreator,
   parseGlassBlocks,
   parseGlassBlocksRecursive,
+  parseGlassTranscriptBlocks,
 } from '@glass-lang/glasslib'
 import * as crypto from 'crypto'
 import fs from 'fs'
@@ -12,15 +13,7 @@ import path from 'path'
 import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getAnthropicKey, getOpenaiKey } from './keys'
-
-function getNonce() {
-  let text = ''
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-  for (let i = 0; i < 8; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length))
-  }
-  return text
-}
+import { generateULID } from './ulid'
 
 export function getSessionDirectoryPath(filepath: string): string {
   let baseDir: string
@@ -64,13 +57,14 @@ session: ${sessionId}
 timestamp: ${timestamp ?? new Date().toISOString()}
 ---
 
+
 ${glass}`
 }
 
 export async function createSession(filepath: string): Promise<string> {
   const sessionDirectory = getSessionDirectoryPath(filepath)
   const filename = path.basename(filepath)
-  const sessionId = getNonce()
+  const sessionId = generateULID()
   let glass = fs.readFileSync(filepath, 'utf-8')
   const blocks = parseGlassBlocks(glass)
   glass = blocks.map(block => block.content).join('\n\n\n')
@@ -105,8 +99,13 @@ export async function loadSessionDocuments(filepath: string): Promise<vscode.Tex
 }
 
 export async function runGlassExtension(document: vscode.TextDocument, outputChannel: vscode.OutputChannel) {
+  // set document to active if it isn't already
+  const activeEditor = vscode.window.activeTextEditor
+  if (!activeEditor || activeEditor.document.uri.fsPath !== document.uri.fsPath) {
+    await vscode.window.showTextDocument(document)
+  }
   const session = document.uri.fsPath
-  const glass = fs.readFileSync(session, 'utf-8')
+  const glass = document.getText()
   const frontmatter = parseFrontmatterFromGlass(glass)
   const elements = parseGlassBlocksRecursive(glass)
   const requestElement = elements.find(element => element.tag === 'Request')
@@ -142,44 +141,90 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
   }
 
   try {
+    let isFirstLoad = true
     const resp = await executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
-      const withFrontmatter = addFrontmatter(
-        progress.nextGlassfile,
-        frontmatter.file,
-        frontmatter.session,
-        frontmatter.timestamp
+      if (isFirstLoad) {
+        // make a document edit to update the document with progress.nextGlassfile
+        const edit = new vscode.WorkspaceEdit()
+        const range = new vscode.Range(0, 0, document.lineCount, 0)
+        const withFrontmatter = addFrontmatter(
+          progress.nextGlassfile,
+          frontmatter.file,
+          frontmatter.session,
+          frontmatter.timestamp
+        )
+        edit.replace(document.uri, range, withFrontmatter)
+        await vscode.workspace.applyEdit(edit)
+        scrollToBottom(document)
+        isFirstLoad = false
+        return true
+      }
+
+      const currentGlass = document.getText()
+      const blocks = parseGlassTranscriptBlocks(currentGlass)
+      const streamingBlock = blocks.find(block => (block.child?.content ?? '').includes('█'))
+      if (!streamingBlock || !progress.response || !streamingBlock.child) {
+        return false
+      }
+      const edit = new vscode.WorkspaceEdit()
+      const range = new vscode.Range(
+        document.positionAt(streamingBlock.child.position.start.offset),
+        document.positionAt(streamingBlock.child.position.end.offset)
       )
-      fs.writeFileSync(session, withFrontmatter)
+      edit.replace(document.uri, range, progress.response)
+      await vscode.workspace.applyEdit(edit)
+      scrollToBottom(document)
       return true
     })
-    const withFrontmatter = addFrontmatter(
-      resp.nextGlassfile,
-      frontmatter.file,
-      frontmatter.session,
-      frontmatter.timestamp
-    )
-    fs.writeFileSync(session, withFrontmatter)
+    if (!document.getText().includes('█')) {
+      return
+    }
+
+    // remove the █ character via document
+    const edit = new vscode.WorkspaceEdit()
+    const location = document.getText().indexOf('█')
+    edit.delete(document.uri, new vscode.Range(document.positionAt(location), document.positionAt(location + 1)))
     if (resp.continued) {
+      await vscode.workspace.applyEdit(edit)
+      scrollToBottom(document)
       await runGlassExtension(document, outputChannel)
     } else {
-      const finalGlassfile = `${withFrontmatter}
+      const addToGlassfile = `
+
 
 <User>
 
 </User>
 
+
 <Request model="${model}" />`
-      fs.writeFileSync(session, finalGlassfile)
+      // make a document edit to update the document with progress.nextGlassfile
+      const range = new vscode.Range(0, 0, document.lineCount, 0)
+      edit.insert(document.uri, range.end, addToGlassfile)
+      await vscode.workspace.applyEdit(edit)
+      scrollToBottom(document)
+      const finalGlassfile = document.getText()
       const lines = finalGlassfile.split('\n')
-      const position = new vscode.Position(lines.length - 4, 0)
+      const position = new vscode.Position(lines.length - 5, 0)
       const selection = new vscode.Selection(position, position)
       const activeEditor = vscode.window.activeTextEditor
-      if (activeEditor && activeEditor.document === document) {
+      if (activeEditor && activeEditor.document.uri.fsPath === document.uri.fsPath) {
         activeEditor.selection = selection
+        activeEditor.revealRange(selection)
       }
     }
   } catch (error) {
     console.error(error)
     void vscode.window.showErrorMessage(`ERROR: ${error}`)
+  }
+}
+
+function scrollToBottom(document: vscode.TextDocument) {
+  const activeEditor = vscode.window.activeTextEditor
+  if (activeEditor && activeEditor.document === document) {
+    const lastLine = document.lineCount - 1
+    const lastCharacter = document.lineAt(lastLine).text.length
+    const bottomPosition = new vscode.Position(lastLine, lastCharacter)
+    activeEditor.revealRange(new vscode.Range(bottomPosition, bottomPosition), vscode.TextEditorRevealType.Default)
   }
 }
