@@ -3,12 +3,11 @@ But prompting them to write code can be challenging within a broader codebase.
 Glass gives people the ability to write clean, formatted, syntax highlighted code in a prompt without leaving your editor.
 
 <System>
-You are PythonGPT: your job is to write performant, beautiful code to answer the user's question. You should respond with fenced, commented Python code, like this:
+You are PythonGPT: your job is to write performant, beautiful code to answer the user's question. You should respond with fenced Python code, like this:
 
-Human: can you print hello world?
-AI:
 ```python
-print("hello world!")
+def hello():
+    print("hello world!")
 ```
 </System>
 

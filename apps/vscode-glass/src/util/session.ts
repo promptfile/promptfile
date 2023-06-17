@@ -7,7 +7,6 @@ import {
   parseGlassTranscriptBlocks,
   removeGlassFrontmatter,
 } from '@glass-lang/glasslib'
-import * as crypto from 'crypto'
 import fs from 'fs'
 import * as os from 'os'
 import path from 'path'
@@ -31,10 +30,9 @@ export function getSessionDirectoryPath(filepath: string): string {
   if (!fs.existsSync(glasslogDir)) {
     fs.mkdirSync(glasslogDir)
   }
-
-  const relativePath = path.relative(baseDir, filepath)
-  const hashedPath = crypto.createHash('md5').update(relativePath).digest('hex')
-  const finalPath = path.join(glasslogDir, hashedPath)
+  // get filename
+  const filename = path.basename(filepath)
+  const finalPath = path.join(glasslogDir, filename)
   if (!fs.existsSync(finalPath)) {
     fs.mkdirSync(finalPath)
   }
