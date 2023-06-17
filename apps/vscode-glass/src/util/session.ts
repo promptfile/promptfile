@@ -224,6 +224,7 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
       const range = new vscode.Range(0, 0, document.lineCount, 0)
       edit.insert(document.uri, range.end, addToGlassfile)
       await vscode.workspace.applyEdit(edit)
+      await document.save()
       scrollToBottom(document)
       const finalGlassfile = document.getText()
       const lines = finalGlassfile.split('\n')
