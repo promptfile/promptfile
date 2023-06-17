@@ -8,7 +8,6 @@ interface ComposerViewProps {
   theme: string
   run: (inputsToRun: Record<string, string>, sessionToRun: string) => void
   stop: () => void
-  reload: () => void
   streaming: boolean
   inputs: Record<string, string>
   setValue: (key: string, value: string) => void

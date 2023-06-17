@@ -1,10 +1,9 @@
 import { GlassContent } from '@glass-lang/glasslib'
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
-import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
+import { SessionView } from './SessionView'
 import { TopperView } from './TopperView'
-import { TranscriptView } from './TranscriptView'
 import { lastElement } from './util'
 
 export interface GlassSession {
@@ -25,7 +24,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Transcript', 'History']
+  const tabs: string[] = ['Session', 'History']
 
   const [theme, setTheme] = useState('')
   const [requestId, setRequestId] = useState('')
@@ -231,21 +230,20 @@ function RigView() {
         reload={reload}
         openOutput={openOutput}
       />
-      {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
-      {/* {tab === 'State' && <StateView />} */}
-      {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
-      {tab === 'Transcript' && (
-        <ComposerView
+
+      {tab === 'Session' && (
+        <SessionView
           theme={theme}
-          reload={reload}
           run={run}
           stop={stop}
           streaming={streaming}
           inputs={inputs}
           setValue={setValue}
           session={session}
+          blocks={blocks}
         />
       )}
+      {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
     </div>
   )
 }
