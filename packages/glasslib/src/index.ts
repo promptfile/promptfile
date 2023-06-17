@@ -6,6 +6,7 @@ export {
   parseGlassBlocks,
   parseGlassBlocksRecursive,
   parseGlassDocument,
+  parseGlassTranscriptBlocks,
   reconstructGlassDocument,
 } from './parseGlassBlocks'
 export { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
