@@ -91,6 +91,11 @@ export function formatDocument(text: string) {
       finalText = `${finalText}\n\n<Request model="gpt-3.5-turbo" />`
     }
 
+    for (const element of glassElements) {
+      const regex = new RegExp(`<${element.name}(\\s+[^>]*)?>\\s*<\\/${element.name}>`, 'g')
+      finalText = finalText.replace(regex, `<${element.name}$1>\n\n</${element.name}>`)
+    }
+
     return finalText.trim()
   } catch (e) {
     return text
@@ -102,7 +107,7 @@ function wrapIfNoBlocks(text: string) {
 
   // If no tags are present, wrap the entire content in <User> </User> tags
   if (!hasTags) {
-    return `<User>\n${text}\n</User>`
+    return `<User>\n${text.trim()}\n</User>`
   }
 
   return text
