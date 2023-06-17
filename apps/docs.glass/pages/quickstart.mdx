@@ -1,6 +1,7 @@
 import { Callout } from 'nextra/components'
 import Image from 'next/image'
 import { Tab, Tabs } from 'nextra-theme-docs'
+import { Steps } from 'nextra-theme-docs'
 
 # Quickstart
 
@@ -8,7 +9,9 @@ This guide will get you all set up and ready to use the Glass language. We’ll 
 
 <Callout type="info">Note: the Glass language is in alpha and is subject to change.</Callout>
 
-## Installing the extension
+<Steps>
+
+### Installing the extension
 
 Working with Glass is easiest in Visual Studio Code via the Glass extension. This extension provides the following features:
 
@@ -18,7 +21,7 @@ Working with Glass is easiest in Visual Studio Code via the Glass extension. Thi
 
 Install the Glass VS code extension [here](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass). or via the VS Code extension marketplace. [Click here](/vscode) to review all configuration settings available in the extension.
 
-## Creating your first `.glass` file
+### Creating your first `.glass` file
 
 {/* Need to make the example much more simpler and not show off too much, also need to have it include the chat block */}
 
@@ -36,7 +39,7 @@ ${input}
 <Request model="gpt-3.5-turbo" />
 ```
 
-## Running in playground
+### Running in playground
 
 If it's your first time executing a Glass file, you'll be asked to input the API key for the specific model you are using in [VSCode settings](/vscode). All of Glass runs locally on your machine — your secret keys are never sent to any server.
 
@@ -47,3 +50,5 @@ When you are ready to run, either hit `Command (⌘) Enter (↩)` or run the Gla
 <br />
 
 <Image src="/screenshots/updated_playground.gif" width={750} height={750} />
+
+</Steps>
