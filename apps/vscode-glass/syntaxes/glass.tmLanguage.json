@@ -24,9 +24,6 @@
       ]
     },
     {
-      "include": "#transcript-element"
-    },
-    {
       "include": "#function-element"
     },
     {
@@ -199,46 +196,6 @@
         },
         "3": {
           "name": "source.glass.for.name"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.tsx#jsx-tag-attribute-name"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        }
-      ],
-      "end": "(?:(\\/)\\s*)?(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
-        },
-        "2": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
-    },
-    "transcript-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(Transcript)(?=[\\s\\/\\>\\{])",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
-        },
-        "3": {
-          "name": "source.glass.transcript.name"
         }
       },
       "patterns": [

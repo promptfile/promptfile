@@ -12,7 +12,6 @@ export function getDiagnostics(textDocument: TextDocument): Diagnostic[] {
     ...findRequestModelDiagnostics(textDocument),
     ...findEmptyBlocksDiagnostics(textDocument),
     // ...findFrontmatterDiagnostics(textDocument),
-    ...findMultipleTranscriptDiagnostics(textDocument),
   ]
 }
 
@@ -267,31 +266,6 @@ function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
     }
 
     return diagnostics
-  } catch {
-    return []
-  }
-}
-
-function findMultipleTranscriptDiagnostics(textDocument: TextDocument): Diagnostic[] {
-  try {
-    const parsed = parseGlassBlocks(textDocument.getText())
-    const transcriptTags = parsed.filter(tag => tag.tag === 'Transcript')
-    if (transcriptTags.length < 2) {
-      return []
-    }
-    return transcriptTags.map(tag => {
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range: {
-          start: textDocument.positionAt(tag.position.start.offset),
-          end: textDocument.positionAt(tag.position.end.offset),
-        },
-        message: `Duplicate <${tag.tag}> tags — only one per file.`,
-        source: 'glass',
-      }
-
-      return diagnostic
-    })
   } catch {
     return []
   }

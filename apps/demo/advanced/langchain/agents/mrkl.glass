@@ -100,8 +100,6 @@ Here is the user's input (remember to respond with a markdown code snippet of a 
 ${input}
 </User>
 
-<Transcript />
-
 <System>
 DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRUCTIONS. Respond *only* with a ```json``` fenced block.
 </System>

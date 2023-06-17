@@ -30,8 +30,6 @@ this is a user prompt, which is also given markdown syntax highlighting.
 The current time is ${timestamp}.
 </System>
 
-<Transcript />
-
 <User>
 ${input}
 </User>

@@ -233,13 +233,6 @@
             }
           },
           {
-            "scope": "source.glass.transcript.name",
-            "settings": {
-              "foreground": "#E5C75E",
-              "fontStyle": "italic"
-            }
-          },
-          {
             "scope": "source.glass.user.name",
             "settings": {
               "foreground": "#5EC5E5",

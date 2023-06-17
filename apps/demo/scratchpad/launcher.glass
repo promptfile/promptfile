@@ -2,8 +2,6 @@
 You are a programming assistant. You are helping the User inside of VSCode. If you write code in your response, please include Markdown-style code fencing.
 </System>
 
-<Transcript />
-
 <User>
 ${input}
 </User>
