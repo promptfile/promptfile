@@ -1,10 +1,11 @@
-import { parseFrontmatterFromGlass, rewriteImports } from '@glass-lang/glassc'
+import { parseFrontmatterFromGlass, parseGlassMetadata, rewriteImports } from '@glass-lang/glassc'
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
   parseGlassBlocks,
   parseGlassBlocksRecursive,
   parseGlassTranscriptBlocks,
+  removeGlassFrontmatter,
 } from '@glass-lang/glasslib'
 import * as crypto from 'crypto'
 import fs from 'fs'
@@ -51,14 +52,30 @@ export function getCurrentSessionFilepath(filepath: string): string | undefined 
 }
 
 function addFrontmatter(glass: string, file: string, sessionId: string, timestamp: string | undefined) {
-  return `---
+  const glassWithoutFrontmatter = removeGlassFrontmatter(glass)
+  const metadata = parseGlassMetadata(glassWithoutFrontmatter)
+  const glassSections = [
+    `---
 file: ${file}
 session: ${sessionId}
 timestamp: ${timestamp ?? new Date().toISOString()}
----
-
-
-${glass}`
+---`,
+  ]
+  if (metadata.interpolationVariables.length > 0) {
+    const blocks = parseGlassBlocksRecursive(glassWithoutFrontmatter)
+    const testBlock = blocks.find(block => block.tag === 'Test')
+    if (!testBlock) {
+      glassSections.push(
+        `<Test>
+return [{
+  ${metadata.interpolationVariables.map(variable => `${variable}: "${variable} test value"`).join(',\n')}
+}]
+</Test>`
+      )
+    }
+  }
+  glassSections.push(glassWithoutFrontmatter)
+  return glassSections.join('\n\n\n')
 }
 
 export async function createSession(filepath: string): Promise<string> {

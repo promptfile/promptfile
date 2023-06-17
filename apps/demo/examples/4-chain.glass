@@ -6,7 +6,7 @@ First, let's get the title of the play from the user.
 <User>
 You are a highly-skilled playwright. Below, I will provide the title of a fictional play. Please respond with a full synopsis of the play based on my title.
 
-Title: "${title}"
+Title: "A Night in Venice Beach"
 </User>
 
 We'll use gpt-3.5-turbo to generate a synopsis based on the title.

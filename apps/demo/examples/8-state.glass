@@ -18,7 +18,7 @@ You are FunnyGPT. Respond to the user with a message that's maximally likely to 
 </System>
 
 <User>
-${input}
+can you tell me a joke about kittens?
 </User>
 
 // The `onResponse` attribute lets you execute code with the response from the LLM.
