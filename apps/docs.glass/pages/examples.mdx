@@ -1,28 +1,118 @@
 import { Steps } from 'nextra-theme-docs'
+import { Callout } from 'nextra-theme-docs'
 
-# Examples Cookbook
+# Cookbook (Examples)
 
-Here is a [cookbook](https://www.quora.com/What-is-a-cookbook-in-programming-language) of examples to help you get started with Glass and show off some of its features.
+The Glass Cookbook includes examples to help you get started with Glass. You can also find examples in the demo [folder](https://github.com/glass-lang/glass/tree/main/apps/demo/examples).
 
 <Steps>
-## Hello
-### Haiku Chatbot
+
+### Add Variables to your Prompt
+
+Here you can declare variables that you can change at each request. It is also how you create an interactive chat.
+
 
 ```glass copy filename="haiku.glass"
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-...but let's use a variable for the User's input!
 <User>
 ${myFirstVariable}
 </User>
 
-Remember, cmd+enter on Mac / ctrl+enter on Windows to run in the Playground!
 <Request model="gpt-3.5-turbo" />
 ```
 
-## Chain two prompts together
+### Access Code in Your Prompt
+
+Using a `<Code>{:glass}` block, you can execute code to do things like access a user's profile. In this example, you can see how you could use 
+
+```glass copy filename="executeCode.glass"
+<Code language="typescript">
+const userProfile = {
+  name: 'Jane Doe',
+  age: 25,
+  location: 'Philadelphia, PA',
+  occupation: 'Zoologist',
+  hobbies: ['juggling', 'hiking', 'basket weaving'],
+  favoriteColor: 'blue',
+  favoriteFood: 'tacos',
+}
+</Code>
+
+<System>
+You are having a conversation with the following User:
+
+###
+${JSON.stringify(userProfile)}
+###
+
+</System>
+
+<User>
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+```
+
+### Fetch information from somewhere as code
+
+
+```glass copy filename="websiteChat.glass"
+<Code language="typescript">
+const res = await fetch('https://elliottburris.com')
+const html = await res.text()
+</Code>
+
+
+<System>
+Your job is to answer questions based on the following website.
+
+###
+${html}
+###
+</System>
+
+// Ask a question about elliott burris that can be answered from his website:
+// - "where did elliott go to graduate school?"
+// - "what is elliott's email?"
+<User>
+${input}
+</User>
+
+<Request model="gpt-3.5-turbo" />
+```
+
+### Add State to your Chatbot
+
+```glass copy filename="state.glass"
+<Code language="typescript">
+// This works just like `useState` in React
+const [lastMessageText, setLastMessageText] = useState('')
+const [numMessages, setNumMessages] = useState(0)
+
+// First, let's increment the numMessages by 1 when we execute the file
+setNumMessages(numMessages + 1)
+</Code>
+
+awesome! we've now set state in the file itself. pretty crazy!
+
+let's actually use the state in a prompt
+<System>
+You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
+</System>
+
+<User>
+${input}
+</User>
+
+// The `onResponse` attribute lets you execute code with the response from the LLM.
+<Request model="gpt-3.5-turbo" onResponse={response => setLastMessageText(response.message)} />
+```
+
+### Chain two prompts together
 
 ```glass copy filename="promptChaining.glass"
 <User>
@@ -43,40 +133,7 @@ You are now a play critic from the New York Times. Given the play synopsis you p
 <Request model="gpt-4" />
 ```
 
-## Chatbot with a user with a user profile
-
-```glass copy filename="chatWithUserProfile.glass"
-<Code language="typescript">
-const userProfile = {
-  name: 'Jane Doe',
-  age: 25,
-  location: 'New York, NY',
-  occupation: 'Software Engineer',
-  hobbies: ['reading', 'hiking', 'cooking'],
-  favoriteColor: 'blue',
-  favoriteFood: 'pizza',
-}
-</Code>
-
-now, use the response in code:
-<System>
-You are having a conversation with the following User:
-
-###
-${JSON.stringify(userProfile)}
-###
-
-Only answer questions from the User based on the information above. Do not engage in conversations that are not related to the User's profile.
-</System>
-
-<User>
-${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-```
-
-## Classify Comments as Questions or Complaints
+### Classify Comments as Questions or Complaints
 
 ```glass copy filename="classify.glass"
 <Code language="typescript">
@@ -119,61 +176,6 @@ ${userMessage}
 </User>
 
 <Request model="gpt-3.5-turbo" />
-```
-
-## Chat with a website!
-
-```glass copy filename="websiteChat.glass"
-Be sure to `await` any async calls!
-<Code language="typescript">
-const res = await fetch('https://elliottburris.com')
-const html = await res.text()
-</Code>
-
-now we can use `html` in our prompt!
-<System>
-Your job is to answer questions based on the following website.
-
-###
-${html}
-###
-</System>
-
-// Ask a question about elliott burris that can be answered from his website:
-// - "where did elliott go to graduate school?"
-// - "what is elliott's email?"
-<User>
-${input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-```
-
-## Add State to your Chatbot
-
-```glass copy filename="state.glass"
-<Code language="typescript">
-// This works just like `useState` in React
-const [lastMessageText, setLastMessageText] = useState('')
-const [numMessages, setNumMessages] = useState(0)
-
-// First, let's increment the numMessages by 1 when we execute the file
-setNumMessages(numMessages + 1)
-</Code>
-
-awesome! we've now set state in the file itself. pretty crazy!
-
-let's actually use the state in a prompt
-<System>
-You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
-</System>
-
-<User>
-${input}
-</User>
-
-// The `onResponse` attribute lets you execute code with the response from the LLM.
-<Request model="gpt-3.5-turbo" onResponse={response => setLastMessageText(response.message)} />
 ```
 
 ## Use conditional logic in your prompt
