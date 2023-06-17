@@ -114,11 +114,9 @@ export async function loadSessionDocuments(filepath: string): Promise<vscode.Tex
 }
 
 export async function runGlassExtension(document: vscode.TextDocument, outputChannel: vscode.OutputChannel) {
-  // set document to active if it isn't already
-  const activeEditor = vscode.window.activeTextEditor
-  if (!activeEditor || activeEditor.document.uri.fsPath !== document.uri.fsPath) {
-    await vscode.window.showTextDocument(document)
-  }
+  const end = new vscode.Position(document.lineCount, 0)
+  const selection = new vscode.Selection(end, end)
+  await vscode.window.showTextDocument(document, { selection })
   const session = document.uri.fsPath
   const glass = document.getText()
   const frontmatter = parseFrontmatterFromGlass(glass)
@@ -223,16 +221,16 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
       edit.insert(document.uri, range.end, addToGlassfile)
       await vscode.workspace.applyEdit(edit)
       await document.save()
-      scrollToBottom(document)
-      const finalGlassfile = document.getText()
-      const lines = finalGlassfile.split('\n')
-      const position = new vscode.Position(lines.length - 5, 0)
-      const selection = new vscode.Selection(position, position)
-      const activeEditor = vscode.window.activeTextEditor
-      if (activeEditor && activeEditor.document.uri.fsPath === document.uri.fsPath) {
-        activeEditor.selection = selection
-        activeEditor.revealRange(selection)
+      const editor = vscode.window.visibleTextEditors.find(e => e.document.uri.fsPath === document.uri.fsPath)
+      if (editor) {
+        const finalGlassfile = document.getText()
+        const lines = finalGlassfile.split('\n')
+        const position = new vscode.Position(lines.length - 5, 0)
+        const selection = new vscode.Selection(position, position)
+        editor.selection = selection
+        editor.revealRange(selection, vscode.TextEditorRevealType.Default)
       }
+      scrollToBottom(document)
     }
   } catch (error) {
     console.error(error)
