@@ -63,7 +63,7 @@ const config: DocsThemeConfig = {
   chat: {
     link: 'https://discord.com/invite/H64PFP2DCc',
   },
-  docsRepositoryBase: 'https://github.com/glass-lang/glass/tree/main/apps/docs',
+  docsRepositoryBase: 'https://github.com/glass-lang/glass/tree/main/apps/docs.glass',
   // footer: {
   //   text: '© 2023 Glass. All rights reserved.',
   // },
@@ -71,8 +71,7 @@ const config: DocsThemeConfig = {
     component: () => <div />,
   },
   feedback: {
-    useLink: () =>
-      `https://github.com/glass-lang/glass/issues/new?title=Feedback%20for%20%E2%80%9CGlass%E2%80%9D&labels=feedback`,
+    useLink: () => `https://github.com/glass-lang/glass/issues/new/choose`,
   },
   navbar: {
     extraContent: (
