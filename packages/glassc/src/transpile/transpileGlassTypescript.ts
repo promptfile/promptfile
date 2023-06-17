@@ -310,7 +310,7 @@ export function transpileGlassFileTypescript(
   },
   openaiKey?: string,
   anthropicKey?: string,
-  progress?: (data: { nextGlassfile: string; transcript: { role: string, content: string, id: string}[]; response: string }) => void
+  progress?: (data: { nextGlassfile: string; response: string }) => void
 }`
 
   const code = `${imports.replace(/import .+ from ['"].+\.glass['"]/gm, '')}

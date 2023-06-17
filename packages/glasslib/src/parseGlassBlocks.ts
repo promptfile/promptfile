@@ -238,15 +238,6 @@ export function reconstructGlassDocument(nodes: { content: string; type: string 
   )
 }
 
-export function parseGlassTranscriptBlocks(glass: string): GlassContent[] {
-  const blocks = parseGlassBlocks(glass)
-  const transcript = blocks.find(b => b.tag === 'Transcript')
-  if (!transcript || !transcript.child) {
-    return []
-  }
-  return parseGlassBlocks(transcript.child.content)
-}
-
 export interface RequestData {
   model: string
   temperature?: number
@@ -254,7 +245,6 @@ export interface RequestData {
   stopSequence?: string[]
   onResponse?: (data: {
     message: string
-    addToTranscript: (tag: string, content: string) => void
     addToDocument: (tag: string, content: string, attrs?: any) => void
     continue: () => void
   }) => Promise<any>

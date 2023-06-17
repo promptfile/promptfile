@@ -1,45 +1,23 @@
 import { ulid } from 'ulid'
 import { LANGUAGE_MODELS } from './languageModels'
-import {
-  GlassContent,
-  RequestData,
-  parseGlassBlocks,
-  parseGlassDocument,
-  parseGlassTranscriptBlocks,
-  reconstructGlassDocument,
-} from './parseGlassBlocks'
-import { updateGlassBlockAttributes } from './updateGlassBlockAttributes'
+import { GlassContent, RequestData, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 
-export function addNodeToDocument(content: string, index: number, doc: string, replaceOnceNodes = false) {
+export function addNodeToDocument(content: string, index: number, doc: string) {
   const parsed = parseGlassDocument(doc)
   const nodes = parsed
     .slice(0, index)
     .concat({ content, type: 'block' } as any)
     .concat(parsed.slice(index))
-    .filter(b => (replaceOnceNodes ? !isOnceBlock(b) : true))
   return reconstructGlassDocument(nodes)
 }
 
-export function replaceDocumentNode(content: string, index: number, doc: string, replaceOnceNodes = false) {
+export function replaceDocumentNode(content: string, index: number, doc: string) {
   const parsed = parseGlassDocument(doc)
   const nodes = parsed
     .slice(0, index)
     .concat({ content, type: 'block' } as any)
     .concat(parsed.slice(index + 1))
-    .filter(b => (replaceOnceNodes ? !isOnceBlock(b) : true))
   return reconstructGlassDocument(nodes)
-}
-
-function isOnceBlock(block: GlassContent) {
-  const onceAttr = block.attrs?.find(attr => attr.name === 'once')
-  return (
-    onceAttr &&
-    ((onceAttr.stringValue == null && onceAttr.expressionValue == null) ||
-      onceAttr.stringValue?.toLowerCase() === 'true' ||
-      onceAttr?.expressionValue?.toLowerCase() === '"true"' ||
-      onceAttr?.expressionValue?.toLowerCase() === 'true' ||
-      onceAttr?.expressionValue?.toLowerCase() === "'true'")
-  )
 }
 
 export function replaceStateNode(newStateNode: string, doc: string) {
@@ -65,21 +43,6 @@ export function replaceStateNode(newStateNode: string, doc: string) {
   return replaceDocumentNode(newStateNode, stateIndex, doc)
 }
 
-export function addToTranscript(addToTranscript: { tag: string; content: string }[], doc: string) {
-  const parsedDoc = parseGlassDocument(doc)
-  const transcriptNodeDoc = parsedDoc.find(node => node.tag === 'Transcript')
-  const newDocTranscript =
-    '<Transcript>\n' +
-    (transcriptNodeDoc?.child?.content || '') +
-    '\n\n' +
-    addToTranscript.map(block => `<${block.tag}>\n${block.content}\n</${block.tag}>`).join('\n\n') +
-    '\n</Transcript>'
-
-  return {
-    doc: replaceTranscriptNode(newDocTranscript, doc, false),
-  }
-}
-
 export function addToDocument(addToDocument: { tag: string; content: string; attrs?: any }[], doc: string) {
   const bs = addToDocument
     .map(b => {
@@ -102,7 +65,6 @@ export function addToDocument(addToDocument: { tag: string; content: string; att
 }
 
 export function handleRequestNode(
-  uninterpolatedDoc: string,
   interpolatedDoc: string,
   request: {
     requestBlocks: RequestData[]
@@ -117,90 +79,43 @@ export function handleRequestNode(
     functionObservation?: string
     responseTokens?: number
     index: number
-  },
-  useId?: boolean
+  }
 ) {
-  const parsedInterpolated = parseGlassBlocks(interpolatedDoc)
-  const transcriptNode = parsedInterpolated.find(node => node.tag === 'Transcript')
-  const newRequestNode = requestNodeReplacement(
-    request.requestBlocks[request.index],
-    request.responseData[request.responseData.length - 1],
-    request.streaming,
-    request.functionObservation
-  )
-
-  const userAndAssistantBlocks: GlassContent[] = []
+  const parsedInterpolated = parseGlassDocument(interpolatedDoc)
+  const newBlocks: GlassContent[] = []
   let currRequest = 0
+
+  // TODO: add ulid to blocks
   for (const block of parsedInterpolated) {
     if (block.tag === 'Request') {
-      if (currRequest < request.index && request.responseData[currRequest] != null) {
-        userAndAssistantBlocks.push({
+      if (request.responseData[currRequest] != null) {
+        newBlocks.push({
           tag: 'Assistant',
           content: requestNodeReplacement(
             request.requestBlocks[currRequest],
             request.responseData[currRequest],
-            false,
+            currRequest < request.index ? false : request.streaming,
             request.functionObservation
           ),
+          // eslint-disable-next-line turbo/no-undeclared-env-vars
+          attrs: [{ name: 'id', stringValue: process.env.NODE_ENV === 'development' ? 'test-id' : ulid() }],
         } as any)
+      } else {
+        newBlocks.push(block)
       }
       currRequest++
-      if (currRequest > request.index) {
-        break
-      }
-    }
-    if (block.tag === 'User' || block.tag === 'Assistant') {
-      const transcriptAttr = block.attrs?.find(attr => attr.name === 'transcript')
-      if (
-        transcriptAttr &&
-        (transcriptAttr.stringValue?.toLowerCase() === 'false' ||
-          transcriptAttr.expressionValue?.toLowerCase() === 'false')
-      ) {
-        // ignore
-      } else {
-        userAndAssistantBlocks.push(block)
-      }
-    }
-  }
-
-  let transcriptContent = transcriptNode?.child?.content || ''
-  if (transcriptContent) {
-    transcriptContent += '\n\n'
-  }
-  if (userAndAssistantBlocks.length > 0) {
-    if (useId) {
-      transcriptContent += userAndAssistantBlocks
-        .map((block, i) => updateGlassBlockAttributes(block, { name: 'id', stringValue: ulid() }))
-        .join('\n\n')
     } else {
-      transcriptContent += userAndAssistantBlocks.map(block => block.content).join('\n\n')
+      newBlocks.push(block)
     }
   }
-  transcriptContent += (transcriptContent.length ? '\n\n' : '') + newRequestNode
 
   let response = request.responseData[request.responseData.length - 1].response
   if (request.streaming) {
     response += '█'
   }
 
-  const nextGlassfile = replaceTranscriptNode(
-    '<Transcript>\n' + transcriptContent + '\n</Transcript>',
-    uninterpolatedDoc,
-    true
-  )
-
-  const transcript = parseGlassTranscriptBlocks(nextGlassfile)
-  const transcriptNodes = transcript.map(t => {
-    return {
-      role: t.tag === 'User' ? 'user' : 'assistant',
-      content: t.child?.content || '',
-      id: t.attrs?.find(a => a.name === 'id')?.stringValue || ulid(),
-    }
-  })
-
   return {
-    nextGlassfile,
-    transcript: transcriptNodes,
+    nextGlassfile: reconstructGlassDocument(newBlocks),
     response,
   }
 }
@@ -247,6 +162,9 @@ const requestNodeReplacement = (
     args.type = 'function_call'
   }
 
+  // eslint-disable-next-line turbo/no-undeclared-env-vars
+  args.id = process.env.NODE_ENV === 'development' ? 'test-id' : ulid()
+
   const argAttributes: string = Object.entries(args).reduce((acc, [key, value]) => {
     return acc + ` ${key}=${typeof value === 'string' ? `"${value}"` : `{${JSON.stringify(value)}}`}`
   }, '')
@@ -267,20 +185,4 @@ export function replaceRequestNode(newRequestNode: string, doc: string) {
 
   const idx = parsed.indexOf(requestNode)
   return replaceDocumentNode(newRequestNode, idx, doc)
-}
-
-export function replaceTranscriptNode(newTranscriptNode: string, doc: string, replaceOnceNodes = false) {
-  const parsed = parseGlassDocument(doc)
-
-  const transNode = parsed.find(node => (node as any).tag === 'Transcript')
-  if (!transNode) {
-    // put transcript node at the index of the first non-state/test block
-    const firstBlockIndex = parsed.findIndex(
-      node => node.type === 'block' && node.tag !== 'State' && node.tag !== 'Test'
-    )
-    return addNodeToDocument(newTranscriptNode + '\n\n', firstBlockIndex, doc, replaceOnceNodes)
-  }
-
-  const idx = parsed.indexOf(transNode)
-  return replaceDocumentNode(newTranscriptNode, idx, doc, replaceOnceNodes)
 }

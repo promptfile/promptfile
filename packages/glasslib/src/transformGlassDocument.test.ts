@@ -1,12 +1,6 @@
 import { expect } from 'chai'
 import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
-import {
-  addNodeToDocument,
-  addToTranscript,
-  handleRequestNode,
-  replaceDocumentNode,
-  replaceStateNode,
-} from './transformGlassDocument'
+import { addNodeToDocument, handleRequestNode, replaceDocumentNode, replaceStateNode } from './transformGlassDocument'
 
 describe('transformGlassDocument', () => {
   it('should parse document nodes and recreate document', () => {
@@ -44,24 +38,6 @@ hello world`
     expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
     expect(parseGlassDocument(doc)).to.have.length(1)
   })
-
-  //   it('should parse document nodes and recreate document', () => {
-  //     const doc = `hello world
-
-  // <Repeat>
-  // <User>
-  // \${input}
-  // </User>
-
-  // interstitial
-
-  // <Request model="gpt-4" />
-  // </Repeat>
-
-  // done`
-
-  //     expect(reconstructGlassDocument(parseGlassDocument(doc))).to.equal(doc)
-  //   })
 
   it('should add node to document', () => {
     const doc = `---
@@ -186,17 +162,7 @@ hello
   })
 
   describe('handleRequestNode', () => {
-    it('shoudl handle request without transcript', () => {
-      const origDoc = `---
-language: typescript
----
-
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />`
-
+    it('should handle request without transcript', () => {
       const interpDoc = `---
 language: typescript
 ---
@@ -207,7 +173,7 @@ hello world
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, {
+      const res = handleRequestNode(interpDoc, {
         responseData: [{ response: '' }],
         streaming: true,
         requestBlocks: [{ model: 'gpt-4' }],
@@ -218,83 +184,16 @@ hello world
 language: typescript
 ---
 
-<Transcript>
 <User>
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature={1}>
+<Assistant model="gpt-4" temperature={1} id="test-id">
 █
-</Assistant>
-</Transcript>
-
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />`)
+</Assistant>`)
     })
 
-    it('shoudl handle request without skipped blocks', () => {
-      const origDoc = `---
-language: typescript
----
-
-<User transcript={false}>
-\${input}
-</User>
-
-<Request model="gpt-4" />`
-
-      const interpDoc = `---
-language: typescript
----
-
-<User transcript={false}>
-hello world
-</User>
-
-<Request model="gpt-4" />`
-
-      const res = handleRequestNode(origDoc, interpDoc, {
-        responseData: [{ response: '' }],
-        streaming: true,
-        requestBlocks: [{ model: 'gpt-4' }],
-        index: 0,
-      })
-      expect(res.response).to.equal('█')
-      expect(res.nextGlassfile).to.equal(`---
-language: typescript
----
-
-<Transcript>
-<Assistant model="gpt-4" temperature={1}>
-█
-</Assistant>
-</Transcript>
-
-<User transcript={false}>
-\${input}
-</User>
-
-<Request model="gpt-4" />`)
-    })
-
-    it('shoudl handle multiple request', () => {
-      const origDoc = `<User>
-You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
-
-Title: \${title}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-
-<User>
-You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
-</User>
-
-<Request model="gpt-3.5-turbo" />`
-
+    it('should handle multiple request', () => {
       const interpDoc = `<User>
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
 
@@ -309,21 +208,20 @@ You are a play critic from the New York Times. Given the synopsis you provided a
 
 <Request model="gpt-4" />`
 
-      const res = handleRequestNode(origDoc, interpDoc, {
+      const res = handleRequestNode(interpDoc, {
         responseData: [{ response: 'goodbye' }, { response: 'world' }],
         streaming: false,
         requestBlocks: [{ model: 'gpt-3.5-turbo' }, { model: 'gpt-4' }],
         index: 1,
       })
       expect(res.response).to.equal('world')
-      expect(res.nextGlassfile).to.equal(`<Transcript>
-<User>
+      expect(res.nextGlassfile).to.equal(`<User>
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
 
 Title: hello world
 </User>
 
-<Assistant model="gpt-3.5-turbo" temperature={1}>
+<Assistant model="gpt-3.5-turbo" temperature={1} id="test-id">
 goodbye
 </Assistant>
 
@@ -331,198 +229,9 @@ goodbye
 You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
 </User>
 
-<Assistant model="gpt-4" temperature={1}>
+<Assistant model="gpt-4" temperature={1} id="test-id">
 world
-</Assistant>
-</Transcript>
-
-<User>
-You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
-
-Title: \${title}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-
-<User>
-You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
-</User>
-
-<Request model="gpt-3.5-turbo" />`)
+</Assistant>`)
     })
-
-    it('shoudl handle request with once block', () => {
-      const origDoc = `<System>
-You are a helpful assistant.
-</System>
-
-<User once="true">
-\${input}
-</User>
-
-<Transcript />
-
-<Request model="gpt-3.5-turbo" />`
-
-      const interpDoc = `<System>
-You are a helpful assistant.
-</System>
-
-<User once="true">
-hello world
-</User>
-
-<Transcript />
-
-<Request model="gpt-3.5-turbo" />`
-
-      const res = handleRequestNode(origDoc, interpDoc, {
-        responseData: [{ response: '' }],
-        streaming: true,
-        requestBlocks: [{ model: 'gpt-4' }],
-        index: 0,
-      })
-      expect(res.response).to.equal('█')
-      expect(res.nextGlassfile).to.equal(`<System>
-You are a helpful assistant.
-</System>
-
-
-
-<Transcript>
-<User once="true">
-hello world
-</User>
-
-<Assistant model="gpt-4" temperature={1}>
-█
-</Assistant>
-</Transcript>
-
-<Request model="gpt-3.5-turbo" />`)
-    })
-
-    it('shoudl handle request with empty transcript', () => {
-      const origDoc = `<User>
-\${input}
-</User>
-
-<Transcript />
-
-<Request model="gpt-4" />`
-
-      const interpDoc = `<User>
-hello world
-</User>
-
-<Transcript />
-
-<Request model="gpt-4" />`
-
-      const res = handleRequestNode(origDoc, interpDoc, {
-        responseData: [{ response: '' }],
-        streaming: true,
-        requestBlocks: [{ model: 'gpt-4' }],
-        index: 0,
-      })
-      expect(res.response).to.equal('█')
-      expect(res.nextGlassfile).to.equal(`<User>
-\${input}
-</User>
-
-<Transcript>
-<User>
-hello world
-</User>
-
-<Assistant model="gpt-4" temperature={1}>
-█
-</Assistant>
-</Transcript>
-
-<Request model="gpt-4" />`)
-    })
-
-    it('shoudl handle request with transcript', () => {
-      const origDoc = `<Transcript>
-<User>
-hello world
-</User>
-
-<Assistant model="gpt-4" temperature={1}>
-how are you doing?
-</Assistant>
-</Transcript>
-
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />`
-
-      const interpDoc = `<Transcript>
-<User>
-hello world
-</User>
-
-<Assistant model="gpt-4" temperature={1}>
-how are you doing?
-</Assistant>
-</Transcript>
-
-<User>
-goodbye world
-</User>
-
-<Request model="gpt-4" />`
-
-      const res = handleRequestNode(origDoc, interpDoc, {
-        responseData: [{ response: '' }],
-        streaming: true,
-        requestBlocks: [{ model: 'gpt-4' }],
-        index: 0,
-      })
-      expect(res.response).to.equal('█')
-      expect(res.nextGlassfile).to.equal(`<Transcript>
-<User>
-hello world
-</User>
-
-<Assistant model="gpt-4" temperature={1}>
-how are you doing?
-</Assistant>
-
-<User>
-goodbye world
-</User>
-
-<Assistant model="gpt-4" temperature={1}>
-█
-</Assistant>
-</Transcript>
-
-<User>
-\${input}
-</User>
-
-<Request model="gpt-4" />`)
-    })
-  })
-
-  it('should add to transcript', () => {
-    const doc = `<Transcript>
-<User>
-hello
-</User>
-</Transcript>`
-    expect(addToTranscript([{ tag: 'User', content: 'hello world' }], doc).doc).to.equal(`<Transcript>
-<User>
-hello
-</User>
-
-<User>
-hello world
-</User>
-</Transcript>`)
   })
 })
