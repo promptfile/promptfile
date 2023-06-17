@@ -165,7 +165,7 @@
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
-            "scope": "source.glass.function.name",
+            "scope": "source.glass.functions.name",
             "settings": {
               "foreground": "#67f49d",
               "fontStyle": "italic"

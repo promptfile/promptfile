@@ -424,6 +424,37 @@
         }
       }
     },
+    "functions-element": {
+      "begin": "^(<)(Functions)(>)$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.functions.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.js"
+        }
+      ],
+      "end": "^(<\\/)(Functions)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.functions.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
     "text-element": {
       "begin": "^(<)(Text)([^>]*)(>)$",
       "beginCaptures": {

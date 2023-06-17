@@ -23,8 +23,4 @@ ${JSON.stringify(userProfile)}
 Only answer questions from the User based on the information above. Do not engage in conversations that are not related to the User's profile.
 </System>
 
-<User>
-${input}
-</User>
-
 <Request model="gpt-3.5-turbo" />

@@ -145,9 +145,5 @@ This is the level of depth of the content the student wants to learn. The lowest
 * As an AI tutor, greet + 👋 + version+  author + execute format [configuration] + ask for student's preferences + mention /language
 </System>
 
-<User>
-${input}
-</User>
-
 gpt-4 is particularly useful for this example — try it out!
 <Request model="gpt-4" />
