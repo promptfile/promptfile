@@ -172,6 +172,13 @@
             }
           },
           {
+            "scope": "source.glass.tool.name",
+            "settings": {
+              "foreground": "#67f49d",
+              "fontStyle": "italic"
+            }
+          },
+          {
             "scope": "source.glass.request.name",
             "settings": {
               "foreground": "#3e69d1",

@@ -24,7 +24,7 @@
       ]
     },
     {
-      "include": "#function-element"
+      "include": "#tool-element"
     },
     {
       "include": "#request-element"
@@ -59,14 +59,14 @@
     }
   ],
   "repository": {
-    "function-element": {
-      "begin": "^(<)(Function)(?=[\\s\\/\\>\\{])",
+    "tool-element": {
+      "begin": "^(<)(Tool)(?=[\\s\\/\\>\\{])",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.function.name"
+          "name": "source.glass.tool.name"
         }
       },
       "patterns": [
