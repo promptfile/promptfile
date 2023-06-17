@@ -124,6 +124,10 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
   const session = document.uri.fsPath
   const glass = document.getText()
   const frontmatter = parseFrontmatterFromGlass(glass)
+  if (!frontmatter) {
+    await vscode.window.showErrorMessage('Unable to parse frontmatter from Glass file')
+    return
+  }
   const elements = parseGlassBlocksRecursive(glass)
   const requestElement = elements.find(element => element.tag === 'Request')
   const model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
@@ -158,9 +162,11 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
   }
 
   try {
-    let isFirstLoad = true
+    let numBlocks = parseGlassTranscriptBlocks(glass).length
     const resp = await executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
-      if (isFirstLoad) {
+      const newBlocks = parseGlassTranscriptBlocks(progress.nextGlassfile)
+      if (newBlocks.length > numBlocks) {
+        numBlocks = newBlocks.length
         // make a document edit to update the document with progress.nextGlassfile
         const edit = new vscode.WorkspaceEdit()
         const range = new vscode.Range(0, 0, document.lineCount, 0)
@@ -173,7 +179,6 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
         edit.replace(document.uri, range, withFrontmatter)
         await vscode.workspace.applyEdit(edit)
         scrollToBottom(document)
-        isFirstLoad = false
         return true
       }
 
