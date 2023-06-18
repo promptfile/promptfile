@@ -76,11 +76,10 @@ return [{
   return glassSections.join('\n\n\n')
 }
 
-export async function createSession(filepath: string): Promise<string> {
+export async function createSession(filepath: string, glass: string): Promise<string> {
   const sessionDirectory = getSessionDirectoryPath(filepath)
   const filename = path.basename(filepath)
   const sessionId = generateULID()
-  let glass = fs.readFileSync(filepath, 'utf-8')
   const blocks = parseGlassBlocks(glass)
   glass = blocks.map(block => block.content).join('\n\n\n')
   glass = addFrontmatter(glass, filename, sessionId, undefined)

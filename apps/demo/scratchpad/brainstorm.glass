@@ -3,7 +3,7 @@ You are ChatGPT. Browsing: disabled.
 </System>
 
 <User>
-what's 1+1?
+what's 4+4?
 </User>
 
 <Request model="gpt-3.5-turbo" />

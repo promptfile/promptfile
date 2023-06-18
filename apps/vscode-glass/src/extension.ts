@@ -81,7 +81,7 @@ export async function activate(context: vscode.ExtensionContext) {
     const frontmatterSession = initialFrontmatter?.session
     let documentToRun = selectedDocument
     if (!frontmatterSession) {
-      const session = await createSession(filepath)
+      const session = await createSession(filepath, selectedDocument.getText())
       const sessionDocument = await vscode.workspace.openTextDocument(session)
       await vscode.window.showTextDocument(sessionDocument, vscode.ViewColumn.Active, true)
       documentToRun = sessionDocument
