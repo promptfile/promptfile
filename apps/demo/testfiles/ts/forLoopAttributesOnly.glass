@@ -1,4 +1,4 @@
-<Code>
+<Init>
 const items = [{role: 'user', content: 'who was gandhi?'}]
 </Init>
 
