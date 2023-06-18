@@ -39,13 +39,13 @@ export const glassElements: GlassElement[] = [
       //   type: 'string',
       //   optional: true,
       // },
-      {
-        name: 'id',
-        detail: 'unique identifier for this element',
-        documentation: 'The `id` attribute allows you to assign an id to this element.',
-        type: 'string',
-        optional: true,
-      },
+      // {
+      //   name: 'id',
+      //   detail: 'unique identifier for this element',
+      //   documentation: 'The `id` attribute allows you to assign an id to this element.',
+      //   type: 'string',
+      //   optional: true,
+      // },
       {
         name: 'model',
         detail: 'model used to generate the content',
