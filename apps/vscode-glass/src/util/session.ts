@@ -4,7 +4,6 @@ import {
   LanguageModelCreator,
   parseGlassBlocks,
   parseGlassBlocksRecursive,
-  parseGlassTranscriptBlocks,
   removeGlassFrontmatter,
 } from '@glass-lang/glasslib'
 import fs from 'fs'
@@ -12,6 +11,7 @@ import * as os from 'os'
 import path from 'path'
 import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
+import { updateTextDocumentWithDiff } from './diffing'
 import { getAnthropicKey, getOpenaiKey } from './keys'
 import { generateULID } from './ulid'
 
@@ -158,52 +158,31 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
   }
 
   try {
-    let numBlocks = parseGlassTranscriptBlocks(glass).length
+    let isUpdatingFile = false
+    let didFinish = false
     const resp = await executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
-      const newBlocks = parseGlassTranscriptBlocks(progress.nextGlassfile)
-      if (newBlocks.length > numBlocks) {
-        numBlocks = newBlocks.length
-        // make a document edit to update the document with progress.nextGlassfile
-        const edit = new vscode.WorkspaceEdit()
-        const range = new vscode.Range(0, 0, document.lineCount, 0)
-        const withFrontmatter = addFrontmatter(
-          progress.nextGlassfile,
-          frontmatter.file,
-          frontmatter.session,
-          frontmatter.timestamp
-        )
-        edit.replace(document.uri, range, withFrontmatter)
-        await vscode.workspace.applyEdit(edit)
-        scrollToBottom(document)
+      if (isUpdatingFile || didFinish) {
         return true
       }
-
-      const currentGlass = document.getText()
-      const blocks = parseGlassTranscriptBlocks(currentGlass)
-      const streamingBlock = blocks.find(block => (block.child?.content ?? '').includes('█'))
-      if (!streamingBlock || !progress.response || !streamingBlock.child) {
-        return false
-      }
-      const edit = new vscode.WorkspaceEdit()
-      const range = new vscode.Range(
-        document.positionAt(streamingBlock.child.position.start.offset),
-        document.positionAt(streamingBlock.child.position.end.offset)
+      isUpdatingFile = true
+      const newGlass = addFrontmatter(
+        progress.nextGlassfile,
+        frontmatter.file,
+        frontmatter.session,
+        frontmatter.timestamp
       )
-      edit.replace(document.uri, range, progress.response)
-      await vscode.workspace.applyEdit(edit)
+      await updateTextDocumentWithDiff(document, newGlass)
       scrollToBottom(document)
+      isUpdatingFile = false
       return true
     })
-    if (!document.getText().includes('█')) {
-      return
-    }
+    didFinish = true
 
-    // remove the █ character via document
-    const edit = new vscode.WorkspaceEdit()
-    const location = document.getText().indexOf('█')
-    edit.delete(document.uri, new vscode.Range(document.positionAt(location), document.positionAt(location + 1)))
+    const newGlass = addFrontmatter(resp.nextGlassfile, frontmatter.file, frontmatter.session, frontmatter.timestamp)
+    console.log(newGlass)
+    await updateTextDocumentWithDiff(document, newGlass)
+
     if (resp.continued) {
-      await vscode.workspace.applyEdit(edit)
       scrollToBottom(document)
       await runGlassExtension(document, outputChannel)
     } else {
@@ -218,6 +197,7 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
 <Request model="${model}" />`
       // make a document edit to update the document with progress.nextGlassfile
       const range = new vscode.Range(0, 0, document.lineCount, 0)
+      const edit = new vscode.WorkspaceEdit()
       edit.insert(document.uri, range.end, addToGlassfile)
       await vscode.workspace.applyEdit(edit)
       await document.save()
