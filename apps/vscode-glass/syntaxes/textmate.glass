@@ -1,4 +1,4 @@
-<Code language="typescript">
+<Code>
 import fs from 'fs'
 import path from 'path'
 
@@ -11,12 +11,12 @@ The User is working on a new DSL called Glass (`.glass` file extension), which i
 Here is the current `glass.tmLanguage.json` file:
 
 ###
-${grammar}
+@{grammar}
 ###
 </System>
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-4" />

@@ -53,7 +53,7 @@ type Budget = {
 | list-expenses        | budget_id           | Given a budget id, returns the list of expenses for it                                    | Expense[]       |
 | get-budget-by-name   | name                | Given a name, returns the budget                                                          | Budget          |
 | add-memo             | expense_id, message | Adds a memo to an expense                                                                 | bool            |
-| converse             | message             | Send the user a message           
+| converse             | message             | Send the user a message
 
 
 Only respond with commands.
@@ -65,7 +65,7 @@ You can only generate commands, but you are an expert at generating commands.
 
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-3.5-turbo" />

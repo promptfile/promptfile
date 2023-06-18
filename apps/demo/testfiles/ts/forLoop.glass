@@ -4,6 +4,6 @@
     { role: 'user', content: 'name a fruit' }
 ]} as="m">
 <Block role={m.role}>
-${m.content}
+@{m.content}
 </Block>
 </For>

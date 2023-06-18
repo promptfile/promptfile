@@ -5,9 +5,9 @@ import { languages } from '@/data/languages'
 import Image from 'next/image'
 
 <Callout type="info">
-  Note: Executing code inside your Glass file is still
-  experimental. We are actively working on improving it while staying up to date with announcements from model providers. If you want to use Glass
-  in your project, message us on [Discord](https://discord.com/invite/H64PFP2DCc)
+  Note: Executing code inside your Glass file is still experimental. We are actively working on improving it while
+  staying up to date with announcements from model providers. If you want to use Glass in your project, message us on
+  [Discord](https://discord.com/invite/H64PFP2DCc)
 </Callout>
 
 ## Languages supported
@@ -22,13 +22,13 @@ You can update your default langauge in [VSCode settings](/vscode) or by adding 
 
 ```glass copy filename="example.glass"
 
-<Code language="typescript">
+<Code>
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
 </Code>
 
 
 <System>
-${myMessage}
+@{myMessage}
 </System>
 
 <Request model="gpt-3.5-turbo" />
@@ -51,7 +51,7 @@ An example of a request with an `onResponse` function is shown below. You can ac
 Just like React's [`useState`](https://react.dev/reference/react/useState) hook that allows you to add a state variable to your component. Glass also allows `useState`. By declaring a state variable:
 
 ```glass copy filename="example.glass"
-<Code language="typescript">
+<Code>
 const [stateVariable, setStateVariable] = useState(initialValue)
 </Code>
 ```
@@ -59,7 +59,7 @@ const [stateVariable, setStateVariable] = useState(initialValue)
 You can then update the state variable by calling the `setStateVariable` function. This will add the updated state variable to the Glass file.
 
 ```glass copy filename="example.glass"
-<Code language="typescript">
+<Code>
 const [stateVariable, setStateVariable] = useState(initialValue)
 setStateVariable(newValue)
 </Code>

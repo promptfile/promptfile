@@ -1,5 +1,5 @@
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-4" />

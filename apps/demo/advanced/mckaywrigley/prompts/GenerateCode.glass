@@ -1,6 +1,6 @@
 <User>
 I need code that does the following:
-${description}
+@{description}
 
 Generate the code for me.
 

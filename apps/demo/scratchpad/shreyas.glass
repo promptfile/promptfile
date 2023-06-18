@@ -25,6 +25,6 @@ Here was the exact prompt that made us want something like Glass. Not only was t
 
 
 <User>
-${input}
+@{input}
 </User>
 <Request model="gpt-4"/>

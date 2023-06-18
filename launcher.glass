@@ -27,11 +27,11 @@ this is a user prompt, which is also given markdown syntax highlighting.
 <Request model="gpt-3.5-turbo" />
 ````
 
-The current time is ${timestamp}.
+The current time is @{timestamp}.
 </System>
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-4" />

@@ -13,19 +13,19 @@ The User also needs to build a Monarch grammar for the Glass support in Monaco E
 Here is the current `glass.tmLanguage.json` file:
 
 ###
-${grammar}
+@{grammar}
 ###
 
 Here is the current `monarchGlassLanguage.js` file:
 
 ###
-${monarch}
+@{monarch}
 ###
 </System>
 
 
 <User>
-${firstMessage}
+@{firstMessage}
 </User>
 
 <Request model="gpt-4" />

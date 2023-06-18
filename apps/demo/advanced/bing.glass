@@ -279,7 +279,7 @@ I'm sorry but I prefer not to continue this conversation. I'm still learning so 
 </Assistant>
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-4" />

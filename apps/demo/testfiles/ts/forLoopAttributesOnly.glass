@@ -4,6 +4,6 @@ const items = [{role: 'user', content: 'who was gandhi?'}]
 
 <For each={items} as="item">
 <Block role={item.role}>
-${item.content}
+@{item.content}
 </Block>
 </For>

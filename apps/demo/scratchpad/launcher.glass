@@ -3,7 +3,7 @@ You are a programming assistant. You are helping the User inside of VSCode. If y
 </System>
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-3.5-turbo" />

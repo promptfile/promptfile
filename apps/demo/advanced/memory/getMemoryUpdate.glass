@@ -4,7 +4,7 @@ language: typescript
 
 
 <System>
-Read the Message provided by the User.  
+Read the Message provided by the User.
 
 First, determine whether the User agreed to remember information based on the conversation.  If the User did agree to remember information, return the updated Profile as fenced JSON with the addition of the new infromation provided by the user.
 
@@ -58,12 +58,12 @@ NO_ACTION
 <User>
 Profile:
 ```json
-${profile}
+@{profile}
 ```
 
 Message:
 ###
-${input}
+@{input}
 ###
 </User>
 

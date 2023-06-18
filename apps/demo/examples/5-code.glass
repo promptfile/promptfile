@@ -2,7 +2,7 @@ What if you want to run code in your Glass file? Good news — there's a Code el
 
 
 
-<Code language="typescript">
+<Code>
 const userProfile = {
   name: 'Jane Doe',
   age: 25,
@@ -19,7 +19,7 @@ now, use the response in code:
 You are having a conversation with the following User:
 
 ###
-${JSON.stringify(userProfile)}
+@{JSON.stringify(userProfile)}
 ###
 
 Only answer questions from the User based on the information above. Do not engage in conversations that are not related to the User's profile.

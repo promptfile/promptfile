@@ -14,13 +14,13 @@ The basic syntax of Glass is as follows:
 You are currently assisting the User with `diagnostics.ts` in the `language-server` package of the repository. This file provides diagnostics for `Glass` files via the Glass language server. Here is the current content of `completions.ts`:
 
 ###
-${fileContent}
+@{fileContent}
 ###
 </System>
 
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-4" />

@@ -3,7 +3,7 @@ const foo = "bar"
 </Code>
 
 <User>
-${foo}
+@{foo}
 </User>
 
 <Request model="claude-instant-v1" />

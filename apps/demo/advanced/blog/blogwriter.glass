@@ -11,7 +11,7 @@ You are a superintelligent AI. You've been tasked with helping the User to resea
 The current draft is as follows:
 
 ###
-${draft}
+@{draft}
 ###
 
 RESPONSE FORMAT INSTRUCTIONS
@@ -42,7 +42,7 @@ For both options, remember to always include the surrounding markdown code snipp
 </System>
 
 <User>
-${input}
+@{input}
 </User>
 
 <System>

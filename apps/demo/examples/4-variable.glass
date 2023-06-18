@@ -18,7 +18,7 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 
 ...but let's use a variable for the User's input!
 <User>
-${myFirstVariable}
+@{myFirstVariable}
 </User>
 
 Remember, cmd+enter on Mac / ctrl+enter on Windows to run in the Playground!

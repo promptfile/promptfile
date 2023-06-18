@@ -13,12 +13,12 @@ The basic syntax of Glass is as follows:
 You are currently assisting the User with `completions.ts` in the `language-server` package of the repository. This file provides completions for `Glass` files. Here is the current content of `completions.ts`:
 
 ###
-${fileContent}
+@{fileContent}
 ###
 </System>
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-4" />

@@ -28,7 +28,7 @@ Try to make each message to the User ≤300 words. Ask questions to the User per
 </System>
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-4" />

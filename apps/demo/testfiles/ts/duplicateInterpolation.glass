@@ -1,4 +1,4 @@
 <User>
-${foo} ${bar} ${foo}
-${bar}
+@{foo} @{bar} @{foo}
+@{bar}
 </User>

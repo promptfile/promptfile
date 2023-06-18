@@ -150,7 +150,7 @@ Now, let's set up your preferences to customize your learning experience. Could 
 </Assistant>
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-4" />

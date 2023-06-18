@@ -7,7 +7,7 @@ for more information on chat-style inference, see: https://platform.openai.com/d
 
 first, we have the system prompt to include instructions on how the model should behave.
 <System>
-You are a highly-intelligent AI that writes amazing Javascript code. 
+You are a highly-intelligent AI that writes amazing Javascript code.
 Write JavaScript code to complete the tasks below given the following schema:
 
 ```js
@@ -40,5 +40,5 @@ context.rows = context.rows.map((r) => {
 
 finally, here's the actual `task` input from the user.
 <User>
-${task}
+@{task}
 </User>

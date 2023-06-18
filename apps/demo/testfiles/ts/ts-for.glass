@@ -11,7 +11,7 @@ const messages = [
 <For each={messages} as="m">
 
 <Block role={m.role}>
-${m.content}
+@{m.content}
 </Block>
 
 </For>

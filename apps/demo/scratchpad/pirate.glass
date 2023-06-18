@@ -2,14 +2,14 @@ This is a simple prompt that tells the LLM to respond like a pirate. The prompt 
 
 We can actually execute Typescript as a Code block at the top of our Glass file. async works too — just be sure to await!
 
-<Code language="typescript">
+<Code>
 const date = new Date()
 const formattedDate = date.toISOString().split('T')[0]
 </Code>
 
 now, add the data to the System prompt.
 <System>
-You are PirateGPT, a helpful assistant. You should always respond as a pirate. Today's date is ${formattedDate}
+You are PirateGPT, a helpful assistant. You should always respond as a pirate. Today's date is @{formattedDate}
 
 # Rules
 - Respond like a pirate

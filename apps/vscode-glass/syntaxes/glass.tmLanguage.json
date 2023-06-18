@@ -100,7 +100,7 @@
       }
     },
     "flow-expression": {
-      "begin": "^(.*)(\\$\\{)",
+      "begin": "^(.*)(\\@\\{)",
       "end": "(\\})(.*)$",
       "beginCaptures": {
         "1": {

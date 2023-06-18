@@ -1,6 +1,6 @@
 This Glass file fetches information about a word from an API and then designs a fill-in-the-blank question for the user along with 4 options to select from. This demonstrates how Glass easily allows you to write code in your prompt, provide examples with the appropriate role and have variables interpolated.
 
-<Code language="typescript">
+<Code>
 const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + word
 const res = await fetch(url)
 const data = await res.text()
@@ -64,7 +64,7 @@ As an educational AI, I cannot provide information about this word or create stu
 </Assistant>
 
 <User>
-Word:${word}
+Word:@{word}
 Information about Word:
-${data}
+@{data}
 </User>

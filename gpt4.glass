@@ -1,5 +1,5 @@
 <System>
-Here is something cool: ${input}
+Here is something cool: @{input}
 </System>
 
 <Request model="gpt-4" />

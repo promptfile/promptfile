@@ -1,3 +1,3 @@
 <User>
-${foo} ${bar}
+@{foo} @{bar}
 </User>

@@ -4,7 +4,7 @@ const baz = "bar"
 </Code>
 
 <User>
-${foo}
+@{foo}
 </User>
 
 <Request model="gpt-3.5-turbo" />

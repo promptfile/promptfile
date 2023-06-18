@@ -1,4 +1,4 @@
-<Code language="typescript">
+<Code>
 import getMemoryUpdate from './getMemoryUpdate.glass'
 
 const [profile, setProfile] = useState('{}')
@@ -24,7 +24,7 @@ const handleResponse = async (response: any) => {
 You are ChatGPT. You exist to interact with the User. Here is the User's profile:
 
 ###
-${profile}
+@{profile}
 ###
 
 You have the ability to remember things about the user. If they ask you to remember something, confirm that you will.

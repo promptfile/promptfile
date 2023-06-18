@@ -7,7 +7,7 @@ You are a playwright. Given the title of a play, it is your job to write a synop
 </System>
 
 <User>
-Title: ${title}
+Title: @{title}
 </User>
 
 <Request model="gpt-3.5-turbo" />

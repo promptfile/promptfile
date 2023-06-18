@@ -13,7 +13,7 @@ const handleResponse = (response: any) => {
 You are ChatGPT. You exist to interact with the User. Here is the User's profile:
 
 ###
-${profile}
+@{profile}
 ###
 
 
@@ -31,11 +31,11 @@ You have access to the following tools:
 ]
 ```
 
-You should respond in JSON format with a single Tool 
+You should respond in JSON format with a single Tool
 </System>
 
 <User>
-${input}
+@{input}
 </User>
 
 <Request model="gpt-3.5-turbo" onResponse={handleResponse} />

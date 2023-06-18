@@ -18,12 +18,12 @@ const website = await res.text()
 <System>
 your job is to answer questions based on the following website code:
 ###
-${website}
+@{website}
 ###
 </System>
 
 <User>
-${question}
+@{question}
 </User>
 
 

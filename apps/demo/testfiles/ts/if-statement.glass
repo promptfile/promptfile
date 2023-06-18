@@ -1,4 +1,4 @@
-<Code language="typescript">
+<Code>
 const useMe = true
 const subject = "Einstein"
 </Code>
@@ -12,7 +12,7 @@ Who was gandhi?
 </User>
 
 <User if={useMe}>
-Who was ${subject}?
+Who was @{subject}?
 </User>
 
 <User if="false">

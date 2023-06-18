@@ -4,7 +4,8 @@ import * as vscode from 'vscode'
 export async function updateTextDocumentWithDiff(document: vscode.TextDocument, newGlass: string): Promise<void> {
   const oldContent = document.getText()
   // Calculate the diff between old and new contents
-  const changes = diff.diffLines(oldContent, newGlass)
+  const changes = diff.diffLines(oldContent.trim(), newGlass.trim())
+  console.log('changes', changes)
 
   // Create a new WorkspaceEdit
   const edits = new vscode.WorkspaceEdit()

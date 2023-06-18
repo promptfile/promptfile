@@ -28,18 +28,18 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
       const cursorIndex = index + 1
       const attributeValue =
         attribute.values && attribute.values.length > 0
-          ? `"\${${cursorIndex}|${attribute.values
+          ? `"\@{@{cursorIndex}|@{attribute.values
               .map(value => value.name)
               .sort()
               .join(',')}|}"`
           : attribute.type === 'boolean'
-          ? `\${${cursorIndex}|true,false|}`
+          ? `\@{@{cursorIndex}|true,false|}`
           : attribute.type === 'string'
-          ? `"${cursorIndex}"`
+          ? `"@{cursorIndex}"`
           : attribute.type === 'array'
-          ? `{${cursorIndex}]}`
-          : `\${cursorIndex}`
-      return ` ${attribute.name}=${attributeValue}`
+          ? `{@{cursorIndex}]}`
+          : `\@{cursorIndex}`
+      return ` @{attribute.name}=@{attributeValue}`
     })
     completionItems.push({
       label: element.name,
@@ -54,7 +54,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
       insertText:
         element.insertText != null
           ? element.insertText
-          : element.closingType === 'nonSelfClosing' ? `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>` : `${element.name}${attributesToInsert.join('')} />`,
+          : element.closingType === 'nonSelfClosing' ? `@{element.name}@{attributesToInsert.join('')}>\n$0\n</@{element.name}>` : `@{element.name}@{attributesToInsert.join('')} />`,
       insertTextFormat: InsertTextFormat.Snippet,
     })
   }
@@ -116,7 +116,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
           return {
             label: attribute.name,
             kind: CompletionItemKind.Property,
-            insertText: `${attribute.name}="\${1|${attribute.values
+            insertText: `@{attribute.name}="\@{1|@{attribute.values
               .map(a => a.name)
               .sort()
               .join(',')}|}"`,
@@ -126,7 +126,7 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
           return {
             label: attribute.name,
             kind: CompletionItemKind.Property,
-            insertText: `${attribute.name}="$1"`,
+            insertText: `@{attribute.name}="$1"`,
             insertTextFormat: InsertTextFormat.Snippet,
           }
         }
@@ -144,14 +144,14 @@ export function generateCompletions(document: TextDocument, textDocumentPosition
     if (openTags.length > 0) {
       const lastTag = openTags[openTags.length - 1].tag
       closingTagCompletion = {
-        label: `</${lastTag}>`,
+        label: `</@{lastTag}>`,
         kind: CompletionItemKind.Snippet,
-        insertText: `/${lastTag}>`,
+        insertText: `/@{lastTag}>`,
         documentation: {
           kind: 'markdown',
-          value: `Closes the <${lastTag}> tag.`,
+          value: `Closes the <@{lastTag}> tag.`,
         },
-        detail: `closing </${lastTag}> tag`,
+        detail: `closing </@{lastTag}> tag`,
         data: 6,
       }
     }

@@ -5,5 +5,5 @@ args:
     bar: string
 ---
 <User>
-${foo} ${bar}
+@{foo} @{bar}
 </User>

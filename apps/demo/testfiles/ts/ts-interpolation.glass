@@ -3,7 +3,7 @@ const userText = "Tell me a storyyyy."
 <User>
 You are a helpful assistant.
 
-${userText}
+@{userText}
 </User>
 
 <Assistant>

@@ -4,10 +4,10 @@ Given the code and the request, make the specified changes.
 
 <User>
 Make this change:
-${request}
+@{request}
 
 Modify this code:
-${code}
+@{code}
 </User>
 
 

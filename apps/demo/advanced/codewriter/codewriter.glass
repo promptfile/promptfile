@@ -24,19 +24,19 @@ You are a superintelligent AI. You've been tasked with helping the User to write
 The current code is:
 
 ###
-${code}
+@{code}
 ###
 
 The current test cases are:
 
 ###
-${test}
+@{test}
 ###
 
 The current test output is:
 
 ###
-${testOutput}
+@{testOutput}
 ###
 
 RESPONSE FORMAT INSTRUCTIONS
@@ -85,7 +85,7 @@ For both options, remember to always include the surrounding markdown code snipp
 </System>
 
 <User>
-${input}
+@{input}
 </User>
 
 <System>

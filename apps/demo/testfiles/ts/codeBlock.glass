@@ -3,7 +3,7 @@ const a = "3"
 </Code>
 
 <User>
-${a}
+@{a}
 </User>
 
 <Request model="gpt-3.5-turbo" />

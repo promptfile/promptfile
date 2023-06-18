@@ -5,7 +5,7 @@ You are a play critic from the New York Times. Given the synopsis of play, it is
 <User>
 Play Synopsis:
 ###
-${synopsis}
+@{synopsis}
 ###
 
 Write a review of the above play.

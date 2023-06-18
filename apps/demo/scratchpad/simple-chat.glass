@@ -1,4 +1,4 @@
-<Code language="typescript">
+<Code>
 const [numMessages, setNumMessages] = useState(0)
 const isLongConversation = numMessages > 2
 </Code>
