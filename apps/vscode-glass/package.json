@@ -168,7 +168,7 @@
           {
             "scope": "source.glass.function.name",
             "settings": {
-              "foreground": "#67f49d",
+              "foreground": "#3EA295",
               "fontStyle": "italic"
             }
           },
