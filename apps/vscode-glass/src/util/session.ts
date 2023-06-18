@@ -114,9 +114,12 @@ export async function loadSessionDocuments(filepath: string): Promise<vscode.Tex
 }
 
 export async function runGlassExtension(document: vscode.TextDocument, outputChannel: vscode.OutputChannel) {
-  const end = new vscode.Position(document.lineCount, 0)
-  const selection = new vscode.Selection(end, end)
-  await vscode.window.showTextDocument(document, { selection })
+  // if the cursor is not active in the document, activate it
+  if (vscode.window.activeTextEditor?.document.uri.fsPath !== document.uri.fsPath) {
+    const end = new vscode.Position(document.lineCount, 0)
+    const selection = new vscode.Selection(end, end)
+    await vscode.window.showTextDocument(document, { selection })
+  }
   const session = document.uri.fsPath
   const glass = document.getText()
   const frontmatter = parseFrontmatterFromGlass(glass)
@@ -179,7 +182,6 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
     didFinish = true
 
     const newGlass = addFrontmatter(resp.nextGlassfile, frontmatter.file, frontmatter.session, frontmatter.timestamp)
-    console.log(newGlass)
     await updateTextDocumentWithDiff(document, newGlass)
 
     if (resp.continued) {
