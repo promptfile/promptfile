@@ -19,7 +19,7 @@ export function parseChatCompletionBlocks(content: string): ChatCompletionReques
   for (const node of nodes.filter(n => n.type === 'block')) {
     let role = node.tag?.toLowerCase()
     let blockContent = node.child!.content
-    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
+    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block' && role !== 'function') {
       continue // ignore
     }
     if (role === 'block') {
@@ -33,8 +33,9 @@ export function parseChatCompletionBlocks(content: string): ChatCompletionReques
         blockContent = parseAttr(contentAttr) // TODO: don't modify existing value. don't interpolate content if string literal?
       }
     }
+    const nameAttr = node.attrs!.find(attr => attr.name === 'name')
     // return { role: role as any, content: doc }
-    res.push({ role: role as any, content: blockContent })
+    res.push({ role: role as any, content: blockContent, name: nameAttr?.stringValue })
   }
 
   return res
@@ -82,7 +83,7 @@ export function parseChatCompletionBlocks2(
 
       continue
     }
-    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block') {
+    if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block' && role !== 'function') {
       continue // ignore
     }
     if (role === 'block') {
@@ -97,7 +98,8 @@ export function parseChatCompletionBlocks2(
       }
     }
     // return { role: role as any, content: doc }
-    currBlock.push({ role: role as any, content: blockContent })
+    const nameAttr = node.attrs!.find(attr => attr.name === 'name')
+    currBlock.push({ role: role as any, content: blockContent, name: nameAttr?.stringValue })
   }
 
   if (currBlock.length > 0) {

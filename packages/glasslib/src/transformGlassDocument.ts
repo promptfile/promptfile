@@ -70,12 +70,12 @@ export function handleRequestNode(
     responseData: {
       response: string
       function_call?: { name: string; arguments: string } | null
+      functionObservation?: string
       requestTokens?: number
       responseTokens?: number
-    }[]
+    }[][]
     streaming: boolean
     requestTokens?: number
-    functionObservation?: string
     responseTokens?: number
     index: number
   }
@@ -84,20 +84,27 @@ export function handleRequestNode(
   const newBlocks: GlassContent[] = []
   let currRequest = 0
 
-  // TODO: add ulid to blocks
   for (const block of parsedInterpolated) {
     if (block.tag === 'Request') {
-      if (request.responseData[currRequest] != null) {
-        newBlocks.push({
-          tag: 'Assistant',
-          content: requestNodeReplacement(
-            request.requestBlocks[currRequest],
-            request.responseData[currRequest],
-            currRequest < request.index ? false : request.streaming,
-            request.functionObservation
-          ),
-          attrs: [],
-        } as any)
+      if (request.responseData[currRequest]?.length) {
+        for (let i = 0; i < request.responseData[currRequest].length; i++) {
+          const d = request.responseData[currRequest][i]
+          if (i > 0) {
+            // add block separation for multiple responses
+            newBlocks.push({
+              type: 'comment',
+              content: '\n\n',
+            } as any)
+          }
+          newBlocks.push({
+            tag: 'Assistant',
+            content: requestNodeReplacement(
+              request.requestBlocks[currRequest],
+              d,
+              currRequest < request.index ? false : request.streaming
+            ),
+          } as any)
+        }
       } else {
         newBlocks.push(block)
       }
@@ -107,14 +114,16 @@ export function handleRequestNode(
     }
   }
 
-  let response = request.responseData[request.responseData.length - 1].response
-  if (request.streaming) {
-    response += '█'
-  }
+  // const lastRequest = request.responseData[request.responseData.length - 1]
+  // let response =
+  //   lastRequest.function_call != null ? JSON.stringify(lastRequest.function_call, null, 2) : lastRequest.response
+  // if (request.streaming) {
+  //   response += '█'
+  // }
 
   return {
     nextGlassfile: reconstructGlassDocument(newBlocks),
-    response,
+    responseData: request.responseData,
   }
 }
 
@@ -123,11 +132,11 @@ const requestNodeReplacement = (
   responseData: {
     response: string
     function_call?: { name: string; arguments: string } | null
+    functionObservation?: string
     requestTokens?: number
     responseTokens?: number
   },
-  streaming: boolean,
-  functionObservation?: string
+  streaming: boolean
 ) => {
   const args: Record<string, any> = {
     model: request.model,
@@ -166,7 +175,10 @@ const requestNodeReplacement = (
   return (
     `<Assistant${argAttributes}>
 ${response}${streaming ? '█' : ''}
-</Assistant>` + (functionObservation ? `\n\n<Function>\n${functionObservation}\n</Function>` : '')
+</Assistant>` +
+    (responseData.functionObservation
+      ? `\n\n<Function name="${responseData.function_call!.name}">\n${responseData.functionObservation}\n</Function>`
+      : '')
   )
 }
 

@@ -169,7 +169,7 @@ export function transpileGlassFileTypescript(
       requestBlocks.push({ model, onResponse, maxTokens, temperature, stopSequence: JSON.stringify(stopSequence) })
       continue
     }
-    if (jsxNode.tag === 'Function') {
+    if (jsxNode.tag === 'Tool') {
       const nameAttr = jsxNode.attrs!.find(a => a.name === 'name')
       const name = nameAttr!.stringValue!
 

@@ -1,11 +1,11 @@
-<Function
+<Tool
   name="calculator"
   description="Useful for getting the result of a math expression. The input to this tool should be a valid mathematical expression that could be executed by a simple calculator."
   schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
   run={({ expression }) => '' + eval(expression)}
 />
 
-<Function
+<Tool
   name="search"
   description="A search engine. Useful for when you need to answer questions about current events. Input should be a search query."
   schema={z.object({ query: z.string().describe('search query') })}
@@ -35,12 +35,7 @@
 />
 
 <User>
-${input}
+who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?
 </User>
 
-<Request
-  model="gpt-3.5-turbo-0613"
-  onResponse={async res => {
-    console.log('got response', res)
-  }}
-/>
+<Request model="gpt-4-0613" />

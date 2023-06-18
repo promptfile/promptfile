@@ -174,12 +174,12 @@ hello world
 <Request model="gpt-4" />`
 
       const res = handleRequestNode(interpDoc, {
-        responseData: [{ response: '' }],
+        responseData: [[{ response: '' }]],
         streaming: true,
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
       })
-      expect(res.response).to.equal('█')
+      expect(res.responseData[0][0].response).to.equal('')
       expect(res.nextGlassfile).to.equal(`---
 language: typescript
 ---
@@ -188,7 +188,7 @@ language: typescript
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature={1} id="test-id">
+<Assistant model="gpt-4" temperature={1}>
 █
 </Assistant>`)
     })
@@ -209,19 +209,20 @@ You are a play critic from the New York Times. Given the synopsis you provided a
 <Request model="gpt-4" />`
 
       const res = handleRequestNode(interpDoc, {
-        responseData: [{ response: 'goodbye' }, { response: 'world' }],
+        responseData: [[{ response: 'goodbye' }], [{ response: 'world' }]],
         streaming: false,
         requestBlocks: [{ model: 'gpt-3.5-turbo' }, { model: 'gpt-4' }],
         index: 1,
       })
-      expect(res.response).to.equal('world')
+      expect(res.responseData[0][0].response).to.equal('goodbye')
+      expect(res.responseData[1][0].response).to.equal('world')
       expect(res.nextGlassfile).to.equal(`<User>
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
 
 Title: hello world
 </User>
 
-<Assistant model="gpt-3.5-turbo" temperature={1} id="test-id">
+<Assistant model="gpt-3.5-turbo" temperature={1}>
 goodbye
 </Assistant>
 
@@ -229,7 +230,7 @@ goodbye
 You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
 </User>
 
-<Assistant model="gpt-4" temperature={1} id="test-id">
+<Assistant model="gpt-4" temperature={1}>
 world
 </Assistant>`)
     })

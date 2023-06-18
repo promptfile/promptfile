@@ -22,6 +22,7 @@ interface LLMResponse {
 export interface ResponseData {
   response: string
   function_call?: { name: string; arguments: string } | null
+  functionObservation?: string
   requestTokens?: number
   responseTokens?: number
 }
@@ -42,11 +43,11 @@ export async function runGlassTranspilerOutput(
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextGlassfile: string; response: string }) => void
+    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
     output?: (line: string) => void
   } = {}
 ): Promise<{
-  response: string
+  responseData: ResponseData[][]
   nextGlassfile: string
   continued: boolean
 }> {
@@ -65,21 +66,18 @@ export async function runGlassTranspilerOutput(
   // (content)
   // </User>
 
-  // eslint-disable-next-line prefer-const
-  let transformedOriginalDoc = originalDoc
   let transformedInterpolatedDoc = interpolatedDoc
 
   const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
 
   if (Object.keys(state).length > 0) {
-    transformedOriginalDoc = replaceStateNode(newStateNode, transformedOriginalDoc)
     transformedInterpolatedDoc = replaceStateNode(newStateNode, transformedInterpolatedDoc)
   }
 
   if (options?.progress) {
     options.progress(
       handleRequestNode(transformedInterpolatedDoc, {
-        responseData: [{ response: '' }],
+        responseData: [[{ response: '' }]],
         requestBlocks,
         streaming: true,
         index: 0,
@@ -87,7 +85,7 @@ export async function runGlassTranspilerOutput(
     )
   }
 
-  const responseData: ResponseData[] = []
+  const responseData: ResponseData[][] = []
   const messageBlocks = parseChatCompletionBlocks2(
     transformedInterpolatedDoc,
     requestBlocks,
@@ -99,7 +97,7 @@ export async function runGlassTranspilerOutput(
   let i = 0
   let res:
     | {
-        response: string
+        responseData: ResponseData[][]
         nextGlassfile: string
       }
     | undefined = undefined
@@ -121,7 +119,7 @@ export async function runGlassTranspilerOutput(
             messagesSoFar,
             responseData,
             requestBlocks,
-            { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+            transformedInterpolatedDoc,
             options
           )
         : languageModel.type === LanguageModelType.chat
@@ -131,7 +129,8 @@ export async function runGlassTranspilerOutput(
             responseData,
             requestBlocks,
             functions,
-            { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+            transformedInterpolatedDoc,
+            i,
             options
           )
         : await runGlassCompletion(
@@ -139,16 +138,17 @@ export async function runGlassTranspilerOutput(
             messagesSoFar,
             responseData,
             requestBlocks,
-            { originalDoc: transformedOriginalDoc, interpolatedDoc: transformedInterpolatedDoc },
+            transformedInterpolatedDoc,
             options
           )
 
-    const blocksToAdd: { tag: string; content: string }[] = []
     const blocksToAddToDocument: { tag: string; content: string; attrs?: any }[] = []
 
     if (requestData.onResponse) {
+      const responseData = res.responseData[i]
+      const lastResponse = responseData[responseData.length - 1]
       await requestData.onResponse({
-        message: res.response,
+        message: lastResponse.response,
         addToDocument: (tag: string, content: string, attrs?: any) => {
           blocksToAddToDocument.push({ tag, content, attrs })
         },
@@ -180,21 +180,23 @@ export async function runGlassTranspilerOutput(
 async function runGlassChat(
   messages: ChatCompletionRequestMessage[],
   messagesSoFar: ChatCompletionRequestMessage[],
-  responseData: ResponseData[],
+  responseData: ResponseData[][],
   requestBlocks: RequestData[],
   functions: FunctionData[],
-  docs: { interpolatedDoc: string; originalDoc: string },
+  interpolatedDoc: string,
+  responseIndex: number,
   options: {
     transcriptTokenCounter?: TokenCounter
     openaiKey?: string
-    progress?: (data: { nextGlassfile: string; response: string }) => void
+    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  response: string
+  responseData: ResponseData[][]
   nextGlassfile: string
 }> {
-  const request = requestBlocks[responseData.length]
+  const request = requestBlocks[responseIndex]
+  const responseDataToAppendTo = responseData[responseIndex] // if undefined, starting new response data
 
   console.log('runGlass: chat-gpt', messagesSoFar.concat(messages))
   if (options.output) {
@@ -246,13 +248,31 @@ async function runGlassChat(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${next}<|im_end|>`, request.model)
       return options.progress(
-        handleRequestNode(docs.interpolatedDoc, {
-          responseData: responseData.concat({
-            response: next.content.trim(),
-            function_call: next.function_call,
-            requestTokens,
-            responseTokens,
-          }),
+        handleRequestNode(interpolatedDoc, {
+          responseData:
+            responseDataToAppendTo == null
+              ? responseData.concat([
+                  [
+                    {
+                      response: next.content.trim(),
+                      function_call: next.function_call,
+                      requestTokens,
+                      responseTokens,
+                    },
+                  ],
+                ])
+              : responseData.map((r, i) =>
+                  i === responseIndex
+                    ? r.concat([
+                        {
+                          response: next.content.trim(),
+                          function_call: next.function_call,
+                          requestTokens,
+                          responseTokens,
+                        },
+                      ])
+                    : r
+                ),
           requestBlocks,
           requestTokens,
           responseTokens,
@@ -267,7 +287,7 @@ async function runGlassChat(
   if (response.function_call != null) {
     const fn = functions.find(f => f.name === response.function_call!.name)
     checkOk(fn, `Function ${response.function_call!.name} not found`)
-    const args = fn.schema.parse(response.function_call!.arguments)
+    const args = fn.schema.parse(JSON.parse(response.function_call!.arguments))
     const result = await fn.run(args)
     functionObservation = JSON.stringify(result, null, 2)
   }
@@ -275,26 +295,57 @@ async function runGlassChat(
   // TODO: handle counting tokens for function response
   const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${response.content}<|im_end|>`, request.model)
 
-  responseData.push({
-    response: response.content.trim(),
-    function_call: response.function_call,
-    requestTokens,
-    responseTokens,
-  })
+  if (responseDataToAppendTo == null) {
+    responseData.push([
+      {
+        response: response.content.trim(),
+        function_call: response.function_call,
+        functionObservation,
+        requestTokens,
+        responseTokens,
+      },
+    ])
+  } else {
+    responseData[responseIndex].push({
+      response: response.content.trim(),
+      function_call: response.function_call,
+      functionObservation,
+      requestTokens,
+      responseTokens,
+    })
+  }
   messagesSoFar.push(...messages)
   messagesSoFar.push({
     role: 'assistant',
     content: response.content.trim().length ? response.content.trim() : JSON.stringify(response.function_call, null, 2),
   })
 
-  return handleRequestNode(docs.interpolatedDoc, {
+  if (functionObservation) {
+    messagesSoFar.push({
+      role: 'function',
+      content: functionObservation,
+      name: response.function_call!.name,
+    })
+
+    return await runGlassChat(
+      [],
+      messagesSoFar,
+      responseData,
+      requestBlocks,
+      functions,
+      interpolatedDoc,
+      responseIndex, // don't increment, gotta continue
+      options
+    )
+  }
+
+  return handleRequestNode(interpolatedDoc, {
     responseData,
     requestBlocks,
     requestTokens,
     responseTokens,
     streaming: false,
     index: responseData.length - 1,
-    functionObservation,
   })
 }
 
@@ -304,19 +355,19 @@ async function runGlassChat(
 async function runGlassChatAnthropic(
   messages: ChatCompletionRequestMessage[],
   messagesSoFar: ChatCompletionRequestMessage[],
-  responseData: ResponseData[],
+  responseData: ResponseData[][],
   requestBlocks: RequestData[],
-  docs: { interpolatedDoc: string; originalDoc: string },
+  interpolatedDoc: string,
   options: {
     transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextGlassfile: string; response: string }) => void
+    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  response: string
+  responseData: ResponseData[][]
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
@@ -366,8 +417,8 @@ async function runGlassChatAnthropic(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(next.content, request.model)
       return options.progress(
-        handleRequestNode(docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.content.trim(), requestTokens, responseTokens }),
+        handleRequestNode(interpolatedDoc, {
+          responseData: responseData.concat([[{ response: next.content.trim(), requestTokens, responseTokens }]]),
           requestBlocks,
           requestTokens,
           responseTokens,
@@ -380,11 +431,11 @@ async function runGlassChatAnthropic(
 
   const responseTokens = tokenCounter.countTokens(response.content, request.model)
 
-  responseData.push({ response: response.content.trim(), requestTokens, responseTokens })
+  responseData.push([{ response: response.content.trim(), requestTokens, responseTokens }])
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response.content.trim() })
 
-  return handleRequestNode(docs.interpolatedDoc, {
+  return handleRequestNode(interpolatedDoc, {
     responseData,
     requestBlocks,
     streaming: false,
@@ -400,18 +451,18 @@ async function runGlassChatAnthropic(
 async function runGlassCompletion(
   messages: ChatCompletionRequestMessage[],
   messagesSoFar: ChatCompletionRequestMessage[],
-  responseData: ResponseData[],
+  responseData: ResponseData[][],
   requestBlocks: RequestData[],
-  docs: { interpolatedDoc: string; originalDoc: string },
+  interpolatedDoc: string,
   options: {
     transcriptTokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
-    progress?: (data: { nextGlassfile: string; response: string }) => void
+    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  response: string
+  responseData: ResponseData[][]
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
@@ -483,8 +534,8 @@ async function runGlassCompletion(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(next.content, request.model)
       return options.progress(
-        handleRequestNode(docs.interpolatedDoc, {
-          responseData: responseData.concat({ response: next.content.trim(), requestTokens, responseTokens }),
+        handleRequestNode(interpolatedDoc, {
+          responseData: responseData.concat([[{ response: next.content.trim(), requestTokens, responseTokens }]]),
           requestBlocks,
           streaming: true,
           requestTokens,
@@ -497,11 +548,11 @@ async function runGlassCompletion(
 
   const responseTokens = tokenCounter.countTokens(response.content, request.model)
 
-  responseData.push({ response: response.content.trim(), requestTokens, responseTokens })
+  responseData.push([{ response: response.content.trim(), requestTokens, responseTokens }])
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response.content.trim() })
 
-  return handleRequestNode(docs.interpolatedDoc, {
+  return handleRequestNode(interpolatedDoc, {
     responseData,
     requestBlocks,
     streaming: false,
@@ -590,7 +641,6 @@ function handleChatChunk(
     }[]
   }
 ) {
-  console.log('handling chat chunk', eventData)
   const choice = eventData.choices[0]
   if (choice.delta.function_call) {
     const newResult: LLMResponse = { ...currResult }

@@ -73,6 +73,18 @@ export const glassElements: GlassElement[] = [
         type: 'number',
         optional: true,
       },
+      {
+        name: 'type',
+        detail: 'type of assistant response',
+        documentation: 'The `type` attribute determines what kind of response came from the assistant.',
+        type: 'enum',
+        optional: true,
+        values: [
+          {
+            name: 'function_call',
+          },
+        ],
+      },
     ],
   },
   {
@@ -166,6 +178,19 @@ export const glassElements: GlassElement[] = [
     detail: '(block) chat block with role="function"',
     closingType: 'nonSelfClosing',
     attributes: [],
+  },
+  {
+    name: 'Function',
+    documentation: 'The result of a function call',
+    closingType: 'nonSelfClosing',
+    attributes: [
+      {
+        name: 'name',
+        detail: 'name of the function call',
+        documentation: 'The `name` attribute defines the name of the function which was called.',
+        type: 'string'
+      },
+    ],
   },
   {
     name: 'Request',
