@@ -1,4 +1,3 @@
-import { ulid } from 'ulid'
 import { LANGUAGE_MODELS } from './languageModels'
 import { GlassContent, RequestData, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 
@@ -97,8 +96,7 @@ export function handleRequestNode(
             currRequest < request.index ? false : request.streaming,
             request.functionObservation
           ),
-          // eslint-disable-next-line turbo/no-undeclared-env-vars
-          attrs: [{ name: 'id', stringValue: process.env.NODE_ENV === 'development' ? 'test-id' : ulid() }],
+          attrs: [],
         } as any)
       } else {
         newBlocks.push(block)
@@ -161,9 +159,6 @@ const requestNodeReplacement = (
   if (responseData.function_call != null) {
     args.type = 'function_call'
   }
-
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
-  args.id = process.env.NODE_ENV === 'development' ? 'test-id' : ulid()
 
   const argAttributes: string = Object.entries(args).reduce((acc, [key, value]) => {
     return acc + ` ${key}=${typeof value === 'string' ? `"${value}"` : `{${JSON.stringify(value)}}`}`
