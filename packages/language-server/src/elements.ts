@@ -118,6 +118,7 @@ export const glassElements: GlassElement[] = [
     documentation: 'Execute custom code',
     detail: '(element) write custom code',
     closingType: 'nonSelfClosing',
+    insertText: 'Code language="ts">\n$1\n</Code>',
     attributes: [
       {
         name: 'language',
@@ -126,13 +127,13 @@ export const glassElements: GlassElement[] = [
         type: 'enum',
         values: [
           {
-            name: 'typescript',
-            detail: 'TypeScript (.ts)',
+            name: 'ts',
+            detail: 'TypeScript',
             documentation: 'Sets the language of this block to TypeScript.',
           },
           {
-            name: 'javascript',
-            detail: 'JavaScript (.js)',
+            name: 'js',
+            detail: 'JavaScript',
             documentation: 'Sets the language of this block to JavaScript.',
           },
         ],
