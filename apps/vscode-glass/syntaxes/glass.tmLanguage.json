@@ -428,8 +428,39 @@
       }
     },
     "function-element": {
-      "begin": "^(<)(Function)(>)$",
+      "begin": "^(<)(Function)([^>]*)(>)$",
       "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.glass.function.name"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-string-single-quoted"
+            },
+            {
+              "include": "source.tsx#jsx-evaluated-code"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "end": "^(<\\/)(Function)(>)$",
+      "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
@@ -444,19 +475,7 @@
         {
           "include": "text.html.markdown"
         }
-      ],
-      "end": "^(<\\/)(Function)(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.glass.function.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
+      ]
     },
     "text-element": {
       "begin": "^(<)(Text)([^>]*)(>)$",
