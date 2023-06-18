@@ -10,10 +10,8 @@ export function formatDocument(text: string) {
     const nonSelfClosingTags = glassElements.filter(e => e.closingType !== 'selfClosing')
 
     const tagNames = glassElements.map(e => e.name).join('|')
-
     const lines = text.split('\n')
     const formattedLines: string[] = []
-
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index]
 
@@ -24,7 +22,6 @@ export function formatDocument(text: string) {
         formattedLines.push(line)
       }
     }
-
     let finalText = formattedLines.join('\n').trim()
     const tags = nonSelfClosingTags.map(e => e.name)
     tags.forEach(tag => {
@@ -32,13 +29,11 @@ export function formatDocument(text: string) {
       const regexClose = new RegExp(`${tag}\\s+>`, 'g')
       finalText = finalText.replace(regexOpen, `<${tag}`).replace(regexClose, `${tag}>`)
     })
-
     // Correctly format tag attributes and self-closing tags
     finalText = finalText.replace(/<(\w+)(\s+[^>]*?)(\/?)\s*>/g, (match, p1, p2, p3) => {
       // Trim trailing spaces from attributes and reassemble the tag
       return p3 ? `<${p1}${p2.trimEnd()} ${p3}>` : `<${p1}${p2.trimEnd()}>`
     })
-
     const frontmatter = parseFrontmatterFromGlass(finalText)
     if (frontmatter == null) {
       finalText = removeGlassFrontmatter(finalText)
@@ -51,7 +46,7 @@ export function formatDocument(text: string) {
         return s
       }
       if (s.type === 'block') {
-        const childContent = s.child!.content
+        let childContent = s.child!.content
         if (childContent.length === 0) {
           const formatted = prettify(s.content).trim()
           return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
@@ -60,26 +55,17 @@ export function formatDocument(text: string) {
           s.content.substring(0, s.child!.position.start.offset - s.position.start.offset) +
           'GLASS_INNERBLOCK_SUBSTITUTION' +
           s.content.substring(s.child!.position.end.offset - s.position.start.offset)
+
+        if (s.tag === 'Code' || s.tag === 'Test') {
+          childContent = prettify(childContent).trim()
+        }
+
         const formatted = prettify(blockWithoutChild)
           .replace(/\s*GLASS_INNERBLOCK_SUBSTITUTION\s*/, '\n' + childContent + '\n')
           .trim()
         return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
       }
-      if (s.content.trim().length === 0) {
-        return s
-      }
-      let formattedCode = prettify(s.content).trim()
-      // if s.content starts or ends with any whitepsace chars, add them back
-      const leadingWhitespace = s.content.match(/^\s+/)
-      const trailingWhitespace = s.content.match(/\s+$/)
-      if (leadingWhitespace) {
-        formattedCode = leadingWhitespace[0] + formattedCode
-      }
-      if (trailingWhitespace) {
-        formattedCode = formattedCode + trailingWhitespace[0]
-      }
-
-      return { ...s, content: formattedCode }
+      return s
     })
     finalText = blocks.map(b => b.content).join('')
 
@@ -98,6 +84,7 @@ export function formatDocument(text: string) {
 
     return finalText.trim()
   } catch (e) {
+    console.error(e)
     return text
   }
 }

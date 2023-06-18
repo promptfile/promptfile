@@ -1,6 +1,6 @@
 <Tool
   name="calculator"
-  description="Useful for getting the result of a math expression. The input to this tool should be a valid mathematical expression that could be executed by a simple calculator."
+  description="Calculates the result of a math expression."
   schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
   run={({ expression }) => '' + eval(expression)}
 />
