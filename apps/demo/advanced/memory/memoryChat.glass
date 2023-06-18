@@ -1,4 +1,4 @@
-<Code>
+<Init>
 import getMemoryUpdate from './getMemoryUpdate.glass'
 
 const [profile, setProfile] = useState('{}')
@@ -17,7 +17,7 @@ const handleResponse = async (response: any) => {
     setProfile(newProfile)
   }
 }
-</Code>
+</Init>
 
 
 <System>

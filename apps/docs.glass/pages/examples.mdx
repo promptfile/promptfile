@@ -25,10 +25,10 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 
 ### Access Code in Your Prompt
 
-Using a `<Code>{:glass}` block, you can execute code to do things like access a user's profile. In this example, you can see how you could use a user profile in our prompt to make the conversation more personal.
+Using a `<Init>{:glass}` block, you can execute code to do things like access a user's profile. In this example, you can see how you could use a user profile in our prompt to make the conversation more personal.
 
 ```glass copy filename="executeCode.glass"
-<Code>
+<Init>
 const userProfile = {
   name: 'Jane Doe',
   age: 25,
@@ -38,7 +38,7 @@ const userProfile = {
   favoriteColor: 'blue',
   favoriteFood: 'tacos',
 }
-</Code>
+</Init>
 
 <System>
 You are having a conversation with the following User:
@@ -61,10 +61,10 @@ You are having a conversation with the following User:
 You could also fetch information from somewhere else, like your database or a website.In this example, we'll fetch the HTML from a website and use it in our prompt. Ask it something like: "Where did Elliott go to grad school?" or "Where has Elliott worked?"
 
 ```glass copy filename="websiteChat.glass"
-<Code>
+<Init>
 const res = await fetch('https://elliottburris.com')
 const html = await res.text()
-</Code>
+</Init>
 
 
 <System>
@@ -92,13 +92,13 @@ In this case, we initialize an empty string as the last message sent by the user
 You can also see the `onResponse` attribute which lets you execute code based on the response from the LLM request. In this case, we update the last message sent by the user with the response from the LLM request.
 
 ```glass copy filename="state.glass"
-<Code>
+<Init>
 
 const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
 
 setNumMessages(numMessages + 1)
-</Code>
+</Init>
 
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
@@ -136,7 +136,7 @@ You are now a play critic from the New York Times. Given the play synopsis you p
 LLMs can also be great at understanding semantic meaning and classifying text. In this example, we see the usage of the `<For>` block which allows you to iterate through an array of examples. In this case, we are iterating through an array of comments and their classifications. We then use the `examples` variable in our prompt to help classify the user's comment.
 
 ```glass copy filename="classify.glass"
-<Code>
+<Init>
 const examples = [
   {
     message: 'ur product never works, def want my money back',
@@ -155,7 +155,7 @@ const examples = [
     classification: 'NEEDS_ATTENTION',
   },
 ]
-</Code>
+</Init>
 
 <System>
 You are an AI community moderator. Your job is to read and process comments on a social media post to see if the comments have a question or complaint. If the comment has a question or complaint, return "NEEDS_ATTENTION". Otherwise, return "SKIP". You are provided examples to help identify comments that are a question or complaint.
@@ -183,9 +183,9 @@ You are an AI community moderator. Your job is to read and process comments on a
 In this example, you can use conditional logic to change what goes into your prompt based on a condition. In this case, we are using the `useState` hook to keep track of the number of messages sent. Then, we use the `if` attribute to change the prompt based on the number of messages sent.
 
 ```glass copy filename="conditionalLogic.glass"
-<Code>
+<Init>
 const [numMessages, setNumMessages] = useState(0)
-</Code>
+</Init>
 <System if={!isLongConversation}>
 You are NickelbackGPT. In all of your responses to the user, make a brief reference to Nickelback. Only discuss things related to Nickelback.
 </System>

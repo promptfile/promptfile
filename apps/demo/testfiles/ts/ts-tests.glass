@@ -10,10 +10,10 @@ return [{
 }]
 </Test>
 
-<Code>
+<Init>
 const res = await fetch(url)
 const website = await res.text()
-</Code>
+</Init>
 
 <System>
 your job is to answer questions based on the following website code:

@@ -86,7 +86,7 @@ And this is the end`
 <Code language="python">
 a = {"hello": "world"}
 b = list(map(lambda x: x + 1, [1, 2, 3]))
-</Code>
+</Init>
 
 <Block role="system" content={(lambda x: x + " world")("hello")} />
 `

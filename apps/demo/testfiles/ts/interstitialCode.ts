@@ -10,10 +10,10 @@ export function getInterstitialCodePrompt() {
     const baz = 'bar'
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Code>
+    const TEMPLATE = `<Init>
 const foo = "bar"
 const baz = "bar"
-</Code>
+</Init>
 
 <User>
 ${foo}
@@ -24,7 +24,7 @@ ${foo}
       fileName: 'interstitialCode',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        '<Code>\nconst foo = "bar"\nconst baz = "bar"\n</Code>\n\n<User>\n${foo}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
+        '<Init>\nconst foo = "bar"\nconst baz = "bar"\n</Init>\n\n<User>\n${foo}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [

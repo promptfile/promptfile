@@ -10,10 +10,10 @@ return [{
 </Test>
 
 Be sure to `await` any async calls!
-<Code>
+<Init>
 const res = await fetch('https://elliottburris.com')
 const html = await res.text()
-</Code>
+</Init>
 
 now we can use `html` in our prompt!
 <System>

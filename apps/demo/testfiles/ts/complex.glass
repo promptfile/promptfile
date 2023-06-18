@@ -1,8 +1,8 @@
-<Code>
+<Init>
 import {sayHello} from './say-hello'
 
 sayHello({ name: 'chat' })
-</Code>
+</Init>
 
 <System>
 Read a Transcript and determine how to respond about the property's @{sayHello({ name: 'chat' })}. Valid responses are:

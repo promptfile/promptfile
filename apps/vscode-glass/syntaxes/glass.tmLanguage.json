@@ -54,7 +54,7 @@
       "include": "#for-element"
     },
     {
-      "include": "#code-element"
+      "include": "#init-element"
     },
     {
       "match": ".",
@@ -138,14 +138,14 @@
         }
       ]
     },
-    "code-element": {
-      "begin": "^(<)(Code)([^>]*)(>)$",
+    "init-element": {
+      "begin": "^(<)(Init)([^>]*)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.code.name"
+          "name": "source.glass.init.name"
         },
         "3": {
           "patterns": [
@@ -170,13 +170,13 @@
           "name": "punctuation.definition.tag.end.jsx"
         }
       },
-      "end": "^(<\\/)(Code)(>)$",
+      "end": "^(<\\/)(Init)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.code.name"
+          "name": "source.glass.init.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"

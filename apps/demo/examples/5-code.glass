@@ -2,7 +2,7 @@ What if you want to run code in your Glass file? Good news — there's a Code el
 
 
 
-<Code>
+<Init>
 const userProfile = {
   name: 'Jane Doe',
   age: 25,
@@ -12,7 +12,7 @@ const userProfile = {
   favoriteColor: 'blue',
   favoriteFood: 'pizza',
 }
-</Code>
+</Init>
 
 now, use the response in code:
 <System>

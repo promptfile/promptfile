@@ -215,12 +215,12 @@ export function transpileGlassFileTypescript(
   let imports = trimmedImports.imports
 
   imports = rewriteImports(
-    `<Code>\n${imports}\n</Code>`,
+    `<Init>\n${imports}\n</Init>`,
     outputDirectory.replace('${workspaceFolder}', workspaceFolder),
     path.join(folderPath, fileName)
   )
 
-  // now strip <Code> again
+  // now strip <Init> again
   imports = glasslib.parseGlassBlocks(imports)[0].child!.content
 
   const glassImports = parseTsGlassImports(imports)

@@ -1,6 +1,6 @@
 <Code language="typescript>
 const foo = "bar"
-</Code>
+</Init>
 
 <User>
 @{foo}

@@ -1,6 +1,6 @@
-<Code>
+<Init>
 const a = "3"
-</Code>
+</Init>
 
 <User>
 @{a}

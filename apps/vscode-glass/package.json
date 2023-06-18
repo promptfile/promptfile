@@ -70,7 +70,7 @@
     "colors": [
       {
         "id": "glass.code.background",
-        "description": "Background color for <Code> blocks",
+        "description": "Background color for <Init> blocks",
         "defaults": {
           "dark": "#4a4a4a26",
           "light": "#b8caf9"
@@ -221,7 +221,7 @@
             }
           },
           {
-            "scope": "source.glass.code.name",
+            "scope": "source.glass.init.name",
             "settings": {
               "foreground": "#FFB454",
               "fontStyle": "italic"

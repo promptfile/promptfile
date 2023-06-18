@@ -1,9 +1,9 @@
-<Code>
+<Init>
 import fs from 'fs'
 import path from 'path'
 
 const grammar = fs.readFileSync(path.join(__dirname, 'glass.tmLanguage.json'), 'utf-8').toString()
-</Code>
+</Init>
 
 <System>
 The User is working on a new DSL called Glass (`.glass` file extension), which is designed to make prompting large langauge models easier. The User is currently working on the syntax highlighting for the Glass VSCode extension, which is defined by a textmate grammar file, `glass.tmLanguage.json`.

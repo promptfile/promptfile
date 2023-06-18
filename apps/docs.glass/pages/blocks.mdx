@@ -60,15 +60,15 @@ Hello human!
 <Callout type="info">
   Note: Executing code inside your Glass file is still experimental and presents challenges to some users writing complex code. We encourage you to file a bug report on GitHub or message us on [Discord](https://discord.com/invite/H64PFP2DCc)
 </Callout>
-Use the `<Code>{:glass}` block to designate code to be run before the request is made. This is useful for defining variables and functions that can be used in other blocks.
+Use the `<Init>{:glass}` block to designate code to be run before the request is made. This is useful for defining variables and functions that can be used in other blocks.
 
 - **language** <i>(required enum)</i> <br/> The language of the code. Defaults to `javascript`. Currently only `javascript` and `typescript` is supported.
 
 ```glass copy filename="example.glass"
-<Code>
+<Init>
 const res = await fetch('https://elliottburris.com')
 const html = await res.text()
-</Code>
+</Init>
 
 <System>
 Your job is to answer questions based on the following website.
@@ -107,7 +107,7 @@ Use the `<For>{:glass}` block to loop over elements in an array. The text inside
 - **as** <i>(required)</i><br/> The variable name for each item in the array. Use this variable within the `<For>{:glass}`
 
 ```glass copy filename="example.glass"
-<Code>
+<Init>
 const examples = [{
   request: "Happy",
   response: "Sad",
@@ -120,7 +120,7 @@ const examples = [{
 }]
 
 const input = "Sunny"
-</Code>
+</Init>
 
 
 <For each={examples} as="ex">

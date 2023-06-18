@@ -11,11 +11,11 @@ export function getWithImportPrompt() {
     const a = '3'
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Code>
+    const TEMPLATE = `<Init>
 import c from "c"
 
 const a = "3"
-</Code>
+</Init>
 
 <User>
 ${a} ${b} ${c}
@@ -26,7 +26,7 @@ ${a} ${b} ${c}
       fileName: 'withImport',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        '<Code>\nimport c from "c"\n\nconst a = "3"\n</Code>\n\n<User>\n${a} ${b} ${c}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
+        '<Init>\nimport c from "c"\n\nconst a = "3"\n</Init>\n\n<User>\n${a} ${b} ${c}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [

@@ -1,7 +1,7 @@
-<Code>
+<Init>
 const [numMessages, setNumMessages] = useState(0)
 const isLongConversation = numMessages > 2
-</Code>
+</Init>
 
 <System if={!isLongConversation}>
 You are FunnyGPT. Every message you send to the User should always include at least one joke.  Do not send any messages that do not contain jokes.

@@ -4,7 +4,7 @@ return [{
 }]
 </Test>
 
-<Code>
+<Init>
 const tools = [
   {
     name: 'calculator',
@@ -44,7 +44,7 @@ async function runAction(data: { action: 'calculator' | 'search'; action_input: 
   }
   return 'No good search result found'
 }
-</Code>
+</Init>
 
 <System>
 Assistant is a large language model trained by OpenAI.

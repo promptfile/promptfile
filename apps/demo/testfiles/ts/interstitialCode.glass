@@ -1,7 +1,7 @@
-<Code>
+<Init>
 const foo = "bar"
 const baz = "bar"
-</Code>
+</Init>
 
 <User>
 @{foo}

@@ -11,18 +11,18 @@ export function getCodeBlockWithStatePrompt() {
     const [moreState, setMoreState] = useState('', GLASS_STATE, 'moreState')
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Code>
+    const TEMPLATE = `<Init>
 const initProfile = { firstName: '', lastName: '', hasChatted: false }
 const [profile, setProfile] = useState(initProfile)
 const [moreState, setMoreState] = useState('')
-</Code>
+</Init>
 
 <Request model="gpt-4" onResponse={() => setProfile({ hasChatted: true })} />`
     return {
       fileName: 'codeBlockWithState',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        "<Code>\nconst initProfile = { firstName: '', lastName: '', hasChatted: false }\nconst [profile, setProfile] = useState(initProfile)\nconst [moreState, setMoreState] = useState('')\n</Code>\n\n<Request model=\"gpt-4\" onResponse={() => setProfile({ hasChatted: true })} />",
+        "<Init>\nconst initProfile = { firstName: '', lastName: '', hasChatted: false }\nconst [profile, setProfile] = useState(initProfile)\nconst [moreState, setMoreState] = useState('')\n</Init>\n\n<Request model=\"gpt-4\" onResponse={() => setProfile({ hasChatted: true })} />",
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [

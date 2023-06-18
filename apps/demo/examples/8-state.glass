@@ -1,14 +1,14 @@
 As you've probably noticed, Glass files can contain more than just the prompt.
 We can store data in the Glass file as well!
 
-<Code>
+<Init>
 // This works just like `useState` in React
 const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
 
 // First, let's increment the numMessages by 1 when we execute the file
 setNumMessages(numMessages + 1)
-</Code>
+</Init>
 
 awesome! we've now set state in the file itself. pretty crazy!
 

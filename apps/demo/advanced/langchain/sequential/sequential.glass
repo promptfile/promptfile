@@ -1,7 +1,7 @@
-<Code>
+<Init>
 import Playwright from './playwright.glass'
 const synopsis = await Playwright({ title: input })
-</Code>
+</Init>
 
 
 <System>
