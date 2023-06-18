@@ -119,9 +119,9 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'Code',
-    documentation: 'Execute custom TypeScript code',
-    detail: '(element) write custom code',
+    name: 'Init',
+    documentation: 'Initialize with custom TypeScript code',
+    detail: '(element) write custom initialization code',
     closingType: 'nonSelfClosing',
     attributes: [],
   },

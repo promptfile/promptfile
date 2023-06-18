@@ -83,7 +83,7 @@ And this is the end`
   it('should parse glass document with Python code', () => {
     const mdx = `Hello world this is a document.
 
-<Code language="python">
+<Init language="python">
 a = {"hello": "world"}
 b = list(map(lambda x: x + 1, [1, 2, 3]))
 </Init>

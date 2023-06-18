@@ -1,4 +1,4 @@
-<Code language="typescript>
+<Code>
 const items = [{role: 'user', content: 'who was gandhi?'}]
 </Init>
 
