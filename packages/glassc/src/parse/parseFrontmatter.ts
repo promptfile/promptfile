@@ -3,6 +3,7 @@ import { parse } from 'yaml'
 interface ParsedResult {
   file: string
   timestamp: string
+  model: string
   session: string
   language: string
   args: Record<string, string>
@@ -45,6 +46,9 @@ export function parseFrontmatter(yamlString: string): ParsedResult | null {
     }
     if (result.file) {
       res['file'] = result.file
+    }
+    if (result.model) {
+      res['model'] = result.model
     }
     return res as ParsedResult
   }

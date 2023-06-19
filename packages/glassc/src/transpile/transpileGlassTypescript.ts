@@ -253,7 +253,10 @@ export function transpileGlassFileTypescript(
 
   interpolationVarSet.delete('') // TODO: figure out where/why this shows up
 
-  const argsOverride = parseFrontmatter(parsedDocument.find(n => n.type === 'frontmatter')?.content || '')?.args || {}
+  const parsedFrontmatter = parseFrontmatter(parsedDocument.find(n => n.type === 'frontmatter')?.content || '')
+  const defaultModel = parsedFrontmatter?.model
+  console.log('default model is', defaultModel)
+  const argsOverride = parsedFrontmatter?.args || {}
   const allInterpolationNames = Array.from(interpolationVarSet)
   const argsString = allInterpolationNames.map(arg => arg + `: ${argsOverride[arg] || 'string'}`).join(', ')
   const fullArgString =
@@ -352,7 +355,7 @@ export function ${exportName}() {
       originalDoc: ${JSON.stringify(originalDoc)},
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [
+      ${defaultModel != null ? `defaultModel: '${defaultModel}',\n` : ''}requestBlocks: [
         ${requestBlocks
           .map(
             b =>

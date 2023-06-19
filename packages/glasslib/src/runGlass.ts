@@ -41,6 +41,21 @@ export async function runGlass(
   let transformedOriginalDoc = glassfile
   let transformedInterpolatedDoc = glassfile
 
+  let defaultModel: string | undefined = undefined
+  if (transformedOriginalDoc.startsWith('---')) {
+    const end = transformedOriginalDoc.indexOf('---', 3)
+    if (end === -1) {
+      throw new Error('invalid frontmatter')
+    }
+    const frontmatter = transformedOriginalDoc.slice(3, end)
+    const frontmatterLines = frontmatter.split('\n')
+    // find line starting with `model:`
+    const modelLine = frontmatterLines.find(l => l.startsWith('model:'))
+    if (modelLine) {
+      defaultModel = modelLine.slice(6).trim()
+    }
+  }
+
   for (const [k, v] of Object.entries(args)) {
     // replace all instances of `@{k}` with `v`
     transformedInterpolatedDoc = transformedInterpolatedDoc.replace(new RegExp(`@\\{${k}\\}`, 'g'), v)
@@ -49,6 +64,15 @@ export async function runGlass(
   const blocks = parseGlassBlocks(transformedInterpolatedDoc)
   // const state = blocks.find(b => b.tag === 'State')?.child?.content || '{}'
   const requestBlocks = blocks.filter(b => b.tag === 'Request').map(parseGlassRequestBlock)
+
+  if (requestBlocks.length === 0) {
+    checkOk(defaultModel, 'no Request blocks and no model provided in frontmatter -- cannot run glass file')
+    requestBlocks.push({
+      model: defaultModel,
+    })
+
+    transformedInterpolatedDoc += `\n\n<Request model="${defaultModel}" />`
+  }
 
   // const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
 

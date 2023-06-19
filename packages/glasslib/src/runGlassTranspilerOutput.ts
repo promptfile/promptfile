@@ -33,12 +33,22 @@ export interface TranspilerOutput {
   originalDoc: string
   state: any
   interpolationArgs: any
+  defaultModel?: string
   requestBlocks: RequestData[]
   functions: FunctionData[]
 }
 
 export async function runGlassTranspilerOutput(
-  { fileName, originalDoc, interpolatedDoc, state, requestBlocks, functions, interpolationArgs }: TranspilerOutput,
+  {
+    fileName,
+    originalDoc,
+    interpolatedDoc,
+    state,
+    defaultModel,
+    requestBlocks,
+    functions,
+    interpolationArgs,
+  }: TranspilerOutput,
   options: {
     tokenCounter?: TokenCounter
     openaiKey?: string
@@ -71,6 +81,15 @@ export async function runGlassTranspilerOutput(
 
   if (Object.keys(state).length > 0) {
     transformedInterpolatedDoc = replaceStateNode(newStateNode, transformedInterpolatedDoc)
+  }
+
+  if (requestBlocks.length === 0) {
+    checkOk(defaultModel, 'no Request blocks and no model provided in frontmatter -- cannot run glass file')
+    requestBlocks.push({
+      model: defaultModel,
+    })
+
+    transformedInterpolatedDoc += `\n\n<Request model="${defaultModel}" />`
   }
 
   if (options?.progress) {

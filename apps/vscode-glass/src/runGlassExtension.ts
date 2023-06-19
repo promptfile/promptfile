@@ -1,4 +1,4 @@
-import { runGlassTranspilerOutput } from '@glass-lang/glasslib'
+import { ChatBlock, runGlassTranspilerOutput } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassTypescript } from './executeGlassTypescript'
@@ -12,7 +12,7 @@ export async function executeGlassFile(
   document: vscode.TextDocument,
   content: string, // use this instead of document.getText because it may be stale wtf
   inputs: any,
-  progress?: (data: { nextGlassfile: string; response?: string }) => void
+  progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
 ) {
   const fileName = getDocumentFilename(document)
 

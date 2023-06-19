@@ -43,14 +43,20 @@ export function getCurrentSessionFilepath(filepath: string): string | undefined 
   return path.join(sessionDirectory, lastSessionFile)
 }
 
-function addFrontmatter(glass: string, filepath: string, sessionId: string, timestamp: string | undefined) {
+function addFrontmatter(
+  glass: string,
+  filepath: string,
+  sessionId: string,
+  timestamp: string | undefined,
+  model: string | undefined
+) {
   const glassWithoutFrontmatter = removeGlassFrontmatter(glass)
   const metadata = parseGlassMetadata(glassWithoutFrontmatter)
   const glassSections = [
     `---
 file: ${filepath}
 session: ${sessionId}
-timestamp: ${timestamp ?? new Date().toISOString()}
+timestamp: ${timestamp ?? new Date().toISOString()}${model ? `\nmodel: ${model}` : ''}
 ---`,
   ]
   if (metadata.interpolationVariables.length > 0) {
@@ -74,8 +80,9 @@ export async function createSession(filepath: string, glass: string): Promise<st
   const sessionDirectory = getSessionDirectoryPath(filepath)
   const sessionId = generateULID()
   const blocks = parseGlassBlocks(glass)
+  const frontmatter = parseFrontmatterFromGlass(glass)
   glass = blocks.map(block => block.content).join('\n\n\n')
-  glass = addFrontmatter(glass, filepath, sessionId, undefined)
+  glass = addFrontmatter(glass, filepath, sessionId, undefined, frontmatter?.model) // TODO: use workspace default?
   glass = rewriteImports(glass, sessionDirectory, filepath)
   const sessionPath = path.join(sessionDirectory, `${sessionId}.glass`)
   fs.writeFileSync(sessionPath, glass)
@@ -120,7 +127,10 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
   }
   const elements = parseGlassBlocks(glass, true)
   const requestElement = elements.find(element => element.tag === 'Request')
-  const model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
+  let model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
+  if (model == null) {
+    model = frontmatter.model
+  }
   const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
   if (!languageModel) {
     await vscode.window.showErrorMessage(`Unable to find model ${model}`)
@@ -171,7 +181,8 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
           progress.nextGlassfile,
           frontmatter.file,
           frontmatter.session,
-          frontmatter.timestamp
+          frontmatter.timestamp,
+          frontmatter.model
         )
 
         await updateTextDocumentWithDiff(document, newGlass)
@@ -199,7 +210,8 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
       finalResp.nextGlassfile,
       frontmatter.file,
       frontmatter.session,
-      frontmatter.timestamp
+      frontmatter.timestamp,
+      frontmatter.model
     )
     await updateTextDocumentWithDiff(document, newGlass)
 
