@@ -1,3 +1,4 @@
+import './addChatBlocks.test'
 import './parseChatBlocks.test'
 import './parseGlassBlocks.test'
 import './parseGlassTopLevelJsxElements.test'

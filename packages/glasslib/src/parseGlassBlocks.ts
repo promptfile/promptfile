@@ -250,7 +250,7 @@ function parseAttributes(origDoc: string, blocks: GlassContent[]) {
   })
 }
 
-export function reconstructGlassDocument(nodes: { content: string; type: string }[]): string {
+export function reconstructGlassDocument(nodes: { content: string }[]): string {
   return (
     nodes
       .map(c => c.content)
