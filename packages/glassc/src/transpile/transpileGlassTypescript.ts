@@ -198,13 +198,13 @@ export function transpileGlassFileTypescript(
       interpolationVarSet.delete(asKey) // sketchy removal, could cause problems if we have another variable defined with same name but fine for now
     }
 
-    for (const s of parsedJsx.undeclaredVariables) {
-      if (s === asKey) {
-        // <For each={messages} as="m"> puts "m" in scope
-        continue
-      }
-      interpolationVarSet.add(s)
-    }
+    // for (const s of parsedJsx.undeclaredVariables) {
+    //   if (s === asKey) {
+    //     // <For each={messages} as="m"> puts "m" in scope
+    //     continue
+    //   }
+    //   interpolationVarSet.add(s)
+    // }
   }
 
   let toplevelCode = parsedDocument
