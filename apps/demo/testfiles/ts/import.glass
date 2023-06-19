@@ -1,0 +1,15 @@
+<Init>
+import { sayHello } from './sayHello'
+
+console.log(sayHello({ name: 'chat' }))
+</Init>
+
+<System>
+You are a helpful assistant.
+</System>
+
+<User>
+write me a haiku
+</User>
+
+<Request model="gpt-3.5-turbo" />

@@ -49,12 +49,12 @@ export function getCurrentSessionFilepath(filepath: string): string | undefined 
   return path.join(sessionDirectory, lastSessionFile)
 }
 
-function addFrontmatter(glass: string, file: string, sessionId: string, timestamp: string | undefined) {
+function addFrontmatter(glass: string, filepath: string, sessionId: string, timestamp: string | undefined) {
   const glassWithoutFrontmatter = removeGlassFrontmatter(glass)
   const metadata = parseGlassMetadata(glassWithoutFrontmatter)
   const glassSections = [
     `---
-file: ${file}
+file: ${filepath}
 session: ${sessionId}
 timestamp: ${timestamp ?? new Date().toISOString()}
 ---`,
@@ -78,11 +78,10 @@ return [{
 
 export async function createSession(filepath: string, glass: string): Promise<string> {
   const sessionDirectory = getSessionDirectoryPath(filepath)
-  const filename = path.basename(filepath)
   const sessionId = generateULID()
   const blocks = parseGlassBlocks(glass)
   glass = blocks.map(block => block.content).join('\n\n\n')
-  glass = addFrontmatter(glass, filename, sessionId, undefined)
+  glass = addFrontmatter(glass, filepath, sessionId, undefined)
   glass = rewriteImports(glass, sessionDirectory, filepath)
   const sessionPath = path.join(sessionDirectory, `${sessionId}.glass`)
   fs.writeFileSync(sessionPath, glass)
@@ -119,7 +118,6 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
     const selection = new vscode.Selection(end, end)
     await vscode.window.showTextDocument(document, { selection })
   }
-  const session = document.uri.fsPath
   const glass = document.getText()
   const frontmatter = parseFrontmatterFromGlass(glass)
   if (!frontmatter) {
@@ -167,7 +165,7 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
 
     // Create a new Promise that will resolve when all streaming updates have been processed
     const streamUpdatesDone = new Promise<void>(resolve => {
-      executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
+      executeGlassFile(document.uri.fsPath, outputChannel, document, glass, {}, async progress => {
         if (!isFirstStream && !progress.nextGlassfile.includes('█')) {
           return true
         }

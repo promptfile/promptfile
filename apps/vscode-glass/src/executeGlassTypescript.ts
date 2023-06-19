@@ -1,6 +1,7 @@
 import {
   constructGlassOutputFileTypescript,
   getGlassExportName,
+  parseFrontmatterFromGlass,
   transpileGlassFileTypescript,
 } from '@glass-lang/glassc'
 import { TranspilerOutput } from '@glass-lang/glasslib'
@@ -56,16 +57,22 @@ context.response = ${getGlassExportName(fileName)}()`,
   )
 
   // bundle the code so that it can be executed in a vm with resolved imports
-  const result = await esbuild.build({
-    entryPoints: [tmpFilePath],
-    bundle: true,
-    platform: 'node',
-    sourcemap: 'inline',
-    write: false,
-    format: 'cjs',
-    target: 'es2020',
-    external: ['@glass-lang/glasslib'],
-  })
+  let result: any = undefined
+  try {
+    result = await esbuild.build({
+      entryPoints: [tmpFilePath],
+      bundle: true,
+      platform: 'node',
+      sourcemap: 'inline',
+      write: false,
+      format: 'cjs',
+      target: 'es2020',
+      external: ['@glass-lang/glasslib'],
+    })
+  } catch (e: any) {
+    console.error(e)
+    throw e
+  }
 
   const bundledCode = new TextDecoder().decode(result.outputFiles[0].contents)
 
@@ -76,6 +83,8 @@ context.response = ${getGlassExportName(fileName)}()`,
   fs.writeFileSync(bundledCodeFilePath, bundledCode, {
     encoding: 'utf-8',
   })
+
+  const parsedFrontmater = parseFrontmatterFromGlass(content)
 
   const script = new vm.Script(bundledCode, { filename: 'outputFile.js' })
   const context: any = {}
@@ -93,7 +102,9 @@ context.response = ${getGlassExportName(fileName)}()`,
     require: require,
     __filename: 'outputFile.js',
     // __dirname: folderPath,
-    __dirname: `${path.join(glassfilePath, '..')}`,
+    __dirname: parsedFrontmater?.file
+      ? `${path.join(parsedFrontmater.file, '..')}`
+      : `${path.join(glassfilePath, '..')}`,
     fetch,
   }
   vm.createContext(ctx)
