@@ -406,9 +406,17 @@ export function transpileGlassTypescript(
   return constructGlassOutputFileTypescript(functions)
 }
 
+function normalizeTypescriptObjectFieldName(name: string) {
+  // remove leading numerals
+  name = name.replace(/^[0-9]+/, '')
+  // remove non-alphanumeric characters
+  name = name.replace(/[^a-zA-Z0-9]/g, '')
+  return name
+}
+
 export function constructGlassOutputFileTypescript(functions: ReturnType<typeof transpileGlassHelper>) {
   const glassConstant = `export const Glass = {
-    ${functions.map(f => `${f.functionName}: ${f.exportName}`).join(',\n  ')}
+    ${functions.map(f => `${normalizeTypescriptObjectFieldName(f.functionName)}: ${f.exportName}`).join(',\n  ')}
   }`
   const functionsString = functions.map(f => f.code).join('\n\n')
 
