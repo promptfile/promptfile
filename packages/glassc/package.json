@@ -1,6 +1,6 @@
 {
   "name": "@glass-lang/glassc",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "Glass language compiler",
   "type": "module",
   "module": "dist/index.js",
