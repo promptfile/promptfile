@@ -163,29 +163,52 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
     let isUpdatingFile = false
     let didFinish = false
     let isFirstStream = true
-    const resp = await executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
-      if (isUpdatingFile || didFinish) {
-        return true
-      }
-      isUpdatingFile = true
-      const newGlass = addFrontmatter(
-        progress.nextGlassfile,
-        frontmatter.file,
-        frontmatter.session,
-        frontmatter.timestamp
-      )
-      await updateTextDocumentWithDiff(document, newGlass)
-      scrollToBottom(document, isFirstStream)
-      isFirstStream = false
-      isUpdatingFile = false
-      return true
-    })
-    didFinish = true
+    let finalResp: any | null = null
 
-    const newGlass = addFrontmatter(resp.nextGlassfile, frontmatter.file, frontmatter.session, frontmatter.timestamp)
+    // Create a new Promise that will resolve when all streaming updates have been processed
+    const streamUpdatesDone = new Promise<void>(resolve => {
+      executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
+        if (isUpdatingFile || didFinish) {
+          return true
+        }
+        isUpdatingFile = true
+        const newGlass = addFrontmatter(
+          progress.nextGlassfile,
+          frontmatter.file,
+          frontmatter.session,
+          frontmatter.timestamp
+        )
+
+        await updateTextDocumentWithDiff(document, newGlass)
+        scrollToBottom(document, isFirstStream)
+        isFirstStream = false
+        isUpdatingFile = false
+        return true
+      })
+        .then(resp => {
+          didFinish = true
+          finalResp = resp // Store the final response in a variable
+          resolve() // Resolve the promise when all streaming updates have been processed
+        })
+        .catch(error => {
+          // Handle error if needed, or just ignore
+        })
+    })
+
+    // Await the Promise before updating the final text modification
+    await streamUpdatesDone
+    if (!finalResp) {
+      return
+    }
+    const newGlass = addFrontmatter(
+      finalResp.nextGlassfile,
+      frontmatter.file,
+      frontmatter.session,
+      frontmatter.timestamp
+    )
     await updateTextDocumentWithDiff(document, newGlass)
 
-    if (resp.continued) {
+    if (finalResp.continued) {
       scrollToBottom(document)
       await runGlassExtension(document, outputChannel)
     } else {
