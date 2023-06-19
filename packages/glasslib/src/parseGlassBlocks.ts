@@ -198,13 +198,6 @@ export function parseGlassBlocks(doc: string) {
   return parseAttributes(doc, blocks)
 }
 
-const transcriptBlocks = new Set(['System', 'User', 'Assistant', 'Function'])
-
-export function parseGlassTranscriptBlocks(doc: string): GlassContent[] {
-  const blocks = parseGlassBlocks(doc)
-  return blocks.filter(b => transcriptBlocks.has(b.tag!))
-}
-
 export function parseGlassBlocksRecursive(doc: string): GlassContent[] {
   const blocks = parseGlassBlocks(doc)
   return blocks.flatMap(b => {

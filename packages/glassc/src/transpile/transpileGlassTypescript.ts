@@ -307,7 +307,7 @@ export function transpileGlassFileTypescript(
       ? 'options'
       : `options: {
   ${fullArgString},
-  transcriptTokenCounter?: {
+  tokenCounter?: {
     countTokens: (str: string, model: string) => number
     maxTokens: (model: string) => number
     reserveCount?: number

@@ -39,7 +39,7 @@ ${question}
 
   const run = async (options: {
     args: { question: string }
-    transcriptTokenCounter?: {
+    tokenCounter?: {
       countTokens: (str: string, model: string) => number
       maxTokens: (model: string) => number
       reserveCount?: number
@@ -119,7 +119,7 @@ Make a question about United States history.
 
   const run = async (options: {
     args?: {}
-    transcriptTokenCounter?: {
+    tokenCounter?: {
       countTokens: (str: string, model: string) => number
       maxTokens: (model: string) => number
       reserveCount?: number

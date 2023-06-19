@@ -182,7 +182,7 @@ const { getTestData, compile } = ${getGlassExportName(fileName)}()
     res.push(c)
   }
   const ret = await runGlass(res[0], {
-    transcriptTokenCounter: {
+    tokenCounter: {
       countTokens: () => 0,
       maxTokens: () => Infinity,
     },

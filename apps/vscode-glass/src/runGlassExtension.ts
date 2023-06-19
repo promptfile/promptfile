@@ -25,7 +25,7 @@ export async function executeGlassFile(
   //   const c = await executeGlassPython(document, content, inputs)
   //   checkOk(c.length >= 0, 'No transpiler output generated')
   //   return await runGlassTranspilerOutput(c[0], {
-  //     transcriptTokenCounter: {
+  //     tokenCounter: {
   //       countTokens: countTokens,
   //       maxTokens: maxTokensForModel,
   //     },
@@ -39,7 +39,7 @@ export async function executeGlassFile(
   const c = await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs)
   checkOk(c.length >= 0, 'No transpiler output generated')
   const res = await runGlassTranspilerOutput(c[0], {
-    transcriptTokenCounter: {
+    tokenCounter: {
       countTokens: countTokens,
       maxTokens: maxTokensForModel,
     },

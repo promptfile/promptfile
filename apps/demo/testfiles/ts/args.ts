@@ -36,7 +36,7 @@ ${foo} ${bar}
 
   const run = async (options: {
     args: { foo: number; bar: string }
-    transcriptTokenCounter?: {
+    tokenCounter?: {
       countTokens: (str: string, model: string) => number
       maxTokens: (model: string) => number
       reserveCount?: number

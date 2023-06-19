@@ -68,7 +68,7 @@ ${transcript}
 
   const run = async (options: {
     args: { agentName: string; instructions: string; transcript: string }
-    transcriptTokenCounter?: {
+    tokenCounter?: {
       countTokens: (str: string, model: string) => number
       maxTokens: (model: string) => number
       reserveCount?: number

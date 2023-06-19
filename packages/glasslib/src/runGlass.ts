@@ -12,7 +12,7 @@ export async function runGlass(
   glassfile: string,
   args: Record<string, string>,
   options: {
-    transcriptTokenCounter?: TokenCounter
+    tokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
     progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
@@ -69,11 +69,7 @@ export async function runGlass(
   }
 
   const responseData: ResponseData[][] = []
-  const messageBlocks = parseChatCompletionBlocks2(
-    transformedInterpolatedDoc,
-    requestBlocks,
-    options?.transcriptTokenCounter
-  )
+  const messageBlocks = parseChatCompletionBlocks2(transformedInterpolatedDoc, requestBlocks, options?.tokenCounter)
   const messagesSoFar: ChatCompletionRequestMessage[] = []
   checkOk(messageBlocks.length === requestBlocks.length)
 
@@ -135,7 +131,7 @@ async function runGlassChat(
   requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
-    transcriptTokenCounter?: TokenCounter
+    tokenCounter?: TokenCounter
     openaiKey?: string
     progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
     output?: (line: string) => void
@@ -152,7 +148,7 @@ async function runGlassChat(
     options.output(JSON.stringify(messagesSoFar.concat(messages), null, 2))
   }
 
-  const tokenCounter = options.transcriptTokenCounter || DEFAULT_TOKEN_COUNTER
+  const tokenCounter = options.tokenCounter || DEFAULT_TOKEN_COUNTER
 
   const requestTokens = tokenCounter.countTokens(
     messagesSoFar
@@ -223,7 +219,7 @@ async function runGlassChatAnthropic(
   requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
-    transcriptTokenCounter?: TokenCounter
+    tokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
     anthropicKey?: string
@@ -254,7 +250,7 @@ async function runGlassChatAnthropic(
     options.output(anthropicQuery)
   }
 
-  const tokenCounter = options.transcriptTokenCounter || DEFAULT_TOKEN_COUNTER
+  const tokenCounter = options.tokenCounter || DEFAULT_TOKEN_COUNTER
 
   const requestTokens = tokenCounter.countTokens(anthropicQuery, request.model)
 
@@ -319,7 +315,7 @@ async function runGlassCompletion(
   requestBlocks: RequestData[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
-    transcriptTokenCounter?: TokenCounter
+    tokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
     progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
@@ -369,7 +365,7 @@ async function runGlassCompletion(
     stop: (request.stopSequence || []).concat(stopSequence ? [stopSequence] : []),
   })
 
-  const tokenCounter = options.transcriptTokenCounter || DEFAULT_TOKEN_COUNTER
+  const tokenCounter = options.tokenCounter || DEFAULT_TOKEN_COUNTER
 
   const requestTokens = tokenCounter.countTokens(prompt, request.model)
   const stop = (request.stopSequence || []).concat(stopSequence ? [stopSequence] : [])

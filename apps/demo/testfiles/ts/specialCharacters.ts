@@ -42,7 +42,7 @@ You are a ${role}.
 
   const run = async (options: {
     args?: {}
-    transcriptTokenCounter?: {
+    tokenCounter?: {
       countTokens: (str: string, model: string) => number
       maxTokens: (model: string) => number
       reserveCount?: number

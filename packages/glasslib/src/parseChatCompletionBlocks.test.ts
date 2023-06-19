@@ -130,12 +130,7 @@ Goodbye world
   it('should parse chat completion blocks with token counter', () => {
     expect(
       parseChatCompletionBlocks2(
-        `<System>
-Hello world
-</System>
-
-<Transcript>
-<User>
+        `<User>
 1
 </User>
 
@@ -146,23 +141,59 @@ Hello world
 <User>
 3
 </User>
-</Transcript>
 
-<User>
-Goodbye world 2
-</User>`,
-        [],
+<Request model="gpt-3.5-turbo" />`,
+        [
+          {
+            model: 'gpt-3.5-turbo',
+          },
+        ],
         {
           countTokens: () => 1,
-          maxTokens: () => 2,
+          maxTokens: () => Infinity,
           reserveCount: 1,
         }
       )
     ).to.deep.equal([
       [
-        { role: 'system', name: undefined, content: 'Hello world' },
+        { role: 'user', name: undefined, content: '1' },
+        { role: 'user', name: undefined, content: '2' },
         { role: 'user', name: undefined, content: '3' },
-        { role: 'user', name: undefined, content: 'Goodbye world 2' },
+      ],
+    ])
+  })
+
+  it('should parse chat completion blocks with token counter, complex', () => {
+    expect(
+      parseChatCompletionBlocks2(
+        `<User>
+1
+</User>
+
+<User>
+2
+</User>
+
+<User>
+3
+</User>
+
+<Request model="gpt-3.5-turbo" />`,
+        [
+          {
+            model: 'gpt-3.5-turbo',
+          },
+        ],
+        {
+          countTokens: () => 1,
+          maxTokens: () => 4,
+          reserveCount: 2,
+        }
+      )
+    ).to.deep.equal([
+      [
+        { role: 'user', name: undefined, content: '2' },
+        { role: 'user', name: undefined, content: '3' },
       ],
     ])
   })
