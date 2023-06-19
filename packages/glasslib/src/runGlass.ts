@@ -198,7 +198,7 @@ async function runGlassChat(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      messages: messagesSoFar.concat(messages),
+      messages: messagesSoFar.concat(messages).map(m => ({ ...m, id: undefined })),
       model: request.model,
       stream: true,
     }),

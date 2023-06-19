@@ -162,7 +162,7 @@ hello
   })
 
   describe('handleRequestNode', () => {
-    it.only('should handle request without transcript', () => {
+    it('should handle request without transcript', () => {
       const interpDoc = `---
 language: typescript
 ---
