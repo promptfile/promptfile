@@ -223,7 +223,7 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
 </User>
 
 
-      <Request model="${model}" />`
+<Request model="${model}" />`
       // make a document edit to update the document with progress.nextGlassfile
       const range = new vscode.Range(0, 0, document.lineCount, 0)
       const edit = new vscode.WorkspaceEdit()
