@@ -179,7 +179,7 @@ hello world
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
       })
-      expect(res.responseData[0][0].response).to.equal('')
+      expect(res.response[0].content).to.equal('')
       expect(res.nextGlassfile).to.equal(`---
 language: typescript
 ---
@@ -214,8 +214,8 @@ You are a play critic from the New York Times. Given the synopsis you provided a
         requestBlocks: [{ model: 'gpt-3.5-turbo' }, { model: 'gpt-4' }],
         index: 1,
       })
-      expect(res.responseData[0][0].response).to.equal('goodbye')
-      expect(res.responseData[1][0].response).to.equal('world')
+      expect(res.response[0].content).to.equal('goodbye')
+      expect(res.response[1].content).to.equal('world')
       expect(res.nextGlassfile).to.equal(`<User>
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
 

@@ -43,13 +43,12 @@ export async function runGlassTranspilerOutput(
     tokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatCompletionRequestMessage[] }) => void
     output?: (line: string) => void
   } = {}
 ): Promise<{
-  responseData: ResponseData[][]
+  response: ChatCompletionRequestMessage[]
   nextGlassfile: string
-  continued: boolean
 }> {
   // replace initDoc instances of
   //
@@ -93,7 +92,7 @@ export async function runGlassTranspilerOutput(
   let i = 0
   let res:
     | {
-        responseData: ResponseData[][]
+        response: ChatCompletionRequestMessage[]
         nextGlassfile: string
       }
     | undefined = undefined
@@ -141,10 +140,9 @@ export async function runGlassTranspilerOutput(
     const blocksToAddToDocument: { tag: string; content: string; attrs?: any }[] = []
 
     if (requestData.onResponse) {
-      const responseData = res.responseData[i]
-      const lastResponse = responseData[responseData.length - 1]
+      const lastResponse = res.response[res.response.length - 1]
       await requestData.onResponse({
-        message: lastResponse.response,
+        message: lastResponse.content,
         addToDocument: (tag: string, content: string, attrs?: any) => {
           blocksToAddToDocument.push({ tag, content, attrs })
         },
@@ -164,10 +162,7 @@ export async function runGlassTranspilerOutput(
     }
   }
 
-  return {
-    ...res!,
-    continued,
-  }
+  return res!
 }
 
 /**
@@ -184,11 +179,11 @@ async function runGlassChat(
   options: {
     tokenCounter?: TokenCounter
     openaiKey?: string
-    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatCompletionRequestMessage[] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  responseData: ResponseData[][]
+  response: ChatCompletionRequestMessage[]
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseIndex]
@@ -359,11 +354,11 @@ async function runGlassChatAnthropic(
     args?: any
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatCompletionRequestMessage[] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  responseData: ResponseData[][]
+  response: ChatCompletionRequestMessage[]
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
@@ -454,11 +449,11 @@ async function runGlassCompletion(
     tokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
-    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatCompletionRequestMessage[] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  responseData: ResponseData[][]
+  response: ChatCompletionRequestMessage[]
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]

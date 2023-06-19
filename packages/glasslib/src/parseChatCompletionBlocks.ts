@@ -3,9 +3,10 @@ import { removeGlassComments } from './removeGlassComments'
 import { DEFAULT_TOKEN_COUNTER } from './tokenCounter'
 
 export interface ChatCompletionRequestMessage {
-  role: 'system' | 'user' | 'assistant'
+  role: 'system' | 'user' | 'assistant' | 'function'
   content: string
   name?: string
+  type?: 'function_call'
 }
 
 export function parseChatCompletionBlocks(content: string): ChatCompletionRequestMessage[] {

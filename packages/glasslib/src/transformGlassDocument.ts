@@ -1,5 +1,7 @@
 import { LANGUAGE_MODELS } from './languageModels'
+import { ChatCompletionRequestMessage } from './parseChatCompletionBlocks'
 import { GlassContent, RequestData, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
+import { ResponseData } from './runGlassTranspilerOutput'
 
 export function addNodeToDocument(content: string, index: number, doc: string) {
   const parsed = parseGlassDocument(doc)
@@ -123,8 +125,32 @@ export function handleRequestNode(
 
   return {
     nextGlassfile: reconstructGlassDocument(newBlocks),
-    responseData: request.responseData,
+    response: convertResponseData(request.responseData),
   }
+}
+
+function convertResponseData(responseData: ResponseData[][]): ChatCompletionRequestMessage[] {
+  return responseData.flatMap(d =>
+    d.flatMap(r => {
+      const res: ChatCompletionRequestMessage[] = []
+
+      res.push({
+        role: 'assistant',
+        content: r.response,
+        type: r.function_call != null ? 'function_call' : undefined,
+      })
+
+      if (r.function_call != null && r.functionObservation != null) {
+        res.push({
+          role: 'function',
+          content: r.functionObservation,
+          name: r.function_call!.name,
+        })
+      }
+
+      return res
+    })
+  )
 }
 
 const requestNodeReplacement = (

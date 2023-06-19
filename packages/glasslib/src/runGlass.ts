@@ -15,11 +15,11 @@ export async function runGlass(
     tokenCounter?: TokenCounter
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatCompletionRequestMessage[] }) => void
     output?: (line: string) => void
   } = {}
 ): Promise<{
-  responseData: ResponseData[][]
+  response: ChatCompletionRequestMessage[]
   nextGlassfile: string
 }> {
   // replace initDoc instances of
@@ -76,7 +76,7 @@ export async function runGlass(
   let i = 0
   let res:
     | {
-        responseData: ResponseData[][]
+        response: ChatCompletionRequestMessage[]
         nextGlassfile: string
       }
     | undefined = undefined
@@ -133,11 +133,11 @@ async function runGlassChat(
   options: {
     tokenCounter?: TokenCounter
     openaiKey?: string
-    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatCompletionRequestMessage[] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  responseData: ResponseData[][]
+  response: ChatCompletionRequestMessage[]
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
@@ -223,11 +223,11 @@ async function runGlassChatAnthropic(
     args?: any
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatCompletionRequestMessage[] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  responseData: ResponseData[][]
+  response: ChatCompletionRequestMessage[]
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
@@ -318,11 +318,11 @@ async function runGlassCompletion(
     tokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
-    progress?: (data: { nextGlassfile: string; responseData: ResponseData[][] }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatCompletionRequestMessage[] }) => void
     output?: (line: string) => void
   }
 ): Promise<{
-  responseData: ResponseData[][]
+  response: ChatCompletionRequestMessage[]
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
