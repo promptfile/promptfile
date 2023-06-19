@@ -11,14 +11,25 @@ export function getDuplicateInterpolationPrompt() {
     const TEMPLATE = `<User>
 ${foo} ${bar} ${foo}
 ${bar}
-</User>`
+</User>
+
+<Request model="gpt-3.5-turbo" />`
     return {
       fileName: 'duplicateInterpolation',
       interpolatedDoc: TEMPLATE,
-      originalDoc: '<User>\n${foo} ${bar} ${foo}\n${bar}\n</User>',
+      originalDoc: '<User>\n@{foo} @{bar} @{foo}\n@{bar}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
+      functions: [],
     }
   }
 
@@ -31,11 +42,7 @@ ${bar}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

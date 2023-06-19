@@ -1,7 +1,7 @@
 <Init>
-import c from "c"
+import c from 'c'
 
-const a = "3"
+const a = '3'
 </Init>
 
 <User>

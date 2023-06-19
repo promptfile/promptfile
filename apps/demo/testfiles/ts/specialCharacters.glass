@@ -1,6 +1,6 @@
 <Init>
 const type = 'assistant'
-const role = `helpful @{type}`
+const role = `helpful ${type} @{type}`
 </Init>
 
 <System>

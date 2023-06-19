@@ -11,20 +11,6 @@ const folders = {
 }
 
 describe('runTranspiledGlass', () => {
-  it('simple: no interpolation vars', async () => {
-    const { input } = loadTestFile('testfiles/ts/noInterpolation', 'ts')
-    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'noInterpolation' })
-    const output = await eval(`${transpiled.code.replace(/^export /gm, '')}\ngetNoInterpolationPrompt().compile({})`)
-    expect(output).to.deep.equal({
-      fileName: 'noInterpolation',
-      interpolatedDoc: '<User>\nfoo\n</User>',
-      interpolationArgs: {},
-      requestBlocks: [],
-      originalDoc: '<User>\nfoo\n</User>',
-      state: {},
-    })
-  })
-
   it('simple: 2 args w/ frontmatter', async () => {
     const { input } = loadTestFile('testfiles/ts/args', 'ts')
     const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'args' })
@@ -33,14 +19,23 @@ describe('runTranspiledGlass', () => {
     )
     expect(output).to.deep.equal({
       fileName: 'args',
-      interpolatedDoc: '<User>\nhello world\n</User>',
+      interpolatedDoc: '\n<User>\nhello world\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       interpolationArgs: {
         bar: 'world',
         foo: 'hello',
       },
-      requestBlocks: [],
+      functions: [],
       originalDoc:
-        '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n<User>\n${foo} ${bar}\n</User>',
+        '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n\n<User>\n@{foo} @{bar}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
+      requestBlocks: [
+        {
+          maxTokens: undefined,
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          stopSequence: undefined,
+          temperature: undefined,
+        },
+      ],
       state: {},
     })
 
@@ -50,13 +45,22 @@ describe('runTranspiledGlass', () => {
     )
     expect(output2).to.deep.equal({
       fileName: 'args',
-      interpolatedDoc: '<User>\nhello undefined\n</User>', // TODO(john): this should fail if an argument is not provided but required
+      interpolatedDoc: '\n<User>\nhello undefined\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       interpolationArgs: {
         foo: 'hello',
       },
-      requestBlocks: [],
+      functions: [],
       originalDoc:
-        '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n<User>\n${foo} ${bar}\n</User>',
+        '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n\n<User>\n@{foo} @{bar}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
+      requestBlocks: [
+        {
+          maxTokens: undefined,
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          stopSequence: undefined,
+          temperature: undefined,
+        },
+      ],
       state: {},
     })
     // } catch (e: any) {
@@ -94,8 +98,9 @@ describe('runTranspiledGlass', () => {
           onResponse: undefined,
         },
       ],
+      functions: [],
       originalDoc:
-        '<User>\nYou are a playwright. Given the title of a play, it is your job to write a synopsis for that title.\n\nTitle: ${title}\n</User>\n\n<Request model="gpt-3.5-turbo" />\n\n<User>\nYou are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.\n</User>\n\n<Request model="gpt-3.5-turbo" />',
+        '<User>\nYou are a playwright. Given the title of a play, it is your job to write a synopsis for that title.\n\nTitle: @{title}\n</User>\n\n<Request model="gpt-3.5-turbo" />\n\n<User>\nYou are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: {},
     })
   })

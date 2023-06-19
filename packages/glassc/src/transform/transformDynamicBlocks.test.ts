@@ -27,7 +27,7 @@ And this is the end`
         'jsx-0':
           "messages.map(m => `<Block role={${JSON.stringify(m.role)}} content={${JSON.stringify(m.text)}}>\n</Block>`).join('\\n\\n')",
       },
-      doc: 'Hello world this is a document.\n\n@{jsx-0}\n\nAnd this is the end',
+      doc: 'Hello world this is a document.\n\n${jsx-0}\n\nAnd this is the end',
     })
   })
 
@@ -50,7 +50,7 @@ And this is the end`
       jsxInterpolations: {
         'jsx-0': "messages.map(m => `<User>\n${m.foo}\n</User>\n\n<Assistant>\nbar\n</Assistant>`).join('\\n\\n')",
       },
-      doc: 'Hello world this is a document.\n\n@{jsx-0}\n\nAnd this is the end',
+      doc: 'Hello world this is a document.\n\n${jsx-0}\n\nAnd this is the end',
     })
   })
 
@@ -66,7 +66,7 @@ And this is the end`
         'jsx-0':
           "true ? messages.map(m => `<Block role={${JSON.stringify(m.role)}} content={${JSON.stringify(m.text)}}>\n</Block>`).join('\\n\\n') : ''",
       },
-      doc: 'Hello world this is a document.\n\n@{jsx-0}\n\nAnd this is the end',
+      doc: 'Hello world this is a document.\n\n${jsx-0}\n\nAnd this is the end',
     })
   })
 
@@ -86,7 +86,7 @@ And this is the end`
         'jsx-1':
           "messages2.map(m => `<Block role={${JSON.stringify(m.role)}} content={${JSON.stringify(m.text)}}>\n</Block>`).join('\\n\\n')",
       },
-      doc: 'Hello world this is a document.\n\n@{jsx-0}\n\nThis is the middle\n@{jsx-1}\nAnd this is the end',
+      doc: 'Hello world this is a document.\n\n${jsx-0}\n\nThis is the middle\n${jsx-1}\nAnd this is the end',
     })
   })
 

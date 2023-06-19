@@ -21,7 +21,7 @@ ${question}
       fileName: 'questionAnswer',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        '<System>\nYou are a helpful assistant.\n</System>\n\n<User>\n${question}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
+        '<System>\nYou are a helpful assistant.\n</System>\n\n<User>\n@{question}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [
@@ -33,6 +33,7 @@ ${question}
           stopSequence: undefined,
         },
       ],
+      functions: [],
     }
   }
 
@@ -45,11 +46,7 @@ ${question}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)
@@ -76,9 +73,11 @@ export function getGlassImportPrompt() {
     const [field, setField] = useState('', GLASS_STATE, 'field')
 
     const GLASSVAR = {}
-    const TEMPLATE = `import questionAnswer from './questionAnswer.glass'
+    const TEMPLATE = `<Init>
+import questionAnswer from './questionAnswer.glass'
 
 const [field, setField] = useState('')
+</Init>
 
 <Assistant>
 You are an assistant that creates questions for Jeopardy.
@@ -88,15 +87,18 @@ You are an assistant that creates questions for Jeopardy.
 Make a question about United States history.
 </User>
 
-<Request model="gpt-3.5-turbo" onResponse={async ({ message }) => {
-    const answer = await questionAnswer({question: message})
+<Request
+  model="gpt-3.5-turbo"
+  onResponse={async ({ message }) => {
+    const answer = await questionAnswer({ question: message })
     setField(answer)
-}} />`
+  }}
+/>`
     return {
       fileName: 'glassImport',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        "import questionAnswer from './questionAnswer.glass'\n\nconst [field, setField] = useState('')\n\n<Assistant>\nYou are an assistant that creates questions for Jeopardy.\n</Assistant>\n\n<User>\nMake a question about United States history.\n</User>\n\n<Request model=\"gpt-3.5-turbo\" onResponse={async ({ message }) => {\n    const answer = await questionAnswer({question: message})\n    setField(answer)\n}} />",
+        "<Init>\nimport questionAnswer from './questionAnswer.glass'\n\nconst [field, setField] = useState('')\n</Init>\n\n<Assistant>\nYou are an assistant that creates questions for Jeopardy.\n</Assistant>\n\n<User>\nMake a question about United States history.\n</User>\n\n<Request\n  model=\"gpt-3.5-turbo\"\n  onResponse={async ({ message }) => {\n    const answer = await questionAnswer({ question: message })\n    setField(answer)\n  }}\n/>",
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [
@@ -111,6 +113,7 @@ Make a question about United States history.
           stopSequence: undefined,
         },
       ],
+      functions: [],
     }
   }
 
@@ -123,11 +126,7 @@ Make a question about United States history.
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

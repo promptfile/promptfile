@@ -12,9 +12,9 @@ export function getWithImportPrompt() {
 
     const GLASSVAR = {}
     const TEMPLATE = `<Init>
-import c from "c"
+import c from 'c'
 
-const a = "3"
+const a = '3'
 </Init>
 
 <User>
@@ -26,7 +26,7 @@ ${a} ${b} ${c}
       fileName: 'withImport',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        '<Init>\nimport c from "c"\n\nconst a = "3"\n</Init>\n\n<User>\n${a} ${b} ${c}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
+        "<Init>\nimport c from 'c'\n\nconst a = '3'\n</Init>\n\n<User>\n@{a} @{b} @{c}\n</User>\n\n<Request model=\"gpt-3.5-turbo\" />",
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [
@@ -38,6 +38,7 @@ ${a} ${b} ${c}
           stopSequence: undefined,
         },
       ],
+      functions: [],
     }
   }
 
@@ -50,11 +51,7 @@ ${a} ${b} ${c}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

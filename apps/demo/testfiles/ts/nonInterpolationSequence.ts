@@ -9,15 +9,26 @@ export function getNonInterpolationSequencePrompt() {
 
     const GLASSVAR = {}
     const TEMPLATE = `<User>
-${foo} and {foo}
-</User>`
+${foo} and {foo} and \${foo} \`cool\`
+</User>
+
+<Request model="gpt-3.5-turbo" />`
     return {
       fileName: 'nonInterpolationSequence',
       interpolatedDoc: TEMPLATE,
-      originalDoc: '<User>\n${foo} and {foo}\n</User>',
+      originalDoc: '<User>\n@{foo} and {foo} and ${foo} `cool`\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
+      functions: [],
     }
   }
 
@@ -30,11 +41,7 @@ ${foo} and {foo}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

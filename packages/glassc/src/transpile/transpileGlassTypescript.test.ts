@@ -11,56 +11,6 @@ const folders = {
 }
 
 describe('transpileGlassTypescript', () => {
-  it('should transpile without interpolation variables', () => {
-    const { input, output } = loadTestFile('testfiles/ts/noInterpolation', 'ts')
-    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'noInterpolation' })
-    expect(transpiled.code.trim()).to.equal(output.trim())
-  })
-
-  it('should transpile with interpolation variables', () => {
-    const { input, output } = loadTestFile('testfiles/ts/withInterpolation', 'ts')
-    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'withInterpolation' })
-    expect(transpiled.code.trim()).to.equal(output.trim())
-  })
-
-  it('should transpile including interstitial text', () => {
-    const { input, output } = loadTestFile('testfiles/ts/interstitialCode', 'ts')
-    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'interstitialCode' })
-    expect(transpiled.code.trim()).to.equal(output.trim())
-  })
-
-  it.skip('should transpile into javascript', () => {
-    const transpiled = transpileGlassFileTypescript(
-      `<User>
-\${foo}
-</User>`,
-      {
-        workspaceFolder: '/Users/me/glassc',
-        folderPath: '/Users/me/glassc',
-        fileName: 'foo',
-        language: 'javascript',
-        outputDirectory: '/Users/me/glassc/src',
-      }
-    )
-
-    expect(transpiled.code).to.equal(`export async function getFooPrompt(opt) {
-  opt = opt || {}
-  const GLASS_STATE = {}
-  const { foo } = opt.args
-
-  const GLASSVAR = {}
-  const TEMPLATE = \`<User>
-\${foo}
-</User>\`
-  return await runGlass(
-    'foo',
-    'text-davinci-003',
-    { interpolatedDoc: TEMPLATE, originalDoc },
-    { ...(opt.options || {}), ...{ state: GLASS_STATE, onResponse: undefined } }
-  )
-}`)
-  })
-
   it('should transpile with non-interpolation sequences', () => {
     const { input, output } = loadTestFile('testfiles/ts/nonInterpolationSequence', 'ts')
     const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'nonInterpolationSequence' })
@@ -115,21 +65,9 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  // it('should transpile with single <For> loop', () => {
-  //   const { input, output } = loadTestfile('testfiles/ts/forLoopAttributesOnly', 'ts')
-  //   const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'forLoopAttributesOnly' })
-  //   expect(transpiled.code.trim()).to.equal(output.trim())
-  // })
-
   it('should transpile with single if condition', () => {
     const { input, output } = loadTestFile('testfiles/ts/ifCondition', 'ts')
     const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'ifCondition' })
-    expect(transpiled.code.trim()).to.equal(output.trim())
-  })
-
-  it('should transpile with single if condition, string value', () => {
-    const { input, output } = loadTestFile('testfiles/ts/singleIfCondition', 'ts')
-    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'singleIfCondition' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 

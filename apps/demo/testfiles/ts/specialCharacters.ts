@@ -7,12 +7,12 @@ export function getSpecialCharactersPrompt() {
     const GLASS_STATE = {}
 
     const type = 'assistant'
-    const role = `helpful ${type}`
+    const role = `helpful ${type} @{type}`
 
     const GLASSVAR = {}
     const TEMPLATE = `<Init>
 const type = 'assistant'
-const role = \`helpful \${type}\`
+const role = \`helpful \${type} @{type}\`
 </Init>
 
 <System>
@@ -24,7 +24,7 @@ You are a ${role}.
       fileName: 'specialCharacters',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        '<Init>\nconst type = \'assistant\'\nconst role = `helpful ${type}`\n</Init>\n\n<System>\nYou are a ${role}.\n</System>\n\n<Request model="gpt-3.5-turbo" />',
+        '<Init>\nconst type = \'assistant\'\nconst role = `helpful ${type} @{type}`\n</Init>\n\n<System>\nYou are a @{role}.\n</System>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [
@@ -36,6 +36,7 @@ You are a ${role}.
           stopSequence: undefined,
         },
       ],
+      functions: [],
     }
   }
 
@@ -48,11 +49,7 @@ You are a ${role}.
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

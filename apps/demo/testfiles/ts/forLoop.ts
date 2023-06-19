@@ -24,10 +24,11 @@ ${m.content}
       fileName: 'forLoop',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        "<For each={[\n    { role: 'user', content: 'name an ice cream' },\n    { role: \"assistant\", content: 'Vanilla' },\n    { role: 'user', content: 'name a fruit' }\n]} as=\"m\">\n<Block role={m.role}>\n${m.content}\n</Block>\n</For>",
+        "<For each={[\n    { role: 'user', content: 'name an ice cream' },\n    { role: \"assistant\", content: 'Vanilla' },\n    { role: 'user', content: 'name a fruit' }\n]} as=\"m\">\n<Block role={m.role}>\n@{m.content}\n</Block>\n</For>",
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [],
+      functions: [],
     }
   }
 
@@ -40,11 +41,7 @@ ${m.content}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

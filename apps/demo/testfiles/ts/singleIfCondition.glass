@@ -1,7 +1,0 @@
-<System>
-Hello world
-</System>
-
-<User if={true}>
-Goodbye world
-</User>

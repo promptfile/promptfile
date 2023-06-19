@@ -189,7 +189,7 @@ b = list(map(lambda x: x + 1, [1, 2, 3]))
             offset: 33,
           },
         },
-        tagName: 'Code',
+        tagName: 'Init',
         type: 'mdxJsxFlowElement',
       },
       {

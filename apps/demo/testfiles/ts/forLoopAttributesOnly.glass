@@ -1,9 +1,0 @@
-<Init>
-const items = [{role: 'user', content: 'who was gandhi?'}]
-</Init>
-
-<For each={items} as="item">
-<Block role={item.role}>
-@{item.content}
-</Block>
-</For>

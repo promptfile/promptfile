@@ -76,12 +76,16 @@ export function transpileGlassFileTypescript(
   // iterate over all the jsxExpressions (values inside `{ }`) and replace them with a number if they're supposed to be treated like code (values inside `${ }`)
   let codeSanitizedDoc = ''
   for (const node of glasslib.parseGlassDocument(glasslib.removeGlassFrontmatter(doc))) {
-    if (node.type === 'comment' || node.type === 'frontmatter' || node.tag === 'Code' || node.tag === 'Test') {
+    if (node.type === 'comment' || node.type === 'frontmatter' || node.tag === 'Init' || node.tag === 'Test') {
       codeSanitizedDoc += node.content // or remove frontmatter from code sanitized doc?
       continue
     }
 
     let content = node.content
+
+    // escape all ${.+} sequences with \
+    content = content.replace(/\$\{(.+?)\}/g, '\\${$1}')
+
     const interpolations = parseInterpolations(content)
 
     for (const codeInterpolation of interpolations) {
@@ -124,7 +128,7 @@ export function transpileGlassFileTypescript(
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
-    if (jsxNode.tag === 'Test' || jsxNode.tag === 'Code') {
+    if (jsxNode.tag === 'Test' || jsxNode.tag === 'Init') {
       // don't strip away codeblocks, yet
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
@@ -204,7 +208,7 @@ export function transpileGlassFileTypescript(
   }
 
   let toplevelCode = parsedDocument
-    .filter(d => d.tag === 'Code')
+    .filter(d => d.tag === 'Init')
     .map(d => d.child!.content)
     .join('\n')
 
@@ -269,7 +273,7 @@ export function transpileGlassFileTypescript(
   const escapedInterpolatedDoc = glasslib
     .parseGlassDocument(codeSanitizedDoc)
     .map(b => {
-      if (b.type === 'block' && b.tag !== 'Code' && b.tag !== 'Test') {
+      if (b.type === 'block' && b.tag !== 'Init' && b.tag !== 'Test') {
         // if it's a block, we need to escape the backticks but only in the attributes
         const bContentWithoutChild =
           b.content.substring(0, b.child!.position.start.offset - b.position.start.offset) +

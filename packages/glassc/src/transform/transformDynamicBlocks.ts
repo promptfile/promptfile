@@ -80,7 +80,7 @@ export function transformDynamicBlocks(doc: string, next?: boolean) {
       }
 
       doc =
-        doc.substring(0, nodeStartOffset + currOffset) + `@{${interpKey}}` + doc.substring(nodeEndOffset + currOffset)
+        doc.substring(0, nodeStartOffset + currOffset) + `\${${interpKey}}` + doc.substring(nodeEndOffset + currOffset)
       currOffset += newSequenceLength - oldSequenceLength
     } else if (ifAttr?.expressionValue != null) {
       jsxInterpolations[pruneInterpKey] = `${ifAttr.expressionValue} ? \`${docSection.replace(

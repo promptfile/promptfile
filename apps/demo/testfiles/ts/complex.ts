@@ -50,7 +50,7 @@ ${transcript}
       fileName: 'complex',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        "<Init>\nimport {sayHello} from './say-hello'\n\nsayHello({ name: 'chat' })\n</Init>\n\n<System>\nRead a Transcript and determine how to respond about the property's ${sayHello({ name: 'chat' })}. Valid responses are:\n\n- `NO_RESPONSE`: use this if the transcript has nothing to do with ${agentName}\n- `HELP: <reason>`: use this if the information you have about the ${agentName} is insufficient to provide an answer and you require more information\n- `<your response>`: a useful response to the User given the property's ${agentName}\n\n${\n  function generateCodeExamples() {\n    const examples = []\n    for (let i = 0; i < 10; i++) {\n      examples.push(Math.random())\n    }\n    return examples.join('\\n')\n  }\n}\n</System>\n\n<User>\n${agentName}\n###\n${instructions}\n###\n\nTranscript\n###\n${transcript}\n###\n</User>\n\n<Request model=\"gpt-3.5-turbo\" />",
+        "<Init>\nimport {sayHello} from './say-hello'\n\nsayHello({ name: 'chat' })\n</Init>\n\n<System>\nRead a Transcript and determine how to respond about the property's @{sayHello({ name: 'chat' })}. Valid responses are:\n\n- `NO_RESPONSE`: use this if the transcript has nothing to do with @{agentName}\n- `HELP: <reason>`: use this if the information you have about the @{agentName} is insufficient to provide an answer and you require more information\n- `<your response>`: a useful response to the User given the property's @{agentName}\n\n@{\n  function generateCodeExamples() {\n    const examples = []\n    for (let i = 0; i < 10; i++) {\n      examples.push(Math.random())\n    }\n    return examples.join('\\n')\n  }\n}\n</System>\n\n<User>\n@{agentName}\n###\n@{instructions}\n###\n\nTranscript\n###\n@{transcript}\n###\n</User>\n\n<Request model=\"gpt-3.5-turbo\" />",
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [
@@ -62,6 +62,7 @@ ${transcript}
           stopSequence: undefined,
         },
       ],
+      functions: [],
     }
   }
 
@@ -74,11 +75,7 @@ ${transcript}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

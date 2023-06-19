@@ -21,7 +21,7 @@ ${a}
     return {
       fileName: 'codeBlock',
       interpolatedDoc: TEMPLATE,
-      originalDoc: '<Init>\nconst a = "3"\n</Init>\n\n<User>\n${a}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
+      originalDoc: '<Init>\nconst a = "3"\n</Init>\n\n<User>\n@{a}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [
@@ -33,6 +33,7 @@ ${a}
           stopSequence: undefined,
         },
       ],
+      functions: [],
     }
   }
 
@@ -45,11 +46,7 @@ ${a}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

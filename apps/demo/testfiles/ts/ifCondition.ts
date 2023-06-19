@@ -17,14 +17,26 @@ Goodbye world
 Hello world
 </System>
 
-${GLASSVAR[0]}`
+${GLASSVAR[0]}
+
+<Request model="gpt-3.5-turbo" />`
     return {
       fileName: 'ifCondition',
       interpolatedDoc: TEMPLATE,
-      originalDoc: '<System>\nHello world\n</System>\n\n<User if={true}>\nGoodbye world\n</User>',
+      originalDoc:
+        '<System>\nHello world\n</System>\n\n<User if={true}>\nGoodbye world\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
+      functions: [],
     }
   }
 
@@ -37,11 +49,7 @@ ${GLASSVAR[0]}`
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

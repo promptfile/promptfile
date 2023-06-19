@@ -8,17 +8,29 @@ export function getArgsPrompt() {
     const { foo, bar } = opt.args
 
     const GLASSVAR = {}
-    const TEMPLATE = `<User>
+    const TEMPLATE = `
+<User>
 ${foo} ${bar}
-</User>`
+</User>
+
+<Request model="gpt-3.5-turbo" />`
     return {
       fileName: 'args',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n<User>\n${foo} ${bar}\n</User>',
+        '---\nlanguage: typescript\nargs:\n    foo: number\n    bar: string\n---\n\n<User>\n@{foo} @{bar}\n</User>\n\n<Request model="gpt-3.5-turbo" />',
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
-      requestBlocks: [],
+      requestBlocks: [
+        {
+          model: 'gpt-3.5-turbo',
+          onResponse: undefined,
+          temperature: undefined,
+          maxTokens: undefined,
+          stopSequence: undefined,
+        },
+      ],
+      functions: [],
     }
   }
 
@@ -31,11 +43,7 @@ ${foo} ${bar}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: {
-      nextGlassfile: string
-      transcript: { role: string; content: string; id: string }[]
-      response: string
-    }) => void
+    progress?: (data: { nextGlassfile: string; response: string }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)
