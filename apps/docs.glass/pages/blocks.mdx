@@ -108,9 +108,61 @@ const input = "Sunny"
 
 This is an automatically generated block that is used to track the results of a function call.
 
-- **name** <i>(p[topma; string)</i> <br/> The name of the function which was called.
+- **name** <i>(string)</i> <br/> The name of the function which was called.
 
-### Init (Initialize code for your prompt)
+For example, here is a sample Glass file that declares a `<Tool>{:glass}` called "calculator".
+
+```glass copy filename="function_example.glass"
+<Tool
+  name="calculator"
+  description="Calculates the result of a math expression."
+  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
+  run={({ expression }) => '' + eval(expression)}
+/>
+
+<User>
+what is 2 to the .12345 power?
+</User>
+
+<Request model="gpt-3.5-turbo-0613" />
+```
+
+When we run this Glass file, we get:
+
+```glass
+<Tool
+  name="calculator"
+  description="Calculates the result of a math expression."
+  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
+  run={({ expression }) => '' + eval(expression)}
+/>
+
+
+<User>
+what is 2 to the .12345 power?
+</User>
+
+// This is the assistant deciding to use the calculator tool and pass in arguments into the schema based on the request
+
+<Assistant model="gpt-3.5-turbo-0613" temperature={1} type="function_call">
+{
+  "name": "calculator",
+  "arguments": "{\n  \"expression\": \"Math.pow(2, 0.12345)\"\n}"
+}
+</Assistant>
+
+// This is the automatically generated function block letting you know that the LLM used the tool it had available
+
+<Function name="calculator">
+"1.0893367441616877"
+</Function>
+
+<Assistant model="gpt-3.5-turbo-0613" temperature={1}>
+2 to the power of 0.12345 is approximately 1.08934.
+</Assistant>
+```
+
+### Init
 
 <Callout type="info">
   Note: Executing code inside your Glass file is still experimental and presents challenges to some users writing complex code. We encourage you to file a bug report on GitHub or message us on [Discord](https://discord.com/invite/H64PFP2DCc)
@@ -156,7 +208,16 @@ Use the `<Request />{:glass}` block to make an API request to a specified model,
 
 ### State
 
-This is an automatically generated block that is used to track the state of the conversation. You should not modify this block. This holds the state of the conversation.
+This is an automatically generated block that is used to track the state of the conversation. You should not modify this block. This holds the state of the conversation. Here is the state of the conversation after running the 4th Glass file in our [Cookbook](/cookbook):
+
+```glass copy filename="events_state.glass"
+<State>
+{
+  "lastMessageText": "Sure, here's one: \n\nWhy did the kitten join Tinder? \nTo find her purr-fect match!",
+  "numResponses": 1
+}
+</State>
+```
 
 ### System
 
@@ -174,15 +235,11 @@ This will not be included in the prompt :(
 
 ### Test
 
-Use `<Test>{:glass}` to define test data to use when running the file.
-
-- **if** <i>(optional condtional)</i> <br/> Includes the block in the request only if the condition is met.
+Use `<Test>{:glass}` to define test data to use when running the file. When actually calling this prompt, you'd need to provide the input. When no variable is specified, your prompt will use cases defined in a `<Text>{:glass}` block.
 
 ```glass copy filename="test_example.glass"
 <Test>
-// input would usually be passed into the prompt as an argument
-// but Glass will use the test data instead when no arguments are provided
-return [{input: "test input 1"}, {input: "test input 2"}]
+const input = "Write me a 5 line poem about dogs"
 </Test>
 
 <User>

@@ -1,22 +1,11 @@
-<System>
-You are an expert in tailwindcss, nextjs, react and type script. Your user is a software engineer.
-</System>
+<Test>
+// input would usually be passed into the prompt as an argument
+// but Glass will use the test data instead when no arguments are provided
+const input = "Write me a 5 line poem about dogs"
+</Test>
 
 <User>
-Help me make the second div's width take the remainder of the screen width
-
-```js
-<main className={`flex min-h-screen min-w-screen flex-row items-center  ${inter.className}`}>
-
-      <Sidebar className='w-64 min-h-screen' />
-
-      <div className='min-h-screen'>
-        <h1 className='text-4xl font-bold'>Gopher AI</h1>
-      </div>
-
-
-    </main>
-```
+@{input}
 </User>
 
-<Request model="gpt-4-32k-0613" />
+<Request model="gpt-3.5-turbo" />

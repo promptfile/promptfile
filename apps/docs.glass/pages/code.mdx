@@ -16,9 +16,7 @@ import Image from 'next/image'
 
 ## Executable Code
 
-Glass has experimental support for an element called `<Init>` which lets you write code to be executed before the prompt is evaluated. This is useful for fetching data, running calculations, or executing any other code that you want to run before prompting the LLM.
-
-You can update your default langauge in [VSCode settings](/vscode) or by adding a language to the frontmatter of your file.
+Glass has supports an element called `<Init>` which lets you write code to be executed before the prompt is evaluated. This is useful for fetching data, running calculations, or executing any other code that you want to run before prompting the LLM.
 
 ```glass copy filename="example.glass"
 
@@ -65,9 +63,10 @@ setStateVariable(newValue)
 </Init>
 ```
 
+## Putting it all together
+
 Here is an example of `onResponse` and `useState` being used together:
 
-###
 ```glass copy filename="events_state.glass"
 <Init>
 // This works just like `useState` in React
@@ -98,7 +97,8 @@ The `onResponse` attribute lets you execute code with the response from the LLM.
 
 
 ```
- You can see the state variables being updated in the Glass file. Here's what it would look like after running.
+
+You can see the state variables being updated in the Glass file. Here's what it would look like after running.
 
 ###
 
