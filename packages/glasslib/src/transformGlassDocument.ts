@@ -1,5 +1,5 @@
 import { LANGUAGE_MODELS } from './languageModels'
-import { ChatCompletionRequestMessage } from './parseChatCompletionBlocks'
+import { ChatBlock } from './parseChatBlocks'
 import { GlassContent, RequestData, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 import { ResponseData } from './runGlassTranspilerOutput'
 
@@ -129,10 +129,10 @@ export function handleRequestNode(
   }
 }
 
-function convertResponseData(responseData: ResponseData[][]): ChatCompletionRequestMessage[] {
+function convertResponseData(responseData: ResponseData[][]): ChatBlock[] {
   return responseData.flatMap(d =>
     d.flatMap(r => {
-      const res: ChatCompletionRequestMessage[] = []
+      const res: ChatBlock[] = []
 
       res.push({
         role: 'assistant',

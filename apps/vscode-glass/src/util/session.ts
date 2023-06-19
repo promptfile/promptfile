@@ -1,11 +1,5 @@
 import { parseFrontmatterFromGlass, parseGlassMetadata, rewriteImports } from '@glass-lang/glassc'
-import {
-  LANGUAGE_MODELS,
-  LanguageModelCreator,
-  parseGlassBlocks,
-  parseGlassBlocksRecursive,
-  removeGlassFrontmatter,
-} from '@glass-lang/glasslib'
+import { LANGUAGE_MODELS, LanguageModelCreator, parseGlassBlocks, removeGlassFrontmatter } from '@glass-lang/glasslib'
 import fs from 'fs'
 import * as os from 'os'
 import path from 'path'
@@ -60,7 +54,7 @@ timestamp: ${timestamp ?? new Date().toISOString()}
 ---`,
   ]
   if (metadata.interpolationVariables.length > 0) {
-    const blocks = parseGlassBlocksRecursive(glassWithoutFrontmatter)
+    const blocks = parseGlassBlocks(glassWithoutFrontmatter, true)
     const testBlock = blocks.find(block => block.tag === 'Test')
     if (!testBlock) {
       glassSections.push(
@@ -124,7 +118,7 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
     await vscode.window.showErrorMessage('Unable to parse frontmatter from Glass file')
     return
   }
-  const elements = parseGlassBlocksRecursive(glass)
+  const elements = parseGlassBlocks(glass, true)
   const requestElement = elements.find(element => element.tag === 'Request')
   const model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
   const languageModel = LANGUAGE_MODELS.find(m => m.name === model)

@@ -12,7 +12,7 @@ export function parseGlassMetadata(document: string) {
     .map(t => t.child!.content)
     .join('\n')
 
-  const blocks = glasslib.parseGlassBlocksRecursive(document)
+  const blocks = glasslib.parseGlassBlocks(document, true)
   const relevantBlocks = blocks.filter(block => contentBlocks.has(block.tag || ''))
 
   const vars = relevantBlocks.flatMap(block => {
@@ -56,7 +56,7 @@ export async function parseGlassMetadataPython(document: string) {
     .map(t => t.child!.content)
     .join('\n')
 
-  const blocks = glasslib.parseGlassBlocksRecursive(document)
+  const blocks = glasslib.parseGlassBlocks(document, true)
   const relevantBlocks = blocks.filter(block => contentBlocks.has(block.tag || ''))
 
   const interpolations = relevantBlocks.flatMap(block => {

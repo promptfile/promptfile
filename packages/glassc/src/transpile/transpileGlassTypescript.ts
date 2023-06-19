@@ -314,7 +314,7 @@ export function transpileGlassFileTypescript(
   },
   openaiKey?: string,
   anthropicKey?: string,
-  progress?: (data: { nextGlassfile: string; response: string }) => void
+  progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
 }`
 
   const code = `${imports.replace(/import .+ from ['"].+\.glass['"]/gm, '')}
@@ -418,6 +418,13 @@ export function constructGlassOutputFileTypescript(functions: ReturnType<typeof 
   import { z } from "zod"
   import * as glasslib from '@glass-lang/glasslib'
   const useState = glasslib.useState
+
+  interface ChatBlock {
+    role: 'system' | 'user' | 'assistant' | 'function'
+    content: string
+    name?: string
+    type?: 'function_call'
+  }
 
   ${functionsString}
 

@@ -2,20 +2,26 @@ import { RequestData, parseGlassBlocks } from './parseGlassBlocks'
 import { removeGlassComments } from './removeGlassComments'
 import { DEFAULT_TOKEN_COUNTER } from './tokenCounter'
 
-export interface ChatCompletionRequestMessage {
+/**
+ * Same as `ChatCompletionRequestMessage` type exported by the 'openai' package.
+ */
+export interface ChatBlock {
   role: 'system' | 'user' | 'assistant' | 'function'
   content: string
   name?: string
   type?: 'function_call'
 }
 
-export function parseChatCompletionBlocks(content: string): ChatCompletionRequestMessage[] {
+/**
+ * From a glass document, parse the chat blocks and return them as an array.
+ */
+export function parseChatBlocks(content: string): ChatBlock[] {
   const doc = removeGlassComments(content)
 
   // first interpolate the jsx interpolations
   const nodes = parseGlassBlocks(doc)
 
-  const res: ChatCompletionRequestMessage[] = []
+  const res: ChatBlock[] = []
 
   for (const node of nodes.filter(n => n.type === 'block')) {
     let role = node.tag?.toLowerCase()
@@ -42,19 +48,19 @@ export function parseChatCompletionBlocks(content: string): ChatCompletionReques
   return res
 }
 
-export function parseChatCompletionBlocks2(
+export function parseChatBlocks2(
   content: string,
   requestBlocks: RequestData[],
   tokenCounter = DEFAULT_TOKEN_COUNTER
-): ChatCompletionRequestMessage[][] {
+): ChatBlock[][] {
   const doc = removeGlassComments(content)
 
   // first interpolate the jsx interpolations
   const nodes = parseGlassBlocks(doc)
 
-  const res: ChatCompletionRequestMessage[][] = []
+  const res: ChatBlock[][] = []
 
-  let currBlock: ChatCompletionRequestMessage[] = []
+  let currBlock: ChatBlock[] = []
 
   let totalNumTokensUsed = 0
 

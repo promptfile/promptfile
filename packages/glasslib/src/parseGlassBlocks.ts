@@ -19,6 +19,16 @@ export interface GlassContent {
   attrs?: { name: string; stringValue?: string; expressionValue?: string }[]
 }
 
+/**
+ * Parse a Glass file.
+ *
+ * Each part of the file is returned as a `GlassContent` object. There are three types of content:
+ * - `frontmatter`: a frontmatter block may be declared at the top of the file
+ * - `block`: a top-level block element (e.g. <System>, <Request>)
+ * - `comment`: ignored text (between blocks)
+ *
+ * For chat-only blocks, use `parseChatBlocks`.
+ */
 export function parseGlassDocument(doc: string): GlassContent[] {
   const blocks = parseGlassBlocks(doc)
 
@@ -66,7 +76,19 @@ export function parseGlassDocument(doc: string): GlassContent[] {
   return content
 }
 
-export function parseGlassBlocks(doc: string) {
+/**
+ * Parses *all* block elements from a Glass file.
+ *
+ * E.g. `<System>`, `<Request>`, etc.
+ *
+ * For chat-only blocks, use `parseChatBlocks`.
+ *
+ * If parseNestedForBlocks is true, then the nested child blocks of `<For>` will be parsed instead of the `<For>` block itself.
+ */
+export function parseGlassBlocks(doc: string, parseNestedForBlocks = false): GlassContent[] {
+  if (parseNestedForBlocks) {
+    return parseGlassBlocksRecursive(doc)
+  }
   const blocks: GlassContent[] = []
   const lines = doc.split('\n')
 
@@ -198,7 +220,7 @@ export function parseGlassBlocks(doc: string) {
   return parseAttributes(doc, blocks)
 }
 
-export function parseGlassBlocksRecursive(doc: string): GlassContent[] {
+function parseGlassBlocksRecursive(doc: string): GlassContent[] {
   const blocks = parseGlassBlocks(doc)
   return blocks.flatMap(b => {
     if (!b.child?.content) {

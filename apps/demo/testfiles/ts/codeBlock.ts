@@ -46,7 +46,7 @@ ${a}
     }
     openaiKey?: string
     anthropicKey?: string
-    progress?: (data: { nextGlassfile: string; response: string }) => void
+    progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
   }) => {
     const c = await compile({ args: options.args || {} })
     return await glasslib.runGlassTranspilerOutput(c, options)

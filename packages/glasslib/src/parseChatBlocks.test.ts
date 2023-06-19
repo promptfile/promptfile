@@ -1,14 +1,14 @@
 import { expect } from 'chai'
-import { parseChatCompletionBlocks, parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
+import { parseChatBlocks, parseChatBlocks2 } from './parseChatBlocks'
 
-describe('parseChatCompletionBlocks', () => {
+describe('parseChatBlocks', () => {
   it('should parse empty document', () => {
-    expect(parseChatCompletionBlocks('')).to.deep.equal([])
+    expect(parseChatBlocks('')).to.deep.equal([])
   })
 
   it('should interpolate a document with system block', () => {
     expect(
-      parseChatCompletionBlocks(
+      parseChatBlocks(
         `<System>
 Hello world
 </System>`
@@ -18,7 +18,7 @@ Hello world
 
   it('should interpolate a document with system and user block', () => {
     expect(
-      parseChatCompletionBlocks(
+      parseChatBlocks(
         `<System>
 Hello world
 </System>
@@ -35,7 +35,7 @@ Goodbye world
 
   it('should interpolate a document with <Block>', () => {
     expect(
-      parseChatCompletionBlocks(
+      parseChatBlocks(
         `<Block role="System">
 Hello world
 </Block>
@@ -51,7 +51,7 @@ Hello world
 
   it('should ignore comments', () => {
     expect(
-      parseChatCompletionBlocks(
+      parseChatBlocks(
         `// this is a comment
 <System>
 Hello world
@@ -72,7 +72,7 @@ Goodbye world
 
   it('should ignore interstitial text', () => {
     expect(
-      parseChatCompletionBlocks(
+      parseChatBlocks(
         `<System>
 Hello world
 </System>
@@ -92,7 +92,7 @@ Goodbye world
 
   it('should ignore test blocks', () => {
     expect(
-      parseChatCompletionBlocks(
+      parseChatBlocks(
         `<System>
 Hello world
 </System>
@@ -113,7 +113,7 @@ Goodbye world
 
   //   it('should ignore loop blocks', () => {
   //     expect(
-  //       parseChatCompletionBlocks(
+  //       parseChatBlocks(
   //         `<System>
   // Hello world
   // </System>
@@ -129,7 +129,7 @@ Goodbye world
 
   it('should parse chat completion blocks with token counter', () => {
     expect(
-      parseChatCompletionBlocks2(
+      parseChatBlocks2(
         `<User>
 1
 </User>
@@ -165,7 +165,7 @@ Goodbye world
 
   it('should parse chat completion blocks with token counter, complex', () => {
     expect(
-      parseChatCompletionBlocks2(
+      parseChatBlocks2(
         `<User>
 1
 </User>

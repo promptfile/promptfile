@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
-import { parseChatCompletionBlocks2 } from './parseChatCompletionBlocks'
+import { parseChatBlocks2 } from './parseChatBlocks'
 import { FunctionData, RequestData } from './parseGlassBlocks'
 import { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'
 import { addToDocument, handleRequestNode, replaceStateNode } from './transformGlassDocument'
@@ -85,7 +85,7 @@ export async function runGlassTranspilerOutput(
   }
 
   const responseData: ResponseData[][] = []
-  const messageBlocks = parseChatCompletionBlocks2(transformedInterpolatedDoc, requestBlocks, options?.tokenCounter)
+  const messageBlocks = parseChatBlocks2(transformedInterpolatedDoc, requestBlocks, options?.tokenCounter)
   const messagesSoFar: ChatCompletionRequestMessage[] = []
   checkOk(messageBlocks.length === requestBlocks.length)
 
