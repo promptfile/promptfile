@@ -185,8 +185,7 @@
           {
             "scope": "source.glass.void",
             "settings": {
-              "foreground": "#7a7a7a",
-              "fontStyle": "italic"
+              "foreground": "#7a7a7a"
             }
           },
           {
@@ -236,6 +235,12 @@
             "settings": {
               "foreground": "#4dff00",
               "fontStyle": "bold"
+            }
+          },
+          {
+            "scope": "markup.fenced_code.block.markdown",
+            "settings": {
+              "fontStyle": "italic"
             }
           }
         ]
