@@ -14,6 +14,7 @@ let's actually use the state in a prompt
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
 </System>
 
+
 <User>
 can you tell me a joke about kittens?
 </User>

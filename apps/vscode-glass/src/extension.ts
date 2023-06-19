@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
+import { updateDecorations } from './util/decorations'
 import { getAllGlassFiles, getDocumentFilename, isGlassFile } from './util/isGlassFile'
 import { createSession, runGlassExtension } from './util/session'
 import { updateTokenCount } from './util/tokenCounter'
@@ -55,14 +56,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
   let activeEditor = vscode.window.activeTextEditor
 
-  // const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
-  //   backgroundColor: new vscode.ThemeColor('glass.code.background'),
-  //   isWholeLine: true,
-  // })
+  const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
+    backgroundColor: new vscode.ThemeColor('glass.prompt.background'),
+    isWholeLine: true,
+  })
 
-  // if (activeEditor) {
-  //   updateDecorations(activeEditor, codeDecorations)
-  // }
+  if (activeEditor) {
+    updateDecorations(activeEditor, codeDecorations)
+  }
 
   const tokenCount = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000000)
   tokenCount.command = undefined
@@ -111,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext) {
         activeEditor = editor
         if (editor && isGlassFile(editor.document)) {
           updateTokenCount(tokenCount)
-          // updateDecorations(editor, codeDecorations)
+          updateDecorations(editor, codeDecorations)
           const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
           fileTimestamps.set(relativePath, Date.now())
         } else {
@@ -123,8 +124,9 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
     vscode.workspace.onDidChangeTextDocument(
       async editor => {
-        if (isGlassFile(editor.document)) {
-          // updateDecorations(activeEditor, codeDecorations)
+        const activeEditor = vscode.window.activeTextEditor
+        if (activeEditor && isGlassFile(editor.document)) {
+          updateDecorations(activeEditor, codeDecorations)
           updateTokenCount(tokenCount)
           const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
           fileTimestamps.set(relativePath, Date.now())

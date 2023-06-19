@@ -69,34 +69,10 @@
     ],
     "colors": [
       {
-        "id": "glass.code.background",
-        "description": "Background color for <Init> blocks",
+        "id": "glass.prompt.background",
+        "description": "Background color for prompt blocks",
         "defaults": {
-          "dark": "#4a4a4a26",
-          "light": "#b8caf9"
-        }
-      },
-      {
-        "id": "glass.system.background",
-        "description": "Background color for System blocks",
-        "defaults": {
-          "dark": "#f467c60D",
-          "light": "#b8caf9"
-        }
-      },
-      {
-        "id": "glass.user.background",
-        "description": "Background color for User blocks",
-        "defaults": {
-          "dark": "#4EC9B00D",
-          "light": "#b8caf9"
-        }
-      },
-      {
-        "id": "glass.assistant.background",
-        "description": "Background color for Assistant blocks",
-        "defaults": {
-          "dark": "#5EC5E50D",
+          "dark": "#00000070",
           "light": "#b8caf9"
         }
       }
@@ -253,18 +229,6 @@
             "settings": {
               "foreground": "#4EC9B0",
               "fontStyle": "italic"
-            }
-          },
-          {
-            "scope": "source.glass.highlight",
-            "settings": {
-              "foreground": "#569CD6"
-            }
-          },
-          {
-            "scope": "markup.list.table-delimiter.mdx",
-            "settings": {
-              "foreground": "#569CD6"
             }
           },
           {
