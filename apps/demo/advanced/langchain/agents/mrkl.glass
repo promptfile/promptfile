@@ -60,7 +60,7 @@ Overall, Assistant is a powerful system that can help with a wide range of tasks
 However, above all else, all responses must adhere to the format of RESPONSE FORMAT INSTRUCTIONS.
 </System>
 
-<User once>
+<User>
 TOOLS
 ------
 Assistant can ask the user to use tools to look up information that may be helpful in answering the users original question. The tools the human can use are:
