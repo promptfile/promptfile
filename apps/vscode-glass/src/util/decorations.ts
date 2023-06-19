@@ -5,7 +5,7 @@ export function updateDecorations(activeEditor: vscode.TextEditor, decorations: 
     return
   }
 
-  const regEx = /^<(User|Assistant|System|Function|Block)>\n([\s\S]*?)^\s*<\/\1>$/gm // Updated regex
+  const regEx = /^<(User|Assistant|System|Function|Block)(.*)>\n([\s\S]*?)^\s*<\/\1>$/gm // Updated regex
   const text = activeEditor.document.getText()
   const highlights = []
 
