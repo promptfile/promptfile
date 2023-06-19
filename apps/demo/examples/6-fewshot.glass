@@ -1,13 +1,5 @@
 Glass provides a powerful way to work with few shots. We can load up our examples in code and then loop through them using a For block.
 
-<Test>
-return [
-  {
-    userMessage: "I'm very angry",
-  },
-]
-</Test>
-
 <Init>
 const examples = [
   {
@@ -28,6 +20,14 @@ const examples = [
   },
 ]
 </Init>
+
+<Test>
+return [
+  {
+    userMessage: "I'm very angry",
+  },
+]
+</Test>
 
 <System>
 You are an AI community moderator. Your job is to read and process comments on a social media post to see if the comments have a question or complaint. If the comment has a question or complaint, return "NEEDS_ATTENTION". Otherwise, return "SKIP". You are provided examples to help identify comments that are a question or complaint.

@@ -1,4 +1,4 @@
-<Code language="ts">
+<Init>
 import fs from 'fs'
 import path from 'path'
 import { exec } from 'child_process'
@@ -18,7 +18,7 @@ async function runTests() {
 }
 
 const testOutput = await runTests()
-</Code>
+</Init>
 
 <System>
 You are a superintelligent AI. You've been tasked with helping the User to write code.

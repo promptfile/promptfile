@@ -1,6 +1,6 @@
 LLMs are particularly good at writing code.
-But prompting them to write code can be challenging within a broader codebase.
-Glass gives people the ability to write clean, formatted, syntax highlighted code in a prompt without leaving your editor.
+But prompting them to write code can be challenging within strings in your normal code files.
+Glass gives you the ability to write clean, formatted, syntax highlighted code in a prompt without leaving your editor.
 
 <System>
 You are PythonGPT: your job is to write performant, beautiful code to answer the user's question. You should respond with fenced Python code, like this:

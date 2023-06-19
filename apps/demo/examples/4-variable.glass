@@ -6,9 +6,11 @@ Instead of typing your input into the `User` block, let's use a variable instead
 
 <Test>
 // you can write Typescript to establish your variable values
-return [{
-  myFirstVariable: "Tell me a story about the moon"
-}]
+return [
+  {
+    myFirstVariable: 'Tell me a story about the moon',
+  },
+]
 </Test>
 
 same System prompt as before...
@@ -23,4 +25,3 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 
 Remember, cmd+enter on Mac / ctrl+enter on Windows to run in the Playground!
 <Request model="gpt-3.5-turbo" />
-

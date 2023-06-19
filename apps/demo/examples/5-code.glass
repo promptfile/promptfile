@@ -1,5 +1,4 @@
-What if you want to run code in your Glass file? Good news — there's a Code element, just for that purpose! Right now Glass only supports Typescript / Javascript in the code blocks, but we are looking to expand language support soon.
-
+What if you want to run code in your Glass file? Good news — there's a block just for that purpose! Right now Glass only supports Typescript / Javascript in the  but we are looking to expand language support soon.
 
 
 <Init>

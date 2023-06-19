@@ -162,6 +162,7 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
   try {
     let isUpdatingFile = false
     let didFinish = false
+    let isFirstStream = true
     const resp = await executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
       if (isUpdatingFile || didFinish) {
         return true
@@ -174,7 +175,8 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
         frontmatter.timestamp
       )
       await updateTextDocumentWithDiff(document, newGlass)
-      scrollToBottom(document)
+      scrollToBottom(document, isFirstStream)
+      isFirstStream = false
       isUpdatingFile = false
       return true
     })
@@ -195,7 +197,7 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
 </User>
 
 
-<Request model="${model}" />`
+      <Request model="${model}" />`
       // make a document edit to update the document with progress.nextGlassfile
       const range = new vscode.Range(0, 0, document.lineCount, 0)
       const edit = new vscode.WorkspaceEdit()
@@ -219,12 +221,28 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
   }
 }
 
-function scrollToBottom(document: vscode.TextDocument) {
+function scrollToBottom(document: vscode.TextDocument, force = false) {
   const activeEditor = vscode.window.activeTextEditor
-  if (activeEditor && activeEditor.document === document) {
+  if (activeEditor && activeEditor.document === document && (force || areLastNLinesVisible(activeEditor, 10))) {
     const lastLine = document.lineCount - 1
     const lastCharacter = document.lineAt(lastLine).text.length
     const bottomPosition = new vscode.Position(lastLine, lastCharacter)
     activeEditor.revealRange(new vscode.Range(bottomPosition, bottomPosition), vscode.TextEditorRevealType.Default)
   }
+}
+
+function areLastNLinesVisible(editor: vscode.TextEditor, n: number): boolean {
+  // Get the last 'n' lines.
+  const startLine = Math.max(0, editor.document.lineCount - n)
+  const endLine = editor.document.lineCount - 1
+  const lastNLinesRange = new vscode.Range(startLine, 0, endLine, editor.document.lineAt(endLine).text.length)
+
+  // Check each visible range to see if it intersects with the last 'n' lines.
+  const visibleRanges = editor.visibleRanges
+  for (const range of visibleRanges) {
+    if (range.intersection(lastNLinesRange)) {
+      return true
+    }
+  }
+  return false
 }

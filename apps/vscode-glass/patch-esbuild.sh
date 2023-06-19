@@ -23,7 +23,7 @@ unzip $FILE_NAME -d vsix_content
 cd vsix_content/extension
 
 # Update the package.json file
-jq ".dependencies = {\"esbuild\": \"^0.17.19\", \"@glass-lang/glasslib\": \"*\", \"@dqbd/tiktoken\": \"*\"}" package.json > temp.json && rm -f package.json && mv temp.json package.json
+jq ".dependencies = {\"esbuild\": \"^0.17.19\", \"@glass-lang/glasslib\": \"*\", \"@dqbd/tiktoken\": \"*\", \"zod\": \"*\"}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 jq ".devDependencies = {}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 mv .yarn.lock yarn.lock
 # touch yarn.lock

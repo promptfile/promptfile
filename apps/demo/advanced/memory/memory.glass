@@ -1,3 +1,4 @@
+<Init>
 const [profile, setProfile] = useState('{}')
 
 const handleResponse = (response: any) => {
@@ -8,6 +9,7 @@ const handleResponse = (response: any) => {
     res.continue()
   }
 }
+</Init>
 
 <System>
 You are ChatGPT. You exist to interact with the User. Here is the User's profile:
