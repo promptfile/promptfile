@@ -50,7 +50,10 @@ export async function executeGlassTypescript(
   fs.writeFileSync(
     tmpFilePath,
     `${transpiledCode}
-context.response = ${getGlassExportName(fileName)}()`,
+context.response = ${getGlassExportName(fileName)}()`.replace(
+      `import glasslib from '@glass-lang/glasslib'`,
+      `import * as glasslib from '@glass-lang/glasslib'`
+    ),
     {
       encoding: 'utf-8',
     }
