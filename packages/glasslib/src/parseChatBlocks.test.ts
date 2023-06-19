@@ -13,7 +13,7 @@ describe('parseChatBlocks', () => {
 Hello world
 </System>`
       )
-    ).to.deep.equal([{ role: 'system', name: undefined, content: 'Hello world' }])
+    ).to.deep.equal([{ role: 'system', name: undefined, id: undefined, content: 'Hello world' }])
   })
 
   it('should interpolate a document with system and user block', () => {
@@ -28,8 +28,8 @@ Goodbye world
 </User>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -44,8 +44,8 @@ Hello world
 </Block>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -65,8 +65,8 @@ Goodbye world
 </User>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -85,8 +85,8 @@ Goodbye world
 </User>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -106,8 +106,8 @@ Goodbye world
 </User>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -156,9 +156,9 @@ Goodbye world
       )
     ).to.deep.equal([
       [
-        { role: 'user', name: undefined, content: '1' },
-        { role: 'user', name: undefined, content: '2' },
-        { role: 'user', name: undefined, content: '3' },
+        { role: 'user', name: undefined, id: undefined, content: '1' },
+        { role: 'user', name: undefined, id: undefined, content: '2' },
+        { role: 'user', name: undefined, id: undefined, content: '3' },
       ],
     ])
   })
@@ -192,8 +192,8 @@ Goodbye world
       )
     ).to.deep.equal([
       [
-        { role: 'user', name: undefined, content: '2' },
-        { role: 'user', name: undefined, content: '3' },
+        { role: 'user', name: undefined, id: undefined, content: '2' },
+        { role: 'user', name: undefined, id: undefined, content: '3' },
       ],
     ])
   })

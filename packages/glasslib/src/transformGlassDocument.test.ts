@@ -174,27 +174,28 @@ hello world
 <Request model="gpt-4" />`
 
       const res = handleRequestNode(interpDoc, {
+        newBlockIds: ['1', '2'],
         responseData: [[{ response: '' }]],
         streaming: true,
         requestBlocks: [{ model: 'gpt-4' }],
         index: 0,
       })
-      expect(res.response[0].content).to.equal('')
+      expect(res.response[0].content).to.equal('█')
       expect(res.nextGlassfile).to.equal(`---
 language: typescript
 ---
 
-<User>
+<User id="1">
 hello world
 </User>
 
-<Assistant model="gpt-4" temperature={1}>
+<Assistant model="gpt-4" temperature={1} id="2">
 █
 </Assistant>`)
     })
 
     it('should handle multiple request', () => {
-      const interpDoc = `<User>
+      const interpDoc = `<User id="dont change me">
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
 
 Title: hello world
@@ -207,30 +208,35 @@ You are a play critic from the New York Times. Given the synopsis you provided a
 </User>
 
 <Request model="gpt-4" />`
-
-      const res = handleRequestNode(interpDoc, {
-        responseData: [[{ response: 'goodbye' }], [{ response: 'world' }]],
-        streaming: false,
-        requestBlocks: [{ model: 'gpt-3.5-turbo' }, { model: 'gpt-4' }],
-        index: 1,
-      })
+      let id = 1
+      const res = handleRequestNode(
+        interpDoc,
+        {
+          newBlockIds: [],
+          responseData: [[{ response: 'goodbye' }], [{ response: 'world' }]],
+          streaming: false,
+          requestBlocks: [{ model: 'gpt-3.5-turbo' }, { model: 'gpt-4' }],
+          index: 1,
+        },
+        () => '' + id++
+      )
       expect(res.response[0].content).to.equal('goodbye')
       expect(res.response[1].content).to.equal('world')
-      expect(res.nextGlassfile).to.equal(`<User>
+      expect(res.nextGlassfile).to.equal(`<User id="dont change me">
 You are a playwright. Given the title of a play, it is your job to write a synopsis for that title.
 
 Title: hello world
 </User>
 
-<Assistant model="gpt-3.5-turbo" temperature={1}>
+<Assistant model="gpt-3.5-turbo" temperature={1} id="1">
 goodbye
 </Assistant>
 
-<User>
+<User id="2">
 You are a play critic from the New York Times. Given the synopsis you provided above, write a review for the play.
 </User>
 
-<Assistant model="gpt-4" temperature={1}>
+<Assistant model="gpt-4" temperature={1} id="3">
 world
 </Assistant>`)
     })

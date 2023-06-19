@@ -255,7 +255,6 @@ export function transpileGlassFileTypescript(
 
   const parsedFrontmatter = parseFrontmatter(parsedDocument.find(n => n.type === 'frontmatter')?.content || '')
   const defaultModel = parsedFrontmatter?.model
-  console.log('default model is', defaultModel)
   const argsOverride = parsedFrontmatter?.args || {}
   const allInterpolationNames = Array.from(interpolationVarSet)
   const argsString = allInterpolationNames.map(arg => arg + `: ${argsOverride[arg] || 'string'}`).join(', ')
