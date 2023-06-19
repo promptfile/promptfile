@@ -18,7 +18,7 @@ export function parseGlassMetadata(document: string) {
   const vars = relevantBlocks.flatMap(block => {
     let match: RegExpMatchArray | null = null
     const interpolationVariables: string[] = []
-    const regex = /\${([A-Za-z0-9]+)}/g
+    const regex = /@{([A-Za-z0-9]+)}/g
     while ((match = regex.exec(block.child!.content))) {
       interpolationVariables.push(match[1])
     }
@@ -62,7 +62,7 @@ export async function parseGlassMetadataPython(document: string) {
   const interpolations = relevantBlocks.flatMap(block => {
     let match: RegExpMatchArray | null = null
     const interpolationVariables: string[] = []
-    const regex = /\${([A-Za-z0-9]+)}/g
+    const regex = /@{([A-Za-z0-9]+)}/g
     while ((match = regex.exec(block.child!.content))) {
       interpolationVariables.push(match[1])
     }

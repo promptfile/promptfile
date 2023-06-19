@@ -21,7 +21,7 @@ hello world
   it('should parse non-chat document with vars', () => {
     expect(
       parseGlassMetadata(`<User>
-\${foo}
+@{foo}
 </User>`)
     ).to.deep.equal({ interpolationVariables: ['foo'] })
   })
@@ -35,15 +35,15 @@ const text = await a.text()
 </Init>
 
 <System>
-\${foo}
+@{foo}
 </System>
 
 <User>
-\${bar}
+@{bar}
 </User>
 
 <Assistant>
-\${foo}
+@{foo}
 </Assistant>`)
     ).to.deep.equal({ interpolationVariables: ['foo', 'bar', 'url'] })
   })
@@ -66,9 +66,9 @@ Use the following pieces of context to answer the question at the end. If you do
 </System>
 
 <User>
-\${context.join('\\n\\n')}
+@{context.join('\\n\\n')}
 
-Question: \${question}
+Question: @{question}
 Helpful Answer:
 </User>
 
@@ -84,7 +84,7 @@ Helpful Answer:
     { role: 'user', content: 'name a fruit' }
 ]} as="m">
 <Block role={m.role}>
-\${content}
+@{content}
 </Block>
 </For>`)
     ).to.deep.equal({ interpolationVariables: ['content'] })
@@ -98,7 +98,7 @@ Helpful Answer:
     { role: 'user', content: 'name a fruit' }
 ]} as="m">
 <Block role={m.role}>
-\${m.content}
+@{m.content}
 </Block>
 </For>`)
     ).to.deep.equal({ interpolationVariables: [] })
@@ -124,7 +124,7 @@ hello world
     it('should parse non-chat document with vars', async () => {
       expect(
         await parseGlassMetadataPython(`<User>
-\${foo}
+@{foo}
 </User>`)
       ).to.deep.equal({ interpolationVariables: ['foo'] })
     })
@@ -139,15 +139,15 @@ text = a.text()
 </Init>
 
 <System>
-\${foo}
+@{foo}
 </System>
 
 <User>
-\${bar}
+@{bar}
 </User>
 
 <Assistant>
-\${foo}
+@{foo}
 </Assistant>`)
         ).interpolationVariables
       ).to.have.members(['foo', 'bar', 'url'])
@@ -161,7 +161,7 @@ text = a.text()
     { role: 'user', content: 'name a fruit' }
 ]} as="m">
 <Block role={m.role}>
-\${content}
+@{content}
 </Block>
 </For>`)
       ).to.deep.equal({ interpolationVariables: ['content'] })
@@ -175,7 +175,7 @@ text = a.text()
     { role: 'user', content: 'name a fruit' }
 ]} as="m">
 <Block role={m.role}>
-\${m.content}
+@{m.content}
 </Block>
 </For>`)
       ).to.deep.equal({ interpolationVariables: [] })

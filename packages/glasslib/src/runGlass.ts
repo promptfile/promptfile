@@ -42,8 +42,8 @@ export async function runGlass(
   let transformedInterpolatedDoc = glassfile
 
   for (const [k, v] of Object.entries(args)) {
-    // replace all instances of `${k}` with `v`
-    transformedInterpolatedDoc = transformedInterpolatedDoc.replace(new RegExp(`\\$\\{${k}\\}`, 'g'), v)
+    // replace all instances of `@{k}` with `v`
+    transformedInterpolatedDoc = transformedInterpolatedDoc.replace(new RegExp(`@\\{${k}\\}`, 'g'), v)
   }
 
   const blocks = parseGlassBlocks(transformedInterpolatedDoc)

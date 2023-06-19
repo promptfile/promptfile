@@ -8,25 +8,25 @@ describe('parseInterpolations', () => {
   })
 
   it('it should parse string with single interpolation', () => {
-    const parsed = parseInterpolations(`hello world \${foo}`)
-    expect(parsed).to.deep.equal(['${foo}'])
+    const parsed = parseInterpolations(`hello world @{foo}`)
+    expect(parsed).to.deep.equal(['@{foo}'])
   })
 
   it('it should parse string with multiple interpolation', () => {
-    const parsed = parseInterpolations(`hello world \${foo}
-\${bar}`)
-    expect(parsed).to.deep.equal(['${foo}', '${bar}'])
+    const parsed = parseInterpolations(`hello world @{foo}
+@{bar}`)
+    expect(parsed).to.deep.equal(['@{foo}', '@{bar}'])
   })
 
   it('it should parse string with multiline interpolation', () => {
-    const parsed = parseInterpolations(`hello world \${
+    const parsed = parseInterpolations(`hello world @{
   foo
 }`)
-    expect(parsed).to.deep.equal(['${\n  foo\n}'])
+    expect(parsed).to.deep.equal(['@{\n  foo\n}'])
   })
 
   it('it should parse string with interpolation containing {}', () => {
-    const parsed = parseInterpolations(`hello world \${function() { return 'foo' }}`)
-    expect(parsed).to.deep.equal(["${function() { return 'foo' }}"])
+    const parsed = parseInterpolations(`hello world @{function() { return 'foo' }}`)
+    expect(parsed).to.deep.equal(["@{function() { return 'foo' }}"])
   })
 })

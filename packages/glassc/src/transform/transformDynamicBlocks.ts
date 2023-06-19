@@ -80,10 +80,13 @@ export function transformDynamicBlocks(doc: string, next?: boolean) {
       }
 
       doc =
-        doc.substring(0, nodeStartOffset + currOffset) + `\${${interpKey}}` + doc.substring(nodeEndOffset + currOffset)
+        doc.substring(0, nodeStartOffset + currOffset) + `@{${interpKey}}` + doc.substring(nodeEndOffset + currOffset)
       currOffset += newSequenceLength - oldSequenceLength
     } else if (ifAttr?.expressionValue != null) {
-      jsxInterpolations[pruneInterpKey] = `${ifAttr.expressionValue} ? \`${docSection}\` : ''`
+      jsxInterpolations[pruneInterpKey] = `${ifAttr.expressionValue} ? \`${docSection.replace(
+        /@\{(.+?)\}/g,
+        (match, p1) => `\$\{${p1}\}`
+      )}\` : ''`
 
       doc =
         doc.substring(0, nodeStartOffset + currOffset) +
@@ -173,7 +176,11 @@ function nestedTagHelper(currInterpolation: number, doc: string, docNode: glassl
         nodeInsides.substring(endOffset + currOffset)
       currOffset += newSequenceLength - oldSequenceLength
     } else if (ifAttr?.expressionValue != null) {
-      jsxInterpolations[pruneInterpKey] = `${ifAttr.expressionValue} ? \`${docSection}\` : ''`
+      // replace all @{foo} in docSection with ${foo}
+      jsxInterpolations[pruneInterpKey] = `${ifAttr.expressionValue} ? \`${docSection.replace(
+        /@\{(.+?)\}/g,
+        (match, p1) => `\$\{${p1}\}`
+      )}\` : ''`
 
       nodeInsides =
         nodeInsides.substring(0, startOffset + currOffset) +

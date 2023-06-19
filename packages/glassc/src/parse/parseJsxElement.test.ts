@@ -11,7 +11,7 @@ describe('parseJsxElement', () => {
   })
 
   it('should parse JSX without variables', () => {
-    const code = `<Assistant> some text with \${variable}</Assistant>`
+    const code = `<Assistant> some text with @{variable}</Assistant>`
     expect(parseJsxElement(code)).to.deep.equal({
       tagNames: ['Assistant'],
       undeclaredVariables: ['variable'],
@@ -19,7 +19,7 @@ describe('parseJsxElement', () => {
   })
 
   it('should parse complex JSX', () => {
-    const code = `<Assistant>\${tools.map((tool) => \`\${tool.name}: \${tool.description}\`).join('\\n')}</Assistant>`
+    const code = `<Assistant>@{tools.map((tool) => \`\${tool.name}: \${tool.description}\`).join('\\n')}</Assistant>`
     expect(parseJsxElement(code)).to.deep.equal({
       tagNames: ['Assistant'],
       undeclaredVariables: ['tools'],
@@ -85,7 +85,7 @@ Who was gandhi?
 
   it('should parse JSX with children', () => {
     const code = `<System arg={foo}>
-\${foo}
+@{foo}
 </System>`
     expect(parseJsxElement(code)).to.deep.equal({
       tagNames: ['System'],
@@ -96,9 +96,9 @@ Who was gandhi?
   it('should parse JSX with complex children', () => {
     const code = `<System arg={foo}>
 hello world
-\${foo}
+@{foo}
 <Text if={bar}>
-\${barInside.field}
+@{barInside.field}
 </Text>
 </System>`
     expect(parseJsxElement(code)).to.deep.equal({
@@ -114,7 +114,7 @@ hello world
     { role: 'user', content: 'name a fruit' }
 ]} as="m">
 <Block role={m.role}>
-\${m.content}
+@{m.content}
 </Block>
 </For>`
     expect(parseJsxElement(code)).to.deep.equal({
@@ -125,7 +125,7 @@ hello world
 
   it('should parse JSX with function closure', () => {
     const code = `<Test>
-\${
+@{
   function generateCodeExamples() {
     const examples = []
     for (let i = 0; i < 10; i++) {

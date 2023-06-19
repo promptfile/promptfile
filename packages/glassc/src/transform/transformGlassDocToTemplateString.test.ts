@@ -6,19 +6,15 @@ import {
 
 describe('transformGlassDocumentToTemplateString', () => {
   it('should transform Glass for TypeScript/JavaScript', () => {
-    const doc = `hello this is text \${fooby}
-
-<Block hello={m.world} foo="bar">
-block content \${whoa}
+    const doc = `<Block hello={m.world} foo="bar">
+block content @{whoa}
 
 <Text if={foo.isAdmin}>
 whoa text
 </Text>
 </Block>`
 
-    expect(transformGlassDocumentToTemplateString(doc)).to.equal(`hello this is text \${fooby}
-
-<Block hello={\${JSON.stringify(m.world)}} foo="bar">
+    expect(transformGlassDocumentToTemplateString(doc)).to.equal(`<Block hello={\${JSON.stringify(m.world)}} foo="bar">
 block content \${whoa}
 
 <Text if={\${JSON.stringify(foo.isAdmin)}}>

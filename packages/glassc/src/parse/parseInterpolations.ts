@@ -4,7 +4,7 @@ export function parseInterpolations(str: string) {
   const matches: string[] = []
 
   for (let i = 0; i < str.length; i++) {
-    if (str.substr(i, 2) === '${') {
+    if (str.substr(i, 2) === '@{') {
       if (stack.length === 0) {
         matchStart = i
       }

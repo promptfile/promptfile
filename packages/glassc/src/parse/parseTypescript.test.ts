@@ -208,7 +208,7 @@ const foo = "bar"`
   })
 
   describe('removeImports', () => {
-    it('should remove importss', () => {
+    it('should remove imports', () => {
       const code = `import {foo, bar} from './someFile'
 import something from './someOtherFile.glass'
 import baz from 'baz'
