@@ -35,7 +35,10 @@ function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
       for (const attribute of existingAttributes) {
         const validAttribute = validAttributes.find(validAttribute => validAttribute.name === attribute.name)
         if (validAttribute) {
-          if (validAttribute.values && !validAttribute.values.some(a => a.name === attribute.stringValue)) {
+          if (
+            validAttribute.values &&
+            !validAttribute.values.some(a => a.name === attribute.stringValue || a.name === attribute.expressionValue)
+          ) {
             invalidAttributes.push({ tag, attribute: attribute.name, type: 'invalid' })
           }
           if (analyzedAttributes.includes(attribute.name)) {
