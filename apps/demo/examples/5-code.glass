@@ -13,7 +13,7 @@ const userProfile = {
 }
 </Init>
 
-now, use the response in code:
+now, use the data from your code in the prompt:
 <System>
 You are having a conversation with the following User:
 
