@@ -3,6 +3,9 @@ import * as vscode from 'vscode'
 
 export async function updateTextDocumentWithDiff(document: vscode.TextDocument, newGlass: string): Promise<void> {
   const oldContent = document.getText()
+  if (oldContent.trim() === newGlass.trim()) {
+    return
+  }
   // Calculate the diff between old and new contents
   const changes = diff.diffLines(oldContent.trim(), newGlass.trim())
   console.log('changes', JSON.stringify(changes, null, 2))

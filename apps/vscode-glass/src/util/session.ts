@@ -168,6 +168,9 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
     // Create a new Promise that will resolve when all streaming updates have been processed
     const streamUpdatesDone = new Promise<void>(resolve => {
       executeGlassFile(session, outputChannel, document, glass, {}, async progress => {
+        if (!isFirstStream && !progress.nextGlassfile.includes('█')) {
+          return true
+        }
         if (isUpdatingFile || didFinish) {
           return true
         }
@@ -197,7 +200,7 @@ export async function runGlassExtension(document: vscode.TextDocument, outputCha
 
     // Await the Promise before updating the final text modification
     await streamUpdatesDone
-    if (!finalResp) {
+    if (!finalResp || !didFinish) {
       return
     }
     const newGlass = addFrontmatter(
