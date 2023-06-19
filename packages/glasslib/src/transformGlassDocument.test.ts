@@ -162,7 +162,7 @@ hello
   })
 
   describe('handleRequestNode', () => {
-    it('should handle request without transcript', () => {
+    it.only('should handle request without transcript', () => {
       const interpDoc = `---
 language: typescript
 ---
@@ -181,6 +181,7 @@ hello world
         index: 0,
       })
       expect(res.response[0].content).to.equal('█')
+      expect(res.response[0].id).to.equal('2')
       expect(res.nextGlassfile).to.equal(`---
 language: typescript
 ---
