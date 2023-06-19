@@ -139,7 +139,7 @@
       ]
     },
     "init-element": {
-      "begin": "^(<)(Init)([^>]*)(>)$",
+      "begin": "^(<)(Init)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -148,25 +148,6 @@
           "name": "source.glass.init.name"
         },
         "3": {
-          "patterns": [
-            {
-              "include": "source.tsx#jsx-tag-attribute-name"
-            },
-            {
-              "include": "source.tsx#jsx-tag-attribute-assignment"
-            },
-            {
-              "include": "source.tsx#jsx-string-double-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-string-single-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-evaluated-code"
-            }
-          ]
-        },
-        "4": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       },
@@ -229,7 +210,7 @@
       }
     },
     "block-element": {
-      "begin": "^(<)(Block)([^>]*)(>)$",
+      "begin": "^(<)(Block)(.*)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -285,7 +266,7 @@
       }
     },
     "system-element": {
-      "begin": "^(<)(System)([^>]*)(>)$",
+      "begin": "^(<)(System)(.*)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -341,7 +322,7 @@
       }
     },
     "assistant-element": {
-      "begin": "^(<)(Assistant)([^>]*)(>)$",
+      "begin": "^(<)(Assistant)(.*)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -428,7 +409,7 @@
       }
     },
     "function-element": {
-      "begin": "^(<)(Function)([^>]*)(>)$",
+      "begin": "^(<)(Function)(.*)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -478,7 +459,7 @@
       ]
     },
     "text-element": {
-      "begin": "^(<)(Text)([^>]*)(>)$",
+      "begin": "^(<)(Text)(.*)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -531,7 +512,7 @@
       ]
     },
     "user-element": {
-      "begin": "^(<)(User)([^>]*)(>)$",
+      "begin": "^(<)(User)(.*)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
