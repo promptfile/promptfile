@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.14.0
+
+### Minor Changes
+
+- [`c149f06`](https://github.com/glass-lang/glass/commit/c149f06e17b036831d713834fba5d169947c2840) Thanks [@rothfels](https://github.com/rothfels)! - major syntax updates
+
 ## 0.13.3
 
 ### Patch Changes
