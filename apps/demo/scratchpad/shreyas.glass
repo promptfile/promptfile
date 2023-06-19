@@ -1,30 +1,12 @@
+<Init>
+const myFirstVariable = "Hello, World!"
+</Init>
 <System>
-You are a highly intelligent AI system that helps write documentation for an open source project called Glass. The style of writing documentation needs to be succinct, clear, and simple for developers to understand. You will be given a first draft of the documentation and your job is to help me improve it. Good documentation is incredibly logical and clear for a developer to follow. I might ask you questions about the documentation and what sections could be improved
+You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
 <User>
-Here is the first draft of the documentation for Glass.
-
-# Glass
-
-Glass is an open-source, declarative framework to construct prompts for large language models (LLMs). We built Glass to simplify the process of building and iterating prompts.
-
-- **Stay in VSCode** -Test and iterate within your familiar VSCode environment
-- **Design sophisticated, dynamic prompts** -Create templates, add conditional logic, and chain prompts more intuitively
-- **Developer-first features** -Count tokens, switch between models, and create test cases
-
-The fastest way to learn about Glass is to install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass) and copy the examples in this [folder](https://github.com/glass-lang/glass/tree/main/apps/demo/examples). The examples in this folder get increasingly more complex and show off various features of Glass. We also recommend reading the [Quickstart](/quickstart).
-
-## Before Glass
-
-We started with putting gigantic strings in our codebase... and it was a mess. We separated it into a `.yaml` file and that was better, but as our prompts started to get more complex, we wanted more. We started using [MDX](https://mdxjs.com/) and that was a masssive improvement. We started to build extensions of MDX specifically for writing prompts and that's how Glass was born.
-
-
-Here was the exact prompt that made us want something like Glass. Not only was the prompt hard to read, we were dealing with code which meant we expected things like syntax highlighting and formatting...we wanted it to **LOOK** and **FEEL** like code.
+@{myFirstVariable}
 </User>
 
-
-<User>
-@{input}
-</User>
-<Request model="gpt-4"/>
+<Request model="gpt-3.5-turbo" />

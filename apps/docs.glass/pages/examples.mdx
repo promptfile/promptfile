@@ -9,9 +9,13 @@ The Glass Cookbook includes examples to help you get started with Glass. You can
 
 ### Add Variables to your Prompt
 
-Here you can declare variables that you can change at each request. It is also how you create an interactive chat.
+Here you can declare variables that you can interpolate into your prompt. You can declare variables in the `<Init>` block and then use them in your prompt with the `@{}` syntax.
 
 ```glass copy filename="haiku.glass"
+<Init>
+const myFirstVariable = "Hello, World!"
+</Init>
+
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
@@ -38,6 +42,7 @@ const userProfile = {
   favoriteColor: 'blue',
   favoriteFood: 'tacos',
 }
+const input = "What is the name of the user and what is their favorite food?"
 </Init>
 
 <System>
@@ -64,6 +69,8 @@ You could also fetch information from somewhere else, like your database or a we
 <Init>
 const res = await fetch('https://elliottburris.com')
 const html = await res.text()
+const input = "Where did Elliott go to school?"
+
 </Init>
 
 
@@ -89,6 +96,7 @@ Using the `useState` hook, you can add state to your chat. This allows you to ke
 
 In this case, we initialize an empty string as the last message sent by the user and 0 as the number of messages sent. Then, we increment the number of messages sent each time the user sends a message and update the last message sent by the user.
 
+The `<State>{:glass}`
 You can also see the `onResponse` attribute which lets you execute code based on the response from the LLM request. In this case, we update the last message sent by the user with the response from the LLM request.
 
 ```glass copy filename="state.glass"
@@ -96,7 +104,7 @@ You can also see the `onResponse` attribute which lets you execute code based on
 
 const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
-
+const input = "Tell me a joke about dogs"
 setNumMessages(numMessages + 1)
 </Init>
 
@@ -116,6 +124,9 @@ You are FunnyGPT. Respond to the user with a message that's maximally likely to 
 For more complicated prompts, you often need the ability to make multiple requests to achieve your goal. In this example, we'll chain two prompts together to create a play synopsis and a review of the play.
 
 ```glass copy filename="promptChaining.glass"
+<Init>
+const title = 'The Glass Experience: Into the AIverse'
+</Init>
 <User>
 You are a highly-skilled playwright. Below, I will provide the title of a fictional play. Please respond with a full synopsis of the play based on my title.
 
@@ -155,6 +166,7 @@ const examples = [
     classification: 'NEEDS_ATTENTION',
   },
 ]
+const userMessage = 'This product is highly defunct. I want my money back!'
 </Init>
 
 <System>
@@ -185,6 +197,7 @@ In this example, you can use conditional logic to change what goes into your pro
 ```glass copy filename="conditionalLogic.glass"
 <Init>
 const [numMessages, setNumMessages] = useState(0)
+const iinput = "What a day, I want you to tell me about something."
 </Init>
 <System if={!isLongConversation}>
 You are NickelbackGPT. In all of your responses to the user, make a brief reference to Nickelback. Only discuss things related to Nickelback.
