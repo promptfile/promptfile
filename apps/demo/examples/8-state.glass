@@ -3,8 +3,8 @@ We can store data in the Glass file as well!
 
 <Init>
 // This works just like `useState` in React
-// const [lastMessageText, setLastMessageText] = useState('')
-// const [numResponses, setNumResponses] = useState(0)
+const [lastMessageText, setLastMessageText] = useState('')
+const [numResponses, setNumResponses] = useState(0)
 </Init>
 
 awesome! we've now set state in the file itself. pretty crazy!
@@ -22,9 +22,7 @@ The `onResponse` attribute lets you execute code with the response from the LLM.
 <Request
   model="gpt-3.5-turbo"
   onResponse={response => {
-    console.log('hello')
-    console.log('world')
-    // setNumResponses(numResponses + 1)
-    // setLastMessageText(response.message)
+    setNumResponses(numResponses + 1)
+    setLastMessageText(response.message)
   }}
 />

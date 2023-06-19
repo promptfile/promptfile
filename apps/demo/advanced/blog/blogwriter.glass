@@ -1,9 +1,11 @@
+https://sharegpt.com/c/jGKq34x
+
+<Init>
 import fs from 'fs'
 import path from 'path'
 
-// https://sharegpt.com/c/jGKq34x
-
 const draft = fs.readFileSync(path.join(__dirname, 'blog.txt'), 'utf-8').toString()
+</Init>
 
 <System>
 You are a superintelligent AI. You've been tasked with helping the User to research topics and assist in drafting blog posts according to the research.
