@@ -1,5 +1,5 @@
-<User if={1 > 2}>
+<User>
 @{input}
 </User>
 
-<Request model="gpt-3.5-turbo-0613" />
+<Request model="gpt-3.5-turbo" />

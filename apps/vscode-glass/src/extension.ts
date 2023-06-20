@@ -1,16 +1,18 @@
-import { parseFrontmatterFromGlass, transpileGlassTypescript } from '@glass-lang/glassc'
+import { parseGlassMetadata, transpileGlassTypescript } from '@glass-lang/glassc'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { getAllGlassFiles, getDocumentFilename, isGlassFile } from './util/isGlassFile'
-import { createSession, runGlassExtension } from './util/session'
+import { GlassPlayground, createPlayground } from './util/playground'
 import { updateTokenCount } from './util/tokenCounter'
 import { transpileCurrentFile } from './util/transpile'
+import { getCurrentViewColumn } from './util/viewColumn'
 
 let client: LanguageClient | null = null
 
 const stoppedRequestIds = new Set<string>()
+const playgrounds = new Map<string, GlassPlayground>()
 const fileTimestamps = new Map<string, number>()
 
 // This method is called when your extension is activated
@@ -55,10 +57,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
   let activeEditor = vscode.window.activeTextEditor
 
-  const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
-    backgroundColor: new vscode.ThemeColor('glass.prompt.background'),
-    isWholeLine: true,
-  })
+  // const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
+  //   backgroundColor: new vscode.ThemeColor('glass.code.background'),
+  //   isWholeLine: true,
+  // })
 
   // if (activeEditor) {
   //   updateDecorations(activeEditor, codeDecorations)
@@ -75,18 +77,23 @@ export async function activate(context: vscode.ExtensionContext) {
     fileTimestamps.set(relativePath, Date.now())
 
     const initialGlass = selectedDocument.getText()
-    const initialFrontmatter = parseFrontmatterFromGlass(initialGlass)
     const filepath = selectedDocument.uri.fsPath
+    const filename = getDocumentFilename(selectedDocument)
 
-    const frontmatterSession = initialFrontmatter?.session
-    let documentToRun = selectedDocument
-    if (!frontmatterSession) {
-      const session = await createSession(filepath, selectedDocument.getText())
-      const sessionDocument = await vscode.workspace.openTextDocument(session)
-      await vscode.window.showTextDocument(sessionDocument, vscode.ViewColumn.Active, true)
-      documentToRun = sessionDocument
+    outputChannel.appendLine(`${filename} — launching Glass playground`)
+    const initialMetadata = parseGlassMetadata(initialGlass)
+    const playground = await createPlayground(
+      filepath,
+      playgrounds,
+      context.extensionUri,
+      outputChannel,
+      stoppedRequestIds
+    )
+    if (!playground) {
+      await vscode.window.showErrorMessage('Unable to create playground')
+      return
     }
-    await runGlassExtension(documentToRun, outputChannel)
+    playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
   }
 
   context.subscriptions.push(
@@ -123,10 +130,18 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
     vscode.workspace.onDidChangeTextDocument(
       async editor => {
-        const activeEditor = vscode.window.activeTextEditor
-        if (activeEditor && isGlassFile(editor.document)) {
+        if (activeEditor && editor.document === activeEditor.document) {
           // updateDecorations(activeEditor, codeDecorations)
           updateTokenCount(tokenCount)
+          const existingPlayground = playgrounds.get(editor.document.uri.fsPath)
+          if (existingPlayground) {
+            await existingPlayground.panel.webview.postMessage({
+              action: 'onDidChangeTextDocument',
+              data: {
+                currentSource: editor.document.getText(),
+              },
+            })
+          }
           const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
           fileTimestamps.set(relativePath, Date.now())
         }
@@ -134,7 +149,7 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    vscode.commands.registerCommand('glass.output', async () => {
+    vscode.commands.registerCommand('glass.showGlassOutput', async () => {
       outputChannel.show()
     }),
     vscode.commands.registerCommand('glass.run', async () => {

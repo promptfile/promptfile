@@ -1,12 +1,18 @@
-import { GlassContent } from '@glass-lang/glasslib'
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import { ComposerView } from './ComposerView'
 import { HistoryView } from './HistoryView'
-import { SessionView } from './SessionView'
 import { TopperView } from './TopperView'
-import { VariablesView } from './VariablesView'
+import { TranscriptView } from './TranscriptView'
 import { lastElement } from './util'
+
+export interface ChatBlock {
+  role: 'system' | 'user' | 'assistant' | 'function'
+  content: string
+  name?: string
+  type?: 'function_call'
+  id?: string
+}
 
 export interface GlassSession {
   session: string
@@ -26,19 +32,18 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
+  const tabs: string[] = ['Transcript', 'History']
+
   const [theme, setTheme] = useState('')
   const [requestId, setRequestId] = useState('')
   const [filename, setFilename] = useState('')
   const [currentSource, setCurrentSource] = useState('')
   const [source, setSource] = useState('')
-  const [blocks, setBlocks] = useState<GlassContent[]>([])
+  const [blocks, setBlocks] = useState<ChatBlock[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
   const [session, setSession] = useState('')
   const [sessions, setSessions] = useState<GlassSession[]>([])
-  const [tabs, setTabs] = useState<string[]>(['Session', 'History'])
-  const [tabIndex, setTabIndex] = useState(0)
-
-  const tab = tabs[tabIndex]
+  const [tab, setTab] = useState(tabs[0])
 
   const setValue = (key: string, value: string) => {
     setInputs({ ...inputs, [key]: value })
@@ -227,17 +232,26 @@ function RigView() {
         dirty={dirty}
         reloadable={assistantBlocks.length > 0 || dirty}
         tab={tab}
-        setTab={tab => setTabIndex(tabs.indexOf(tab))}
+        setTab={setTab}
         tabs={tabs}
         filename={filename}
         reload={reload}
         openOutput={openOutput}
       />
-      {tab === 'Variables' && <VariablesView inputs={inputs} setValue={setValue} />}
-      {tab === 'Session' && <SessionView blocks={blocks} session={session} />}
+      {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
+      {/* {tab === 'State' && <StateView />} */}
       {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
-      {['Session', 'Variables'].includes(tab) && (
-        <ComposerView run={run} session={session} stop={stop} streaming={streaming} theme={theme} />
+      {tab === 'Transcript' && (
+        <ComposerView
+          theme={theme}
+          reload={reload}
+          run={run}
+          stop={stop}
+          streaming={streaming}
+          inputs={inputs}
+          setValue={setValue}
+          session={session}
+        />
       )}
     </div>
   )

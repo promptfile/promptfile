@@ -5,7 +5,7 @@ the purpose of this prompt is to have the LLM write code in response to a user's
 for more information on chat-style inference, see: https://platform.openai.com/docs/guides/chat
 
 
-first, we have the system prompt to include instructions on how the model should behave.
+first, we have the system prompt to include instructions on how the model shsould behave.
 <System>
 You are a highly-intelligent AI that writes amazing Javascript code.
 Write JavaScript code to complete the tasks below given the following schema:
@@ -42,3 +42,5 @@ finally, here's the actual `task` input from the user.
 <User>
 @{task}
 </User>
+
+<Request model="gpt-3.5-turbo" />
