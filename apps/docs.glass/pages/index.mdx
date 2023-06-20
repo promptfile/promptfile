@@ -24,27 +24,27 @@ Our JSON requests would look a little something like this....with Glass, you can
 <Tabs items={['JSON', 'Glass']}>
   <Tab>
   <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', overflowWrap: 'break-word', overflow: 'hidden'}}>
-    ````json copy filename='request.json'
-    [
-      {
-        "role": "system",
-        "content": "You are a helpful assistant that helps me write code.You are TypeScriptGPT: your job is to write performant, concise beautiful TypeScript code to answer the user's question. The user may ask you to make changes to the code based on different needs, your job is to update the code to meet their requests. You should respond with fenced, commented TypeScript code, like this:\n\nUser: How do I add two numbers in TypeScript?\nAssistant: \n\n```ts\nfunction addNumbers(a: number, b: number): number {\n  return a + b;\n}\n```"
-      },
-      {
-        "role": "user",
-        "content": "Write me a function that creates an array of 10 random odd integers between 0 and 20"
-      },
-      {
-          "role": "assistant",
-        "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}\n\n// Usage example\nconst randomOddIntegers = generateRandomOddIntegers();\nconsole.log(randomOddIntegers);\n```"
-      }
-    ]
-    ````
+````json copy filename='request.json'
+[
+  {
+    "role": "system",
+    "content": "You are a helpful assistant that helps me write code.You are TypeScriptGPT: your job is to write performant, concise beautiful TypeScript code to answer the user's question. The user may ask you to make changes to the code based on different needs, your job is to update the code to meet their requests. You should respond with fenced, commented TypeScript code, like this:\n\nUser: How do I add two numbers in TypeScript?\nAssistant: \n\n```ts\nfunction addNumbers(a: number, b: number): number {\n  return a + b;\n}\n```"
+  },
+  {
+    "role": "user",
+    "content": "Write me a function that creates an array of 10 random odd integers between 0 and 20"
+  },
+  {
+      "role": "assistant",
+    "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}\n\n// Usage example\nconst randomOddIntegers = generateRandomOddIntegers();\nconsole.log(randomOddIntegers);\n```"
+  }
+]
+````
     </pre>
   </Tab>
   <Tab>
-    ````glass copy filename= 'request.glass'
-    <System>
+````glass copy filename= 'request.glass'
+<System>
 You are a helpful assistant that helps me write code.You are TypeScriptGPT: your job is to write performant, concise beautiful TypeScript code to answer the user's question. The user may ask you to make changes to the code based on different needs, your job is to update the code to meet their requests. You should respond with fenced, commented TypeScript code, like this:
 
 User: How do I add two numbers in TypeScript?
@@ -55,7 +55,6 @@ function addNumbers(a: number, b: number): number {
   return a + b
 }
 ```
-
 </System>
 
 <User>
@@ -63,7 +62,6 @@ Write me a function that creates an array of 10 random odd integers between 0 an
 </User>
 
 <Assistant>
-
 ```ts
 function generateRandomOddIntegers(): number[] {
   const oddIntegers: number[] = []
@@ -83,7 +81,6 @@ function generateRandomOddIntegers(): number[] {
 const randomOddIntegers = generateRandomOddIntegers()
 console.log(randomOddIntegers)
 ```
-
 </Assistant>
 
 <Request model="gpt-4" />

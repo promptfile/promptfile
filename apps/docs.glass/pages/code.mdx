@@ -19,7 +19,6 @@ import Image from 'next/image'
 Glass has supports an element called `<Init>` which lets you write code to be executed before the prompt is evaluated. This is useful for fetching data, running calculations, or executing any other code that you want to run before prompting the LLM.
 
 ```glass copy filename="example.glass"
-
 <Init>
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
 </Init>
@@ -94,22 +93,17 @@ The `onResponse` attribute lets you execute code with the response from the LLM.
     setLastMessageText(response.message)
   }}
 />
-
-
 ```
 
 You can see the state variables being updated in the Glass file. Here's what it would look like after running.
 
-###
-
-```glass copy filename="events_state.glass
+```glass copy filename="events_state.glass"
 <State>
 {
   "lastMessageText": "Sure, here's one: \n\nWhy did the kitten join Tinder? \nTo find her purr-fect match!",
   "numResponses": 1
 }
 </State>
-
 
 
 <Init>

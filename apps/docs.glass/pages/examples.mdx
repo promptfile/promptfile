@@ -70,7 +70,6 @@ You could also fetch information from somewhere else, like your database or a we
 const res = await fetch('https://elliottburris.com')
 const html = await res.text()
 const input = "Where did Elliott go to school?"
-
 </Init>
 
 
@@ -101,7 +100,6 @@ You can also see the `onResponse` attribute which lets you execute code based on
 
 ```glass copy filename="state.glass"
 <Init>
-
 const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
 const input = "Tell me a joke about dogs"
@@ -127,6 +125,7 @@ For more complicated prompts, you often need the ability to make multiple reques
 <Init>
 const title = 'The Glass Experience: Into the AIverse'
 </Init>
+
 <User>
 You are a highly-skilled playwright. Below, I will provide the title of a fictional play. Please respond with a full synopsis of the play based on my title.
 
@@ -199,6 +198,7 @@ In this example, you can use conditional logic to change what goes into your pro
 const [numMessages, setNumMessages] = useState(0)
 const iinput = "What a day, I want you to tell me about something."
 </Init>
+
 <System if={!isLongConversation}>
 You are NickelbackGPT. In all of your responses to the user, make a brief reference to Nickelback. Only discuss things related to Nickelback.
 </System>
