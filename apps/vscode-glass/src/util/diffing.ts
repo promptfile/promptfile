@@ -3,32 +3,45 @@ import * as vscode from 'vscode'
 
 export async function updateTextDocumentWithDiff(document: vscode.TextDocument, newGlass: string): Promise<void> {
   const oldContent = document.getText()
-  if (oldContent.trim() === newGlass.trim()) {
+
+  if (oldContent === newGlass) {
     return
   }
-  // Calculate the diff between old and new contents
-  const changes = diff.diffLines(oldContent.trim(), newGlass.trim())
 
-  // Create a new WorkspaceEdit
+  // Calculate the diff between old and new contents
+  const changes = diff.diffLines(oldContent, newGlass)
+
   const edits = new vscode.WorkspaceEdit()
 
-  // Initialize the line counter
-  let line = 0
-
-  // Iterate through the changes and create TextEdits
-  for (const change of changes) {
-    if (change.added) {
-      // Add the new lines
-      const range = new vscode.Range(line, 0, line, 0)
-      edits.replace(document.uri, range, change.value)
-      line += change.count || 0
+  let lineCounter = 0
+  for (let i = 0; i < changes.length; i++) {
+    const change = changes[i]
+    if (change.removed && changes[i + 1] && changes[i + 1].added) {
+      const delText = change.value
+      const lines = delText.split('\n').length - (delText.endsWith('\n') ? 1 : 0)
+      const start = new vscode.Position(lineCounter, 0)
+      lineCounter += lines
+      const newText = changes[i + 1].value
+      const end = new vscode.Position(lineCounter, 0)
+      const range = new vscode.Range(start, end)
+      edits.replace(document.uri, range, newText)
+      lineCounter += newText.split('\n').length - (newText.endsWith('\n') ? 1 : 0)
+      i++ // skip next change
     } else if (change.removed) {
-      // Remove the old lines
-      const range = new vscode.Range(line, 0, line + (change.count || 0), 0)
+      const delText = change.value
+      const lines = delText.split('\n').length - (delText.endsWith('\n') ? 1 : 0)
+      const start = new vscode.Position(lineCounter, 0)
+      lineCounter += lines
+      const end = new vscode.Position(lineCounter, 0)
+      const range = new vscode.Range(start, end)
       edits.delete(document.uri, range)
+    } else if (change.added) {
+      const newText = change.value
+      const position = new vscode.Position(lineCounter, 0)
+      edits.insert(document.uri, position, newText)
+      lineCounter += newText.split('\n').length - (newText.endsWith('\n') ? 1 : 0)
     } else {
-      // No change, move the line counter forward
-      line += change.count || 0
+      lineCounter += change.count || 0
     }
   }
 
