@@ -15,7 +15,7 @@ This guide will get you all set up and ready to use the Glass language. We’ll 
 
 Working with Glass is easiest in Visual Studio Code via the Glass extension. This extension provides the following features:
 
-- built-in playground to test your prompts
+- stream in your results into VSCode
 - syntax highlighting and diagnostics for Glass files
 - transpiling Glass files to your preferred programming language
 
@@ -32,23 +32,22 @@ After installing the extension, create a new file called `example.glass` and cop
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
+
 <User>
-@{input}
+The ocean is so big! I wonder what is out there. I want to explore.
 </User>
 
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Running in playground
+### Run your first `.glass` file
 
 If it's your first time executing a Glass file, you'll be asked to input the API key for the specific model you are using in [VSCode settings](/vscode). All of Glass runs locally on your machine — your secret keys are never sent to any server.
 
 In `example.glass`, we're using the `gpt-3.5-turbo` model, so we'll need to input the key for OpenAI `glass.openaiKey` (or set `OPENAI_API_KEY` on your environment).
 
-When you are ready to run, either hit `Command (⌘) Enter (↩)` or run the Glass file via selecting the VSCode Command Palette `Glass: run in Playground` command.
+When you are ready to run, either hit `Command (⌘) Enter (↩)` or `Command (⌘) + Shift (⇧) + Enter (↩)` or run the Glass file via selecting the VSCode Command Palette `Glass: run`.
 
 <br />
-
-<Image src="/screenshots/updated_playground.gif" width={750} height={750} />
 
 </Steps>

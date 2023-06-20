@@ -23,5 +23,5 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 @{myFirstVariable}
 </User>
 
-Remember, cmd+enter on Mac / ctrl+enter on Windows to run in the Playground!
+Remember, cmd+enter on Mac / ctrl+enter on Windows to run the file
 <Request model="gpt-3.5-turbo" />
