@@ -2,6 +2,7 @@
   "index": "Introduction",
   "quickstart": "Quickstart",
   "examples": "Cookbook (Examples)",
+  "playground": "Playground",
   "vscode": "VSCode Extension",
   "blocks": "Blocks",
   "models": "Models",

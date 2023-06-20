@@ -1,25 +1,54 @@
 import { Tab, Tabs } from 'nextra-theme-docs'
 import Image from 'next/image'
+import {Steps} from 'nextra-theme-docs'
 
-# Glass: play with your prompts in VSCode
+# Glass: Iterate and build prompts quickly
 
-Glass is an open-source templating syntax and VSCode playground for constructing prompts for large language models (LLMs). Although Glass is still in early alpha and we hope to support its usage in projects, we're excited to share it currently as a way for developers to quickly iterate on prompts in VSCode.
+Glass is an open-source templating syntax and VSCode playground for constructing prompts for large language models (LLMs). When you are writing prompts, you shouldn't have to leave where you work. As constructing prompts becomes more important, you deserve a developer-first experience for writing and iterating on these prompts.
+
+We started with our prompts as giant strings in our codebase. Then we moved to storing them in .MDX [files](https://mdxjs.com/) for readability of both our prompts and our codebase. That wasn't enough, we wanted more advanced features that were made for writing prompts. So we built Glass.
+
+When you've perfected your prompt, Glass can generate a function for you to use in your project with a single line of code.
 
 ## Key Features
 
-- **Integrated VSCode experience** - Write prompts in VSCode and get your responses streamed straight where you work
-- **Design sophisticated prompts** - Create dynamic templates with conditional logic and multiple model requests
-- **Made for developers** - Count tokens, switch between models, and get diagnostics for your requests
+- **Integrated VSCode experience** - Write and perfect prompts in VSCode with syntax highlighting, IntelliSense, and existing tools like GitHub Co-Pilot.
+- **Design sophisticated prompts** - Create dynamic templates with conditional logic, state management, and multiple model requests
+- **Made for LLMs** - Count tokens, switch between models, and get diagnostics for your requests
 
-## Getting Started
+## Quickstart
 
-1. Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
-2. Copy some examples from our [Cookbook](/examples) and run them by pressing `Command (⌘) Enter (↩)`
-3. For a detailed walkthrough, refer to the [Quickstart](/quickstart) guide.
+<Steps>
+### Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
+Add your OpenAI or Anthropic API Key by opening the Glass settings. Run the `Glass: open settings` command on VSCode Command Palette. If you need help, check out how to do this [here](/vscode)
+### Run your first Glass file
+Create a folder for your Glass files. Create a file called `example.glass` and copy this into it.
+
+```glass copy filename="example.glass"
+<System>
+You are HaikuGPT. Always respond to the user in the form of a haiku.
+</System>
+<User>
+The ocean is so big! I wonder what is out there. I want to explore.
+</User>
+<Request model="gpt-3.5-turbo" />
+```
+
+### Run your Glass file with  `Command (⌘) Enter (↩)`
+Voila! You have run your first Glass file, but don't stop there....
+
+### Explore our [Cookbook](/examples) to see more of Glass' features
+Glass can do so much more, try following along with the examples to see how you can increase the complexity of your prompts.
+
+### Ask questions and engage in the community
+We want honest feedback, questions, we want to see what you are building....we want to meet you! Talk to the Glass community on [Discord](www.discord.glass)
+
+</Steps>
+
 
 ## The Glass Difference
 
-Our JSON requests would look a little something like this....with Glass, you can write the same request in a more readable and intuitive way. With Glass, we got all the benefits of something like Markdown or MDX, but purpose-built for writing prompts. As our prompts got more complex, we wanted even more features.
+Our JSON requests would look a little something like this....with Glass, you can write the same request in a more readable and intuitive way. With Glass, we got all the benefits of something like Markdown or MDX, but purpose-built for writing prompts. At the bare minimum, your prompts are more readable and easier to iterate on. As you start to explore more of Glass, we hope you see that there's more value than just a templating syntax.
 
 <Tabs items={['JSON', 'Glass']}>
   <Tab>
