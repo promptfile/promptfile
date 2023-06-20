@@ -7,9 +7,9 @@ The Glass Cookbook includes examples to help you get started with Glass. You can
 
 <Steps>
 
-### Add Variables to your Prompt
+### Add Variables
 
-Here you can declare variables that you can interpolate into your prompt. You can declare variables in the `<Init>{:glass}` block and then use them in your prompt with the `@{}{:glass}` syntax.
+Here you can declare variables that you can interpolate into your prompt. You can declare variables in the `<Init>{:glass}` block and then use them in your prompt with the `@{variableNameHere}` syntax. All variables must be inside a block.
 
 ```glass copy filename="haiku.glass"
 <Init>
@@ -27,9 +27,9 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Access Code in Your Prompt
+### Access Code
 
-Using a `<Init>{:glass}` block, you can execute code to do things like access a user's profile. In this example, you can see how you could use a user profile in our prompt to make the conversation more personal.
+Using an `<Init>{:glass}` block, you can execute code to do things like access a user's profile. In this example, you can see how you could use a user profile in our prompt to make the conversation more personal.
 
 ```glass copy filename="executeCode.glass"
 <Init>
@@ -61,7 +61,7 @@ You are having a conversation with the following User:
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Fetch information using code
+### Load in data into your prompt
 
 You could also fetch information from somewhere else, like your database or a website.In this example, we'll fetch the HTML from a website and use it in our prompt. Ask it something like: "Where did Elliott go to grad school?" or "Where has Elliott worked?"
 
@@ -87,6 +87,49 @@ Your job is to answer questions based on the following website.
 </User>
 
 <Request model="gpt-3.5-turbo" />
+```
+
+### Use function calling
+You can define a tool (or function) that the model can now use to accomplish its task. In this case, we give it the ability to use a Calculator. We define what the tool is called via `name`, what it does via `description`, and then we provide a schema (in this case, we are using [Zod](https://zod.dev/) to validate the output) and then evaluating it directly.
+
+Keep in mind, currently only `gpt-3.5-turbo-0613` and `gpt-4-0613` have been fine-tuned on calling functions.
+
+```glass
+<Tool
+  name="calculator"
+  description="Calculates the result of a math expression."
+  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
+  run={({ expression }) => '' + eval(expression)}
+/>
+
+<User>
+what is 2 to the .12345 power?
+</User>
+
+<Request model="gpt-3.5-turbo-0613" />
+```
+### Chain two prompts together
+
+For more complicated prompts, you often need the ability to make multiple requests to achieve your goal. In this example, we'll chain two prompts together to create a play synopsis and a review of the play.
+
+```glass copy filename="promptChaining.glass"
+<Init>
+const title = 'The Glass Experience: Into the AIverse'
+</Init>
+
+<User>
+You are a highly-skilled playwright. Below, I will provide the title of a fictional play. Please respond with a full synopsis of the play based on my title.
+
+Title: "@{title}"
+</User>
+
+<Request model="gpt-3.5-turbo" />
+
+<User>
+You are now a play critic from the New York Times. Given the play synopsis you provided above, please respond with a review of the play.
+</User>
+
+<Request model="gpt-4" />
 ```
 
 ### Add a state to your chat
@@ -116,31 +159,6 @@ You are FunnyGPT. Respond to the user with a message that's maximally likely to 
 
 <Request model="gpt-3.5-turbo" onResponse={response => setLastMessageText(response.message)} />
 ```
-
-### Chain two prompts together
-
-For more complicated prompts, you often need the ability to make multiple requests to achieve your goal. In this example, we'll chain two prompts together to create a play synopsis and a review of the play.
-
-```glass copy filename="promptChaining.glass"
-<Init>
-const title = 'The Glass Experience: Into the AIverse'
-</Init>
-
-<User>
-You are a highly-skilled playwright. Below, I will provide the title of a fictional play. Please respond with a full synopsis of the play based on my title.
-
-Title: "@{title}"
-</User>
-
-<Request model="gpt-3.5-turbo" />
-
-<User>
-You are now a play critic from the New York Times. Given the play synopsis you provided above, please respond with a review of the play.
-</User>
-
-<Request model="gpt-4" />
-```
-
 ### Classify Comments as Questions or Complaints
 
 LLMs can also be great at understanding semantic meaning and classifying text. In this example, we see the usage of the `<For>{:glass}` block which allows you to iterate through an array of examples. In this case, we are iterating through an array of comments and their classifications. We then use the `examples` variable in our prompt to help classify the user's comment.
@@ -215,3 +233,4 @@ You are TaylorSwiftGPT. In all of your responses to the user, make a brief refer
 ```
 
 </Steps>
+
