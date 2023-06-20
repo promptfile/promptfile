@@ -86,13 +86,17 @@ export async function runGlass(
 
   if (options?.progress) {
     options.progress(
-      handleRequestNode(transformedInterpolatedDoc, {
-        newBlockIds,
-        responseData: [[{ response: '' }]],
-        requestBlocks,
-        streaming: true,
-        index: 0,
-      })
+      handleRequestNode(
+        transformedInterpolatedDoc,
+        {
+          newBlockIds,
+          responseData: [[{ response: '' }]],
+          requestBlocks,
+          streaming: true,
+          index: 0,
+        },
+        options.id
+      )
     )
   }
 
@@ -163,6 +167,7 @@ async function runGlassChat(
   newBlockIds: string[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
+    id?: () => string
     tokenCounter?: TokenCounter
     openaiKey?: string
     progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
@@ -213,15 +218,19 @@ async function runGlassChat(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${next}<|im_end|>`, request.model)
       return options.progress(
-        handleRequestNode(docs.interpolatedDoc, {
-          newBlockIds,
-          responseData: responseData.concat([[{ response: next.trim(), requestTokens, responseTokens }]]),
-          requestBlocks,
-          requestTokens,
-          responseTokens,
-          streaming: true,
-          index: responseData.length,
-        })
+        handleRequestNode(
+          docs.interpolatedDoc,
+          {
+            newBlockIds,
+            responseData: responseData.concat([[{ response: next.trim(), requestTokens, responseTokens }]]),
+            requestBlocks,
+            requestTokens,
+            responseTokens,
+            streaming: true,
+            index: responseData.length,
+          },
+          options.id
+        )
       )
     }
   })
@@ -232,15 +241,19 @@ async function runGlassChat(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response })
 
-  return handleRequestNode(docs.interpolatedDoc, {
-    newBlockIds,
-    responseData,
-    requestBlocks,
-    requestTokens,
-    responseTokens,
-    streaming: false,
-    index: responseData.length - 1,
-  })
+  return handleRequestNode(
+    docs.interpolatedDoc,
+    {
+      newBlockIds,
+      responseData,
+      requestBlocks,
+      requestTokens,
+      responseTokens,
+      streaming: false,
+      index: responseData.length - 1,
+    },
+    options.id
+  )
 }
 
 /**
@@ -254,6 +267,7 @@ async function runGlassChatAnthropic(
   newBlockIds: string[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
+    id?: () => string
     tokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
@@ -312,15 +326,19 @@ async function runGlassChatAnthropic(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(next, request.model)
       return options.progress(
-        handleRequestNode(docs.interpolatedDoc, {
-          newBlockIds,
-          responseData: responseData.concat([[{ response: next.trim(), requestTokens, responseTokens }]]),
-          requestBlocks,
-          requestTokens,
-          responseTokens,
-          streaming: true,
-          index: responseData.length,
-        })
+        handleRequestNode(
+          docs.interpolatedDoc,
+          {
+            newBlockIds,
+            responseData: responseData.concat([[{ response: next.trim(), requestTokens, responseTokens }]]),
+            requestBlocks,
+            requestTokens,
+            responseTokens,
+            streaming: true,
+            index: responseData.length,
+          },
+          options.id
+        )
       )
     }
   })
@@ -331,15 +349,19 @@ async function runGlassChatAnthropic(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response.trim() })
 
-  return handleRequestNode(docs.interpolatedDoc, {
-    newBlockIds,
-    responseData,
-    requestBlocks,
-    streaming: false,
-    requestTokens,
-    responseTokens,
-    index: responseData.length - 1,
-  })
+  return handleRequestNode(
+    docs.interpolatedDoc,
+    {
+      newBlockIds,
+      responseData,
+      requestBlocks,
+      streaming: false,
+      requestTokens,
+      responseTokens,
+      index: responseData.length - 1,
+    },
+    options.id
+  )
 }
 
 /**
@@ -353,6 +375,7 @@ async function runGlassCompletion(
   newBlockIds: string[],
   docs: { interpolatedDoc: string; originalDoc: string },
   options: {
+    id?: () => string
     tokenCounter?: TokenCounter
     args?: any
     openaiKey?: string
@@ -432,15 +455,19 @@ async function runGlassCompletion(
     if (options?.progress) {
       const responseTokens = tokenCounter.countTokens(next, request.model)
       return options.progress(
-        handleRequestNode(docs.interpolatedDoc, {
-          newBlockIds,
-          responseData: responseData.concat([[{ response: next.trim(), requestTokens, responseTokens }]]),
-          requestBlocks,
-          streaming: true,
-          requestTokens,
-          responseTokens,
-          index: responseData.length,
-        })
+        handleRequestNode(
+          docs.interpolatedDoc,
+          {
+            newBlockIds,
+            responseData: responseData.concat([[{ response: next.trim(), requestTokens, responseTokens }]]),
+            requestBlocks,
+            streaming: true,
+            requestTokens,
+            responseTokens,
+            index: responseData.length,
+          },
+          options.id
+        )
       )
     }
   })
@@ -451,15 +478,19 @@ async function runGlassCompletion(
   messagesSoFar.push(...messages)
   messagesSoFar.push({ role: 'assistant', content: response.trim() })
 
-  return handleRequestNode(docs.interpolatedDoc, {
-    newBlockIds,
-    responseData,
-    requestBlocks,
-    streaming: false,
-    requestTokens,
-    responseTokens,
-    index: responseData.length - 1,
-  })
+  return handleRequestNode(
+    docs.interpolatedDoc,
+    {
+      newBlockIds,
+      responseData,
+      requestBlocks,
+      streaming: false,
+      requestTokens,
+      responseTokens,
+      index: responseData.length - 1,
+    },
+    options.id
+  )
 }
 
 async function handleStream(
