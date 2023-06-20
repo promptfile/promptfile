@@ -237,12 +237,6 @@
               "foreground": "#4dff00",
               "fontStyle": "bold"
             }
-          },
-          {
-            "scope": "markup.fenced_code.block.markdown",
-            "settings": {
-              "fontStyle": "italic"
-            }
           }
         ]
       }
