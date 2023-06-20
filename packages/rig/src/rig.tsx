@@ -89,6 +89,8 @@ function RigView() {
             setTheme(() => message.data.theme)
           }
           setBlocks(() => message.data.blocks)
+          console.log('variables!!!!')
+          console.log(message.data.variables)
           updateInputsWithVariables(message.data.variables)
           if (message.data.variables.length > 0 && !message.data.testing) {
             setTimeout(() => {
@@ -118,6 +120,7 @@ function RigView() {
             break
           }
           setBlocks(() => message.data.blocks)
+          updateInputsWithVariables(message.data.variables)
           break
         default:
           break
@@ -212,7 +215,7 @@ function RigView() {
     }
   }, [tab])
 
-  const assistantBlocks = blocks.filter(b => b.tag === 'Assistant')
+  const assistantBlocks = blocks.filter(b => b.role === 'assistant')
   const streaming = lastElement(assistantBlocks)?.child?.content.includes('█') === true
   const dirty = source !== currentSource
 

@@ -327,7 +327,7 @@ export async function createPlayground(
 <Request model="${model}" />`
             const blocksForGlass = parseChatBlocks(newGlassfile)
             const metadataForGlass = parseGlassMetadata(newGlassfile)
-
+            console.log(metadataForGlass)
             writeGlass(sessionToRun, newGlassfile) // wait for this?
             await panel.webview.postMessage({
               action: 'onResponse',
@@ -337,8 +337,6 @@ export async function createPlayground(
                 blocks: blocksForGlass,
                 variables: metadataForGlass.interpolationVariables,
                 model,
-                inputs,
-                output: resp.response,
               },
             })
           } catch (error) {

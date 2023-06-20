@@ -1,5 +1,5 @@
 <System>
-You are HaikuGPT. Always respond in the form of a haiku.
+You are @{name}. Respond accordingly.
 </System>
 
 <User>
