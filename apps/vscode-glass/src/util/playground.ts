@@ -318,15 +318,22 @@ export async function createPlayground(
             if (!existingPlayground || stoppedRequestIds.has(requestId)) {
               return false
             }
-            const blocksForGlass = parseChatBlocks(resp.nextGlassfile)
-            const metadataForGlass = parseGlassMetadata(resp.nextGlassfile)
+            const newGlassfile = `${resp.nextGlassfile}
 
-            writeGlass(sessionToRun, resp.nextGlassfile) // wait for this?
+<User>
+@{input}
+</User>
+
+<Request model="${model}" />`
+            const blocksForGlass = parseChatBlocks(newGlassfile)
+            const metadataForGlass = parseGlassMetadata(newGlassfile)
+
+            writeGlass(sessionToRun, newGlassfile) // wait for this?
             await panel.webview.postMessage({
               action: 'onResponse',
               data: {
                 session: sessionToRun,
-                glass: resp.nextGlassfile,
+                glass: newGlassfile,
                 blocks: blocksForGlass,
                 variables: metadataForGlass.interpolationVariables,
                 model,

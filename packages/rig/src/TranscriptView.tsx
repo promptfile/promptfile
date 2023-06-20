@@ -122,103 +122,105 @@ export const TranscriptView = (props: TranscriptViewProps) => {
         >
           {sessionId}
         </div>
-        {blocks.map((block, index) => {
-          // const model = modelName(block)
-          // const request = requestSummary(block)
-          // const response = responseSummary(block)
-          return (
-            <div
-              key={index}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                paddingBottom: '48px',
-                fontStyle: block.role === 'system' ? 'italic' : 'normal',
-                width: '100%',
-              }}
-            >
-              <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
-                <span
-                  style={{
-                    fontWeight: 'bold',
-                    color: block.role ? colorLookup[block.role] : undefined,
-                    fontStyle: 'italic',
-                    fontSize: '12px',
-                  }}
-                >
-                  {block.role}
-                </span>
-                {/* {model && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{model}</span>} */}
-              </div>
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm, remarkMath]}
-                rehypePlugins={[rehypeMathjax]}
-                components={{
-                  code({ node, inline, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || '')
-                    return !inline && match ? (
-                      <CodeBlock language={match[1]} value={String(children).replace(/\n$/, '')} {...props} />
-                    ) : (
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    )
-                  },
-                  table({ children }) {
-                    return (
-                      <table
-                        style={{
-                          borderCollapse: 'collapse',
-                          border: '1px solid black',
-                          padding: '1rem 0.75rem',
-                          // Consider using a dark mode library to handle dark mode styles
-                        }}
-                      >
-                        {children}
-                      </table>
-                    )
-                  },
-                  th({ children }) {
-                    return (
-                      <th
-                        style={{
-                          // wordBreak: 'break-word',
-                          border: '1px solid black',
-                          backgroundColor: 'gray',
-                          padding: '1rem 0.75rem',
-                          color: 'white',
-                          // Consider using a dark mode library to handle dark mode styles
-                        }}
-                      >
-                        {children}
-                      </th>
-                    )
-                  },
-                  td({ children }) {
-                    return (
-                      <td
-                        style={{
-                          // wordBreak: 'break-word',
-                          border: '1px solid black',
-                          padding: '1rem 0.75rem',
-                          // Consider using a dark mode library to handle dark mode styles
-                        }}
-                      >
-                        {children}
-                      </td>
-                    )
-                  },
+        {blocks
+          .filter(b => b.content !== `@{input}`)
+          .map((block, index) => {
+            // const model = modelName(block)
+            // const request = requestSummary(block)
+            // const response = responseSummary(block)
+            return (
+              <div
+                key={index}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  paddingBottom: '48px',
+                  fontStyle: block.role === 'system' ? 'italic' : 'normal',
+                  width: '100%',
                 }}
               >
-                {block.content}
-              </ReactMarkdown>
-              {/* <div style={{ fontSize: '10px', opacity: 0.3, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+                  <span
+                    style={{
+                      fontWeight: 'bold',
+                      color: block.role ? colorLookup[block.role] : undefined,
+                      fontStyle: 'italic',
+                      fontSize: '12px',
+                    }}
+                  >
+                    {block.role}
+                  </span>
+                  {/* {model && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{model}</span>} */}
+                </div>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeMathjax]}
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || '')
+                      return !inline && match ? (
+                        <CodeBlock language={match[1]} value={String(children).replace(/\n$/, '')} {...props} />
+                      ) : (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                      )
+                    },
+                    table({ children }) {
+                      return (
+                        <table
+                          style={{
+                            borderCollapse: 'collapse',
+                            border: '1px solid black',
+                            padding: '1rem 0.75rem',
+                            // Consider using a dark mode library to handle dark mode styles
+                          }}
+                        >
+                          {children}
+                        </table>
+                      )
+                    },
+                    th({ children }) {
+                      return (
+                        <th
+                          style={{
+                            // wordBreak: 'break-word',
+                            border: '1px solid black',
+                            backgroundColor: 'gray',
+                            padding: '1rem 0.75rem',
+                            color: 'white',
+                            // Consider using a dark mode library to handle dark mode styles
+                          }}
+                        >
+                          {children}
+                        </th>
+                      )
+                    },
+                    td({ children }) {
+                      return (
+                        <td
+                          style={{
+                            // wordBreak: 'break-word',
+                            border: '1px solid black',
+                            padding: '1rem 0.75rem',
+                            // Consider using a dark mode library to handle dark mode styles
+                          }}
+                        >
+                          {children}
+                        </td>
+                      )
+                    },
+                  }}
+                >
+                  {block.content}
+                </ReactMarkdown>
+                {/* <div style={{ fontSize: '10px', opacity: 0.3, display: 'flex', flexDirection: 'column' }}>
                 {request && <span>{request}</span>}
                 {response && <span>{response}</span>}
               </div> */}
-            </div>
-          )
-        })}
+              </div>
+            )
+          })}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
     </div>
