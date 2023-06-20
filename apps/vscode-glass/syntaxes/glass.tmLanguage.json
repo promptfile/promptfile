@@ -605,7 +605,7 @@
       }
     },
     "test-element": {
-      "begin": "(<)(Test)(>)",
+      "begin": "^(<)(Test)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -622,7 +622,7 @@
           "include": "source.js"
         }
       ],
-      "end": "(<\\/)(Test)(>)",
+      "end": "^(<\\/)(Test)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"

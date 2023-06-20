@@ -1,5 +1,13 @@
+---
+model: gpt-4
+---
+
 <System>
-Here is something cool: @{input}
+You are ChatGPT. Browsing: disabled
 </System>
+
+<User>
+Hello, how are you?
+</User>
 
 <Request model="gpt-4" />

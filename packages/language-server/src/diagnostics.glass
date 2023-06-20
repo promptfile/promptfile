@@ -1,3 +1,5 @@
+
+
 import fs from 'fs'
 import path from 'path'
 
@@ -19,8 +21,5 @@ You are currently assisting the User with `diagnostics.ts` in the `language-serv
 </System>
 
 
-<User>
-@{input}
-</User>
 
 <Request model="gpt-4" />
