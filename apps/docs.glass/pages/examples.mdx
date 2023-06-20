@@ -9,7 +9,7 @@ The Glass Cookbook includes examples to help you get started with Glass. You can
 
 ### Add Variables to your Prompt
 
-Here you can declare variables that you can interpolate into your prompt. You can declare variables in the `<Init>` block and then use them in your prompt with the `@{}` syntax.
+Here you can declare variables that you can interpolate into your prompt. You can declare variables in the `<Init>{:glass}` block and then use them in your prompt with the `@{}{:glass}` syntax.
 
 ```glass copy filename="haiku.glass"
 <Init>
@@ -144,7 +144,7 @@ You are now a play critic from the New York Times. Given the play synopsis you p
 
 ### Classify Comments as Questions or Complaints
 
-LLMs can also be great at understanding semantic meaning and classifying text. In this example, we see the usage of the `<For>` block which allows you to iterate through an array of examples. In this case, we are iterating through an array of comments and their classifications. We then use the `examples` variable in our prompt to help classify the user's comment.
+LLMs can also be great at understanding semantic meaning and classifying text. In this example, we see the usage of the `<For>{:glass}` block which allows you to iterate through an array of examples. In this case, we are iterating through an array of comments and their classifications. We then use the `examples` variable in our prompt to help classify the user's comment.
 
 ```glass copy filename="classify.glass"
 <Init>
