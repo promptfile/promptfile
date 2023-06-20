@@ -35,7 +35,7 @@ Our JSON requests would look a little something like this....with Glass, you can
     "content": "Write me a function that creates an array of 10 random odd integers between 0 and 20"
   },
   {
-      "role": "assistant",
+    "role": "assistant",
     "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}\n\n// Usage example\nconst randomOddIntegers = generateRandomOddIntegers();\nconsole.log(randomOddIntegers);\n```"
   }
 ]
