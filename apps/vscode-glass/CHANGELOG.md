@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.14.2
+
+### Patch Changes
+
+- [`d9bb13d`](https://github.com/glass-lang/glass/commit/d9bb13dd2db9e46cd3472bf52c47a901debefc39) Thanks [@rothfels](https://github.com/rothfels)! - fix syntax highlight flicker during stream
+
 ## 0.14.1
 
 ### Patch Changes
