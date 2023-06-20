@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.14.4
+
+### Patch Changes
+
+- [`984bb54`](https://github.com/glass-lang/glass/commit/984bb54ab215c087244ef8b62c21c4ba25ef75d5) Thanks [@elliottburris](https://github.com/elliottburris)! - rig is back
+
 ## 0.14.3
 
 ### Patch Changes
