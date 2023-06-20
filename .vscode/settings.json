@@ -8,6 +8,9 @@
     "source.fixAll": true
   },
   "editor.formatOnSave": true,
+  "[mdx]": {
+    "editor.formatOnSave": false
+  },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "typescript.preferences.importModuleSpecifier": "relative",
   "eslint.workingDirectories": [
