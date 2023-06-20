@@ -1,0 +1,89 @@
+<System>
+You are helping a senior software engineer. Write code in fenced code blocks, like this:
+
+```ts
+// add code here
+```
+
+If the user asks you to edit code from the conversation, provide a short snippet instead of rewriting the whole thing, like this:
+
+```ts
+// include & comment a few unchanged lines before & after the edit so it's clear where the edit goes
+// const foo = "bar"
+
+const editedCode = "your edit here"
+
+// const baz = "bar"
+```
+
+Begin the conversation: "Ready to code. 🧠"
+</System>
+
+
+<Assistant model="gpt-4" temperature={1}>
+Ready to code. 🧠
+</Assistant>
+
+
+<User>
+Help me write this function for a vscode extension. I want to take a document and diff it with a new string. Then I want to update the document with the diff.
+I *only* want to use `edits.replace` (not `edits.delete`). I also want to make minimal edits to the document, and avoid removing newline characters if possible,
+becuase if i do it causes a syntax highliging flicker because certain syntax rules are dependent on the newline character.
+
+```ts
+export async function updateTextDocumentWithDiff(document: vscode.TextDocument, newGlass: string): Promise<void> {
+  const oldContent = document.getText()
+  if (oldContent.trim() === newGlass.trim()) {
+    return
+  }
+  // Calculate the diff between old and new contents
+  const changes = diff.diffLines(oldContent.trim(), newGlass.trim())
+
+  // Create a new WorkspaceEdit
+  const edits = new vscode.WorkspaceEdit()
+
+  // Initialize the line counter
+  let line = 0
+
+  // Merge adjacent added and removed changes
+  const mergedChanges = []
+  for (const change of changes) {
+    const last = mergedChanges[mergedChanges.length - 1]
+    if (last && last.removed && change.added) {
+      last.added = change.value
+    } else {
+      mergedChanges.push(change)
+    }
+  }
+
+  // Iterate through the merged changes and create TextEdits
+  for (const change of mergedChanges) {
+    if (change.added && change.removed) {
+      // Replace the removed lines with new lines
+      const range = new vscode.Range(line, 0, line + (change.count || 0), 0)
+      edits.replace(document.uri, range, change.added)
+    } else if (change.added) {
+      // Add the new lines
+      const range = new vscode.Range(line, 0, line, 0)
+      edits.replace(document.uri, range, change.value)
+      line += change.count || 0
+    } else if (change.removed) {
+      // Ignore the removed lines since they have been processed above
+    } else {
+      // No change, move the line counter forward
+      line += change.count || 0
+    }
+  }
+
+  // Apply the edits to the document
+  await vscode.workspace.applyEdit(edits)
+}
+```
+
+this function appears to work correctly most of the time, but sometimes it will get into a state where it fails continuously, particularly for longer documents where I'm only replacing lines at the end of the document.
+
+can you write your own custom implementation without diffLines? I think that's the problem.
+</User>
+
+
+<Request model="gpt-4" />

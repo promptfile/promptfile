@@ -135,8 +135,12 @@ export function handleRequestNode(
               responseBlockIds.push(nextId)
             }
             newBlocks.push({
+              type: 'comment',
+              content: '\n\n\n', // unclear why we need 3 here, something wrong with diffing algorithm.
+            } as any)
+            newBlocks.push({
               tag: 'Function',
-              content: `\n\n<Function name="${d.function_call!.name}"${nextId != null ? ` id="${nextId}"` : ''}>\n${
+              content: `<Function name="${d.function_call!.name}"${nextId != null ? ` id="${nextId}"` : ''}>\n${
                 d.functionObservation
               }\n</Function>`,
             } as any)
