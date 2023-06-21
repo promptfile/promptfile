@@ -4,25 +4,20 @@ import Cards from '@/components/Cards/Cards'
 import { languages } from '@/data/languages'
 import Image from 'next/image'
 
-<Callout type="info">
-  Note: Executing code inside your Glass file is still experimental. We are actively working on improving it while
-  staying up to date with announcements from model providers. If you want to use Glass in your project, message us on
-  [Discord](https://discord.com/invite/H64PFP2DCc)
-</Callout>
+<Callout type="info"> Note: The feature to execute code within your Glass file is currently experimental. We are diligently working on enhancing its syntax and usage. </Callout>
 
-## Languages supported
+## Languages Currently Supported
 
 <Cards children={languages} />
 
 ## Executable Code
 
-Glass has supports an element called `<Init>` which lets you write code to be executed before the prompt is evaluated. This is useful for fetching data, running calculations, or executing any other code that you want to run before prompting the LLM.
+Glass features an `<Init>{:glass}` element that enables you to write code to be executed prior to evaluating the prompt. This is particularly helpful for tasks such as data retrieval, performing calculations, or executing any other code that needs to be run before prompting the large language model (LLM).
 
 ```glass copy filename="example.glass"
 <Init>
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
 </Init>
-
 
 <System>
 @{myMessage}
@@ -33,9 +28,9 @@ const myMessage = "This is code! You can define which language you want in the f
 
 ## Event Handling: onResponse
 
-Just like React's event handling, Glass has a similar event handling system. The `onResponse` function evaluates when the request has been made and the response is received. This is most useful for taking actions after a response has been received, such as updating the state of the Glass file.
+Similar to React, Glass incorporates an event handling system. The onResponse function is triggered when a request has been completed, and the response is received. This is especially useful for taking actions after a response, such as updating the state of the Glass file.
 
-An example of a request with an `onResponse` function is shown below. You can access the response from the request by using the `.message` attribute of the response object.
+Here's an example of a request utilizing the onResponse function. To access the response from the request, use the .message attribute of the response object:
 
 ```glass copy filename="onResponse.glass"
 <Request model="gpt-4" onResponse = {response => {
@@ -45,16 +40,14 @@ An example of a request with an `onResponse` function is shown below. You can ac
 
 ## State Management: useState
 
-Just like React's [`useState`](https://react.dev/reference/react/useState) hook that allows you to add a state variable to your component. Glass also allows `useState`. By declaring a state variable:
+Similar to React's [`useState`](https://react.dev/reference/react/useState) hook, which adds state variables to components, Glass also supports `useState`. To declare a state variable in Glass, follow this example:
 
 ```glass copy filename="useState.glass"
 <Init>
 const [stateVariable, setStateVariable] = useState(initialValue)
 </Init>
 ```
-
 You can then update the state variable by calling the `setStateVariable` function. This will add the updated state variable to the Glass file.
-
 ```glass copy filename="updatingState.glass"
 <Init>
 const [stateVariable, setStateVariable] = useState(initialValue)
@@ -64,7 +57,7 @@ setStateVariable(newValue)
 
 ## Putting it all together
 
-Here is an example of `onResponse` and `useState` being used together:
+Below is an example showcasing the combined use of onResponse and useState in a Glass file:
 
 ```glass copy filename="events_state.glass"
 <Init>
@@ -73,19 +66,14 @@ const [lastMessageText, setLastMessageText] = useState('')
 const [numResponses, setNumResponses] = useState(0)
 </Init>
 
-awesome! we've now set state in the file itself. pretty crazy!
-
-let's actually use the state in a prompt
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
 </System>
-
 
 <User>
 can you tell me a joke about kittens?
 </User>
 
-The `onResponse` attribute lets you execute code with the response from the LLM.
 <Request
   model="gpt-3.5-turbo"
   onResponse={response => {
@@ -95,7 +83,7 @@ The `onResponse` attribute lets you execute code with the response from the LLM.
 />
 ```
 
-You can see the state variables being updated in the Glass file. Here's what it would look like after running.
+In the example provided earlier, after executing the onResponse function and updating the state variable responseMessage, the Glass file will display the updated state.
 
 ```glass copy filename="events_state.glass"
 <State>
@@ -105,27 +93,22 @@ You can see the state variables being updated in the Glass file. Here's what it 
 }
 </State>
 
-
 <Init>
 // This works just like `useState` in React
 const [lastMessageText, setLastMessageText] = useState('')
 const [numResponses, setNumResponses] = useState(0)
 </Init>
 
-
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
 </System>
-
 
 <User>
 can you tell me a joke about kittens?
 </User>
 
-
 <Assistant model="gpt-3.5-turbo" temperature={1}>
 Sure, here's one:
-
 Why did the kitten join Tinder?
 To find her purr-fect match!
 </Assistant>
