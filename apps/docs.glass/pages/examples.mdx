@@ -3,17 +3,17 @@ import { Callout } from 'nextra-theme-docs'
 
 # Cookbook (Examples)
 
-The Glass Cookbook includes examples to help you get started with Glass. You can also find examples in the demo [folder](https://github.com/glass-lang/glass/tree/main/apps/demo/examples) of the project.
+The Glass Cookbook provides a collection of practical examples to assist you in getting started with Glass.
 
 <Steps>
 
-### Add Variables
+### Declaring Variables
 
-Here you can declare variables that you can interpolate into your prompt. You can declare variables in the `<Init>{:glass}` block and then use them in your prompt with the `@{variableNameHere}` syntax. All variables must be inside a block. If you want the user to provide the variable, simply don't initialize the variable in an `<Init>{:glass}`.
+To declare variables for interpolation within your prompt, utilize the `<Init>{:glass}` block. Follow the syntax `@{variableName}` to use them in your prompt. Ensure that all variables are placed within a block. If you require user input for the variable, simply do not declare it. The Playground will automatically request user input for those undeclared variables.
 
 ```glass copy filename="haiku.glass"
 <Init>
-const myFirstVariable = "Hello, World!"
+const myFirstVariable = "The deep blue ocean"
 </Init>
 
 <System>
@@ -27,9 +27,9 @@ You are HaikuGPT. Always respond to the user in the form of a haiku. In your res
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Access Code
+### Executing Code
 
-Using an `<Init>{:glass}` block, you can execute code to do things like access a user's profile. In this example, you can see how you could use a user profile in our prompt to make the conversation more personal.
+The `<Init>{:glass}` block provides versatility, not only permitting variable declaration but also enabling code execution for a range of purposes, including accessing user profiles. The example below showcases how incorporating user profile data into your prompt yields a more personalized and engaging conversational interaction.
 
 ```glass copy filename="executeCode.glass"
 <Init>
@@ -46,12 +46,11 @@ const input = "What is the name of the user and what is their favorite food?"
 </Init>
 
 <System>
-You are having a conversation with the following User:
+You are having a conversation with the following user:
 
 ###
 @{JSON.stringify(userProfile)}
 ###
-
 </System>
 
 <User>
@@ -61,9 +60,11 @@ You are having a conversation with the following User:
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Load data into your prompt
+### Loading data into your prompt
 
-You could also fetch information from somewhere else, like your database or a website.In this example, we'll fetch the HTML from a website and use it in our prompt. Ask it something like: "Where did Elliott go to grad school?" or "Where has Elliott worked?"
+You may also retrieve information from external sources, such as a database or website. In this example, we demonstrate fetching HTML content from a website and incorporating it into our prompt using an `<Init>{:glass}` block. To seamlessly integrate dynamic information into the conversation, consider making API requests or loading external data.
+
+Sample user queries might include: "Where did Elliott go to grad school?" or "Where has Elliott worked?"
 
 ```glass copy filename="websiteChat.glass"
 <Init>
@@ -72,15 +73,12 @@ const html = await res.text()
 const input = "Where did Elliott go to school?"
 </Init>
 
-
 <System>
 Your job is to answer questions based on the following website.
-
 ###
 @{html}
 ###
 </System>
-
 
 <User>
 @{input}
@@ -89,10 +87,13 @@ Your job is to answer questions based on the following website.
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Use function calling
-You can define a tool (or function) that the model can now use to accomplish its task. In this case, we give it the ability to use a Calculator. We define what the tool is called via `name`, what it does via `description`, and then we provide a schema (in this case, we are using [Zod](https://zod.dev/) to validate the output) and then evaluating it directly.
+### Calling functions
 
-Keep in mind, currently only `gpt-3.5-turbo-0613` and `gpt-4-0613` have been fine-tuned on calling functions.
+Employ the `<Tool>{:glass}` block to create a tool (or function) that enhances the model's ability to perform tasks. In this case, a calculator is provided as a resource for the LLM to utilize.
+
+Define the tool by specifying its parameters, which include the tool itself, the schema the LLM needs to return to execute the function, and the intended function to run. In this example, we use [Zod](https://zod.dev/) to parse and validate the data.
+
+Please note that, as of now, only `gpt-3.5-turbo-0613` and `gpt-4-0613` models have been fine-tuned to effectively call functions.
 
 ```glass
 <Tool
@@ -108,11 +109,11 @@ what is 2 to the .12345 power?
 
 <Request model="gpt-3.5-turbo-0613" />
 ```
-### Chain two prompts together
+### Chaining two prompts together
 
-For more complicated prompts, you often need the ability to make multiple requests to achieve your goal. In this example, we'll chain two prompts together to create a play synopsis and a review of the play.
+For complex prompts, achieving the desired outcome often requires executing multiple requests. In this example, we will link two prompts to generate both a synopsis of a fictitious play and a review of that fictitious play.
 
-<Callout type="info"> Notice the use of `<Test>{:glass}` block instead of `<Init>{:glass}`. Here we create a test block, which means that when we run the file, it will pass in our test case as arguments, but when we actually use it in our project, we can pass our arguments in as parameters to invoking the Glass file.</Callout>
+<Callout type="info"> Observe the utilization of the `<Test>{:glass}` block, replacing the `<Init>{:glass}` block. This creates a test block that passes the test case as arguments when running the file. However, when implementing the Glass file within the actual project, the arguments can be supplied as parameters during invocation. </Callout>
 
 ```glass copy filename="promptChaining.glass"
 <Test>
@@ -134,14 +135,13 @@ You are now a play critic from the New York Times. Given the play synopsis you p
 <Request model="gpt-4" />
 ```
 
-### Add a state to your chat
+### Managing State of Chat
 
-Using the `useState` hook, you can add state to your chat. This allows you to keep track of things like the number of messages sent or the last message sent by the user.
+Leverage the useState hook to introduce state management in your chat. This enables tracking features such as the total number of messages and the most recent message sent by the user.
 
-In this case, we initialize an empty string as the last message sent by the user and 0 as the number of messages sent. Then, we increment the number of messages sent each time the user sends a message and update the last message sent by the user.
+In this example, we set an empty string as the last message sent by the user and initialize the number of messages sent as 0. Subsequently, each time the user sends a message, we increment the message count and update the user's most recent message.
 
-The `<State>{:glass}`
-You can also see the `onResponse` attribute which lets you execute code based on the response from the LLM request. In this case, we update the last message sent by the user with the response from the LLM request.
+The `<State>{:glass}` is generated automatically to a file to keep track of the state of a chat. Additionally, observe the onResponse attribute, which permits code execution based on the LLM request's response. In this situation, we use the LLM request's response to update the last message sent by the user.
 
 ```glass copy filename="state.glass"
 <Init>
@@ -161,9 +161,9 @@ You are FunnyGPT. Respond to the user with a message that's maximally likely to 
 
 <Request model="gpt-3.5-turbo" onResponse={response => setLastMessageText(response.message)} />
 ```
-### Classify Comments as Questions or Complaints
+### Classifying Comments as Questions or Complaints
 
-LLMs can also be great at understanding semantic meaning and classifying text. In this example, we see the usage of the `<For>{:glass}` block which allows you to iterate through an array of examples. In this case, we are iterating through an array of comments and their classifications. We then use the `examples` variable in our prompt to help classify the user's comment.
+LLMs excel in comprehending semantic meaning and text classification. This example highlights the `<For>{:glass}` block, which enables iteration through an array of examples. Here, we iterate over an array of comments and their corresponding classifications. By incorporating the examples variable in our prompt, we efficiently classify the user's comment.
 
 ```glass copy filename="classify.glass"
 <Init>
@@ -209,9 +209,9 @@ You are an AI community moderator. Your job is to read and process comments on a
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Use conditional logic in your prompt
+### Using conditional logic
 
-In this example, you can use conditional logic to change what goes into your prompt based on a condition. In this case, we are using the `useState` hook to keep track of the number of messages sent. Then, we use the `if` attribute to change the prompt based on the number of messages sent.
+In this example, conditional logic allows for dynamic adjustments to your prompt based on specific conditions. Utilizing the useState hook, we maintain a record of the number of messages sent. Subsequently, the if attribute is employed to modify the prompt contingent upon the message count.
 
 ```glass copy filename="conditionalLogic.glass"
 <Init>
