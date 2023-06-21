@@ -1,37 +1,49 @@
 import Image from 'next/image'
+import {Steps} from 'nextra-theme-docs'
+import {Callout} from 'nextra-theme-docs'
 
 # What is the Playground?
+<br / >
+<br / >
+     <Image src="/screenshots/cleanPlayground.png" width={350} height={350} />
 
-The Glass Playground provides an interactive way to run a Glass file you create and chat with your prompt.
+
+The Glass Playground provides an interactive way to run a Glass file you create and chat with your prompt. You can write messages to LLMs as if you were using the same editor as VSCode (Monaco). For code you are writing, you can view the code with syntax highlighting and formatting so long as it's wrapped in three backticks with the language specified such as ```` ```js ```` to render JavaScript.
+
+<Callout type="info" emoji="⚠️"> Anytime you make a request in Playground, a `<Request>{:glass}` block will add an uninitialized `input` variable so the user can respond. It will also automatically add a `<Request>{:glass}` block with the same arguments as the initial request. You can see this in the raw session file. </Callout>
 
 ## How to use the Playground
 
-1. Open a Glass file in VSCode.
-2. Launch the Playground either by:
+<Steps>
+### Create a folder and create a new Glass file in VSCode
+ - Need some inspiration, check out our examples [here](/examples) and copy one into your Glass file
+### Launch the Playground either by:
    - Pressing `Command (⌘) + Enter (↩)`
-   - Executing the `Glass: run in Playground` command from the VSCode command palette which you can access by pressing `Command (⌘) + Shift (⇧) + P`
-     <br />
-     <Image src="/screenshots/playgroundEditor.png" width={750} height={750} />
-
-## Playground Features Overview
+   - Executing the `Glass: run` command from the VSCode command palette which you can access
+### Look at chat history
+- Access past requests and responses. Click a session ID to open up any part of the conversation history as a `Glass` file in a new VSCode tab.
+### Keep track of your tokens
+- Monitor token usage inside your Glass file at the bottom of the editor. Currently uses [tiktoken](https://github.com/openai/tiktoken) to count tokens.
+### Open the session Glass file
+- Want to see what exactly you are seeing in the Playground? Click `Open session file`.
+### Share your Glass file as a Github Gist
+- Click the share button to create a sharable GitHub Gist of your Glass file. Set your GitHub access token that allows you to create a Gist via the [GitHub REST API](https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28) as `GITHUB_API_KEY` in a `.env` file or in your `.zshrc` file.
 
 <br />
-<Image src="/screenshots/playground_history.gif" width={750} height={750} />
+<Image src="/screenshots/newPlayground.gif" width={750} height={750} />
+</Steps>
 
-The Playground has various features to help you interact with your Glass file and prompt.
 
-- **Transcript Tab** Experiment with your prompt and view results in real-time
-- **History Tab** Access past requests and responses. Click a session ID to open up any part of the conversation history as a `Glass` file in a new VSCode tab. Alternatively, click the `Open session file` button.
-- **Logs** Click the logs button to view Playground logs for debugging and examining API requests
-- **Share** Click the share button to create a sharable GitHub Gist of your Glass file. Set your GitHub access token that allows you to create a Gist via the [GitHub REST API](https://docs.github.com/en/rest/gists/gists?apiVersion=2022-11-28) as `GITHUB_API_KEY` in a `.env` file or in your `.zshrc` file.
-- **Token counting** Monitor token usage inside your Glass file at the bottom of the editor. Currently uses <a href="https://github.com/openai/tiktoken" target="_blank"> tiktoken</a> to count tokens.
-
-## Playground Launcher
-
-To make navigating between multiple Glass files easier on the Playground, you can use the Playground Launcher by pressing `Command (⌘) + Shift (⇧) + Enter (↩)` and selecting the Glass file you want to run. The files will be sorted by the recency of any edits.
 
 ## Playground Status Indicator
 
 In the Playground, a status indicator appears next to the name of your Glass file. This helps you track the synchronization of the Glass Playground with your file's changes.
 
 If you see an orange dot: the Playground is <i>**not using the most recent version**</i> of your Glass file. To update the Playground with your latest changes, click the New Session button to restart.
+
+
+<br />
+<Image src="/screenshots/newPlayground.gif" width={750} height={750} />
+
+
+
