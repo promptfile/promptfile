@@ -1,7 +1,8 @@
 {
   "index": "Introduction",
-  "quickstart": "Quickstart",
+  "guide": "Getting Started Guide",
   "examples": "Cookbook (Examples)",
+  "playground": "Playground",
   "vscode": "VSCode Extension",
   "blocks": "Blocks",
   "models": "Models",
