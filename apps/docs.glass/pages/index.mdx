@@ -4,32 +4,34 @@ import {Steps} from 'nextra-theme-docs'
 
 # **Glass: Iterate and build prompts quickly**
 
-Glass is an open-source templating syntax and VSCode playground for constructing prompts for large language models (LLMs). Write your prompts where you work on you project. You deserve a developer-first experience for writing and iterating on these prompts.
+Introducing Glass: a powerful, open-source templating syntax and VSCode playground engineered for crafting prompts for large language models (LLMs). Effortlessly create and refine prompts within your project workspace, delivering a developer-focused experience.
 
-We started with our prompts as giant strings in our codebase. Then we moved to storing them in .MDX [files](https://mdxjs.com/) for readability and separation of concerns. That wasn't enough, we wanted more advanced features that were made for writing prompts. So we built Glass.
+Initially, we managed prompts through lengthy strings in our codebase, but soon transitioned to utilizing [MDX](https://mdxjs.com/) for enhanced readability and separation of concerns. As our needs evolved, we sought more advanced features tailored to prompt development, leading to the creation of Glass.
 
-When you've perfected your prompt, Glass can generate a function for you to use in your project with a single line of code.
+Once you've fine-tuned your prompt, Glass makes it easy to generate a function for integration into your project with just a single line of code.
+
 
 ## Key Features
 
 <Steps>
-### **Integrated VSCode experience**
-- Write and perfect prompts in VSCode with syntax highlighting, IntelliSense, and your existing tools like GitHub Co-Pilot.
-### **Design sophisticated prompts**
-- Create dynamic templates with conditional logic, state management, and multiple model requests
-### **Made for LLMs**
-- Count tokens, switch between models, and get diagnostics for your requests
+### **Seamless VSCode Integration**
+- Craft and refine prompts with syntax highlighting, IntelliSense, and compatible tools like GitHub Copilot, all within VSCode.
+### **Advanced Prompt Design**
+- Develop dynamic templates incorporating conditional logic, state management, and multiple model requests.
+### **Optimized for LLMs**
+- Benefit from built-in token counting, effortless model switching, and comprehensive diagnostic insights for your requests.
 </Steps>
 
 
 
 ## Quickstart
-Here are some quick steps to get started quickly. If you wwant more detail, check out our [Getting Started Guide](/guide)
+Follow these simple steps to get started quickly. For more details, refer to our [Getting Started Guide](/guide).
 <Steps>
-### Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
-Add your OpenAI or Anthropic API Key by running the `Glass: open settings` command on VSCode Command Palette. If you need help, check out how to do this [here](/guide#save-your-openai-andor-anthropic-keys)
-### Create your first Glass file
-Create a folder for your Glass files. Create a file called `example.glass` and copy this into it.
+### Install the [VSCode Extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
+Add your OpenAI or Anthropic API Key by executing the `Glass: open settings` command in the VSCode Command Palette. Refer to our guide on [saving your OpenAI and/or Anthropic keys](/guide#save-your-openai-andor-anthropic-keys) for help.
+
+### Create Your First Glass File
+Open a new or existing VSCode workspace and create a file named `example.glass`. Insert the following content:
 
 ```glass copy filename="example.glass"
 <System>
@@ -40,21 +42,25 @@ The ocean is so big! I wonder what is out there. I want to explore.
 </User>
 <Request model="gpt-3.5-turbo" />
 ```
-### Run your Glass file with  `Command (⌘) Enter (↩)`
-Voila! You have run your first Glass file, but don't stop there....
+### Execute your Glass file with  `Command (⌘) Enter (↩)`
+Congratulations! You've run your first Glass file, but there's so much more to explore.
 
 ### Explore our [Cookbook](/examples) to see more of Glass' features
-Glass can do so much more, try following along with the examples to see how you can increase the complexity of your prompts.
+Unleash the full potential of Glass with more complex prompts. Explore our examples to learn about the advanced features.
 
 ### Ask questions and engage in the community
-We want honest feedback, questions, and we want to see what you are building....we want to meet you! Talk to the Glass community on [Discord](www.discord.glass)
-
+We value your honest feedback, questions, and creations. Join the Glass community on [Discord](www.discord.glass) and let's connect!
 </Steps>
 
 
-## The Glass Difference
+## Experience the Glass difference
 
-Our JSON requests would look a little something like this....with Glass, you can write the same request in a more readable and intuitive way. With Glass, we got all the benefits of something like Markdown or MDX, but purpose-built for writing prompts. At the bare minimum, your prompts are more readable and easier to iterate on in the VSCode playground. As you start to explore more of Glass, we hope you see that there's more value than just a templating syntax.
+Dealing with JSON requests can be tedious and not very intuitive. Glass addresses this issue by offering a more readable and developer-friendly approach to prompting large language models. It brings the benefits of Markdown or MDX, tailor-made for writing prompts.
+
+With Glass in the VSCode playground, you'll enjoy better readability and effortless iteration on your prompts. But Glass is more than just a templating syntax – it simplifies the prompting process and enhances the overall development experience.
+
+Check out the side-by-side comparison of a prompt in JSON format compared to its Glass version. Experience firsthand how Glass improves your workflow and makes crafting prompts a smoother, more efficient task.
+
 
 <Tabs items={['JSON', 'Glass']}>
   <Tab>
@@ -63,7 +69,15 @@ Our JSON requests would look a little something like this....with Glass, you can
 [
   {
     "role": "system",
-    "content": "You are a helpful assistant that helps me write code.You are TypeScriptGPT: your job is to write performant, concise beautiful TypeScript code to answer the user's question. The user may ask you to make changes to the code based on different needs, your job is to update the code to meet their requests. You should respond with fenced, commented TypeScript code, like this:\n\nUser: How do I add two numbers in TypeScript?\nAssistant: \n\n```ts\nfunction addNumbers(a: number, b: number): number {\n  return a + b;\n}\n```"
+    "content": "You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response."
+  },
+  {
+    "role": "user",
+    "content": "How do I add two numbers?"
+  },
+  {
+    "role": "assistant",
+    "content": "```ts\nfunction addNumbers(a: number, b: number): number {\n  return a + b;\n}\n```"
   },
   {
     "role": "user",
@@ -71,7 +85,7 @@ Our JSON requests would look a little something like this....with Glass, you can
   },
   {
     "role": "assistant",
-    "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}\n\n// Usage example\nconst randomOddIntegers = generateRandomOddIntegers();\nconsole.log(randomOddIntegers);\n```"
+    "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}```"
   }
 ]
 ````
@@ -80,17 +94,23 @@ Our JSON requests would look a little something like this....with Glass, you can
   <Tab>
 ````glass copy filename= 'request.glass'
 <System>
-You are a helpful assistant that helps me write code.You are TypeScriptGPT: your job is to write performant, concise beautiful TypeScript code to answer the user's question. The user may ask you to make changes to the code based on different needs, your job is to update the code to meet their requests. You should respond with fenced, commented TypeScript code, like this:
+You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response.
+</System>
 
-User: How do I add two numbers in TypeScript?
-Assistant:
 
+<User>
+How do I add two numbers?
+</User>
+
+
+<Assistant>
 ```ts
 function addNumbers(a: number, b: number): number {
-  return a + b
+  return a + b;
 }
 ```
-</System>
+</Assistant>
+
 
 <User>
 Write me a function that creates an array of 10 random odd integers between 0 and 20
@@ -111,12 +131,14 @@ function generateRandomOddIntegers(): number[] {
 
   return oddIntegers
 }
-
-// Usage example
-const randomOddIntegers = generateRandomOddIntegers()
-console.log(randomOddIntegers)
 ```
 </Assistant>
+
+
+<User>
+@{userRequest}
+</User>
+
 
 <Request model="gpt-4" />
 ````
