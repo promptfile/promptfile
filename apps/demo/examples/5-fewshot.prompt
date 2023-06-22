@@ -38,5 +38,3 @@ You are an AI community moderator. Your job is to read and process comments on a
 <User>
 @{userMessage}
 </User>
-
-<Request model="gpt-3.5-turbo" />

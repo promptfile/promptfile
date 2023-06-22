@@ -1,3 +1,7 @@
+---
+model: gpt-3.5-turbo-0613
+---
+
 LLMs have the most power when you give them tools to use. Promptfile supports the ability to define Tools inside your prompts. Promptfile will give instructions to the LLM for how to use the tools, and will run the code any time the LLM wants to use a tool.
 
 https://platform.openai.com/docs/guides/gpt/function-calling
@@ -21,5 +25,3 @@ https://platform.openai.com/docs/guides/gpt/function-calling
 <User>
 what is 2 to the .12345 power?
 </User>
-
-<Request model="gpt-3.5-turbo-0613" />

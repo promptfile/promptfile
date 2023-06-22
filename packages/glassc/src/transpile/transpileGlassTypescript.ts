@@ -28,7 +28,17 @@ export function transpileGlassFileTypescript(
     outputDirectory,
     fileName,
     language,
-  }: { workspaceFolder: string; folderPath: string; outputDirectory: string; fileName: string; language: string }
+    parseBlocks,
+    defaultModel,
+  }: {
+    workspaceFolder: string
+    folderPath: string
+    outputDirectory: string
+    fileName: string
+    language: string
+    parseBlocks?: boolean
+    defaultModel?: string
+  }
 ) {
   if (language !== 'typescript' && language !== 'javascript') {
     throw new Error(`${language} not supported yet`)
@@ -88,14 +98,6 @@ export function transpileGlassFileTypescript(
     codeSanitizedDoc += content
   }
 
-  const requestBlocks: {
-    model: string
-    onResponse?: string
-    maxTokens?: string
-    temperature?: string
-    stopSequence?: string
-  }[] = []
-
   const functions: {
     name: string
     description: string
@@ -114,40 +116,6 @@ export function transpileGlassFileTypescript(
       continue
     }
     if (jsxNode.tag === 'Transcript') {
-      continue
-    }
-    if (jsxNode.tag === 'Request') {
-      const modelAttr = jsxNode.attrs!.find(a => a.name === 'model')
-      // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
-      // we don't currently support dynamic model values
-      const model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : 'gpt-3.5-turbo'
-
-      const maxTokensAttr = jsxNode.attrs!.find(a => a.name === 'maxTokens')
-      const maxTokens = maxTokensAttr
-        ? maxTokensAttr.stringValue || JSON.parse(maxTokensAttr.expressionValue!)
-        : 'undefined'
-
-      const temperatureAttr = jsxNode.attrs!.find(a => a.name === 'temperature')
-      const temperature = temperatureAttr
-        ? temperatureAttr.stringValue || JSON.parse(temperatureAttr.expressionValue!)
-        : 'undefined'
-
-      const stopSequenceAttr = jsxNode.attrs!.find(a => a.name === 'stopSequence')
-      let stopSequence: string[] | undefined = undefined
-      if (stopSequenceAttr?.stringValue) {
-        stopSequence = [stopSequenceAttr.stringValue]
-      } else if (stopSequenceAttr?.stringValue) {
-        const parsedStopSequence = JSON.parse(stopSequenceAttr.expressionValue!)
-        if (Array.isArray(parsedStopSequence)) {
-          stopSequence = parsedStopSequence
-        }
-        stopSequence = [parsedStopSequence]
-      }
-
-      const onResponseAttr = jsxNode.attrs!.find(a => a.name === 'onResponse')
-      const onResponse = onResponseAttr ? onResponseAttr.expressionValue : 'undefined'
-
-      requestBlocks.push({ model, onResponse, maxTokens, temperature, stopSequence: JSON.stringify(stopSequence) })
       continue
     }
     if (jsxNode.tag === 'Tool') {
@@ -231,7 +199,7 @@ export function transpileGlassFileTypescript(
   interpolationVarSet.delete('') // TODO: figure out where/why this shows up
 
   const parsedFrontmatter = parseFrontmatter(parsedDocument.find(n => n.type === 'frontmatter')?.content || '')
-  const defaultModel = parsedFrontmatter?.model
+  defaultModel = parsedFrontmatter?.model ? parsedFrontmatter.model : defaultModel
   const argsOverride = parsedFrontmatter?.args || {}
   const allInterpolationNames = Array.from(interpolationVarSet)
   const argsString = allInterpolationNames.map(arg => arg + `: ${argsOverride[arg] || 'string'}`).join(', ')
@@ -288,8 +256,9 @@ export async function ${exportName}(${functionArgs}) {
   }
   const TEMPLATE = \`${escapedInterpolatedDoc}\`
   return {
-    interpolatedDoc: TEMPLATE,
-    defaultModel: ${defaultModel != null ? `'${defaultModel}'` : 'null'},
+    interpolatedDoc: TEMPLATE,${parseBlocks ? `\nblocks: glasslib.parseChatBlocks(TEMPLATE),` : ''}${
+    defaultModel != null ? `\ndefaultModel: '${defaultModel}',` : ''
+  }
     functions: [
       ${functions
         .map(f => `{ name: '${f.name}', description: '${f.description}', parameters: ${f.parameters}, run: ${f.run} }`)
@@ -322,10 +291,19 @@ export function transpileGlassTypescript(
   workspaceFolder: string,
   fileOrFolderPath: string,
   language: string,
-  outputDirectory: string
+  outputDirectory: string,
+  defaultModel?: string,
+  parseBlocks?: boolean
 ) {
-  const functions = transpileGlassHelper(workspaceFolder, fileOrFolderPath, language, outputDirectory)
-  return constructGlassOutputFileTypescript(functions)
+  const functions = transpileGlassHelper(
+    workspaceFolder,
+    fileOrFolderPath,
+    language,
+    outputDirectory,
+    defaultModel,
+    parseBlocks
+  )
+  return constructGlassOutputFileTypescript(functions, parseBlocks)
 }
 
 function normalizeTypescriptObjectFieldName(name: string) {
@@ -336,7 +314,10 @@ function normalizeTypescriptObjectFieldName(name: string) {
   return name
 }
 
-export function constructGlassOutputFileTypescript(functions: ReturnType<typeof transpileGlassHelper>) {
+export function constructGlassOutputFileTypescript(
+  functions: ReturnType<typeof transpileGlassHelper>,
+  parseBlocks = false
+) {
   const glassConstant = `export const Promptfile = {
     ${functions.map(f => `${normalizeTypescriptObjectFieldName(f.functionName)}: ${f.exportName}`).join(',\n  ')}
   }`
@@ -344,13 +325,7 @@ export function constructGlassOutputFileTypescript(functions: ReturnType<typeof 
 
   const code = `/* eslint-disable */
 // THIS FILE WAS GENERATED BY GLASS -- DO NOT EDIT!
-
-interface ChatBlock {
-  role: 'system' | 'user' | 'assistant' | 'function'
-  content: string
-  name?: string
-  type?: 'function_call'
-}
+${parseBlocks ? `import glasslib from '@glass-lang/glasslib'` : ''}
 
 ${functionsString}
 
@@ -373,7 +348,9 @@ function transpileGlassHelper(
   workspaceFolder: string,
   fileOrFolderPath: string,
   language: string,
-  outputDirectory: string
+  outputDirectory: string,
+  defaultModel?: string,
+  parseBlocks?: boolean
 ): {
   code: string
   args: {
@@ -389,7 +366,7 @@ function transpileGlassHelper(
   const folderPath = fileOrFolderPath.split('/').slice(0, -1).join('/')
   if (fs.statSync(fileOrFolderPath).isDirectory()) {
     // Recursively process files in subdirectory
-    return recursiveCodegen(workspaceFolder, fileOrFolderPath, language, outputDirectory)
+    return recursiveCodegen(workspaceFolder, fileOrFolderPath, language, outputDirectory, defaultModel, parseBlocks)
   } else if (path.extname(file) === `.${extension}`) {
     const fileContent = fs.readFileSync(fileOrFolderPath, 'utf8')
     const fileName = path.basename(file, `.${extension}`)
@@ -404,6 +381,8 @@ function transpileGlassHelper(
       fileName,
       language,
       outputDirectory,
+      defaultModel,
+      parseBlocks,
     })
     if (!codegenedResult) {
       return []
@@ -415,12 +394,21 @@ function transpileGlassHelper(
     return []
   }
 }
-function recursiveCodegen(workspaceFolder: string, folderPath: string, language: string, outputDirectory: string) {
+function recursiveCodegen(
+  workspaceFolder: string,
+  folderPath: string,
+  language: string,
+  outputDirectory: string,
+  defaultModel?: string,
+  parseBlocks?: boolean
+) {
   const files = fs.readdirSync(folderPath)
   const functions: any = []
   for (const file of files) {
     const filePath = path.join(folderPath, file)
-    functions.push(...transpileGlassHelper(workspaceFolder, filePath, language, outputDirectory))
+    functions.push(
+      ...transpileGlassHelper(workspaceFolder, filePath, language, outputDirectory, defaultModel, parseBlocks)
+    )
   }
   return functions
 }

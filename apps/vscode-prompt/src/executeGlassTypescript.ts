@@ -27,6 +27,7 @@ export async function executeGlassTypescript(
   }
 
   const outputDirectoryConfig: string = vscode.workspace.getConfiguration('prompt').get('outputDirectory') as any
+  const defaultModel: string = vscode.workspace.getConfiguration('prompt').get('defaultModel') as any
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
@@ -38,6 +39,7 @@ export async function executeGlassTypescript(
     fileName,
     language: 'typescript',
     outputDirectory: outDir,
+    defaultModel,
   })
   const transpiledCode = constructGlassOutputFileTypescript([transpiledFunction])
 

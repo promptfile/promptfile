@@ -17,5 +17,3 @@ Feel free to change this text to anything you want!
 <User>
 Tell me about the ocean.
 </User>
-
-<Request model="gpt-3.5-turbo" />

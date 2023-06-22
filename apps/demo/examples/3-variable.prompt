@@ -4,15 +4,6 @@ Being able to run a prompt once is great, but what if you want to run it multipl
 
 Instead of typing your input into the `User` block, let's use a variable instead.
 
-<Test>
-// you can write Typescript to establish your variable values
-return [
-  {
-    myFirstVariable: 'Tell me a story about the moon',
-  },
-]
-</Test>
-
 same System prompt as before...
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.

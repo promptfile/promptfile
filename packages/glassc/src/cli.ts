@@ -20,6 +20,12 @@ function main() {
       demandOption: true,
       description: 'The output directory for compiled files',
     })
+    .option('defaultModel', {
+      alias: 'm',
+      type: 'string',
+      demandOption: false,
+      description: 'The default model to use for prompts',
+    })
     .command(
       '$0 <sourceDirectory>',
       'compile a directory',
@@ -34,12 +40,23 @@ function main() {
           console.error('Only "typescript" is supported for --lang option')
           return
         }
+        let defaultModel = argv.defaultModel
+        if (!defaultModel) {
+          defaultModel = 'gpt-3.5-turbo'
+        }
 
         const workspaceDirectory = path.resolve('.')
         const sourceDirectory = path.resolve(argv.sourceDirectory as string)
         const outputDirectory = path.resolve(argv.outputDirectory)
 
-        const output = glassc.transpileGlassTypescript(workspaceDirectory, sourceDirectory, argv.lang, outputDirectory)
+        const output = glassc.transpileGlassTypescript(
+          workspaceDirectory,
+          sourceDirectory,
+          argv.lang,
+          outputDirectory,
+          defaultModel,
+          true
+        )
         fs.writeFileSync(path.join(outputDirectory, 'glass.ts'), output)
       }
     ).argv

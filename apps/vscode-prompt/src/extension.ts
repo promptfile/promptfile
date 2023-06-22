@@ -218,6 +218,7 @@ export async function activate(context: vscode.ExtensionContext) {
         if (workspaceFolders) {
           for (const workspaceFolder of workspaceFolders) {
             const outputDirectory: string = vscode.workspace.getConfiguration('prompt').get('outputDirectory') as any
+            const defaultModel: string = vscode.workspace.getConfiguration('prompt').get('defaultModel') as any
 
             const folderPath = workspaceFolder.uri.fsPath
             /* eslint no-template-curly-in-string: "off" */
@@ -229,7 +230,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
             try {
               let output = ''
-              output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir)
+              output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir, defaultModel)
 
               const extension = languageMode === 'javascript' ? 'js' : 'ts'
               const outputPath = path.join(outDir, `prompt.${extension}`)
