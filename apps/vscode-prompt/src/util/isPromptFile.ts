@@ -1,20 +1,20 @@
 import * as vscode from 'vscode'
 
-export function isGlassFile(document: vscode.TextDocument) {
-  return document.languageId === 'glass'
+export function isPromptFile(document: vscode.TextDocument) {
+  return document.languageId === 'prompt'
 }
 
-export function hasGlassFileOpen(editor: vscode.TextEditor) {
-  return isGlassFile(editor.document)
+export function hasPromptFileOpen(editor: vscode.TextEditor) {
+  return isPromptFile(editor.document)
 }
 
 export function getDocumentFilename(document: vscode.TextDocument) {
   return document.fileName.split('/').pop()!
 }
 
-export async function getAllGlassFiles(): Promise<vscode.Uri[]> {
+export async function getAllPromptFiles(): Promise<vscode.Uri[]> {
   const glassFilePattern = '**/*.prompt'
-  // const excludePattern = '**/.glasslog/**' // exclude any .prompt files in .glasslog folder
+  // const excludePattern = '**/.prompt-playgrounds/**' // exclude any .prompt files in .prompt-playgrounds folder
 
   const config = vscode.workspace.getConfiguration()
 
@@ -30,8 +30,8 @@ export async function getAllGlassFiles(): Promise<vscode.Uri[]> {
   }
 
   if (excludePattern) excludePattern += ','
-  excludePattern += '**/.glasslog/**' // exclude any .prompt files in .glasslog folder
+  excludePattern += '**/.prompt-playgrounds/**' // exclude any .prompt files in .prompt-playgrounds folder
 
   // for some reason, the exclude pattern doesn't work, so we have to filter out the results
-  return await vscode.workspace.findFiles(glassFilePattern, '**/.glasslog/**')
+  return await vscode.workspace.findFiles(glassFilePattern, '**/.prompt-playgrounds/**')
 }

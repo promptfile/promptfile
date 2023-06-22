@@ -8,7 +8,7 @@ I'm currently working on a VSCode extension for my `promptfile` DSP (`.prompt` f
 ```typescript
 vscode.commands.registerCommand('glass.openPlayground', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !hasGlassFileOpen(activeEditor)) {
+      if (!activeEditor || !hasPromptFileOpen(activeEditor)) {
         return
       }
 

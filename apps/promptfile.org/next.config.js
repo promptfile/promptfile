@@ -23,10 +23,10 @@ const withNextra = require('nextra')({
       getHighlighter: async options => {
         const highlighter = await shiki.getHighlighter(options)
         await highlighter.loadLanguage({
-          id: 'glass',
+          id: 'prompt',
           scopeName: 'source.prompt',
           grammar: glass,
-          aliases: ['glass'],
+          aliases: ['prompt'],
         })
         return highlighter
       },

@@ -21,7 +21,7 @@
   },
   "main": "./out/extension.js",
   "keywords": [
-    "glass",
+    "prompt",
     "prompting",
     "gpt",
     "prompt",
@@ -247,7 +247,7 @@
     },
     "grammars": [
       {
-        "language": "glass",
+        "language": "prompt",
         "scopeName": "source.prompt",
         "path": "./syntaxes/glass.tmLanguage.json",
         "embeddedLanguages": {
@@ -301,12 +301,12 @@
       }
     ],
     "documentFormattingProvider": {
-      "language": "glass",
+      "language": "prompt",
       "scheme": "file"
     },
     "languages": [
       {
-        "id": "glass",
+        "id": "prompt",
         "aliases": [
           "Promptfile"
         ],

@@ -4,7 +4,7 @@ import * as child_process from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
-import { getDocumentFilename } from './util/isGlassFile'
+import { getDocumentFilename } from './util/isPromptFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 
 export async function executeGlassPython(
@@ -18,7 +18,7 @@ export async function executeGlassPython(
   if (!activeEditorWorkspaceFolder) {
     throw new Error('Could not find active editor workspace folder')
   }
-  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('prompt').get('outputDirectory') as any
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
@@ -59,7 +59,7 @@ print(${getGlassExportName(fileName)}(${jsonToPython(inputs || {})}))`,
 }
 
 function executePythonScript(filePath: string): Promise<string> {
-  const pythonExecutable = vscode.workspace.getConfiguration('glass').get('pythonPath') || 'python3'
+  const pythonExecutable = vscode.workspace.getConfiguration('prompt').get('pythonPath') || 'python3'
   const openaiKey = getOpenaiKey()
   const anthropicKey = getAnthropicKey()
 

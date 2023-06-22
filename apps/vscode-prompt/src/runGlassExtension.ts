@@ -2,7 +2,7 @@ import { ChatBlock, runGlassTranspilerOutput } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassTypescript } from './executeGlassTypescript'
-import { getDocumentFilename } from './util/isGlassFile'
+import { getDocumentFilename } from './util/isPromptFile'
 import { getAnthropicKey, getOpenaiKey } from './util/keys'
 import { countTokens, maxTokensForModel } from './util/tokenCounter'
 

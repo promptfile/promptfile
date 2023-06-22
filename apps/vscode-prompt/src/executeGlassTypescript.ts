@@ -1,8 +1,8 @@
 import {
-  constructGlassOutputFileTypescript,
-  getGlassExportName,
-  parseFrontmatterFromGlass,
-  transpileGlassFileTypescript,
+    constructGlassOutputFileTypescript,
+    getGlassExportName,
+    parseFrontmatterFromGlass,
+    transpileGlassFileTypescript,
 } from '@glass-lang/glassc'
 import { TranspilerOutput } from '@glass-lang/glasslib'
 import { spawn } from 'child_process'
@@ -27,7 +27,7 @@ export async function executeGlassTypescript(
     throw new Error('Could not find active editor workspace folder')
   }
 
-  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('prompt').get('outputDirectory') as any
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
@@ -147,7 +147,7 @@ export async function executeGlassTypescriptWithRunner(
     throw new Error('Could not find active editor workspace folder')
   }
 
-  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('prompt').get('outputDirectory') as any
 
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)

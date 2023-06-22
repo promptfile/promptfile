@@ -9,7 +9,7 @@ import { transformPythonTestBlock } from '../transform/transformPyTestBlock.js'
 import { indentLines } from '../util/indentLines.js'
 import { getGlassExportName } from './transpileGlassTypescript.js'
 
-const extension = 'glass'
+const extension = 'prompt'
 
 /**
  * Takes a .prompt document and returns a code file.

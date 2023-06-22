@@ -15,9 +15,9 @@ export function getSessionDirectoryPath(filepath: string): string {
   } else {
     baseDir = os.homedir()
   }
-  const glasslogDir = path.join(baseDir, '.glasslog')
+  const glasslogDir = path.join(baseDir, '.prompt-playgrounds')
 
-  // Create the .glasslog directory if it doesn't exist
+  // Create the .prompt-playgrounds directory if it doesn't exist
   if (!fs.existsSync(glasslogDir)) {
     fs.mkdirSync(glasslogDir)
   }

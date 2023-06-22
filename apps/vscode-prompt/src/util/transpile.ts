@@ -3,7 +3,7 @@ import * as vscode from 'vscode'
 
 export async function transpileCurrentFile(document: vscode.TextDocument) {
   const activeEditorWorkspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri)!
-  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+  const outputDirectoryConfig: string = vscode.workspace.getConfiguration('prompt').get('outputDirectory') as any
   const workspacePath = activeEditorWorkspaceFolder.uri.fsPath
   const outDir = outputDirectoryConfig.replace('${workspaceFolder}', workspacePath)
 

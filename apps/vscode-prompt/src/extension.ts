@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
-import { getAllGlassFiles, getDocumentFilename, isGlassFile } from './util/isGlassFile'
+import { getAllPromptFiles, getDocumentFilename, isPromptFile } from './util/isPromptFile'
 import { GlassPlayground, createPlayground } from './util/playground'
 import { updateTokenCount } from './util/tokenCounter'
 import { transpileCurrentFile } from './util/transpile'
@@ -49,7 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     },
     {
-      documentSelector: [{ scheme: 'file', language: 'glass' }],
+      documentSelector: [{ scheme: 'file', language: 'prompt' }],
       outputChannelName: 'Promptfile Language Server',
     }
   )
@@ -99,7 +99,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     tokenCount,
     vscode.workspace.onDidOpenTextDocument(document => {
-      if (isGlassFile(document)) {
+      if (isPromptFile(document)) {
         const relativePath = vscode.workspace.asRelativePath(document.uri.fsPath)
         fileTimestamps.set(relativePath, Date.now())
       }
@@ -116,7 +116,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor(
       async editor => {
         activeEditor = editor
-        if (editor && isGlassFile(editor.document)) {
+        if (editor && isPromptFile(editor.document)) {
           updateTokenCount(tokenCount)
           // updateDecorations(editor, codeDecorations)
           const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
@@ -154,12 +154,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('glass.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (activeEditor && isGlassFile(activeEditor.document)) {
+      if (activeEditor && isPromptFile(activeEditor.document)) {
         await launchGlassDocument(activeEditor.document, outputChannel)
         await updateRecentlySelectedFiles(activeEditor.document.uri)
         return
       }
-      const glassFiles = await getAllGlassFiles()
+      const glassFiles = await getAllPromptFiles()
       if (glassFiles.length === 0) {
         await vscode.window.showErrorMessage('Unable to find any Promptfile files')
         return
@@ -212,12 +212,12 @@ export async function activate(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'Promptfile')
     }),
     vscode.commands.registerCommand('glass.transpile', async () => {
-      const languageMode: string = vscode.workspace.getConfiguration('glass').get('defaultLanguageMode') as any
+      const languageMode: string = vscode.workspace.getConfiguration('prompt').get('defaultLanguageMode') as any
       async function transpileAll() {
         const workspaceFolders = vscode.workspace.workspaceFolders
         if (workspaceFolders) {
           for (const workspaceFolder of workspaceFolders) {
-            const outputDirectory: string = vscode.workspace.getConfiguration('glass').get('outputDirectory') as any
+            const outputDirectory: string = vscode.workspace.getConfiguration('prompt').get('outputDirectory') as any
 
             const folderPath = workspaceFolder.uri.fsPath
             /* eslint no-template-curly-in-string: "off" */
@@ -244,7 +244,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const activeEditor = vscode.window.activeTextEditor
-      if (activeEditor && isGlassFile(activeEditor.document)) {
+      if (activeEditor && isPromptFile(activeEditor.document)) {
         const filename = getDocumentFilename(activeEditor.document)
         const transpilationModes = [
           {

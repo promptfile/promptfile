@@ -65,7 +65,7 @@ function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
             : item.type === 'invalid'
             ? `Invalid value for attribute "${item.attribute}"`
             : `Missing attribute: "${item.attribute}"`,
-        source: 'glass',
+        source: 'prompt',
       }
       return diagnostic
     })
@@ -87,7 +87,7 @@ function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnostic[] {
           end: textDocument.positionAt(tag.position.end.offset),
         },
         message: `Empty <${tag.tag}> tag.`,
-        source: 'glass',
+        source: 'prompt',
       }
 
       return diagnostic
@@ -117,7 +117,7 @@ function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnostic[] {
 //           severity: DiagnosticSeverity.Error,
 //           range,
 //           message: `Unsupported language: ${frontmatter.language}`,
-//           source: 'glass',
+//           source: 'prompt',
 //         })
 //       }
 //     }
@@ -164,7 +164,7 @@ function findRequestModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
           end: textDocument.positionAt(requestElement.position.end.offset),
         },
         message: `maxTokens exceeds maximum value for ${languageModel.name}: ${languageModel.maxTokens}`,
-        source: 'glass',
+        source: 'prompt',
       }
       diagnostics.push(diagnostic)
     }
@@ -201,7 +201,7 @@ function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
           end: textDocument.positionAt(requestElement.position.end.offset),
         },
         message: `Unknown model: ${model}`,
-        source: 'glass',
+        source: 'prompt',
       }
       return [diagnostic]
     }
@@ -219,7 +219,7 @@ function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
             end: textDocument.positionAt(requestElement.position.end.offset),
           },
           message: `${languageModel.name} was deprecated on ${languageModel.deprecatedOn} and is no longer supported.`,
-          source: 'glass',
+          source: 'prompt',
         })
       } else {
         diagnostics.push({
@@ -229,7 +229,7 @@ function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
             end: textDocument.positionAt(requestElement.position.end.offset),
           },
           message: `${languageModel.name} will be deprecated on ${languageModel.deprecatedOn}.`,
-          source: 'glass',
+          source: 'prompt',
         })
       }
     }
@@ -245,7 +245,7 @@ function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
               end: textDocument.positionAt(tag.position.start.offset + 7),
             },
             message: `<System> blocks not supported by Anthropic — this will get converted to a <User> block.`,
-            source: 'glass',
+            source: 'prompt',
           }
           return diagnostic
         })
@@ -261,7 +261,7 @@ function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
               end: textDocument.positionAt(tag.position.start.offset + 7),
             },
             message: `<System> blocks not supported by ${languageModel.name} — this will get converted to a <User> block.`,
-            source: 'glass',
+            source: 'prompt',
           }
           return diagnostic
         })
@@ -286,7 +286,7 @@ function findUnmatchedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] 
       severity: DiagnosticSeverity.Error,
       range,
       message: `<${tagName}> tag requires a closing </${tagName}> tag.`,
-      source: 'glass',
+      source: 'prompt',
     }
 
     return diagnostic
@@ -338,7 +338,7 @@ function findUnsupportedTagsDiagnostics(textDocument: TextDocument): Diagnostic[
           end: textDocument.positionAt(tag.position.end.offset),
         },
         message: `Unsupported <${tag.tag}> tag.`,
-        source: 'glass',
+        source: 'prompt',
       }
 
       return diagnostic

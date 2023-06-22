@@ -19,7 +19,7 @@ import { getUseStatePairs, transformSetState } from '../transform/transformSetSt
 import { transformTsTestBlock } from '../transform/transformTsTestBlock.js'
 import { TYPESCRIPT_GLOBALS } from './typescriptGlobals.js'
 
-const extension = 'glass'
+const extension = 'prompt'
 
 /**
  * Takes a .prompt document and returns a code file.
