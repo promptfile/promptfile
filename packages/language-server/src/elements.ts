@@ -259,6 +259,7 @@ export const glassElements: GlassElement[] = [
         name: 'description',
         detail: 'description of the tool',
         documentation: 'The `description` attribute defines the description of the tool.',
+        optional: true,
         type: 'string',
       },
       {
@@ -267,6 +268,7 @@ export const glassElements: GlassElement[] = [
         documentation:
           'The `parameters` attribute defines the parameters of the tool with JSON schema (https://json-schema.org/understanding-json-schema/)',
         type: 'object',
+        optional: true,
         insertText: 'parameters={{}}',
       },
       {
@@ -274,6 +276,7 @@ export const glassElements: GlassElement[] = [
         detail: 'code to run when the tool is used',
         documentation: 'The `run` attribute defines the code to run when the tool is used.',
         type: 'function',
+        optional: true,
         insertText: 'run={(arg) => {$1}}',
       },
     ],

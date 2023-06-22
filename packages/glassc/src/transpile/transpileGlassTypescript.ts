@@ -100,9 +100,9 @@ export function transpileGlassFileTypescript(
 
   const functions: {
     name: string
-    description: string
-    parameters: string
-    run: string
+    description?: string
+    parameters?: string
+    run?: string
   }[] = []
 
   // find all the interpolation variables from dynamic code blocks
@@ -123,13 +123,13 @@ export function transpileGlassFileTypescript(
       const name = nameAttr!.stringValue!
 
       const descriptionAttr = jsxNode.attrs!.find(a => a.name === 'description')
-      const description = descriptionAttr!.stringValue!
+      const description = descriptionAttr?.stringValue
 
       const parametersAttr = jsxNode.attrs!.find(a => a.name === 'parameters')
-      const parameters = parametersAttr!.expressionValue!
+      const parameters = parametersAttr?.expressionValue
 
       const runAttr = jsxNode.attrs!.find(a => a.name === 'run')
-      const run = runAttr!.expressionValue!
+      const run = runAttr?.expressionValue
 
       functions.push({ name, description, parameters, run })
       continue
@@ -261,7 +261,12 @@ export async function ${exportName}(${functionArgs}) {
   }
     functions: [
       ${functions
-        .map(f => `{ name: '${f.name}', description: '${f.description}', parameters: ${f.parameters}, run: ${f.run} }`)
+        .map(
+          f =>
+            `{ name: '${f.name}', description: ${
+              f.description ? `${JSON.stringify(f.description)}` : 'undefined'
+            }, parameters: ${f.parameters || 'undefined'}, run: ${f.run || 'undefined'} }`
+        )
         .join(',\n')}
     ]
   }

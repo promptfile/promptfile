@@ -1,4 +1,5 @@
 import { ChatBlock, runGlassTranspilerOutput } from '@glass-lang/glasslib'
+import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { executeGlassTypescript } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isPromptFile'
@@ -35,6 +36,8 @@ export async function executeGlassFile(
   //   })
   // }
 
+  const functionEndpoint: string = vscode.workspace.getConfiguration('prompt').get('functionEndpoint') as any
+
   const c = await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs)
   const res = await runGlassTranspilerOutput(c, {
     tokenCounter: {
@@ -45,6 +48,22 @@ export async function executeGlassFile(
     anthropicKey: anthropicKey || '',
     progress,
     output: outputChannel.appendLine,
+    getFunction: async name => {
+      const res = await fetch(`${functionEndpoint}/${name}`, {
+        method: 'GET',
+      })
+      return (await res.json()) as any
+    },
+    execFunction: async (name, args) => {
+      const res = await fetch(`${functionEndpoint}/${name}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json ',
+        },
+        body: JSON.stringify(args),
+      })
+      return (await res.json()) as any
+    },
   })
   return res
 }

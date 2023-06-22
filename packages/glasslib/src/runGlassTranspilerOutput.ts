@@ -34,6 +34,8 @@ export async function runGlassTranspilerOutput(
     anthropicKey?: string
     progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
     id?: () => string
+    getFunction?: (name: string) => Promise<any>
+    execFunction?: (name: string, args: string) => Promise<any>
     output?: (line: string) => void
   } = {}
 ): Promise<{
@@ -172,6 +174,8 @@ async function runGlassChat(
     tokenCounter?: TokenCounter
     openaiKey?: string
     progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
+    getFunction?: (name: string) => Promise<any>
+    execFunction?: (name: string, args: string) => Promise<any>
     output?: (line: string) => void
   }
 ): Promise<{
@@ -200,11 +204,19 @@ async function runGlassChat(
   let functionArgs = {}
   if (functions.length > 0) {
     functionArgs = {
-      functions: functions.map(f => ({
-        name: f.name,
-        description: f.description,
-        parameters: f.parameters,
-      })),
+      functions: await Promise.all(
+        functions.map(async f => {
+          if (f.run != null && f.description != null && f.parameters != null) {
+            return {
+              name: f.name,
+              description: f.description,
+              parameters: f.parameters,
+            }
+          }
+          checkOk(options.getFunction != null)
+          return await options.getFunction(f.name)
+        })
+      ),
       function_call: 'auto',
     }
   }
@@ -276,8 +288,17 @@ async function runGlassChat(
     const fn = functions.find(f => f.name === response.function_call!.name)!
     checkOk(fn, `Function ${response.function_call!.name} not found`)
     const args = JSON.parse(response.function_call!.arguments)
-    const result = await fn.run(args)
-    functionObservation = JSON.stringify(result, null, 2)
+    if (fn.run != null) {
+      const result = await fn.run(args)
+      functionObservation = JSON.stringify(result)
+    } else {
+      checkOk(
+        options.execFunction,
+        `Function ${response.function_call!.name} not implemented, and no execFunction provided`
+      )
+      const result = await options.execFunction(response.function_call!.name, args)
+      functionObservation = JSON.stringify(result)
+    }
   }
 
   // TODO: handle counting tokens for function response
