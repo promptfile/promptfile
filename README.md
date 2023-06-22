@@ -1,12 +1,12 @@
 # glass
 
-![main](https://github.com/glass-platform/prompt/actions/workflows/main.yml/badge.svg)
+![main](https://github.com/glass-platform/promptfile/actions/workflows/main.yml/badge.svg)
 
 _**ALERT: GLASS IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
 
 Getting started? Head to [promptfile.org](https://promptfile.org) for all of our documentation.
 
-Want some examples? Check out the [examples](https://github.com/glass-platform/prompt/tree/main/apps/demo/examples).
+Want some examples? Check out the [examples](https://github.com/glass-platform/promptfile/tree/main/apps/demo/examples).
 
 [Download the VSCode extension](http://vscode.glass) to quickly run and iterate on Promptfile files.
 

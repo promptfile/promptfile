@@ -10,13 +10,13 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/glass-platform/prompt.git"
+    "url": "git+https://github.com/glass-platform/promptfile.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/glass-platform/prompt/issues"
+    "url": "https://github.com/glass-platform/promptfile/issues"
   },
-  "homepage": "https://github.com/glass-platform/prompt#readme",
+  "homepage": "https://github.com/glass-platform/promptfile#readme",
   "dependencies": {
     "next": "^13.0.6",
     "nextra": "latest",

@@ -19,14 +19,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/glass-platform/prompt.git"
+    "url": "https://github.com/glass-platform/promptfile.git"
   },
   "files": [
     "dist",
     "LICENSE"
   ],
-  "homepage": "https://github.com/glass-platform/prompt",
-  "bugs": "https://github.com/glass-platform/prompt/issues",
+  "homepage": "https://github.com/glass-platform/promptfile",
+  "bugs": "https://github.com/glass-platform/promptfile/issues",
   "keywords": [],
   "authors": [
     "John Rothfels <john@platform.glass>",

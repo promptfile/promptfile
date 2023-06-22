@@ -14,10 +14,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/glass-platform/prompt.git"
+    "url": "https://github.com/glass-platform/promptfile.git"
   },
-  "homepage": "https://github.com/glass-platform/prompt",
-  "bugs": "https://github.com/glass-platform/prompt/issues",
+  "homepage": "https://github.com/glass-platform/promptfile",
+  "bugs": "https://github.com/glass-platform/promptfile/issues",
   "authors": [
     "John Rothfels <john@platform.glass>",
     "Elliott Burris <elliott@platform.glass>"
