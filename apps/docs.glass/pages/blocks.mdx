@@ -2,13 +2,12 @@ import { Callout } from 'nextra/components'
 
 # What are Blocks?
 
-Blocks in Glass simplify LLM requests, making them easy to read and understand. They prevent common mistakes and give more power to create complicated interactions with the LLM.
+Blocks in Glass simplify LLM requests by making them easy to read and understand. They prevent common mistakes and give you more power to create complicated interactions with the LLM.
 
 ## Role Blocks
 
 ### Assistant
-
-`<Assistant>{:glass}` specifies that the model generated this text
+Use the `<Assistant>{:glass}` to specify that the content is coming from the model
 
  - **name** <i>(optional string) </i>— Assign a name to the assistant.
  - **if** <i>(optional condition)</i> — Includes the block only if condition evaluates `true`
@@ -24,9 +23,9 @@ Hello human!
 
 ### Block
 
-`<Block>{:glass}` is a generic alternative to `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`.
+Use the `<Block>{:glass}` as a generic alternative to `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`. This is most helpful when writing a  `<For>{:glass}` loop.
 
- - **role** <i>(required enumerated string)</i> — Determines the type of block. Accepted values are user, assistant, or system.
+ - **role** <i>(required enumerated string)</i> — Determines the type of block. Accepted values are `user`, `assistant`, or `system`.
  - **if** <i>(optional condition)</i> — Includes the block only if the given condition evaluates to `true`.
 
 ```glass copy filename="blocks_example.glass"
@@ -57,7 +56,7 @@ const conversation = [
 </Block>
 </For>
 
-<Request model="gpt - **3.5 - **turbo" />
+<Request model="gpt-3.5-turbo" />
 ```
 
 ### User
@@ -197,9 +196,9 @@ Your job is to answer questions based on the following website.
 
 ### Request
 
-Use the the `<Request />{:glass}` block to make an API request to a specified model, using all preceding blocks as input.
+Use the the `<Request>{:glass}` block to make an API request to a specified model, using all preceding blocks as input.
 
- - **model** <i>(required string)  </i> — The name of the model for inference. Defaults to gpt - **3.5 - **turbo.
+ - **model** <i>(required string)  </i> — The name of the model for inference. Defaults to `gpt-3.5-turbo`.
  - **temperature** <i>(optional number)  </i> — The temperature for the model's inference.
  - **max_tokens** <i>(optional number)  </i> — The maximum number of tokens to generate.
  - **onResponse** <i>(optional function)  </i> — Function callback invoked when the response is received.
@@ -236,11 +235,9 @@ what is 2 to the .12345 power?
 
 ### Function
 
-The `<Function>{:glass}` block is automatically generated and employed to track the results of a function call.
+The `<Function>{:glass}` block is automatically generated and used to track the results of a function evaluation. For example, here is a sample Glass file that declares a `<Tool>{:glass}` called "calculator".
 
  - **name** <i>(string)</i> The name of the function which was called.
-
-For example, here is a sample Glass file that declares a `<Tool>{:glass}` called "calculator".
 
 ```glass copy filename="function_example.glass"
 <Tool
@@ -256,7 +253,7 @@ what is 2 to the .12345 power?
 <Request model="gpt - **3.5 - **turbo - **0613" />
 ```
 
-When we run this Glass file, we get this interaction:
+When we run this Glass file, we get the following interaction:
 
 ```glass
 <Tool
@@ -287,12 +284,12 @@ what is 2 to the .12345 power?
 
 ### State
 
-This is an automatically generated block that tracks the state of the conversation. Do not modify this block. It maintains the state of the conversation. Below is the state of the conversation after running the 4th Glass file in our Cookbook:
+The `<State>{:glass}`block is an automatically generated block and used to track the state of the conversation. Do not modify this block. It maintains the state of the conversation. Below is the state of the conversation after running the 4th Glass file in our Cookbook:
 
 ```glass copy filename="events_state.glass"
 <State>
 {
-  "lastMessageText": "Sure, here's one: \n\nWhy did the kitten join Tinder? \nTo find her purr - **fect match!",
+  "lastMessageText": "Sure, here's one: \n\nWhy did the kitten join Tinder? \nTo find her purr-fect match!",
   "numResponses": 1
 }
 </State>
