@@ -298,9 +298,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vscode-glass@workspace:.":
+"vscode-prompt@workspace:.":
   version: 0.0.0-use.local
-  resolution: "vscode-glass@workspace:."
+  resolution: "vscode-prompt@workspace:."
   dependencies:
     "@dqbd/tiktoken": "*"
     "@glass-lang/glasslib": "*"

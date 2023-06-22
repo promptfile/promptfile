@@ -1,7 +1,7 @@
 {
   "settings": {
     "git.openRepositoryInParentFolders": "never",
-    "glass.outputDirectory": "${workspaceFolder}",
+    "prompt.outputDirectory": "${workspaceFolder}",
     "files.trimTrailingWhitespace": false,
     "files.insertFinalNewline": false,
     "editor.wordWrap": "on",

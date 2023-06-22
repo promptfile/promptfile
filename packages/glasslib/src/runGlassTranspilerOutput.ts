@@ -3,9 +3,9 @@ import fetch from 'node-fetch'
 import { Readable } from 'stream'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { ChatBlock, parseChatBlocks2 } from './parseChatBlocks'
-import { FunctionData, RequestData } from './parseGlassBlocks'
+import { FunctionData, RequestData, parseGlassBlocks, parseGlassRequestBlock } from './parseGlassBlocks'
 import { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'
-import { addToDocument, handleRequestNode, replaceStateNode } from './transformGlassDocument'
+import { addToDocument, handleRequestNode } from './transformGlassDocument'
 
 interface LLMResponse {
   content: string
@@ -21,27 +21,13 @@ export interface ResponseData {
 }
 
 export interface TranspilerOutput {
-  fileName: string
   interpolatedDoc: string
-  originalDoc: string
-  state: any
-  interpolationArgs: any
   defaultModel?: string
-  requestBlocks: RequestData[]
   functions: FunctionData[]
 }
 
 export async function runGlassTranspilerOutput(
-  {
-    fileName,
-    originalDoc,
-    interpolatedDoc,
-    state,
-    defaultModel,
-    requestBlocks,
-    functions,
-    interpolationArgs,
-  }: TranspilerOutput,
+  { interpolatedDoc, defaultModel, functions }: TranspilerOutput,
   options: {
     tokenCounter?: TokenCounter
     openaiKey?: string
@@ -71,11 +57,9 @@ export async function runGlassTranspilerOutput(
 
   let transformedInterpolatedDoc = interpolatedDoc
 
-  const newStateNode = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-
-  if (Object.keys(state).length > 0) {
-    transformedInterpolatedDoc = replaceStateNode(newStateNode, transformedInterpolatedDoc)
-  }
+  const requestBlocks = parseGlassBlocks(interpolatedDoc)
+    .map(n => (n.tag === 'Request' ? parseGlassRequestBlock(n) : null))
+    .filter(n => Boolean(n)) as RequestData[]
 
   if (requestBlocks.length === 0) {
     checkOk(defaultModel, 'no Request blocks and no model provided in frontmatter -- cannot run glass file')
@@ -117,7 +101,7 @@ export async function runGlassTranspilerOutput(
       }
     | undefined = undefined
   let codeResponse: any
-  let continued = false
+  const continued = false
 
   for (; i < messageBlocks.length; i++) {
     const messages = messageBlocks[i]
@@ -161,23 +145,6 @@ export async function runGlassTranspilerOutput(
           )
 
     const blocksToAddToDocument: { tag: string; content: string; attrs?: any }[] = []
-
-    if (requestData.onResponse) {
-      const lastResponse = res.response[res.response.length - 1]
-      await requestData.onResponse({
-        message: lastResponse.content,
-        addToDocument: (tag: string, content: string, attrs?: any) => {
-          blocksToAddToDocument.push({ tag, content, attrs })
-        },
-        continue: () => {
-          continued = true
-        },
-      })
-      if (Object.keys(state).length > 0) {
-        const finalStateBlock = `<State>\n${JSON.stringify(state, null, 2)}\n</State>`
-        res.nextGlassfile = replaceStateNode(finalStateBlock, res.nextGlassfile)
-      }
-    }
 
     if (blocksToAddToDocument.length > 0) {
       const added = addToDocument(blocksToAddToDocument, res.nextGlassfile)
@@ -306,7 +273,7 @@ async function runGlassChat(
 
   let functionObservation: string | undefined = undefined
   if (response.function_call != null) {
-    const fn = functions.find(f => f.name === response.function_call!.name)
+    const fn = functions.find(f => f.name === response.function_call!.name)!
     checkOk(fn, `Function ${response.function_call!.name} not found`)
     const args = JSON.parse(response.function_call!.arguments)
     const result = await fn.run(args)

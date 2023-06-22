@@ -89,8 +89,6 @@ function RigView() {
             setTheme(() => message.data.theme)
           }
           setBlocks(() => message.data.blocks)
-          console.log('variables!!!!')
-          console.log(message.data.variables)
           updateInputsWithVariables(message.data.variables)
           if (message.data.variables.length > 0 && !message.data.testing) {
             setTimeout(() => {

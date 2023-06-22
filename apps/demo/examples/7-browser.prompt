@@ -9,14 +9,6 @@ const res = await fetch('https://elliottburris.com')
 const html = await res.text()
 </Code>
 
-<Test>
-return [
-  {
-    input: `what is elliott's email, and where on the website did you find it?`,
-  },
-]
-</Test>
-
 now we can use `html` in our prompt!
 <System>
 Your job is to answer questions based on the following website.

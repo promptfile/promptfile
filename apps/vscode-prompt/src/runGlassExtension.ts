@@ -1,5 +1,4 @@
 import { ChatBlock, runGlassTranspilerOutput } from '@glass-lang/glasslib'
-import { checkOk } from '@glass-lang/util'
 import * as vscode from 'vscode'
 import { executeGlassTypescript } from './executeGlassTypescript'
 import { getDocumentFilename } from './util/isPromptFile'
@@ -37,8 +36,7 @@ export async function executeGlassFile(
   // }
 
   const c = await executeGlassTypescript(glassfilePath, outputChannel, document, content, fileName, inputs)
-  checkOk(c.length >= 0, 'No transpiler output generated')
-  const res = await runGlassTranspilerOutput(c[0], {
+  const res = await runGlassTranspilerOutput(c, {
     tokenCounter: {
       countTokens: countTokens,
       maxTokens: maxTokensForModel,

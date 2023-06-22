@@ -62,8 +62,6 @@ export const ComposerView = (props: ComposerViewProps) => {
 
   const disabled = !Object.values(inputs).some(v => v.trim().length > 0)
 
-  console.log(keys)
-
   return (
     <Resizable
       enable={{

@@ -1,10 +1,10 @@
 import { parseGlassMetadata } from '@glass-lang/glassc'
 import {
-    LANGUAGE_MODELS,
-    LanguageModelCreator,
-    parseChatBlocks,
-    parseGlassBlocks,
-    parseGlassDocument,
+  LANGUAGE_MODELS,
+  LanguageModelCreator,
+  parseChatBlocks,
+  parseGlassBlocks,
+  parseGlassDocument,
 } from '@glass-lang/glasslib'
 import fs from 'fs'
 import fetch from 'node-fetch'
@@ -328,7 +328,6 @@ export async function createPlayground(
 <Request model="${model}" />`
             const blocksForGlass = parseChatBlocks(newGlassfile)
             const metadataForGlass = parseGlassMetadata(newGlassfile)
-            console.log(metadataForGlass)
             writeGlass(sessionToRun, newGlassfile) // wait for this?
             await panel.webview.postMessage({
               action: 'onResponse',

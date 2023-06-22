@@ -7,16 +7,10 @@ import { parseFrontmatter } from '../parse/parseFrontmatter.js'
 import { parseInterpolations } from '../parse/parseInterpolations.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
-import {
-    parseCodeBlock,
-    parseCodeBlockUndeclaredSymbols,
-    parseTsGlassImports,
-    removeImports,
-} from '../parse/parseTypescript.js'
+import { parseCodeBlock, parseCodeBlockUndeclaredSymbols, removeImports } from '../parse/parseTypescript.js'
 import { rewriteImports } from '../transform/rewriteImports.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
-import { getUseStatePairs, transformSetState } from '../transform/transformSetState.js'
-import { transformTsTestBlock } from '../transform/transformTsTestBlock.js'
+import { getUseStatePairs } from '../transform/transformSetState.js'
 import { TYPESCRIPT_GLOBALS } from './typescriptGlobals.js'
 
 const extension = 'prompt'
@@ -43,23 +37,6 @@ export function transpileGlassFileTypescript(
   const originalDoc = doc
 
   const parsedDocument = glasslib.parseGlassDocument(originalDoc)
-
-  const testContent = parsedDocument
-    .filter(t => 'tag' in t && t.tag === 'Test')
-    .map(t => (t as any).child.content)
-    .join('\n')
-
-  const stateNode = parsedDocument.find(node => 'tag' in node && node.tag === 'State')
-  let state = {} as any
-  if (stateNode) {
-    const innerContents = (stateNode as any).child.content
-    if (innerContents.startsWith('```json') && innerContents.endsWith('```')) {
-      state = JSON.parse(innerContents.slice(7, -3).trim())
-    } else {
-      state = JSON.parse(innerContents)
-      //TODO: support other content types
-    }
-  }
 
   // remove all block comments before any processing happens
   doc = glasslib.removeGlassComments(doc)
@@ -227,11 +204,11 @@ export function transpileGlassFileTypescript(
   // now strip <Code> again
   imports = glasslib.parseGlassBlocks(imports)[0].child!.content
 
-  const glassImports = parseTsGlassImports(imports)
-  const dependencyGlassDocs = glassImports.flatMap(gi => {
-    const res = transpileGlassHelper(workspaceFolder, path.join(workspaceFolder, gi.path), language, outputDirectory)
-    return res.map(r => ({ ...r, symbolName: gi.name }))
-  })
+  // const glassImports = parseTsGlassImports(imports)
+  // const dependencyGlassDocs = glassImports.flatMap(gi => {
+  //   const res = transpileGlassHelper(workspaceFolder, path.join(workspaceFolder, gi.path), language, outputDirectory)
+  //   return res.map(r => ({ ...r, symbolName: gi.name }))
+  // })
 
   for (const symbol of codeBlock.symbolsAddedToScope) {
     interpolationVarSet.delete(symbol)
@@ -258,12 +235,7 @@ export function transpileGlassFileTypescript(
   const argsOverride = parsedFrontmatter?.args || {}
   const allInterpolationNames = Array.from(interpolationVarSet)
   const argsString = allInterpolationNames.map(arg => arg + `: ${argsOverride[arg] || 'string'}`).join(', ')
-  const fullArgString =
-    language === 'typescript' ? `args${argsString.length === 0 ? '?' : ''}: { ${argsString} }` : 'args'
-  let functionArgs = language === 'javascript' ? 'opt' : `opt: { ${fullArgString} }`
-  if (language === 'typescript' && argsString.length === 0) {
-    functionArgs += ' = { args: {} }'
-  }
+  const functionArgs = argsString.length === 0 ? '' : language === 'javascript' ? 'args' : `args: { ${argsString} }`
 
   const codePairs = getUseStatePairs(toplevelCode)
   // join them all together
@@ -304,80 +276,26 @@ export function transpileGlassFileTypescript(
     .join('')
     .replaceAll('`', '\\`')
 
-  const runGlassOptions =
-    language === 'javascript'
-      ? 'options'
-      : `options: {
-  ${fullArgString},
-  tokenCounter?: {
-    countTokens: (str: string, model: string) => number
-    maxTokens: (model: string) => number
-    reserveCount?: number
-  },
-  openaiKey?: string,
-  anthropicKey?: string,
-  progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
-}`
+  const code = `${imports}
 
-  const code = `${imports.replace(/import .+ from ['"].+\.prompt['"]/gm, '')}
-${dependencyGlassDocs
-  .map(g => {
-    return `
-  ${g.code}
-
-  async function ${g.symbolName}(args: any) {
-    const { getTestData, compile } = ${g.exportName}()
-    const c = await compile({ args })
-    const res = await runGlassTranspilerOutput(c as any)
-    return res.response
+export async function ${exportName}(${functionArgs}) {
+  ${functionArgs ? `const {${allInterpolationNames.join(',')}} = args` : ''}
+  ${toplevelCode}
+  const GLASSVAR = {
+    ${Object.keys(codeInterpolationMap)
+      .map(k => `"${k}": ${codeInterpolationMap[k]}`)
+      .join(',')}
   }
-`
-  })
-  .join('\n\n')}
-
-export function ${exportName}() {
-  ${transformTsTestBlock(testContent)}
-
-  const compile = async (${functionArgs}) => {${language === 'javascript' ? '\n  opt = opt || {}' : ''}
-    const GLASS_STATE = ${JSON.stringify(state)}
-    ${argsString ? `const {${allInterpolationNames.join(',')}} = opt.args` : ''}
-    ${transformSetState(toplevelCode)}
-    const GLASSVAR = {
-      ${Object.keys(codeInterpolationMap)
-        .map(k => `"${k}": ${codeInterpolationMap[k]}`)
-        .join(',')}
-    }
-    const TEMPLATE = \`${escapedInterpolatedDoc}\`
-    return {
-      fileName: '${fileName}',
-      interpolatedDoc: TEMPLATE,
-      originalDoc: ${JSON.stringify(originalDoc)},
-      state: GLASS_STATE,
-      interpolationArgs: opt.args || {},
-      ${defaultModel != null ? `defaultModel: '${defaultModel}',\n` : ''}requestBlocks: [
-        ${requestBlocks
-          .map(
-            b =>
-              `{ model: '${b.model}', onResponse: ${b.onResponse}, temperature: ${b.temperature}, maxTokens: ${b.maxTokens}, stopSequence: ${b.stopSequence} }`
-          )
-          .join(',\n')}
-      ],
-      functions: [
-        ${functions
-          .map(
-            f => `{ name: '${f.name}', description: '${f.description}', parameters: ${f.parameters}, run: ${f.run} }`
-          )
-          .join(',\n')}
-      ]
-    }
+  const TEMPLATE = \`${escapedInterpolatedDoc}\`
+  return {
+    interpolatedDoc: TEMPLATE,
+    defaultModel: ${defaultModel != null ? `'${defaultModel}'` : 'null'},
+    functions: [
+      ${functions
+        .map(f => `{ name: '${f.name}', description: '${f.description}', parameters: ${f.parameters}, run: ${f.run} }`)
+        .join(',\n')}
+    ]
   }
-
-  const run = async (${runGlassOptions}) => {
-    const c = await compile({ args: options.args || {} })
-    return await glasslib.runGlassTranspilerOutput(c, options)
-  }
-
-  return { getTestData, compile, run }
 }`
 
   const formattedCode = prettier.format(code, {
@@ -425,22 +343,19 @@ export function constructGlassOutputFileTypescript(functions: ReturnType<typeof 
   const functionsString = functions.map(f => f.code).join('\n\n')
 
   const code = `/* eslint-disable */
-  // THIS FILE WAS GENERATED BY GLASS -- DO NOT EDIT!
+// THIS FILE WAS GENERATED BY GLASS -- DO NOT EDIT!
 
-  import glasslib from '@glass-lang/glasslib'
-  const useState = glasslib.useState
+interface ChatBlock {
+  role: 'system' | 'user' | 'assistant' | 'function'
+  content: string
+  name?: string
+  type?: 'function_call'
+}
 
-  interface ChatBlock {
-    role: 'system' | 'user' | 'assistant' | 'function'
-    content: string
-    name?: string
-    type?: 'function_call'
-  }
+${functionsString}
 
-  ${functionsString}
-
-  ${glassConstant}
-  `
+${glassConstant}
+`
 
   const output = prettier.format(code, {
     parser: 'typescript',

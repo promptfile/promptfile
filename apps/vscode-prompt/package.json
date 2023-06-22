@@ -1,5 +1,5 @@
 {
-  "name": "vscode-glass",
+  "name": "vscode-prompt",
   "version": "0.14.6",
   "displayName": "Promptfile",
   "description": "Language support for Promptfile",
@@ -9,7 +9,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/glass-platform/prompt.git",
-    "directory": "packages/vscode-glass"
+    "directory": "packages/vscode-prompt"
   },
   "publisher": "foundation",
   "private": true,
@@ -99,7 +99,7 @@
         "command": "glass.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorTextFocus && editorLangId == glass"
+        "when": "editorTextFocus && editorLangId == prompt"
       },
       {
         "command": "glass.run",
@@ -111,22 +111,22 @@
       {
         "title": "Promptfile",
         "properties": {
-          "glass.openaiKey": {
+          "prompt.openaiKey": {
             "type": "string",
             "default": "",
             "description": "OpenAI API key"
           },
-          "glass.anthropicKey": {
+          "prompt.anthropicKey": {
             "type": "string",
             "default": "",
             "description": "Anthropic API key"
           },
-          "glass.githubKey": {
+          "prompt.githubKey": {
             "type": "string",
             "default": "",
             "description": "GitHub API key"
           },
-          "glass.outputDirectory": {
+          "prompt.outputDirectory": {
             "type": "string",
             "default": "${workspaceFolder}",
             "description": "Output directory for generated code"

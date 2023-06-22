@@ -9,7 +9,7 @@ The Promptfile Playground provides an interactive testing space for Promptfile f
 ## Interacting with your Promptfile File
 <Callout type="warning"> When running a file in the Playground, Promptfile appends some code to enable a back-and-forth with your prompt. Promptfile does not modify the actual file, just a temporary session file.</Callout>
 
-To enable dynamic conversations with your prompt, Promptfile automatically adds a `<User>{:glass}` block containing an uninitialized input variable, along with a `<Request>{:glass}` block with the same arguments found in the most recent request.
+To enable dynamic conversations with your prompt, Promptfile automatically adds a `<User>{:prompt}` block containing an uninitialized input variable, along with a `<Request>{:prompt}` block with the same arguments found in the most recent request.
 For example:
 
 ```prompt
