@@ -4,7 +4,7 @@ This folder contains frequently tested examples of Promptfile files. They are no
 
 1. Open this folder in VSCode
 2. Install the [Promptfile VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
-3. Open any `.glass` file
+3. Open any `.prompt` file
 4. Use the `> Promptfile: *` commands in VSCode
 
 Want more information? Check out the [Promptfile docs](https://promptfile.org).

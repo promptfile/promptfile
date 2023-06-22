@@ -13,8 +13,8 @@ export function getDocumentFilename(document: vscode.TextDocument) {
 }
 
 export async function getAllGlassFiles(): Promise<vscode.Uri[]> {
-  const glassFilePattern = '**/*.glass'
-  // const excludePattern = '**/.glasslog/**' // exclude any .glass files in .glasslog folder
+  const glassFilePattern = '**/*.prompt'
+  // const excludePattern = '**/.glasslog/**' // exclude any .prompt files in .glasslog folder
 
   const config = vscode.workspace.getConfiguration()
 
@@ -30,7 +30,7 @@ export async function getAllGlassFiles(): Promise<vscode.Uri[]> {
   }
 
   if (excludePattern) excludePattern += ','
-  excludePattern += '**/.glasslog/**' // exclude any .glass files in .glasslog folder
+  excludePattern += '**/.glasslog/**' // exclude any .prompt files in .glasslog folder
 
   // for some reason, the exclude pattern doesn't work, so we have to filter out the results
   return await vscode.workspace.findFiles(glassFilePattern, '**/.glasslog/**')

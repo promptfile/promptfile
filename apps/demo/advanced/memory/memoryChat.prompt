@@ -1,5 +1,5 @@
 <Code>
-import getMemoryUpdate from './getMemoryUpdate.glass'
+import getMemoryUpdate from './getMemoryUpdate.prompt'
 
 const [profile, setProfile] = useState('{}')
 

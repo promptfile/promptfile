@@ -77,7 +77,7 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  it.skip('should transpile with .glass import', () => {
+  it.skip('should transpile with .prompt import', () => {
     const { input, output } = loadTestFile('testfiles/ts/glassImport', 'ts')
     const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'glassImport' })
     expect(transpiled.code.trim()).to.equal(output.trim())

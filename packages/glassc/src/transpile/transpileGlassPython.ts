@@ -12,7 +12,7 @@ import { getGlassExportName } from './transpileGlassTypescript.js'
 const extension = 'glass'
 
 /**
- * Takes a .glass document and returns a code file.
+ * Takes a .prompt document and returns a code file.
  * The directory / folder information is necessary so we can correctly re-write import paths.
  * The language is necessary so we can correctly format the output. Currently only supports 'typescript'.
  */

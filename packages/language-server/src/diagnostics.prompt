@@ -7,7 +7,7 @@ const fileContent = fs.readFileSync(path.join(__dirname, 'diagnostics.ts'), 'utf
 
 
 <System>
-The User you are chatting with is working on a new DSL called Promptfile (`.glass` file extension), which is a declarative framework for prompting large language models. The `Promptfile` DSL comes with a language server and a VSCode extension.
+The User you are chatting with is working on a new DSL called Promptfile (`.prompt` file extension), which is a declarative framework for prompting large language models. The `Promptfile` DSL comes with a language server and a VSCode extension.
 
 The basic syntax of Promptfile is as follows:
 - Promptfile has special tags: `System`, `User`, and `Assistant`, each of which opens up a Markdown block that contains the text that will be sent to the language model with the appropriate role (`system`, `user` or `assistant`).

@@ -1,1 +1,1 @@
-This folder contains `.glass` versions of these prompts: https://github.com/mckaywrigley/prompts
+This folder contains `.prompt` versions of these prompts: https://github.com/mckaywrigley/prompts

@@ -1,10 +1,10 @@
 import { parseGlassMetadata } from '@glass-lang/glassc'
 import {
-  LANGUAGE_MODELS,
-  LanguageModelCreator,
-  parseChatBlocks,
-  parseGlassBlocks,
-  parseGlassDocument,
+    LANGUAGE_MODELS,
+    LanguageModelCreator,
+    parseChatBlocks,
+    parseGlassBlocks,
+    parseGlassDocument,
 } from '@glass-lang/glasslib'
 import fs from 'fs'
 import fetch from 'node-fetch'
@@ -237,7 +237,7 @@ export async function createPlayground(
         try {
           const newGlassFile = await vscode.workspace.openTextDocument({
             language: languageId,
-            content: message.data.glass,
+            content: message.data.prompt,
           })
           await vscode.window.showTextDocument(newGlassFile, {
             viewColumn: vscode.ViewColumn.Active,

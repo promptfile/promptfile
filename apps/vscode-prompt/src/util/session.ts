@@ -33,7 +33,7 @@ export function getSessionDirectoryPath(filepath: string): string {
 
 export function getCurrentSessionFilepath(filepath: string): string | undefined {
   const sessionDirectory = getSessionDirectoryPath(filepath)
-  const sessionFiles = fs.readdirSync(sessionDirectory).filter(file => file.endsWith('.glass'))
+  const sessionFiles = fs.readdirSync(sessionDirectory).filter(file => file.endsWith('.prompt'))
   const lastSessionFile = sessionFiles.length > 0 ? sessionFiles[sessionFiles.length - 1] : undefined
   if (!lastSessionFile) {
     return undefined
@@ -56,7 +56,7 @@ export async function createSession(filepath: string): Promise<string> {
   const sessionId = generateULID()
   const glass = fs.readFileSync(filepath, 'utf-8')
   const updatedGlass = rewriteImports(glass, sessionDirectory, filepath)
-  const sessionPath = path.join(sessionDirectory, `${sessionId}.glass`)
+  const sessionPath = path.join(sessionDirectory, `${sessionId}.prompt`)
   return writeGlass(sessionPath, updatedGlass)
 }
 
@@ -67,7 +67,7 @@ export async function loadSessionDocuments(filepath: string): Promise<vscode.Tex
     return []
   }
 
-  const sessionFiles = fs.readdirSync(tempDir).filter(file => file.endsWith('.glass'))
+  const sessionFiles = fs.readdirSync(tempDir).filter(file => file.endsWith('.prompt'))
   const sessionDocuments: vscode.TextDocument[] = []
 
   for (const sessionFile of sessionFiles) {

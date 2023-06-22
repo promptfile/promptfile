@@ -1,5 +1,5 @@
 <Code>
-import questionAnswer from './questionAnswer.glass'
+import questionAnswer from './questionAnswer.prompt'
 
 const [field, setField] = useState('')
 </Code>

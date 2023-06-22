@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 import {
-  codeBlockContainsAwait,
-  parseCodeBlock,
-  parseCodeBlockLocalVars,
-  parseCodeBlockUndeclaredSymbols,
-  parseCodeImportedSymbols,
-  parseReturnExpression,
-  parseTsGlassImports,
-  removeImports,
-  removeReturnStatements,
+    codeBlockContainsAwait,
+    parseCodeBlock,
+    parseCodeBlockLocalVars,
+    parseCodeBlockUndeclaredSymbols,
+    parseCodeImportedSymbols,
+    parseReturnExpression,
+    parseTsGlassImports,
+    removeImports,
+    removeReturnStatements,
 } from './parseTypescript'
 
 describe('parseTypescript', () => {
@@ -190,27 +190,27 @@ const question = "where did elliott go to school";
   describe('parseTsGlassImports', () => {
     it('should parse glass imports', () => {
       const code = `import {foo, bar} from './someFile'
-import something from './someOtherFile.glass'
+import something from './someOtherFile.prompt'
 import baz from 'baz'`
 
-      expect(parseTsGlassImports(code)).to.deep.equal([{ name: 'something', path: './someOtherFile.glass' }])
+      expect(parseTsGlassImports(code)).to.deep.equal([{ name: 'something', path: './someOtherFile.prompt' }])
     })
 
     it('should parse glass imports with other code', () => {
       const code = `import {foo, bar} from './someFile'
-import something from './someOtherFile.glass'
+import something from './someOtherFile.prompt'
 import baz from 'baz'
 
 const foo = "bar"`
 
-      expect(parseTsGlassImports(code)).to.deep.equal([{ name: 'something', path: './someOtherFile.glass' }])
+      expect(parseTsGlassImports(code)).to.deep.equal([{ name: 'something', path: './someOtherFile.prompt' }])
     })
   })
 
   describe('removeImports', () => {
     it('should remove imports', () => {
       const code = `import {foo, bar} from './someFile'
-import something from './someOtherFile.glass'
+import something from './someOtherFile.prompt'
 import baz from 'baz'
 
 const a = foo
@@ -219,7 +219,7 @@ import foo from 'foo'`
 
       expect(removeImports(code)).to.deep.equal({
         imports: `import {foo, bar} from './someFile'
-import something from './someOtherFile.glass'
+import something from './someOtherFile.prompt'
 import baz from 'baz'
 
 import foo from 'foo'`,

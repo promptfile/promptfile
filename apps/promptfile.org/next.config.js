@@ -24,7 +24,7 @@ const withNextra = require('nextra')({
         const highlighter = await shiki.getHighlighter(options)
         await highlighter.loadLanguage({
           id: 'glass',
-          scopeName: 'source.glass',
+          scopeName: 'source.prompt',
           grammar: glass,
           aliases: ['glass'],
         })

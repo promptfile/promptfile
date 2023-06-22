@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/Septh/tmlanguage/master/tmlanguage.json",
   "name": "Promptfile",
-  "scopeName": "source.glass",
+  "scopeName": "source.prompt",
   "patterns": [
     {
       "begin": "^---$",
@@ -58,7 +58,7 @@
     },
     {
       "match": ".",
-      "name": "source.glass.void"
+      "name": "source.prompt.void"
     }
   ],
   "repository": {
@@ -69,7 +69,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.tool.name"
+          "name": "source.prompt.tool.name"
         }
       },
       "patterns": [
@@ -114,12 +114,12 @@
           ]
         },
         "2": {
-          "name": "source.glass.flow.punctuation"
+          "name": "source.prompt.flow.punctuation"
         }
       },
       "endCaptures": {
         "1": {
-          "name": "source.glass.flow.punctuation"
+          "name": "source.prompt.flow.punctuation"
         },
         "2": {
           "patterns": [
@@ -145,7 +145,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.code.name"
+          "name": "source.prompt.code.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -157,7 +157,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.code.name"
+          "name": "source.prompt.code.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -179,7 +179,7 @@
           "name": "punctuation.definition.tag.closing.jsx"
         },
         "3": {
-          "name": "source.glass.for.name"
+          "name": "source.prompt.for.name"
         }
       },
       "patterns": [
@@ -216,7 +216,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.block.name"
+          "name": "source.prompt.block.name"
         },
         "3": {
           "patterns": [
@@ -258,7 +258,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.block.name"
+          "name": "source.prompt.block.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -272,7 +272,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.system.name"
+          "name": "source.prompt.system.name"
         },
         "3": {
           "patterns": [
@@ -314,7 +314,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.system.name"
+          "name": "source.prompt.system.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -328,7 +328,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.assistant.name"
+          "name": "source.prompt.assistant.name"
         },
         "3": {
           "patterns": [
@@ -370,7 +370,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.assistant.name"
+          "name": "source.prompt.assistant.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -384,7 +384,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.state.name"
+          "name": "source.prompt.state.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -401,7 +401,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.state.name"
+          "name": "source.prompt.state.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -415,7 +415,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.function.name"
+          "name": "source.prompt.function.name"
         },
         "3": {
           "patterns": [
@@ -446,7 +446,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.function.name"
+          "name": "source.prompt.function.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -465,7 +465,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.text.name"
+          "name": "source.prompt.text.name"
         },
         "3": {
           "patterns": [
@@ -496,7 +496,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.text.name"
+          "name": "source.prompt.text.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -518,7 +518,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.user.name"
+          "name": "source.prompt.user.name"
         },
         "3": {
           "patterns": [
@@ -549,7 +549,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.user.name"
+          "name": "source.prompt.user.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -574,7 +574,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.request.name"
+          "name": "source.prompt.request.name"
         }
       },
       "patterns": [
@@ -611,7 +611,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.test.name"
+          "name": "source.prompt.test.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -628,7 +628,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.test.name"
+          "name": "source.prompt.test.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"

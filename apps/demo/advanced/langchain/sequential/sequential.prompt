@@ -1,5 +1,5 @@
 <Code>
-import Playwright from './playwright.glass'
+import Playwright from './playwright.prompt'
 const synopsis = await Playwright({ title: input })
 </Code>
 

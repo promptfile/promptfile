@@ -91,7 +91,7 @@
       {
         "command": "glass.transpile",
         "title": "Promptfile: transpile",
-        "description": "This command transpiles all .glass files in your workspace to the language of your choice."
+        "description": "This command transpiles all .prompt files in your workspace to the language of your choice."
       }
     ],
     "keybindings": [
@@ -147,96 +147,96 @@
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
-            "scope": "source.glass.function.name",
+            "scope": "source.prompt.function.name",
             "settings": {
               "foreground": "#3EA295",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.tool.name",
+            "scope": "source.prompt.tool.name",
             "settings": {
               "foreground": "#67f49d",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.request.name",
+            "scope": "source.prompt.request.name",
             "settings": {
               "foreground": "#3e69d1",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.text.name",
+            "scope": "source.prompt.text.name",
             "settings": {
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.block.name",
+            "scope": "source.prompt.block.name",
             "settings": {
               "foreground": "#9373DE",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.state.name",
+            "scope": "source.prompt.state.name",
             "settings": {
               "foreground": "#7a7a7a",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.void",
+            "scope": "source.prompt.void",
             "settings": {
               "foreground": "#7a7a7a"
             }
           },
           {
-            "scope": "source.glass.test.name",
+            "scope": "source.prompt.test.name",
             "settings": {
               "foreground": "#FFB454",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.code.name",
+            "scope": "source.prompt.code.name",
             "settings": {
               "foreground": "#FFB454",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.system.name",
+            "scope": "source.prompt.system.name",
             "settings": {
               "foreground": "#f467c6",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.for.name",
+            "scope": "source.prompt.for.name",
             "settings": {
               "foreground": "#E5C75E",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.user.name",
+            "scope": "source.prompt.user.name",
             "settings": {
               "foreground": "#5EC5E5",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.assistant.name",
+            "scope": "source.prompt.assistant.name",
             "settings": {
               "foreground": "#4EC9B0",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.glass.flow.punctuation",
+            "scope": "source.prompt.flow.punctuation",
             "settings": {
               "foreground": "#4dff00",
               "fontStyle": "bold"
@@ -248,7 +248,7 @@
     "grammars": [
       {
         "language": "glass",
-        "scopeName": "source.glass",
+        "scopeName": "source.prompt",
         "path": "./syntaxes/glass.tmLanguage.json",
         "embeddedLanguages": {
           "source.js": "javascript",
@@ -311,7 +311,7 @@
           "Promptfile"
         ],
         "extensions": [
-          ".glass"
+          ".prompt"
         ],
         "configuration": "./configurations/language-configuration.json",
         "icon": {

@@ -3,7 +3,7 @@ You are ChatGPT. Browsing: disabled. Respond in Markdown format if appropriate.
 </System>
 
 <User>
-I'm currently working on a VSCode extension for my `promptfile` DSP (`.glass` file extension).  Here's a snippet from my `extension.ts` file:
+I'm currently working on a VSCode extension for my `promptfile` DSP (`.prompt` file extension).  Here's a snippet from my `extension.ts` file:
 
 ```typescript
 vscode.commands.registerCommand('glass.openPlayground', async () => {
