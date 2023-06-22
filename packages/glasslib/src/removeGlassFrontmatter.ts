@@ -1,5 +1,5 @@
 /**
- * Removes the Glass frontmatter from a document.
+ * Removes the Promptfile frontmatter from a document.
  *
  * E.g.
  *

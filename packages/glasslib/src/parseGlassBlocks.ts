@@ -20,7 +20,7 @@ export interface GlassContent {
 }
 
 /**
- * Parse a Glass file.
+ * Parse a Promptfile file.
  *
  * Each part of the file is returned as a `GlassContent` object. There are three types of content:
  * - `frontmatter`: a frontmatter block may be declared at the top of the file
@@ -77,7 +77,7 @@ export function parseGlassDocument(doc: string): GlassContent[] {
 }
 
 /**
- * Parses *all* block elements from a Glass file.
+ * Parses *all* block elements from a Promptfile file.
  *
  * E.g. `<System>`, `<Request>`, etc.
  *

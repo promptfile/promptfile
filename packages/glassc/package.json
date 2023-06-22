@@ -1,7 +1,7 @@
 {
   "name": "@glass-lang/glassc",
   "version": "0.1.22",
-  "description": "Glass language compiler",
+  "description": "Promptfile language compiler",
   "type": "module",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,14 +19,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/glass-lang/glass.git"
+    "url": "https://github.com/glass-platform/prompt.git"
   },
   "files": [
     "dist",
     "LICENSE"
   ],
-  "homepage": "https://github.com/glass-lang/glass",
-  "bugs": "https://github.com/glass-lang/glass/issues",
+  "homepage": "https://github.com/glass-platform/prompt",
+  "bugs": "https://github.com/glass-platform/prompt/issues",
   "keywords": [],
   "authors": [
     "John Rothfels <john@platform.glass>",

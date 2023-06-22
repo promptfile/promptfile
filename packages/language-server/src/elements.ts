@@ -212,7 +212,7 @@ export const glassElements: GlassElement[] = [
   {
     name: 'System',
     documentation: 'Creates a System chat block with inner content',
-    detail: '(element) raw Glass text block',
+    detail: '(element) raw Promptfile text block',
     closingType: 'nonSelfClosing',
     attributes: [
       {
@@ -244,7 +244,7 @@ export const glassElements: GlassElement[] = [
   },
   {
     name: 'Tool',
-    documentation: 'Sets a tool the Glass runtime can use',
+    documentation: 'Sets a tool the Promptfile runtime can use',
     detail: '(element) define a tool',
     closingType: 'selfClosing',
     insertText: 'Tool name="$1" description="$2" parameters={z.object({$3})} run={(arg) => $4} />',

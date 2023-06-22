@@ -1,16 +1,16 @@
 # glass
 
-![main](https://github.com/glass-lang/glass/actions/workflows/main.yml/badge.svg)
+![main](https://github.com/glass-platform/prompt/actions/workflows/main.yml/badge.svg)
 
 _**ALERT: GLASS IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
 
-Getting started? Head to [docs.glass](https://docs.glass) for all of our documentation.
+Getting started? Head to [promptfile.org](https://promptfile.org) for all of our documentation.
 
-Want some examples? Check out the [examples](https://github.com/glass-lang/glass/tree/main/apps/demo/examples).
+Want some examples? Check out the [examples](https://github.com/glass-platform/prompt/tree/main/apps/demo/examples).
 
-[Download the VSCode extension](http://vscode.glass) to quickly run and iterate on Glass files.
+[Download the VSCode extension](http://vscode.glass) to quickly run and iterate on Promptfile files.
 
-If you are using Glass, have questions, or want to stay up to date, feel free to join our [Discord](https://discord.com/invite/H64PFP2DCc).
+If you are using Promptfile, have questions, or want to stay up to date, feel free to join our [Discord](https://discord.com/invite/H64PFP2DCc).
 
 ## Apps and Packages
 
@@ -18,16 +18,16 @@ This project uses npm workspaces and [Turborepo](https://turbo.build/).
 
 ### `apps/`
 
-- `vscode-glass`: VS Code extension for Glass
-- `docs.glass`: a Next.js/Nextra app serving [docs.glass](https://docs.glass/)
-- `demo`: examples of using Glass, some of these are in active development and may not currently work
+- `vscode-glass`: VS Code extension for Promptfile
+- `promptfile.org`: a Next.js/Nextra app serving [promptfile.org](https://promptfile.org/)
+- `demo`: examples of using Promptfile, some of these are in active development and may not currently work
 
 ### `packages/`
 
-- `glassc`: the Glass compiler (generates `.ts`, `.js`, `.py` output from Glass files)
-- `glasslib`: Glass client library (runtime for executing Glass compiler generated code)
-- `language-server`: LSP server providing Glass intellisense
-- `rig`: a React app for the VS Code Glass playground webview
+- `glassc`: the Promptfile compiler (generates `.ts`, `.js`, `.py` output from Promptfile files)
+- `glasslib`: Promptfile client library (runtime for executing Promptfile compiler generated code)
+- `language-server`: LSP server providing Promptfile intellisense
+- `rig`: a React app for the VS Code Promptfile playground webview
 - `ui`: a React component library shared by web applications
 - `util`: random utilities shared by packages/apps
 - `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
@@ -68,4 +68,4 @@ npm run dev
 
 ## License
 
-MIT © [Glass Platform](https://platform.glass)
+MIT © [Promptfile Platform](https://platform.glass)

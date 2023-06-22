@@ -1,0 +1,22 @@
+<Code>
+import fs from 'fs'
+import path from 'path'
+
+const grammar = fs.readFileSync(path.join(__dirname, 'glass.tmLanguage.json'), 'utf-8').toString()
+</Code>
+
+<System>
+The User is working on a new DSL called Promptfile (`.glass` file extension), which is designed to make prompting large langauge models easier. The User is currently working on the syntax highlighting for the Promptfile VSCode extension, which is defined by a textmate grammar file, `glass.tmLanguage.json`.
+
+Here is the current `glass.tmLanguage.json` file:
+
+###
+@{grammar}
+###
+</System>
+
+<User>
+@{input}
+</User>
+
+<Request model="gpt-4" />

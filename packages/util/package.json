@@ -1,7 +1,7 @@
 {
   "name": "@glass-lang/util",
   "version": "1.0.0",
-  "description": "Glass language utils",
+  "description": "Promptfile language utils",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -14,10 +14,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/glass-lang/glass.git"
+    "url": "https://github.com/glass-platform/prompt.git"
   },
-  "homepage": "https://github.com/glass-lang/glass",
-  "bugs": "https://github.com/glass-lang/glass/issues",
+  "homepage": "https://github.com/glass-platform/prompt",
+  "bugs": "https://github.com/glass-platform/prompt/issues",
   "authors": [
     "John Rothfels <john@platform.glass>",
     "Elliott Burris <elliott@platform.glass>"

@@ -15,10 +15,10 @@
         "--profile-temp",
         "--skip-release-notes",
         "--skip-welcome",
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-glass",
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-prompt",
         "${workspaceFolder}/apps/demo/demo.code-workspace"
       ],
-      "outFiles": ["${workspaceFolder}/apps/vscode-glass/out/**/*.js"],
+      "outFiles": ["${workspaceFolder}/apps/vscode-prompt/out/**/*.js"],
       "preLaunchTask": "${defaultBuildTask}"
     },
     {
@@ -26,10 +26,10 @@
       "type": "extensionHost",
       "request": "launch",
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-glass",
-        "--extensionTestsPath=${workspaceFolder}/apps/vscode-glass/dist/test/suite/index"
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/vscode-prompt",
+        "--extensionTestsPath=${workspaceFolder}/apps/vscode-prompt/dist/test/suite/index"
       ],
-      "outFiles": ["${workspaceFolder}/apps/vscode-glass/dist/test/**/*.js"],
+      "outFiles": ["${workspaceFolder}/apps/vscode-prompt/dist/test/**/*.js"],
       "preLaunchTask": "${defaultBuildTask}"
     }
   ]

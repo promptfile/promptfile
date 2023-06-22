@@ -1,6 +1,6 @@
 ---
 name: Community Bug Report
-about: Create a report to help us improve Glass
+about: Create a report to help us improve Prompt
 title: ''
 labels: community-reported-bug
 assignees: ''
@@ -28,5 +28,5 @@ If applicable, add screenshots to help explain your problem.
  - VSCode Version [e.g. 0.12.1]
 
 
-**GLASS FILE**
--If you are working on a specific Glass file that you feel comfortable sharing, feel free to attach it here so we have some context on the project as well :)
+**PROMPT FILE**
+-If you are working on a specific `.prompt` file that you feel comfortable sharing, feel free to attach it here so we have some context on the project as well :)

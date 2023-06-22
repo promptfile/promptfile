@@ -419,7 +419,7 @@ function normalizeTypescriptObjectFieldName(name: string) {
 }
 
 export function constructGlassOutputFileTypescript(functions: ReturnType<typeof transpileGlassHelper>) {
-  const glassConstant = `export const Glass = {
+  const glassConstant = `export const Promptfile = {
     ${functions.map(f => `${normalizeTypescriptObjectFieldName(f.functionName)}: ${f.exportName}`).join(',\n  ')}
   }`
   const functionsString = functions.map(f => f.code).join('\n\n')

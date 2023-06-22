@@ -1,8 +1,8 @@
-# Glass demos
+# `.prompt` demos
 
-This folder contains examples of using Glass. The best place to start is [Examples](./examples).
+This folder contains examples of using `.prompt`. The best place to start is [Examples](./examples).
 
-This folder is also used as the default workspace when launching/developing the `vscode-glass` extension; this way as you're developing Glass,
+This folder is also used as the default workspace when launching/developing the `vscode-glass` extension; this way as you're developing `.prompt`,
 you can easily test your changes across all of the examples.
 
-Want more information? Check out the [Glass docs](https://docs.glass).
+Want more information? Check out the [`.prompt` docs](https://promptfile.org).
