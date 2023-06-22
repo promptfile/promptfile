@@ -4,6 +4,7 @@ import {Steps} from 'nextra-theme-docs'
 
 # Glass: Iterate and build prompts quickly
 
+
 Glass is an open-source templating syntax and VSCode playground specifically designed for crafting prompts to large language models (LLMs).
 
 By enabling developers to work within the familiar VSCode environment, Glass makes writing prompts as familiar as writing code.
@@ -48,18 +49,26 @@ Write me a haiku about the ocean
 
 <Request model="gpt-3.5-turbo" />
 ```
+
 ### **Run the Glass File: `Command (⌘) + Enter (↩)`**
 The Glass [Playground](/playground) should appear and run your Glass file.
 
 ### **See more Glass Features in our [Cookbook](/examples)**
 Explore the examples in the Cookbook to learn about Glass' many features.
-
 </Steps>
 
 
-## The Glass Difference
+## Experience the Glass difference
+
+Dealing with JSON requests can be tedious and not very intuitive. Glass addresses this issue by offering a more readable and developer-friendly approach to prompting large language models. It brings the benefits of Markdown or MDX, tailor-made for writing prompts.
+
+With Glass in the VSCode playground, you'll enjoy better readability and effortless iteration on your prompts. But Glass is more than just a templating syntax – it simplifies the prompting process and enhances the overall development experience.
+
+Check out the side-by-side comparison of a prompt in JSON format compared to its Glass version. Experience firsthand how Glass improves your workflow and makes crafting prompts a smoother, more efficient task.
+
 
 Glass provides a more readable and intuitive alternative to traditional JSON requests. It offers the same benefits as Markdown or MDX but adds more functionality specifically designed for writing prompts. This makes your prompts not only more readable but also easier to iterate on, especially in the Glass Playground.
+
 
 <Tabs items={['JSON', 'Glass']}>
   <Tab>
@@ -68,11 +77,11 @@ Glass provides a more readable and intuitive alternative to traditional JSON req
   [
   {
     "role": "system",
-    "content": "You are a helpful assistant that helps me write code. You are TypeScriptGPT: your job is to write performant, concise beautiful TypeScript code to answer the user's question. The user may ask you to make changes to the code based on different needs, your job is to update the code to meet their requests. You should respond with fenced, commented TypeScript code."
+    "content": "You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response."
   },
   {
     "role": "user",
-    "content": "How do I add two numbers in TypeScript?"
+    "content": "How do I add two numbers?"
   },
   {
     "role": "assistant",
@@ -84,11 +93,7 @@ Glass provides a more readable and intuitive alternative to traditional JSON req
   },
   {
     "role": "assistant",
-    "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}\n```"
-  },
-  {
-    "role": "user",
-    "content": "Write me a function to find a prime number"
+    "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}```"
   }
 ]
 ````
@@ -97,12 +102,14 @@ Glass provides a more readable and intuitive alternative to traditional JSON req
   <Tab>
 ````glass copy filename= 'request.glass'
 <System>
-You are a helpful assistant that helps me write code.You are TypeScriptGPT: your job is to write performant, concise beautiful TypeScript code to answer the user's question. The user may ask you to make changes to the code based on different needs, your job is to update the code to meet their requests. You should respond with fenced, commented TypeScript code.
+You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response.
 </System>
 
+
 <User>
-How do I add two numbers in TypeScript?
+How do I add two numbers?
 </User>
+
 
 <Assistant>
 ```ts
@@ -112,9 +119,11 @@ function addNumbers(a: number, b: number): number {
 ```
 </Assistant>
 
+
 <User>
 Write me a function that creates an array of 10 random odd integers between 0 and 20
 </User>
+
 
 <Assistant>
 ```ts
@@ -134,9 +143,11 @@ function generateRandomOddIntegers(): number[] {
 ```
 </Assistant>
 
+
 <User>
 Write me a function to find a prime number
 </User>
+
 
 <Request model="gpt-4" />
 ````

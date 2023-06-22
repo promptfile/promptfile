@@ -145,7 +145,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.init.name"
+          "name": "source.glass.code.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -157,7 +157,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.init.name"
+          "name": "source.glass.code.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"

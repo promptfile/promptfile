@@ -1,6 +1,6 @@
 {
   "name": "vscode-glass",
-  "version": "0.14.5",
+  "version": "0.14.6",
   "displayName": "Glass",
   "description": "Language support for Glass",
   "categories": [
@@ -122,6 +122,11 @@
             "default": "",
             "description": "Anthropic API key"
           },
+          "glass.githubKey": {
+            "type": "string",
+            "default": "",
+            "description": "GitHub API key"
+          },
           "glass.outputDirectory": {
             "type": "string",
             "default": "${workspaceFolder}",
@@ -197,7 +202,7 @@
             }
           },
           {
-            "scope": "source.glass.init.name",
+            "scope": "source.glass.code.name",
             "settings": {
               "foreground": "#FFB454",
               "fontStyle": "italic"

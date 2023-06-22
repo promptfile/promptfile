@@ -12,12 +12,14 @@ import Image from 'next/image'
 
 ## Executable Code
 
+
 Glass features an `<Code>{:glass}` element that enables you to write code to be executed prior to evaluating the prompt. This is particularly helpful for tasks such as data retrieval, performing calculations, or executing any other code that needs to be run before prompting the large language model (LLM).
 
 ```glass copy filename="example.glass"
 <Code>
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
 </Code>
+
 
 <System>
 @{myMessage}
@@ -93,19 +95,23 @@ In the example provided earlier, after executing the onResponse function and upd
 }
 </State>
 
+
 <Code>
 // This works just like `useState` in React
 const [lastMessageText, setLastMessageText] = useState('')
 const [numResponses, setNumResponses] = useState(0)
 </Code>
 
+
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
 </System>
 
+
 <User>
 can you tell me a joke about kittens?
 </User>
+
 
 <Assistant model="gpt-3.5-turbo" temperature={1}>
 Sure, here's one:

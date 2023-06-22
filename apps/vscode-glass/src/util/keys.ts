@@ -1,5 +1,15 @@
 import * as vscode from 'vscode'
 
+export function getGithubKey() {
+  let githubKey: string = vscode.workspace.getConfiguration('glass').get('githubKey') as any
+  if (!githubKey) {
+    // eslint-disable-next-line turbo/no-undeclared-env-vars
+    githubKey = process.env.OPENAI_API_KEY || ''
+  }
+
+  return githubKey || null
+}
+
 export function getOpenaiKey() {
   let openaiKey: string = vscode.workspace.getConfiguration('glass').get('openaiKey') as any
   if (!openaiKey) {
@@ -18,14 +28,4 @@ export function getAnthropicKey() {
   }
 
   return anthropicKey || null
-}
-
-export function getGithubKey() {
-  let githubKey: string = vscode.workspace.getConfiguration('glass').get('githubKey') as any
-  if (!githubKey) {
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
-    githubKey = process.env.GITHUB_API_KEY || ''
-  }
-
-  return githubKey || null
 }

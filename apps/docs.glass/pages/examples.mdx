@@ -9,6 +9,7 @@ The Glass Cookbook provides a collection of practical examples that demonstrate 
 
 ### **Declaring Variables**
 
+
 To declare variables for interpolation within your prompt, utilize the `<Code>{:glass}` block. Use the `@{variableName}` syntax to use those variables in your prompt. Ensure that all variables are placed within a block. If you want the user to define the variable when interacting, do not declare it. The Playground will automatically as the user to define those undeclared variables.
 
 ```glass copy filename="haiku.glass"
@@ -28,6 +29,7 @@ You are HaikuGPT. Always respond to the user in the form of a haiku. In your res
 ```
 
 ### **Executing Code**
+
 
 The `<Code>{:glass}` block provides versatility, not only permitting variable declaration but also enabling code execution for a range of purposes, including accessing user profiles. The example below showcases how incorporating user profile data into your prompt yields a more personalized and engaging conversational interaction.
 
@@ -73,6 +75,7 @@ const html = await res.text()
 const input = "Where did Elliott go to school?"
 </Code>
 
+
 <System>
 Your job is to answer questions based on the following website.
 ###
@@ -112,6 +115,7 @@ What is 2 to the .12345 power?
 ### **Chaining two prompts together**
 
 For complex prompts, achieving the desired outcome often requires executing multiple requests. In this example, we will link two prompts to generate both a synopsis of a fictitious play and a review of that fictitious play in a single prompt.
+
 
 <Callout type="info"> Observe the utilization of the `<Test>{:glass}` block, replacing the `<Code>{:glass}` block. This creates a test block that passes the test case as arguments when running the file. However, when implementing the Glass file within the actual project, the arguments can be supplied as parameters during invocation. </Callout>
 
@@ -216,6 +220,7 @@ In this example, conditional logic allows for dynamic adjustments to your prompt
 ```glass copy filename="conditionalLogic.glass"
 <Code>
 const [numMessages, setNumMessages] = useState(0)
+
 const input = "What a day, I want you to tell me about something."
 if (numMessages > 2){
   isLongConversation = true;

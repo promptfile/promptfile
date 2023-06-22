@@ -11,7 +11,7 @@ import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { executeGlassFile } from '../runGlassExtension'
 import { getHtmlForWebview } from '../webview'
-import { getAnthropicKey, getOpenaiKey } from './keys'
+import { getAnthropicKey, getGithubKey, getOpenaiKey } from './keys'
 import { createSession, getCurrentSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
 import { generateULID } from './ulid'
 import { getCurrentViewColumn } from './viewColumn'
@@ -186,16 +186,17 @@ export async function createPlayground(
         break
       case 'shareSessionGist':
         const sessionToShare = message.data.session
-        // eslint-disable-next-line turbo/no-undeclared-env-vars
-        if (!process.env.GITHUB_API_KEY) {
-          await vscode.window.showErrorMessage('No GitHub API key found')
+        const githubKey = getGithubKey()
+        if (githubKey == null || githubKey === '') {
+          await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.githubKey')
+          await vscode.window.showErrorMessage('Add GitHub API key to share as gist.')
           return
         }
+
         try {
           const newSessionFile = await vscode.workspace.openTextDocument(sessionToShare)
           const url = 'https://api.github.com/gists'
           // eslint-disable-next-line turbo/no-undeclared-env-vars
-          const accessToken = process.env.GITHUB_API_KEY
 
           const description = await vscode.window.showInputBox({
             prompt: 'Enter a description for your gist',
@@ -214,7 +215,7 @@ export async function createPlayground(
           const response = await fetch(url, {
             method: 'POST',
             headers: {
-              Authorization: `token ${accessToken}`,
+              Authorization: `token ${githubKey}`,
               Accept: 'application/vnd.github.v3+json',
             },
             body: JSON.stringify(gistToCreate),
