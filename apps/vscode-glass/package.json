@@ -122,6 +122,11 @@
             "default": "",
             "description": "Anthropic API key"
           },
+          "glass.githubKey": {
+            "type": "string",
+            "default": "",
+            "description": "GitHub API key"
+          },
           "glass.outputDirectory": {
             "type": "string",
             "default": "${workspaceFolder}",
