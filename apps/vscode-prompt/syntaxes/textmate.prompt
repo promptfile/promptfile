@@ -2,13 +2,13 @@
 import fs from 'fs'
 import path from 'path'
 
-const grammar = fs.readFileSync(path.join(__dirname, 'glass.tmLanguage.json'), 'utf-8').toString()
+const grammar = fs.readFileSync(path.join(__dirname, 'prompt.tmLanguage.json'), 'utf-8').toString()
 </Code>
 
 <System>
-The User is working on a new DSL called Promptfile (`.prompt` file extension), which is designed to make prompting large langauge models easier. The User is currently working on the syntax highlighting for the Promptfile VSCode extension, which is defined by a textmate grammar file, `glass.tmLanguage.json`.
+The User is working on a new DSL called Promptfile (`.prompt` file extension), which is designed to make prompting large langauge models easier. The User is currently working on the syntax highlighting for the Promptfile VSCode extension, which is defined by a textmate grammar file, `prompt.tmLanguage.json`.
 
-Here is the current `glass.tmLanguage.json` file:
+Here is the current `prompt.tmLanguage.json` file:
 
 ###
 @{grammar}

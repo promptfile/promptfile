@@ -7,7 +7,7 @@ const vscodePackageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../vs
 const colors = vscodePackageJson.contributes?.configurationDefaults['editor.tokenColorCustomizations'].textMateRules
 
 const glass = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../vscode-prompt/syntaxes/glass.tmLanguage.json')).toString()
+  fs.readFileSync(path.join(__dirname, '../vscode-prompt/syntaxes/prompt.tmLanguage.json')).toString()
 )
 
 const syntaxTheme = JSON.parse(fs.readFileSync(path.join(__dirname, 'shiki-theme.json')).toString())
