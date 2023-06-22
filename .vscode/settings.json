@@ -31,6 +31,6 @@
   "typescript.tsc.autoDetect": "off",
   "editor.wordWrap": "on",
   "[prompt]": {
-    "editor.defaultFormatter": "foundation.vscode-glass"
+    "editor.defaultFormatter": "foundation.vscode-prompt"
   }
 }

@@ -148,7 +148,7 @@
 
 ### Patch Changes
 
-- [`e713d1e`](https://github.com/glass-platform/promptfile/commit/e713d1e210807a2792b96750ecdfd4f9df6bb8c2) Thanks [@elliottburris](https://github.com/elliottburris)! - moving tiktoken to vscode-glass
+- [`e713d1e`](https://github.com/glass-platform/promptfile/commit/e713d1e210807a2792b96750ecdfd4f9df6bb8c2) Thanks [@elliottburris](https://github.com/elliottburris)! - moving tiktoken to vscode-prompt
 
 ## 0.11.0
 
@@ -204,7 +204,7 @@
 
 - [`f5d4492`](https://github.com/glass-platform/promptfile/commit/f5d4492c6b6d44315bd6052ddd45b47af79720a8) Thanks [@rothfels](https://github.com/rothfels)! - major syntax updates, dynamic blocks, if conditions, etc.
 
-All notable changes to the "vscode-glass" extension will be documented in this file.
+All notable changes to the "vscode-prompt" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
