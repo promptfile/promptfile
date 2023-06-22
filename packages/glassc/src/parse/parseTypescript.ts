@@ -194,11 +194,11 @@ export function parseCodeImportedSymbols(code: string) {
  *
  * ```
  * import {foo, bar} from './someFile'
- * import * as something from './someOtherFile.glass'
+ * import * as something from './someOtherFile.prompt'
  * import baz from 'baz'
  * ```
  *
- * And returns the values added to the scope by the imports from .glass files, i.e. ['something']
+ * And returns the values added to the scope by the imports from .prompt files, i.e. ['something']
  */
 export function parseTsGlassImports(code: string) {
   const sourceFile = ts.createSourceFile('temp.ts', code, ts.ScriptTarget.ESNext, true)
@@ -209,7 +209,7 @@ export function parseTsGlassImports(code: string) {
       const moduleSpecifier = node.moduleSpecifier.getText(sourceFile)
       const importClause = node.importClause
 
-      if (importClause && moduleSpecifier.endsWith(".glass'")) {
+      if (importClause && moduleSpecifier.endsWith(".prompt'")) {
         if (importClause.namedBindings) {
           if (ts.isNamedImports(importClause.namedBindings)) {
             for (const element of importClause.namedBindings.elements) {

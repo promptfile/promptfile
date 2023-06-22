@@ -1,0 +1,23 @@
+<Code>
+import questionAnswer from './questionAnswer.prompt'
+
+const [field, setField] = useState('')
+</Code>
+
+<Assistant>
+You are an assistant that creates questions for Jeopardy.
+</Assistant>
+
+<User>
+Make a question about United States history.
+</User>
+
+<Request
+  model="gpt-3.5-turbo"
+  onResponse={async ({ message }) => {
+    const answer = await questionAnswer({ question: message })
+    setField(answer)
+  }}
+/>
+
+<Request model="gpt-3.5-turbo" />

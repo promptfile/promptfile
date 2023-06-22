@@ -25,7 +25,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npx --workspace vscode-glass vsce package
+      - run: npx --workspace vscode-prompt vsce package
 
       ## required fpr the next step
       - name: Install Yarn
@@ -34,18 +34,18 @@ jobs:
           yarn set version stable
 
       - name: Bundle esbuild
-        run: npm run patch:esbuild --workspace=vscode-glass
+        run: npm run patch:esbuild --workspace=vscode-prompt
 
       # - run: npx ovsx publish --packagePath *.vsix
       #   env:
       #     OVSX_PAT: ${{secrets.OPEN_VSX_TOKEN}}
       - run: npx vsce publish --packagePath *.vsix
-        working-directory: ./apps/vscode-glass
+        working-directory: ./apps/vscode-prompt
         env:
           VSCE_PAT: ${{secrets.VSCE_TOKEN}}
 
       - uses: softprops/action-gh-release@v1
         with:
-          body_path: ${{github.workspace}}/apps/vscode-glass/CHANGELOG.md
+          body_path: ${{github.workspace}}/apps/vscode-prompt/CHANGELOG.md
           files: |
-            apps/vscode-glass/*.vsix
+            apps/vscode-prompt/*.vsix

@@ -1,6 +1,0 @@
-out
-dist
-.env
-.vscode-test/
-*.vsix
-**/.glasslog*

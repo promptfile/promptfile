@@ -1,0 +1,298 @@
+import { Callout } from 'nextra/components'
+
+# What are Blocks?
+
+Blocks in Promptfile simplify LLM requests by making them easy to read and understand. They prevent common mistakes and give you more power to create complicated interactions with the LLM.
+
+## Role Blocks
+
+### Assistant
+Use the `<Assistant>{:glass}` to specify that the content is coming from the model
+
+ - **name** <i>(optional string) </i>— Assign a name to the assistant.
+ - **if** <i>(optional condition)</i> — Includes the block only if condition evaluates `true`
+ - **model** <i>(optional enumerated string)</i> — Automatically generated condition for tracking the model
+ - **temperature** <i>(optional number)</i> — Automatically generated condition for tracking the temperature
+ - **type** <i>(optional enumerated string)</i> — Automatically generated condition for tracking the assistant response type. Currently only `function_call`.
+
+```prompt copy filename="assistantBlock_example.prompt"
+<Assistant if={true}>
+Hello human!
+</Assistant>
+```
+
+### Block
+
+Use the `<Block>{:glass}` as a generic alternative to `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`. This is most helpful when writing a  `<For>{:glass}` loop.
+
+ - **role** <i>(required enumerated string)</i> — Determines the type of block. Accepted values are `user`, `assistant`, or `system`.
+ - **if** <i>(optional condition)</i> — Includes the block only if the given condition evaluates to `true`.
+
+```prompt copy filename="blocks_example.prompt"
+<Code>
+const conversation = [
+  {
+    message: 'You are an AI system that can respond to the user in the way they ask to be interact with.'
+    role: 'system',
+  }
+  {
+    message: 'Howdy partner! ,
+    role: 'user',
+  },
+    {
+    message: 'Hello, how can I help you? ,
+    role: 'assistant',
+  },
+    {
+    message: 'Tell me a knock knock joke' ,
+    role: 'user',
+  }
+]
+</Code>
+
+
+<For each={conversation} as="example">
+<Block role={example.role}>
+@{example.message}
+</Block>
+</For>
+
+<Request model="gpt-3.5-turbo" />
+```
+
+### User
+
+Use the `<User>{:glass}` block to indicate the text originating from a human user.
+
+ - **name** <i>(optional string)  </i> — Assign a name to the user.
+ - **if** <i>(optional condition)  </i> — Includes the block in the request only if the given condition evaluates to true.
+
+```prompt copy filename="user_example.prompt"
+<User if={true}>
+Hello AI!
+</User>
+
+<Request model="gpt - **3.5 - **turbo" />
+```
+### System
+
+Use the `<System>{:glass}` block to provide instructions to the LLM.
+
+For Anthropic models, the `<System>{:glass}` block has the same effect as the `<User>{:glass}` block.
+
+ - **if** <i>(optional condition)  </i> — Includes the block only if the given condition evaluates to `true`.
+
+```prompt copy filename="system_example.prompt"
+<System if={false}>
+Even if I want to give the LLM a System prompt here, it won't evaluate because the condition is not met.
+</System>
+```
+## Control Flow Blocks
+
+### For
+
+Use the `<For>{:glass}` block to iterate over elements in an array. The content within the `<For>{:glass}` block will be repeated for each item in the array.
+
+ - **each** <i>(required array)</i> — The array to loop through.
+ - **as** <i>(required variable)</i> — The variable name assigned to each item in the array. Use this variable within the `<For>{:glass}` block.
+
+```prompt copy filename="forLoop_example.prompt"
+<Code>
+const examples = [{
+  request: "Happy",
+  response: "Sad",
+}, {
+  request: "Hot",
+  response: "Cold",
+}, {
+  request: "Tall",
+  response: "Short",
+}]
+const input = "Sunny"
+</Code>
+
+
+<For each={examples} as="ex">
+<User>
+@{ex.request}
+</User>
+
+<Assistant>
+@{ex.response}
+</Assistant>
+</For>
+
+<User>
+@{input}
+</User>
+
+<Request model="gpt - **3.5 - **turbo" />
+```
+
+
+### Test
+
+Use `<Test>{:glass}` to establish test data for running the file. When making a call to this prompt, you will need to provide the input. If no variable is specified, your prompt will employ cases defined in a `<Test>{:glass}` block.
+
+```prompt copy filename="test_example.prompt"
+<Test>
+const input = "Write me a 5 line poem about dogs"
+</Test>
+
+<User>
+@{input}
+</User>
+
+<Request model="gpt - **3.5 - **turbo" />
+```
+
+### Text
+
+Use the `<Text>{:glass}` block to insert text within another block. This is helpful for adding text when a specific condition is satisfied.
+
+ - **if** <i>(optional condition)  </i> — Includes the block in the request only if the given condition evaluates to true.
+
+```prompt copy filename="text_example.prompt"
+<User>
+<Text if={true}>
+I love you!
+</Text>
+
+<Text if={false}>
+I hate you!
+</Text>
+</User>
+
+<Request model="gpt - **3.5 - **turbo" />
+```
+## Functional Blocks
+
+
+### Code
+
+Use the `<Code>{:glass}` block to define code that runs before the request is made. This is helpful for establishing variables and functions that can be employed in other blocks.
+
+ - **language** <i>(required enumerated string)  </i> — The language of the code. Defaults to javascript. Currently, only javascript and typescript are supported.
+
+```prompt copy filename="init_example.prompt"
+<Code>
+const res = await fetch('https://elliottburris.com')
+const html = await res.text()
+</Code>
+
+<System>
+Your job is to answer questions based on the following website.
+
+###
+@{html}
+###
+</System>
+
+<User>
+//ask a question like "Where did Elliott go to grad school?"
+@{input}
+</User>
+
+<Request model="gpt - **3.5 - **turbo" />
+```
+
+### Request
+
+Use the the `<Request>{:glass}` block to make an API request to a specified model, using all preceding blocks as input.
+
+ - **model** <i>(required string)  </i> — The name of the model for inference. Defaults to `gpt-3.5-turbo`.
+ - **temperature** <i>(optional number)  </i> — The temperature for the model's inference.
+ - **max_tokens** <i>(optional number)  </i> — The maximum number of tokens to generate.
+ - **onResponse** <i>(optional function)  </i> — Function callback invoked when the response is received.
+
+```prompt copy filename="request_example.prompt"
+<Request model="gpt - **4" maxTokens={50} temperature={0.05} />
+```
+
+### Tool
+
+Use the `<Tool>{:glass}` block to integrate a tool that Promptfile can execute at runtime. Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
+
+ - **name** <i>(optional string)  </i> — Assign a name to the tool.
+ - **schema** <i>(required string)  </i> — Defines the schema that the tool can accept.
+ - **description** <i>(optional string)  </i> — Describes the tool and its potential use.
+ - **run** <i>(required function)  </i> — Specifies the code to run when the tool is invoked.
+
+```prompt copy filename="function.prompt"
+<Tool
+  name="calculator"
+  description="Calculates the result of a math expression."
+  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
+  run={({ expression }) => '' + eval(expression)}
+/>
+
+<User>
+what is 2 to the .12345 power?
+</User>
+
+<Request model="gpt - **3.5 - **turbo - **0613" />
+```
+
+## Promptfile Generated Blocks
+
+### Function
+
+The `<Function>{:glass}` block is automatically generated and used to track the results of a function evaluation. For example, here is a sample Promptfile file that declares a `<Tool>{:glass}` called "calculator".
+
+ - **name** <i>(string)</i> The name of the function which was called.
+
+```prompt copy filename="function_example.prompt"
+<Tool
+  name="calculator"
+  description="Calculates the result of a math expression"
+  schema={z.object({ expression: z.string().describe('expression to eval with JS') })}
+  run={({ expression }) => '' + eval(expression)} />
+
+<User>
+what is 2 to the .12345 power?
+</User>
+
+<Request model="gpt - **3.5 - **turbo - **0613" />
+```
+
+When we run this Promptfile file, we get the following interaction:
+
+```prompt
+<Tool
+  name="calculator"
+  description="Calculates the result of a math expression."
+  schema={z.object({ expression: z.string().describe('expression to eval with JS') })}
+  run={({ expression }) => '' + eval(expression)} />
+
+<User>
+what is 2 to the .12345 power?
+</User>
+// This is the assistant deciding to use the calculator tool and pass in arguments into the schema based on the request
+<Assistant model="gpt - **3.5 - **turbo - **0613" temperature={1} type="function_call">
+{
+  "name": "calculator",
+  "arguments": "{\n  \"expression\": \"Math.pow(2, 0.12345)\"\n}"
+}
+</Assistant>
+// This is the automatically generated function block letting you know that the LLM used the tool it had available
+<Function name="calculator">
+"1.0893367441616877"
+</Function>
+
+<Assistant model="gpt - **3.5 - **turbo - **0613" temperature={1}>
+2 to the power of 0.12345 is approximately 1.08934.
+</Assistant>
+```
+
+### State
+
+The `<State>{:glass}`block is an automatically generated block and used to track the state of the conversation. Do not modify this block. It maintains the state of the conversation. Below is the state of the conversation after running the 4th Promptfile file in our Cookbook:
+
+```prompt copy filename="events_state.prompt"
+<State>
+{
+  "lastMessageText": "Sure, here's one: \n\nWhy did the kitten join Tinder? \nTo find her purr-fect match!",
+  "numResponses": 1
+}
+</State>
+```

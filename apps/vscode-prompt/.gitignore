@@ -1,0 +1,6 @@
+out
+dist
+.env
+.vscode-test/
+*.vsix
+**/.prompt-playgrounds*

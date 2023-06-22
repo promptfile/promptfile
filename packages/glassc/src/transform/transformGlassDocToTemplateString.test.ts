@@ -5,7 +5,7 @@ import {
 } from './transformGlassDocToTemplateString'
 
 describe('transformGlassDocumentToTemplateString', () => {
-  it('should transform Glass for TypeScript/JavaScript', () => {
+  it('should transform Promptfile for TypeScript/JavaScript', () => {
     const doc = `<Block hello={m.world} foo="bar">
 block content @{whoa}
 
@@ -23,7 +23,7 @@ whoa text
 </Block>`)
   })
 
-  it('should transform Glass for Python simple', () => {
+  it('should transform Promptfile for Python simple', () => {
     const doc = `hello this is text \${1}`
 
     expect(transformGlassDocumentToTemplateStringPython(doc)).to.deep.equal({
@@ -32,7 +32,7 @@ whoa text
     })
   })
 
-  it('should transform Glass for Python medium', () => {
+  it('should transform Promptfile for Python medium', () => {
     const doc = `hello this is text \${1}
 
 <Block hello={2} foo="bar">
@@ -49,7 +49,7 @@ content
     })
   })
 
-  it('should transform Glass for Python', () => {
+  it('should transform Promptfile for Python', () => {
     const doc = `hello this is text \${a}
 
 <Block hello={2} foo="bar">

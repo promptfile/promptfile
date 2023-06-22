@@ -8,10 +8,10 @@ import { parseInterpolations } from '../parse/parseInterpolations.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
 import {
-  parseCodeBlock,
-  parseCodeBlockUndeclaredSymbols,
-  parseTsGlassImports,
-  removeImports,
+    parseCodeBlock,
+    parseCodeBlockUndeclaredSymbols,
+    parseTsGlassImports,
+    removeImports,
 } from '../parse/parseTypescript.js'
 import { rewriteImports } from '../transform/rewriteImports.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
@@ -19,10 +19,10 @@ import { getUseStatePairs, transformSetState } from '../transform/transformSetSt
 import { transformTsTestBlock } from '../transform/transformTsTestBlock.js'
 import { TYPESCRIPT_GLOBALS } from './typescriptGlobals.js'
 
-const extension = 'glass'
+const extension = 'prompt'
 
 /**
- * Takes a .glass document and returns a code file.
+ * Takes a .prompt document and returns a code file.
  * The directory / folder information is necessary so we can correctly re-write import paths.
  * The language is necessary so we can correctly format the output. Currently only supports 'typescript'.
  */
@@ -319,7 +319,7 @@ export function transpileGlassFileTypescript(
   progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
 }`
 
-  const code = `${imports.replace(/import .+ from ['"].+\.glass['"]/gm, '')}
+  const code = `${imports.replace(/import .+ from ['"].+\.prompt['"]/gm, '')}
 ${dependencyGlassDocs
   .map(g => {
     return `
@@ -419,7 +419,7 @@ function normalizeTypescriptObjectFieldName(name: string) {
 }
 
 export function constructGlassOutputFileTypescript(functions: ReturnType<typeof transpileGlassHelper>) {
-  const glassConstant = `export const Glass = {
+  const glassConstant = `export const Promptfile = {
     ${functions.map(f => `${normalizeTypescriptObjectFieldName(f.functionName)}: ${f.exportName}`).join(',\n  ')}
   }`
   const functionsString = functions.map(f => f.code).join('\n\n')
@@ -512,7 +512,7 @@ function recursiveCodegen(workspaceFolder: string, folderPath: string, language:
 
 export function getGlassExportName(filePath: string) {
   let fileName = filePath.split('/').pop() || ''
-  if (fileName.endsWith('.glass')) {
+  if (fileName.endsWith('.prompt')) {
     fileName = fileName.slice(0, -6)
   }
 

@@ -8,7 +8,7 @@ import foo from 'bar'
 import { baz } from './path'
 </Code>`
 
-    expect(rewriteImports(document, '/out', '/out/file.glass')).to.equal(document)
+    expect(rewriteImports(document, '/out', '/out/file.prompt')).to.equal(document)
   })
 
   it('should modify imports', () => {
@@ -22,7 +22,7 @@ import { bar } from '../foo'
 foo
 </User>`
 
-    expect(rewriteImports(document, '/out', '/in/file.glass')).to.equal(`<Code>
+    expect(rewriteImports(document, '/out', '/in/file.prompt')).to.equal(`<Code>
 import foo from 'bar'
 import { baz } from '../in/path'
 import { bar } from '../foo'

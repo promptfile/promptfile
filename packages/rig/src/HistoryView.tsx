@@ -51,7 +51,7 @@ export const HistoryView = (props: HistoryViewProps) => {
               <VSCodeDataGridRow key={session.session}>
                 <VSCodeDataGridCell grid-column="1">
                   <VSCodeLink href={'#'} onClick={() => openSession(session.session)}>
-                    {session.session.split('/').pop()?.replace('.glass', '')}
+                    {session.session.split('/').pop()?.replace('.prompt', '')}
                   </VSCodeLink>
                 </VSCodeDataGridCell>
                 <VSCodeDataGridCell grid-column="2">{session.numMessages}</VSCodeDataGridCell>

@@ -1,7 +1,7 @@
 {
   "name": "@glass-lang/language-server",
   "version": "1.0.0",
-  "description": "Glass language server",
+  "description": "Promptfile language server",
   "main": "out/language-server.js",
   "scripts": {
     "lint": "eslint src --ext ts",

@@ -8,11 +8,11 @@
       "script": "watch",
       "problemMatcher": {
         "base": "$tsc-watch",
-        "fileLocation": ["relative", "${workspaceFolder}/apps/vscode-glass"]
+        "fileLocation": ["relative", "${workspaceFolder}/apps/vscode-prompt"]
       },
       "isBackground": true,
       "options": {
-        "cwd": "${workspaceFolder}/apps/vscode-glass"
+        "cwd": "${workspaceFolder}/apps/vscode-prompt"
       },
       "presentation": {
         "reveal": "never"

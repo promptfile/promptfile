@@ -29,7 +29,7 @@ export interface JSXNode {
  * Takes a glass document and returns all the top-level JSX elements.
  * For example, in the the document:
  *
- * ```glass
+ * ```prompt
  * <div>hello</div>
  *
  * interstitial text

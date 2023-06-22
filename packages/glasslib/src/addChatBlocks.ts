@@ -2,14 +2,14 @@ import { ChatBlock } from './parseChatBlocks'
 import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
 
 /**
- * Add a chat block to a Glass file and returns the new Glass file.
+ * Add a chat block to a Promptfile file and returns the new Promptfile file.
  */
 export function addChatBlock(glassfile: string, block: ChatBlock) {
   return addChatBlocks(glassfile, [block])
 }
 
 /**
- * Add a list of chat block to a Glass file and returns the new Glass file.
+ * Add a list of chat block to a Promptfile file and returns the new Promptfile file.
  */
 export function addChatBlocks(glassfile: string, blocks: ChatBlock[]) {
   const parsed = parseGlassDocument(glassfile)

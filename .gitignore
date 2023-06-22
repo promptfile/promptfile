@@ -35,4 +35,4 @@ yarn-error.log*
 # vercel
 .vercel
 
-.glasslog/
+.prompt-playgrounds/
