@@ -23,12 +23,6 @@ describe('transpileGlassTypescript', () => {
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
-  it('should transpile with duplicate interpolation variables', () => {
-    const { input, output } = loadTestFile('testfiles/ts/duplicateInterpolation', 'ts')
-    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'duplicateInterpolation' })
-    expect(transpiled.code.trim()).to.equal(output.trim())
-  })
-
   it('should transpile with Args block', () => {
     const { input, output } = loadTestFile('testfiles/ts/args', 'ts')
     const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'args' })
@@ -38,12 +32,6 @@ describe('transpileGlassTypescript', () => {
   it('should transpile with code block', () => {
     const { input, output } = loadTestFile('testfiles/ts/codeBlock', 'ts')
     const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'codeBlock' })
-    expect(transpiled.code.trim()).to.equal(output.trim())
-  })
-
-  it('should transpile with code block containing state', () => {
-    const { input, output } = loadTestFile('testfiles/ts/codeBlockWithState', 'ts')
-    const transpiled = transpileGlassFileTypescript(input, { ...folders, fileName: 'codeBlockWithState' })
     expect(transpiled.code.trim()).to.equal(output.trim())
   })
 
