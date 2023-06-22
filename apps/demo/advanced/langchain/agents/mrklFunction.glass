@@ -1,14 +1,32 @@
 <Tool
   name="calculator"
   description="Calculates the result of a math expression."
-  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
+  parameters={{
+    type: 'object',
+    properties: {
+      expression: {
+        type: 'string',
+        description: 'expression to eval with JavaScript',
+      },
+    },
+    required: ['expression'],
+  }}
   run={({ expression }) => '' + eval(expression)}
 />
 
 <Tool
   name="search"
   description="A search engine. Useful for when you need to answer questions about current events. Input should be a search query."
-  schema={z.object({ query: z.string().describe('search query') })}
+  parameters={{
+    type: 'object',
+    properties: {
+      query: {
+        type: 'string',
+        description: 'search query',
+      },
+    },
+    required: ['query'],
+  }}
   run={async ({ query }) => {
     const resp = await fetch(
       'https://serpapi.com/search.json?api_key=' +
