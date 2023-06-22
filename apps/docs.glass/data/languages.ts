@@ -12,7 +12,7 @@ export const languages: ICards = {
     },
     description:
       'Typescript (TS) is a strict syntactical superset of JavaScript and adds optional static typing to the language. It is designed for the development of large applications and transpiles to JavaScript.',
-    href: 'https://www.typescriptlang.org/',
+    href: '/examples',
   },
   javascript: {
     title: 'JavaScript',
@@ -26,8 +26,7 @@ export const languages: ICards = {
     },
     description:
       'JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.',
-    href: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_overview',
-  },
+    href: '/examples',
   // python: {
   //   title: 'Python',
   //   image: 'python',
@@ -69,4 +68,5 @@ export const languages: ICards = {
   //     'Go is a statically typed, compiled high-level programming language with memory safety, garbage collection, structural typing, and CSP-style concurrency.',
   //   href: 'https://go.dev/',
   // },
+}
 }

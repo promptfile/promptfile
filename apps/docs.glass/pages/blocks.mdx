@@ -2,20 +2,18 @@ import { Callout } from 'nextra/components'
 
 # What are Blocks?
 
-Blocks in Glass simplify LLM requests, making them easy to read and understand. They prevent common mistakes and give more power to create complicated interactions with the LLM.
+Blocks in Glass simplify LLM requests by making them easy to read and understand. They prevent common mistakes and give you more power to create complicated interactions with the LLM.
 
-## Types of Blocks
+## Role Blocks
 
 ### Assistant
+Use the `<Assistant>{:glass}` to specify that the content is coming from the model
 
-Use the `<Assistant>{:glass}` block to designate the text coming from the model.
-
-- **name** <i>(optional string)</i> <br/> Assigns a name to the assistant.
-
-- **if** <i>(optional condition)</i> <br/> Includes the block in the request only if the condition is met.
-- **model** <i>(optional enum)</i> <br/> This is an automatically generated condition that is visible in the editor. It is used to track the model that generated the block.
-- **temperature**<i>(optional number)</i> <br/> This is an automatically generated condition that is visible in the editor. It is used to track the temperature that generated the block.
-- **type** <i> (optional enum)</i> <br/> This is an automatically generated condition that is visible in the editor. It is used to track the type of assistant response. The only type that currently exists with OpenAI models is `function_call`.
+ - **name** <i>(optional string) </i>— Assign a name to the assistant.
+ - **if** <i>(optional condition)</i> — Includes the block only if condition evaluates `true`
+ - **model** <i>(optional enumerated string)</i> — Automatically generated condition for tracking the model
+ - **temperature** <i>(optional number)</i> — Automatically generated condition for tracking the temperature
+ - **type** <i>(optional enumerated string)</i> — Automatically generated condition for tracking the assistant response type. Currently only `function_call`.
 
 ```glass copy filename="assistantBlock_example.glass"
 <Assistant if={true}>
@@ -25,11 +23,10 @@ Hello human!
 
 ### Block
 
-Use `<Block>{:glass}` as a generic version of `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`.
+Use the `<Block>{:glass}` as a generic alternative to `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}`. This is most helpful when writing a  `<For>{:glass}` loop.
 
-- **role** <i>(required)</i> <br/> The type of block. Can be `user`, `assistant`, or `system`.
-
-- **if** <i>(optional)</i> <br/> Allows you to conditionally include the block.
+ - **role** <i>(required enumerated string)</i> — Determines the type of block. Accepted values are `user`, `assistant`, or `system`.
+ - **if** <i>(optional condition)</i> — Includes the block only if the given condition evaluates to `true`.
 
 ```glass copy filename="blocks_example.glass"
 <Code>
@@ -49,7 +46,7 @@ const conversation = [
     {
     message: 'Tell me a knock knock joke' ,
     role: 'user',
-  },
+  }
 ]
 </Code>
 
@@ -63,12 +60,41 @@ const conversation = [
 <Request model="gpt-3.5-turbo" />
 ```
 
+### User
+
+Use the `<User>{:glass}` block to indicate the text originating from a human user.
+
+ - **name** <i>(optional string)  </i> — Assign a name to the user.
+ - **if** <i>(optional condition)  </i> — Includes the block in the request only if the given condition evaluates to true.
+
+```glass copy filename="user_example.glass"
+<User if={true}>
+Hello AI!
+</User>
+
+<Request model="gpt - **3.5 - **turbo" />
+```
+### System
+
+Use the `<System>{:glass}` block to provide instructions to the LLM.
+
+For Anthropic models, the `<System>{:glass}` block has the same effect as the `<User>{:glass}` block.
+
+ - **if** <i>(optional condition)  </i> — Includes the block only if the given condition evaluates to `true`.
+
+```glass copy filename="system_example.glass"
+<System if={false}>
+Even if I want to give the LLM a System prompt here, it won't evaluate because the condition is not met.
+</System>
+```
+## Control Flow Blocks
+
 ### For
 
-Use the `<For>{:glass}` block to loop over elements in an array. The text inside the `<For>{:glass}` block will be repeated for each item in the array.
+Use the `<For>{:glass}` block to iterate over elements in an array. The content within the `<For>{:glass}` block will be repeated for each item in the array.
 
-- **each** <i>(required)</i> <br/> The array to iterate over.
-- **as** <i>(required)</i><br/> The variable name for each item in the array. Use this variable within the `<For>{:glass}`
+ - **each** <i>(required array)</i> — The array to loop through.
+ - **as** <i>(required variable)</i> — The variable name assigned to each item in the array. Use this variable within the `<For>{:glass}` block.
 
 ```glass copy filename="forLoop_example.glass"
 <Code>
@@ -82,7 +108,6 @@ const examples = [{
   request: "Tall",
   response: "Short",
 }]
-
 const input = "Sunny"
 </Code>
 
@@ -101,75 +126,53 @@ const input = "Sunny"
 @{input}
 </User>
 
-<Request model="gpt-3.5-turbo" />
+<Request model="gpt - **3.5 - **turbo" />
 ```
 
-### Function
 
-This is an automatically generated block that is used to track the results of a function call.
+### Test
 
-- **name** <i>(string)</i> <br/> The name of the function which was called.
+Use `<Test>{:glass}` to establish test data for running the file. When making a call to this prompt, you will need to provide the input. If no variable is specified, your prompt will employ cases defined in a `<Test>{:glass}` block.
 
-For example, here is a sample Glass file that declares a `<Tool>{:glass}` called "calculator".
-
-```glass copy filename="function_example.glass"
-<Tool
-  name="calculator"
-  description="Calculates the result of a math expression."
-  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
-  run={({ expression }) => '' + eval(expression)}
-/>
+```glass copy filename="test_example.glass"
+<Test>
+const input = "Write me a 5 line poem about dogs"
+</Test>
 
 <User>
-what is 2 to the .12345 power?
+@{input}
 </User>
 
-<Request model="gpt-3.5-turbo-0613" />
+<Request model="gpt - **3.5 - **turbo" />
 ```
 
-When we run this Glass file, we get:
+### Text
 
-```glass
-<Tool
-  name="calculator"
-  description="Calculates the result of a math expression."
-  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
-  run={({ expression }) => '' + eval(expression)}
-/>
+Use the `<Text>{:glass}` block to insert text within another block. This is helpful for adding text when a specific condition is satisfied.
 
+ - **if** <i>(optional condition)  </i> — Includes the block in the request only if the given condition evaluates to true.
 
+```glass copy filename="text_example.glass"
 <User>
-what is 2 to the .12345 power?
+<Text if={true}>
+I love you!
+</Text>
+
+<Text if={false}>
+I hate you!
+</Text>
 </User>
 
-// This is the assistant deciding to use the calculator tool and pass in arguments into the schema based on the request
-
-<Assistant model="gpt-3.5-turbo-0613" temperature={1} type="function_call">
-{
-  "name": "calculator",
-  "arguments": "{\n  \"expression\": \"Math.pow(2, 0.12345)\"\n}"
-}
-</Assistant>
-
-// This is the automatically generated function block letting you know that the LLM used the tool it had available
-
-<Function name="calculator">
-"1.0893367441616877"
-</Function>
-
-<Assistant model="gpt-3.5-turbo-0613" temperature={1}>
-2 to the power of 0.12345 is approximately 1.08934.
-</Assistant>
+<Request model="gpt - **3.5 - **turbo" />
 ```
+## Functional Blocks
+
 
 ### Code
 
-<Callout type="info">
-  Note: Executing code inside your Glass file is still experimental and presents challenges to some users writing complex code. We encourage you to file a bug report on GitHub or message us on [Discord](https://discord.com/invite/H64PFP2DCc)
-</Callout>
-Use the `<Code>{:glass}` block to designate code to be run before the request is made. This is useful for defining variables and functions that can be used in other blocks.
+Use the `<Code>{:glass}` block to define code that runs before the request is made. This is helpful for establishing variables and functions that can be employed in other blocks.
 
-- **language** <i>(required enum)</i> <br/> The language of the code. Defaults to `javascript`. Currently only `javascript` and `typescript` is supported.
+ - **language** <i>(required enumerated string)  </i> — The language of the code. Defaults to javascript. Currently, only javascript and typescript are supported.
 
 ```glass copy filename="init_example.glass"
 <Code>
@@ -190,94 +193,30 @@ Your job is to answer questions based on the following website.
 @{input}
 </User>
 
-<Request model="gpt-3.5-turbo" />
+<Request model="gpt - **3.5 - **turbo" />
 ```
 
 ### Request
 
-Use the `<Request />{:glass}` block to make an API request to a specified model, using all previous `<System>{:glass}`, `<User>{:glass}`, and `<Assistant>{:glass}` blocks as input.
+Use the the `<Request>{:glass}` block to make an API request to a specified model, using all preceding blocks as input.
 
-- **model** <i>(required)</i> <br/> The name of the model to inference. Defaults to `gpt-3.5-turbo`
-- **temperature** <i>(optional)</i> <br/> The temperance of the inference to the model.
-- **max_tokens** <i>(optional)</i> <br/> The maximum number of tokens to generate.
-- **onResponse** <i>(optional)</i> <br/> Function callback for when the response is received.
+ - **model** <i>(required string)  </i> — The name of the model for inference. Defaults to `gpt-3.5-turbo`.
+ - **temperature** <i>(optional number)  </i> — The temperature for the model's inference.
+ - **max_tokens** <i>(optional number)  </i> — The maximum number of tokens to generate.
+ - **onResponse** <i>(optional function)  </i> — Function callback invoked when the response is received.
 
 ```glass copy filename="request_example.glass"
-<Request model="gpt-4" maxTokens={50} temperature={0.05} />
-```
-
-
-### State
-
-This is an automatically generated block that is used to track the state of the conversation. You should not modify this block. This holds the state of the conversation. Here is the state of the conversation after running the 4th Glass file in our [Cookbook](/cookbook):
-
-```glass copy filename="events_state.glass"
-<State>
-{
-  "lastMessageText": "Sure, here's one: \n\nWhy did the kitten join Tinder? \nTo find her purr-fect match!",
-  "numResponses": 1
-}
-</State>
-```
-
-### System
-
-Use the `<System>{:glass}` block to designate instructions to the LLM.
-
-For Anthropic models, the `<System>{:glass}` block has the same effect `<User>{:glass}`.
-
-- **if** <i>(optional condition)</i> <br/> Allows you to conditionally include the block.
-
-```glass copy filename="system_example.glass"
-<System if={false}>
-This will not be included in the prompt :(
-</System>
-```
-
-### Test
-
-Use `<Test>{:glass}` to define test data to use when running the file. When actually calling this prompt, you'd need to provide the input. When no variable is specified, your prompt will use cases defined in a `<Text>{:glass}` block.
-
-```glass copy filename="test_example.glass"
-<Test>
-const input = "Write me a 5 line poem about dogs"
-</Test>
-
-<User>
-@{input}
-</User>
-
-<Request model="gpt-3.5-turbo" />
-```
-
-### Text
-
-Use the `<Text>{:glass}` to add text inside another block. This is useful for adding text if a condition is met.
-
-- **if** <i>(optional)</i> <br/> Includes the block in the request only if the condition is met.
-
-```glass copy filename="text_example.glass"
-<User>
-<Text if={true}>
-I love you!
-</Text>
-
-<Text if={false}>
-I hate you!
-</Text>
-</User>
-
-<Request model="gpt-3.5-turbo" />
+<Request model="gpt - **4" maxTokens={50} temperature={0.05} />
 ```
 
 ### Tool
 
-Use the `<Tool>{:glass}` block to add a tool that Glass can use at runtime. Keep in mind, this block is only valid in specific OpenAI models currently. Currently only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
+Use the `<Tool>{:glass}` block to integrate a tool that Glass can execute at runtime. Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
 
-- **name** <i>(optional)</i> <br/> Allows you to conditionally include the block.
-- **schema** <i>(required string)</i> <br/> This is the schema that the tool can accept.
-- **description** <i>(string)</i> <br/> The `description` attribute defines what tool is and how it might be used.
-- **run**<i>(required function) </i> This block defines the code to run when the tool is called.
+ - **name** <i>(optional string)  </i> — Assign a name to the tool.
+ - **schema** <i>(required string)  </i> — Defines the schema that the tool can accept.
+ - **description** <i>(optional string)  </i> — Describes the tool and its potential use.
+ - **run** <i>(required function)  </i> — Specifies the code to run when the tool is invoked.
 
 ```glass copy filename="function.glass"
 <Tool
@@ -291,21 +230,69 @@ Use the `<Tool>{:glass}` block to add a tool that Glass can use at runtime. Keep
 what is 2 to the .12345 power?
 </User>
 
-<Request model="gpt-3.5-turbo-0613" />
+<Request model="gpt - **3.5 - **turbo - **0613" />
 ```
 
-### User
+## Glass Generated Blocks
 
-Use the `<User>{:glass}` to designate the text coming from a human user.
+### Function
 
-- **name** <i>(optional string)</i> <br/> Assigns a name to the user.
+The `<Function>{:glass}` block is automatically generated and used to track the results of a function evaluation. For example, here is a sample Glass file that declares a `<Tool>{:glass}` called "calculator".
 
-- **if** <i>(optional condition)</i> <br/> Includes the block in the request only if the condition is met.
+ - **name** <i>(string)</i> The name of the function which was called.
 
-```glass copy filename="user_example.glass"
-<User if={true}>
-Hello AI!
+```glass copy filename="function_example.glass"
+<Tool
+  name="calculator"
+  description="Calculates the result of a math expression"
+  schema={z.object({ expression: z.string().describe('expression to eval with JS') })}
+  run={({ expression }) => '' + eval(expression)} />
+
+<User>
+what is 2 to the .12345 power?
 </User>
 
-<Request model="gpt-3.5-turbo" />
+<Request model="gpt - **3.5 - **turbo - **0613" />
+```
+
+When we run this Glass file, we get the following interaction:
+
+```glass
+<Tool
+  name="calculator"
+  description="Calculates the result of a math expression."
+  schema={z.object({ expression: z.string().describe('expression to eval with JS') })}
+  run={({ expression }) => '' + eval(expression)} />
+
+<User>
+what is 2 to the .12345 power?
+</User>
+// This is the assistant deciding to use the calculator tool and pass in arguments into the schema based on the request
+<Assistant model="gpt - **3.5 - **turbo - **0613" temperature={1} type="function_call">
+{
+  "name": "calculator",
+  "arguments": "{\n  \"expression\": \"Math.pow(2, 0.12345)\"\n}"
+}
+</Assistant>
+// This is the automatically generated function block letting you know that the LLM used the tool it had available
+<Function name="calculator">
+"1.0893367441616877"
+</Function>
+
+<Assistant model="gpt - **3.5 - **turbo - **0613" temperature={1}>
+2 to the power of 0.12345 is approximately 1.08934.
+</Assistant>
+```
+
+### State
+
+The `<State>{:glass}`block is an automatically generated block and used to track the state of the conversation. Do not modify this block. It maintains the state of the conversation. Below is the state of the conversation after running the 4th Glass file in our Cookbook:
+
+```glass copy filename="events_state.glass"
+<State>
+{
+  "lastMessageText": "Sure, here's one: \n\nWhy did the kitten join Tinder? \nTo find her purr-fect match!",
+  "numResponses": 1
+}
+</State>
 ```

@@ -9,7 +9,7 @@ export const models: ICards = {
     },
     darkIcon: {
       width: 24,
-      fill: '#f0f0f0',
+      fill: '#FFFFFF',
     },
     description:
       'OpenAI is an AI research and deployment company. Their mission is to ensure that artificial general intelligence benefits all of humanity',
@@ -23,7 +23,7 @@ export const models: ICards = {
     },
     darkIcon: {
       width: 24,
-      fill: '#f0f0f0',
+      fill: '#FFFFFF',
     },
     description:
       'Anthropic is an AI safety startup. They are focused on developing techniques for Constitutional AI to ensure artificial agents are helpful, harmless, and honest.',

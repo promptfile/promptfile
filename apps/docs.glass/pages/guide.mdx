@@ -3,41 +3,24 @@ import Image from 'next/image'
 import { Tab, Tabs } from 'nextra-theme-docs'
 import { Steps } from 'nextra-theme-docs'
 
-# Quickstart
+# Getting Started Guide
 
-This guide will get you all set up and ready to use the Glass language. We’ll cover how to get started, install the VS Code extension, and how to create your first Glass file.
+This guide offers a more comprehensive introduction to getting started with Glass.
 
 <Steps>
 
-### Installing the extension
+### **Installing the extension**
 
-Working with Glass is easiest in Visual Studio Code via the Glass extension. This extension provides the following features:
+Install the Glass VS Code extension through the VSCode Marketplace [here](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass).
 
-- run your Glass file in our playground
-- syntax highlighting and diagnostics for Glass files
-- transpiling Glass files to use in your project
+### **Creating your first `.glass` file**
 
-Install the Glass VS code extension [here](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass). or via the VS Code extension marketplace.
-
-### Save your OpenAI and/or Anthropic keys
-Save your keys in your Glass settings. Hit `Command (⌘) + Shift (⇧) + P` and search `Glass: open settings` which will bring you to the VSCode [settings](/vscode) to copy and paste them there.
-
-
-Alternatively, you can set your API keys on your environment as either `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
-
-<Callout type="info">Note: Glass does not store or log your API keys. They are saved locally. </Callout>
-
-### Creating your first `.glass` file
-
-{/* Need to make the example much more simpler and not show off too much, also need to have it include the chat block */}
-
-After installing the extension, create a new file called `example.glass` and copy/paste the following content:
+After installing the extension, open up a workspace and create a new file called `example.glass`. Copy/paste the following content:
 
 ```glass copy filename="example.glass"
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku. In your response, add new lines to format the haiku.
 </System>
-
 
 <User>
 The ocean is so big! I wonder what is out there. I want to explore.
@@ -46,11 +29,19 @@ The ocean is so big! I wonder what is out there. I want to explore.
 <Request model="gpt-3.5-turbo" />
 ```
 
-### Run your first `.glass` file
+### **Saving your API Keys**
 
-In `example.glass`, we're using the `gpt-3.5-turbo` model, so we'll need to input the key for OpenAI `glass.openaiKey` (or set `OPENAI_API_KEY` on your environment).
+Save your keys in Glass settings by pressing `Command (⌘) + Shift (⇧) + P,` searching for Glass: open settings, and pasting your keys in the VSCode settings.
 
-When you are ready to run, either hit `Command (⌘) Enter (↩)` or `Command (⌘) + Shift (⇧) + Enter (↩)` or run the Glass file via selecting the VSCode Command Palette `Glass: run`.
+Alternatively, you can set your API keys on your environment as either `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
+
+<Callout type="info">Note: Glass does not store or log your API keys. They are saved locally. </Callout>
+
+### **Running your first `.glass` file**
+
+When you are ready to run the file, run the Glass file by running the VSCode Command Palette `Glass: run` command. You can access the VSCode Command Palette by pressing `Command (⌘) + Shift (⇧) + P,` and searching for `Glass: run`.
+
+Alternatively, you can run your file by pressing `Command (⌘) Enter (↩)`.
 
 <br />
 
