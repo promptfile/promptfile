@@ -242,8 +242,6 @@ async function runGlassChat(
     }
   }
 
-  console.log('function args', JSON.stringify(functionArgs, null, 2))
-
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {

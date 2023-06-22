@@ -266,8 +266,8 @@ export const glassElements: GlassElement[] = [
         detail: 'parameters of the tool',
         documentation:
           'The `parameters` attribute defines the parameters of the tool with JSON schema (https://json-schema.org/understanding-json-schema/)',
-        type: 'array',
-        insertText: 'parameters={[]}',
+        type: 'object',
+        insertText: 'parameters={{}}',
       },
       {
         name: 'run',
