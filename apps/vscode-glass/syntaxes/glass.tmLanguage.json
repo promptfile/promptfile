@@ -139,7 +139,7 @@
       ]
     },
     "init-element": {
-      "begin": "^(<)(Init)(>)$",
+      "begin": "^(<)(Code)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -151,7 +151,7 @@
           "name": "punctuation.definition.tag.end.jsx"
         }
       },
-      "end": "^(<\\/)(Init)(>)$",
+      "end": "^(<\\/)(Code)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"

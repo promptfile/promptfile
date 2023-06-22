@@ -1,4 +1,4 @@
-<Init>
+<Code>
 const tools = [
   {
     name: 'calculator',
@@ -38,7 +38,7 @@ async function runAction(data: { action: 'calculator' | 'search'; action_input: 
   }
   return 'No good search result found'
 }
-</Init>
+</Code>
 
 <Test>
 return [
@@ -117,3 +117,5 @@ DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRU
     }
   }}
 />
+
+<Request model="gpt-3.5-turbo" />

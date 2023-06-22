@@ -9,12 +9,12 @@ The Glass Cookbook provides a collection of practical examples that demonstrate 
 
 ### **Declaring Variables**
 
-To declare variables for interpolation within your prompt, utilize the `<Init>{:glass}` block. Use the `@{variableName}` syntax to use those variables in your prompt. Ensure that all variables are placed within a block. If you want the user to define the variable when interacting, do not declare it. The Playground will automatically as the user to define those undeclared variables.
+To declare variables for interpolation within your prompt, utilize the `<Code>{:glass}` block. Use the `@{variableName}` syntax to use those variables in your prompt. Ensure that all variables are placed within a block. If you want the user to define the variable when interacting, do not declare it. The Playground will automatically as the user to define those undeclared variables.
 
 ```glass copy filename="haiku.glass"
-<Init>
+<Code>
 const myFirstVariable = "The deep blue ocean"
-</Init>
+</Code>
 
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku. In your response, add new lines to format the haiku.
@@ -29,10 +29,10 @@ You are HaikuGPT. Always respond to the user in the form of a haiku. In your res
 
 ### **Executing Code**
 
-The `<Init>{:glass}` block provides versatility, not only permitting variable declaration but also enabling code execution for a range of purposes, including accessing user profiles. The example below showcases how incorporating user profile data into your prompt yields a more personalized and engaging conversational interaction.
+The `<Code>{:glass}` block provides versatility, not only permitting variable declaration but also enabling code execution for a range of purposes, including accessing user profiles. The example below showcases how incorporating user profile data into your prompt yields a more personalized and engaging conversational interaction.
 
 ```glass copy filename="executeCode.glass"
-<Init>
+<Code>
 const userProfile = {
   name: 'Jane Doe',
   age: 25,
@@ -43,7 +43,7 @@ const userProfile = {
   favoriteFood: 'tacos',
 }
 const input = "What is the name of the user and what is their favorite food?"
-</Init>
+</Code>
 
 <System>
 You are having a conversation with the following user:
@@ -62,16 +62,16 @@ You are having a conversation with the following user:
 
 ### **Loading data into your prompt**
 
-You may also retrieve information from external sources, such as a database or website. In this example, we demonstrate fetching HTML content from a website and incorporating it into our prompt using an `<Init>{:glass}` block. To integrate more dynamic information into the conversation, consider making API requests or loading external data.
+You may also retrieve information from external sources, such as a database or website. In this example, we demonstrate fetching HTML content from a website and incorporating it into our prompt using an `<Code>{:glass}` block. To integrate more dynamic information into the conversation, consider making API requests or loading external data.
 
 Sample user queries might include: "Where did Elliott go to grad school?" or "Where has Elliott worked?".
 
 ```glass copy filename="websiteChat.glass"
-<Init>
+<Code>
 const res = await fetch('https://elliottburris.com')
 const html = await res.text()
 const input = "Where did Elliott go to school?"
-</Init>
+</Code>
 
 <System>
 Your job is to answer questions based on the following website.
@@ -113,7 +113,7 @@ What is 2 to the .12345 power?
 
 For complex prompts, achieving the desired outcome often requires executing multiple requests. In this example, we will link two prompts to generate both a synopsis of a fictitious play and a review of that fictitious play in a single prompt.
 
-<Callout type="info"> Observe the utilization of the `<Test>{:glass}` block, replacing the `<Init>{:glass}` block. This creates a test block that passes the test case as arguments when running the file. However, when implementing the Glass file within the actual project, the arguments can be supplied as parameters during invocation. </Callout>
+<Callout type="info"> Observe the utilization of the `<Test>{:glass}` block, replacing the `<Code>{:glass}` block. This creates a test block that passes the test case as arguments when running the file. However, when implementing the Glass file within the actual project, the arguments can be supplied as parameters during invocation. </Callout>
 
 ```glass copy filename="promptChaining.glass"
 <Test>
@@ -144,12 +144,12 @@ In this example, we set an empty string as the last message sent by the user and
 The `<State>{:glass}` is generated automatically to a file to keep track of the state of a chat. Additionally, observe the onResponse attribute, which permits code execution based on the LLM request's response. In this situation, we use the LLM request's response to update the last message sent by the user and count the number of messages exchanged.
 
 ```glass copy filename="state.glass"
-<Init>
+<Code>
 const [lastMessageText, setLastMessageText] = useState('')
 const [numMessages, setNumMessages] = useState(0)
 const input = "Tell me a joke about dogs"
 setNumMessages(numMessages + 1)
-</Init>
+</Code>
 
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
@@ -166,7 +166,7 @@ You are FunnyGPT. Respond to the user with a message that's maximally likely to 
 LLMs excel in comprehending semantic meaning and text classification. This example highlights the `<For>{:glass}` block, which enables iteration through an array of examples. Here, we iterate over an array of comments and their corresponding classifications.
 
 ```glass copy filename="classify.glass"
-<Init>
+<Code>
 const examples = [
   {
     message: 'ur product never works, def want my money back',
@@ -186,7 +186,7 @@ const examples = [
   },
 ]
 const userMessage = 'This product is highly defunct. I want my money back!'
-</Init>
+</Code>
 
 <System>
 You are an AI community moderator. Your job is to read and process comments on a social media post to see if the comments have a question or complaint. If the comment has a question or complaint, return "NEEDS_ATTENTION". Otherwise, return "SKIP". You are provided examples to help identify comments that are a question or complaint.
@@ -214,7 +214,7 @@ You are an AI community moderator. Your job is to read and process comments on a
 In this example, conditional logic allows for dynamic adjustments to your prompt based on specific conditions. Utilizing the `useState hook`, we maintain a record of the number of messages sent. Subsequently, the `if` attribute is employed to modify the prompt contingent upon the message count.
 
 ```glass copy filename="conditionalLogic.glass"
-<Init>
+<Code>
 const [numMessages, setNumMessages] = useState(0)
 const input = "What a day, I want you to tell me about something."
 if (numMessages > 2){
@@ -222,7 +222,7 @@ if (numMessages > 2){
 } else {
   isLongConversation = false;
 }
-</Init>
+</Code>
 
 <System if={!isLongConversation}>
 You are NickelbackGPT. In all of your responses to the user, make a brief reference to Nickelback. Only discuss things related to Nickelback.

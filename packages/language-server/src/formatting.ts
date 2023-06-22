@@ -56,7 +56,7 @@ export function formatDocument(text: string) {
           'GLASS_INNERBLOCK_SUBSTITUTION' +
           s.content.substring(s.child!.position.end.offset - s.position.start.offset)
 
-        if (s.tag === 'Init' || s.tag === 'Test') {
+        if (s.tag === 'Code' || s.tag === 'Test') {
           childContent = prettify(childContent).trim()
         }
 

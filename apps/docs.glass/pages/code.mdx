@@ -12,12 +12,12 @@ import Image from 'next/image'
 
 ## Executable Code
 
-Glass features an `<Init>{:glass}` element that enables you to write code to be executed prior to evaluating the prompt. This is particularly helpful for tasks such as data retrieval, performing calculations, or executing any other code that needs to be run before prompting the large language model (LLM).
+Glass features an `<Code>{:glass}` element that enables you to write code to be executed prior to evaluating the prompt. This is particularly helpful for tasks such as data retrieval, performing calculations, or executing any other code that needs to be run before prompting the large language model (LLM).
 
 ```glass copy filename="example.glass"
-<Init>
+<Code>
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
-</Init>
+</Code>
 
 <System>
 @{myMessage}
@@ -43,16 +43,16 @@ Here's an example of a request utilizing the onResponse function. To access the 
 Similar to React's [`useState`](https://react.dev/reference/react/useState) hook, which adds state variables to components, Glass also supports `useState`. To declare a state variable in Glass, follow this example:
 
 ```glass copy filename="useState.glass"
-<Init>
+<Code>
 const [stateVariable, setStateVariable] = useState(initialValue)
-</Init>
+</Code>
 ```
 You can then update the state variable by calling the `setStateVariable` function. This will add the updated state variable to the Glass file.
 ```glass copy filename="updatingState.glass"
-<Init>
+<Code>
 const [stateVariable, setStateVariable] = useState(initialValue)
 setStateVariable(newValue)
-</Init>
+</Code>
 ```
 
 ## Putting it all together
@@ -60,11 +60,11 @@ setStateVariable(newValue)
 Below is an example showcasing the combined use of onResponse and useState in a Glass file:
 
 ```glass copy filename="events_state.glass"
-<Init>
+<Code>
 // This works just like `useState` in React
 const [lastMessageText, setLastMessageText] = useState('')
 const [numResponses, setNumResponses] = useState(0)
-</Init>
+</Code>
 
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.
@@ -93,11 +93,11 @@ In the example provided earlier, after executing the onResponse function and upd
 }
 </State>
 
-<Init>
+<Code>
 // This works just like `useState` in React
 const [lastMessageText, setLastMessageText] = useState('')
 const [numResponses, setNumResponses] = useState(0)
-</Init>
+</Code>
 
 <System>
 You are FunnyGPT. Respond to the user with a message that's maximally likely to make them laugh.

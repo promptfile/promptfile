@@ -1,8 +1,8 @@
-<Init>
+<Code>
 import { sayHello } from './sayHello'
 
 console.log(sayHello({ name: 'chat' }))
-</Init>
+</Code>
 
 <System>
 You are a helpful assistant.

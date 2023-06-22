@@ -83,10 +83,10 @@ And this is the end`
   it('should parse glass document with Python code', () => {
     const mdx = `Hello world this is a document.
 
-<Init language="python">
+<Code language="python">
 a = {"hello": "world"}
 b = list(map(lambda x: x + 1, [1, 2, 3]))
-</Init>
+</Code>
 
 <Block role="system" content={(lambda x: x + " world")("hello")} />
 `
@@ -189,7 +189,7 @@ b = list(map(lambda x: x + 1, [1, 2, 3]))
             offset: 33,
           },
         },
-        tagName: 'Init',
+        tagName: 'Code',
         type: 'mdxJsxFlowElement',
       },
       {

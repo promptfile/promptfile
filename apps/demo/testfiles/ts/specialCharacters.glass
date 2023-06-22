@@ -1,7 +1,7 @@
-<Init>
+<Code>
 const type = 'assistant'
 const role = `helpful ${type} @{type}`
-</Init>
+</Code>
 
 <System>
 You are a @{role}.
