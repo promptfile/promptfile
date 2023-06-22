@@ -15,7 +15,7 @@ import Image from 'next/image'
 
 Promptfile features an `<Code>{:glass}` element that enables you to write code to be executed prior to evaluating the prompt. This is particularly helpful for tasks such as data retrieval, performing calculations, or executing any other code that needs to be run before prompting the large language model (LLM).
 
-```glass copy filename="example.glass"
+```prompt copy filename="example.glass"
 <Code>
 const myMessage = "This is code! You can define which language you want in the frontmatter or adjust your default language in your VSCode settings."
 </Code>
@@ -34,7 +34,7 @@ Similar to React, Promptfile incorporates an event handling system. The onRespon
 
 Here's an example of a request utilizing the onResponse function. To access the response from the request, use the .message attribute of the response object:
 
-```glass copy filename="onResponse.glass"
+```prompt copy filename="onResponse.glass"
 <Request model="gpt-4" onResponse = {response => {
     someFunction(response.message)
 }} />
@@ -44,13 +44,13 @@ Here's an example of a request utilizing the onResponse function. To access the 
 
 Similar to React's [`useState`](https://react.dev/reference/react/useState) hook, which adds state variables to components, Promptfile also supports `useState`. To declare a state variable in Promptfile, follow this example:
 
-```glass copy filename="useState.glass"
+```prompt copy filename="useState.glass"
 <Code>
 const [stateVariable, setStateVariable] = useState(initialValue)
 </Code>
 ```
 You can then update the state variable by calling the `setStateVariable` function. This will add the updated state variable to the Promptfile file.
-```glass copy filename="updatingState.glass"
+```prompt copy filename="updatingState.glass"
 <Code>
 const [stateVariable, setStateVariable] = useState(initialValue)
 setStateVariable(newValue)
@@ -61,7 +61,7 @@ setStateVariable(newValue)
 
 Below is an example showcasing the combined use of onResponse and useState in a Promptfile file:
 
-```glass copy filename="events_state.glass"
+```prompt copy filename="events_state.glass"
 <Code>
 // This works just like `useState` in React
 const [lastMessageText, setLastMessageText] = useState('')
@@ -87,7 +87,7 @@ can you tell me a joke about kittens?
 
 In the example provided earlier, after executing the onResponse function and updating the state variable responseMessage, the Promptfile file will display the updated state.
 
-```glass copy filename="events_state.glass"
+```prompt copy filename="events_state.glass"
 <State>
 {
   "lastMessageText": "Sure, here's one: \n\nWhy did the kitten join Tinder? \nTo find her purr-fect match!",

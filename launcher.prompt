@@ -11,7 +11,7 @@ Promptfile is a declarative framework for prompting large language models. It al
 
 For reference, here's an example Promptfile file:
 
-````glass
+````prompt
 // this is typescript code that will be executed by the glass runtime.
 
 <System>
