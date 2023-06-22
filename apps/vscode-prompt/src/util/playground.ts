@@ -1,11 +1,5 @@
-import { parseGlassMetadata } from '@glass-lang/glassc'
-import {
-  LANGUAGE_MODELS,
-  LanguageModelCreator,
-  parseChatBlocks,
-  parseGlassBlocks,
-  parseGlassDocument,
-} from '@glass-lang/glasslib'
+import { parseFrontmatterFromGlass, parseGlassMetadata } from '@glass-lang/glassc'
+import { LANGUAGE_MODELS, LanguageModelCreator, parseChatBlocks, parseGlassBlocks } from '@glass-lang/glasslib'
 import fs from 'fs'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
@@ -251,9 +245,8 @@ export async function createPlayground(
         break
       case 'runSession':
         async function runGlassExtension(glass: string, sessionToRun: string, inputs: any) {
-          const elements = parseGlassDocument(glass)
-          const requestElement = elements.find(element => element.tag && ['Request', 'Chat'].includes(element.tag))
-          const model = requestElement?.attrs?.find((attr: any) => attr.name === 'model')?.stringValue
+          const parsedFrontmater = parseFrontmatterFromGlass(glass)
+          const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('prompt').get('defaultModel')
           const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
           if (!languageModel) {
             await vscode.window.showErrorMessage(`Unable to find model ${model}`)
