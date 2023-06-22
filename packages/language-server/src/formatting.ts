@@ -1,5 +1,5 @@
 import { parseFrontmatterFromGlass } from '@glass-lang/glassc'
-import { parseGlassBlocks, parseGlassDocument, removeGlassFrontmatter } from '@glass-lang/glasslib'
+import { parseGlassDocument, removeGlassFrontmatter } from '@glass-lang/glasslib'
 import * as prettier from 'prettier'
 import { glassElements } from './elements'
 
@@ -68,14 +68,6 @@ export function formatDocument(text: string) {
       return s
     })
     finalText = blocks.map(b => b.content).join('')
-
-    // Add <Request /> tag if not present
-    const finalBlocks = parseGlassBlocks(finalText)
-    const hasRequest =
-      finalText.includes('<Request ') || finalBlocks.some(b => b.type === 'block' && b.tag === 'Request')
-    if (!hasRequest) {
-      finalText = `${finalText}\n\n<Request model="gpt-3.5-turbo" />`
-    }
 
     for (const element of glassElements) {
       const regex = new RegExp(`<${element.name}(\\s+[^>]*)?>\\s*<\\/${element.name}>`, 'g')
