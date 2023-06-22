@@ -275,7 +275,7 @@ export interface RequestData {
 export interface FunctionData {
   name: string
   description: string
-  schema: any
+  parameters: any
   run: (data: any) => Promise<any>
 }
 

@@ -5,7 +5,19 @@ Providing a schema explains to the LLM how to use your tool. Use https://github.
 <Tool
   name="calculator"
   description="Calculates the result of a math expression."
-  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
+  parameters={[
+    {
+      type: 'object',
+      properties: {
+        expression: {
+          type: 'string',
+          description: 'expression to eval with JavaScript',
+        },
+      },
+      required: ['expression'],
+      additionalProperties: false,
+    },
+  ]}
   run={({ expression }) => '' + eval(expression)}
 />
 

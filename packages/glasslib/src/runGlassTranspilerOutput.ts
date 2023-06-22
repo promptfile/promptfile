@@ -1,7 +1,6 @@
 import { checkOk } from '@glass-lang/util'
 import fetch from 'node-fetch'
 import { Readable } from 'stream'
-import { zodToJsonSchema } from 'zod-to-json-schema'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { ChatBlock, parseChatBlocks2 } from './parseChatBlocks'
 import { FunctionData, RequestData } from './parseGlassBlocks'
@@ -237,11 +236,13 @@ async function runGlassChat(
       functions: functions.map(f => ({
         name: f.name,
         description: f.description,
-        parameters: (zodToJsonSchema(f.schema, f.name) as any).definitions[f.name],
+        parameters: f.parameters,
       })),
       function_call: 'auto',
     }
   }
+
+  console.log('function args', JSON.stringify(functionArgs, null, 2))
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -309,7 +310,7 @@ async function runGlassChat(
   if (response.function_call != null) {
     const fn = functions.find(f => f.name === response.function_call!.name)
     checkOk(fn, `Function ${response.function_call!.name} not found`)
-    const args = fn.schema.parse(JSON.parse(response.function_call!.arguments))
+    const args = JSON.parse(response.function_call!.arguments)
     const result = await fn.run(args)
     functionObservation = JSON.stringify(result, null, 2)
   }

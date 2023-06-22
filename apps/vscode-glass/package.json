@@ -61,8 +61,7 @@
     "diff": "^5.1.0",
     "esbuild": "^0.17.18",
     "node-fetch": "^3.3.1",
-    "vscode-languageclient": "^8.1.0",
-    "zod": "^3.21.4"
+    "vscode-languageclient": "^8.1.0"
   },
   "contributes": {
     "activationEvents": [

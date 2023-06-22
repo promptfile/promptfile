@@ -247,7 +247,7 @@ export const glassElements: GlassElement[] = [
     documentation: 'Sets a tool the Glass runtime can use',
     detail: '(element) define a tool',
     closingType: 'selfClosing',
-    insertText: 'Tool name="$1" description="$2" schema={z.object({$3})} run={(arg) => $4} />',
+    insertText: 'Tool name="$1" description="$2" parameters={z.object({$3})} run={(arg) => $4} />',
     attributes: [
       {
         name: 'name',
@@ -262,11 +262,12 @@ export const glassElements: GlassElement[] = [
         type: 'string',
       },
       {
-        name: 'schema',
-        detail: 'schema of the tool',
-        documentation: 'The `schema` attribute defines the schema of the tool.',
-        type: 'object',
-        insertText: 'schema={z.object({$1})}',
+        name: 'parameters',
+        detail: 'parameters of the tool',
+        documentation:
+          'The `parameters` attribute defines the parameters of the tool with JSON schema (https://json-schema.org/understanding-json-schema/)',
+        type: 'array',
+        insertText: 'parameters={[]}',
       },
       {
         name: 'run',
