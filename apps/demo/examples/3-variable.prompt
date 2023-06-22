@@ -1,3 +1,7 @@
+---
+model: gpt-3.5-turbo
+---
+
 Awesome, you're well on your way to working with Promptfile!
 
 Being able to run a prompt once is great, but what if you want to run it multiple times? Language models are particularly skilled at back-and-forth conversations, so let's try that out.
@@ -13,6 +17,3 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 <User>
 @{myFirstVariable}
 </User>
-
-Remember, cmd+enter on Mac / ctrl+enter on Windows to run the file
-<Request model="gpt-3.5-turbo" />

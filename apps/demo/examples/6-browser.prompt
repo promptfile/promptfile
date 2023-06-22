@@ -1,3 +1,7 @@
+---
+model: gpt-3.5-turbo
+---
+
 Many interesting applications of AI technology involve loading information dynamically (e.g. from an API) and giving the LLM access to this data.
 
 In this example, let's load the raw HTML from the personal website of one of the creators of Promptfile.

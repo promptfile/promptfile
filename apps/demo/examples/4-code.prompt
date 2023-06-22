@@ -1,4 +1,8 @@
-What if you want to run code in your Promptfile file? Good news — there's a block just for that purpose! Right now Promptfile only supports Typescript / Javascript in the  but we are looking to expand language support soon.
+---
+model: gpt-3.5-turbo
+---
+
+What if you want to run code in your .prompt file? Good news — there's a block just for that purpose! Right now .prompt only supports Typescript / Javascript in the  but we are looking to expand language support soon.
 
 
 <Code>
@@ -23,7 +27,3 @@ You are having a conversation with the following User:
 
 Only answer questions from the User based on the information above. Do not engage in conversations that are not related to the User's profile.
 </System>
-
-
-
-<Request model="gpt-3.5-turbo" />
