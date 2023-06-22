@@ -1,19 +1,22 @@
 <Test>
 // const question = "where did elliott go to school"
 // return an array of objects to run a list of tests; no need to return if you just want a single test
-return [{
-    question: "where did elliott go to school",
-    url: "https://elliottburris.com"
-},{
+return [
+  {
+    question: 'where did elliott go to school',
+    url: 'https://elliottburris.com',
+  },
+  {
     question: "what is elliott's last name",
-    url: "https://elliottburris.com"
-}]
+    url: 'https://elliottburris.com',
+  },
+]
 </Test>
 
-<Init>
+<Code>
 const res = await fetch(url)
 const website = await res.text()
-</Init>
+</Code>
 
 <System>
 your job is to answer questions based on the following website code:

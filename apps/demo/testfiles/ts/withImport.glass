@@ -1,8 +1,8 @@
-<Init>
+<Code>
 import c from 'c'
 
 const a = '3'
-</Init>
+</Code>
 
 <User>
 @{a} @{b} @{c}

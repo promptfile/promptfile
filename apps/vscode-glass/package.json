@@ -197,7 +197,7 @@
             }
           },
           {
-            "scope": "source.glass.init.name",
+            "scope": "source.glass.code.name",
             "settings": {
               "foreground": "#FFB454",
               "fontStyle": "italic"

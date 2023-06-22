@@ -76,7 +76,7 @@ export function transpileGlassFileTypescript(
   // iterate over all the jsxExpressions (values inside `{ }`) and replace them with a number if they're supposed to be treated like code (values inside `${ }`)
   let codeSanitizedDoc = ''
   for (const node of glasslib.parseGlassDocument(glasslib.removeGlassFrontmatter(doc))) {
-    if (node.type === 'comment' || node.type === 'frontmatter' || node.tag === 'Init' || node.tag === 'Test') {
+    if (node.type === 'comment' || node.type === 'frontmatter' || node.tag === 'Code' || node.tag === 'Test') {
       codeSanitizedDoc += node.content // or remove frontmatter from code sanitized doc?
       continue
     }
@@ -128,7 +128,7 @@ export function transpileGlassFileTypescript(
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
-    if (jsxNode.tag === 'Test' || jsxNode.tag === 'Init') {
+    if (jsxNode.tag === 'Test' || jsxNode.tag === 'Code') {
       // don't strip away codeblocks, yet
       // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
       continue // ignore all interpolation sequences / requirements in code blocks
@@ -208,7 +208,7 @@ export function transpileGlassFileTypescript(
   }
 
   let toplevelCode = parsedDocument
-    .filter(d => d.tag === 'Init')
+    .filter(d => d.tag === 'Code')
     .map(d => d.child!.content)
     .join('\n')
 
@@ -219,12 +219,12 @@ export function transpileGlassFileTypescript(
   let imports = trimmedImports.imports
 
   imports = rewriteImports(
-    `<Init>\n${imports}\n</Init>`,
+    `<Code>\n${imports}\n</Code>`,
     outputDirectory.replace('${workspaceFolder}', workspaceFolder),
     path.join(folderPath, fileName)
   )
 
-  // now strip <Init> again
+  // now strip <Code> again
   imports = glasslib.parseGlassBlocks(imports)[0].child!.content
 
   const glassImports = parseTsGlassImports(imports)
@@ -275,7 +275,7 @@ export function transpileGlassFileTypescript(
   const escapedInterpolatedDoc = glasslib
     .parseGlassDocument(codeSanitizedDoc)
     .map(b => {
-      if (b.type === 'block' && b.tag !== 'Init' && b.tag !== 'Test') {
+      if (b.type === 'block' && b.tag !== 'Code' && b.tag !== 'Test') {
         // if it's a block, we need to escape the backticks but only in the attributes
         const bContentWithoutChild =
           b.content.substring(0, b.child!.position.start.offset - b.position.start.offset) +

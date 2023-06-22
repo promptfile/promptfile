@@ -1,11 +1,11 @@
 As you've probably noticed, Glass files can contain more than just the prompt.
 We can store data in the Glass file as well!
 
-<Init>
+<Code>
 // This works just like `useState` in React
 const [lastMessageText, setLastMessageText] = useState('')
 const [numResponses, setNumResponses] = useState(0)
-</Init>
+</Code>
 
 awesome! we've now set state in the file itself. pretty crazy!
 
@@ -27,3 +27,5 @@ The `onResponse` attribute lets you execute code with the response from the LLM.
     setLastMessageText(response.message)
   }}
 />
+
+<Request model="gpt-3.5-turbo" />

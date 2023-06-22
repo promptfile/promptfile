@@ -73,11 +73,11 @@ export function getGlassImportPrompt() {
     const [field, setField] = useState('', GLASS_STATE, 'field')
 
     const GLASSVAR = {}
-    const TEMPLATE = `<Init>
+    const TEMPLATE = `<Code>
 import questionAnswer from './questionAnswer.glass'
 
 const [field, setField] = useState('')
-</Init>
+</Code>
 
 <Assistant>
 You are an assistant that creates questions for Jeopardy.
@@ -98,7 +98,7 @@ Make a question about United States history.
       fileName: 'glassImport',
       interpolatedDoc: TEMPLATE,
       originalDoc:
-        "<Init>\nimport questionAnswer from './questionAnswer.glass'\n\nconst [field, setField] = useState('')\n</Init>\n\n<Assistant>\nYou are an assistant that creates questions for Jeopardy.\n</Assistant>\n\n<User>\nMake a question about United States history.\n</User>\n\n<Request\n  model=\"gpt-3.5-turbo\"\n  onResponse={async ({ message }) => {\n    const answer = await questionAnswer({ question: message })\n    setField(answer)\n  }}\n/>",
+        "<Code>\nimport questionAnswer from './questionAnswer.glass'\n\nconst [field, setField] = useState('')\n</Code>\n\n<Assistant>\nYou are an assistant that creates questions for Jeopardy.\n</Assistant>\n\n<User>\nMake a question about United States history.\n</User>\n\n<Request\n  model=\"gpt-3.5-turbo\"\n  onResponse={async ({ message }) => {\n    const answer = await questionAnswer({ question: message })\n    setField(answer)\n  }}\n/>",
       state: GLASS_STATE,
       interpolationArgs: opt.args || {},
       requestBlocks: [

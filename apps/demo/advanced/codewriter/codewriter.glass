@@ -1,4 +1,4 @@
-<Init>
+<Code>
 import fs from 'fs'
 import path from 'path'
 import { exec } from 'child_process'
@@ -18,7 +18,7 @@ async function runTests() {
 }
 
 const testOutput = await runTests()
-</Init>
+</Code>
 
 <System>
 You are a superintelligent AI. You've been tasked with helping the User to write code.
@@ -123,3 +123,5 @@ DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRU
     }
   }}
 />
+
+<Request model="gpt-3.5-turbo" />

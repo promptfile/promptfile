@@ -1,11 +1,10 @@
-
-<Init>
+<Code>
 const items = [
   { role: 'user', content: 'name an ice cream' },
   { role: 'assistant', content: 'Vanilla' },
   { role: 'user', content: 'name a color' },
 ]
-</Init>
+</Code>
 
 <For each={items} as="item">
 <Block role={item.role}>

@@ -1,7 +1,7 @@
 What if you want to run code in your Glass file? Good news — there's a block just for that purpose! Right now Glass only supports Typescript / Javascript in the  but we are looking to expand language support soon.
 
 
-<Init>
+<Code>
 const userProfile = {
   name: 'Jane Doe',
   age: 25,
@@ -11,7 +11,7 @@ const userProfile = {
   favoriteColor: 'blue',
   favoriteFood: 'pizza',
 }
-</Init>
+</Code>
 
 now, use the data from your code in the prompt:
 <System>

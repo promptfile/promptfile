@@ -2,10 +2,10 @@ This is a simple prompt that tells the LLM to respond like a pirate. The prompt 
 
 We can actually execute Typescript as a Code block at the top of our Glass file. async works too — just be sure to await!
 
-<Init>
+<Code>
 const date = new Date()
 const formattedDate = date.toISOString().split('T')[0]
-</Init>
+</Code>
 
 now, add the data to the System prompt.
 <System>

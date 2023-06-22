@@ -119,7 +119,7 @@ export const glassElements: GlassElement[] = [
     ],
   },
   {
-    name: 'Init',
+    name: 'Code',
     documentation: 'Initialize with custom TypeScript code',
     detail: '(element) write custom initialization code',
     closingType: 'nonSelfClosing',

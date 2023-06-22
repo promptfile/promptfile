@@ -193,9 +193,9 @@ left alone
     })
 
     it('should transform document with nested text expressions', () => {
-      const glass = `<Init>
+      const glass = `<Code>
 const useGandhi = true
-</Init>
+</Code>
 
 <System>
 You are a highly-intelligent AI.
@@ -230,7 +230,7 @@ who was Einstein?
         },
         undeclaredSymbols: [],
         jsxInterpolations: {
-          '0': '"""{}""".format("""<Init>\n{}\n</Init>""".format("""const useGandhi = true""".format()))',
+          '0': '"""{}""".format("""<Code>\n{}\n</Code>""".format("""const useGandhi = true""".format()))',
           '1': '"""{}""".format("""<System>\n{}\n</System>""".format("""You are a highly-intelligent AI.""".format()))',
           '2': '"""{}""".format("""<User>\n{}\n</User>""".format("""{}\n\n{}""".format(GLASSVAR[0], GLASSVAR[1])))',
           '3': '"""{}""".format("""<User>\n{}\n</User>""".format("""{}\n\n{}""".format(GLASSVAR[2], GLASSVAR[3])))',

@@ -1,8 +1,8 @@
-<Init>
+<Code>
 import questionAnswer from './questionAnswer.glass'
 
 const [field, setField] = useState('')
-</Init>
+</Code>
 
 <Assistant>
 You are an assistant that creates questions for Jeopardy.
@@ -19,3 +19,5 @@ Make a question about United States history.
     setField(answer)
   }}
 />
+
+<Request model="gpt-3.5-turbo" />

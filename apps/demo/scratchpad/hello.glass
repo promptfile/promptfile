@@ -1,6 +1,6 @@
-<Init>
+<Code>
 const foo = "bar"
-</Init>
+</Code>
 
 <User>
 @{foo}

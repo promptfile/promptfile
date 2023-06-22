@@ -139,25 +139,25 @@
       ]
     },
     "init-element": {
-      "begin": "^(<)(Init)(>)$",
+      "begin": "^(<)(Code)(>)$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.init.name"
+          "name": "source.glass.code.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
         }
       },
-      "end": "^(<\\/)(Init)(>)$",
+      "end": "^(<\\/)(Code)(>)$",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.tag.end.jsx"
         },
         "2": {
-          "name": "source.glass.init.name"
+          "name": "source.glass.code.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"

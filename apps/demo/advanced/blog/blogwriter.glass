@@ -1,11 +1,11 @@
 https://sharegpt.com/c/jGKq34x
 
-<Init>
+<Code>
 import fs from 'fs'
 import path from 'path'
 
 const draft = fs.readFileSync(path.join(__dirname, 'blog.txt'), 'utf-8').toString()
-</Init>
+</Code>
 
 <System>
 You are a superintelligent AI. You've been tasked with helping the User to research topics and assist in drafting blog posts according to the research.
@@ -71,3 +71,5 @@ DO NOT FORGET: all responses must adhere to the format of RESPONSE FORMAT INSTRU
     }
   }}
 />
+
+<Request model="gpt-3.5-turbo" />
