@@ -65,7 +65,7 @@ export async function createPlayground(
 
   // If there's no existing panel, create a new one
   const panel = vscode.window.createWebviewPanel(
-    'glass.webView',
+    'prompt.webView',
     `${filename} (playground)`,
     {
       viewColumn: getCurrentViewColumn(playgrounds),
@@ -188,7 +188,7 @@ export async function createPlayground(
         const sessionToShare = message.data.session
         const githubKey = getGithubKey()
         if (githubKey == null || githubKey === '') {
-          await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.githubKey')
+          await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.githubKey')
           await vscode.window.showErrorMessage('Add GitHub API key to share as gist.')
           return
         }
@@ -263,7 +263,7 @@ export async function createPlayground(
             case LanguageModelCreator.anthropic:
               const anthropicKey = getAnthropicKey()
               if (anthropicKey == null || anthropicKey === '') {
-                await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.anthropicKey')
+                await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.anthropicKey')
                 await vscode.window.showErrorMessage('Add Anthropic API key to run Promptfile files.')
                 return
               }
@@ -271,7 +271,7 @@ export async function createPlayground(
             case LanguageModelCreator.openai:
               const openaiKey = getOpenaiKey()
               if (openaiKey == null || openaiKey === '') {
-                await vscode.commands.executeCommand('workbench.action.openSettings', 'glass.openaiKey')
+                await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.openaiKey')
                 await vscode.window.showErrorMessage('Add OpenAI API key to run Promptfile files.')
                 return
               }

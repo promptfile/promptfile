@@ -58,7 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
   let activeEditor = vscode.window.activeTextEditor
 
   // const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
-  //   backgroundColor: new vscode.ThemeColor('glass.code.background'),
+  //   backgroundColor: new vscode.ThemeColor('prompt.code.background'),
   //   isWholeLine: true,
   // })
 
@@ -149,10 +149,10 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    vscode.commands.registerCommand('glass.showGlassOutput', async () => {
+    vscode.commands.registerCommand('prompt.showGlassOutput', async () => {
       outputChannel.show()
     }),
-    vscode.commands.registerCommand('glass.run', async () => {
+    vscode.commands.registerCommand('prompt.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && isPromptFile(activeEditor.document)) {
         await launchGlassDocument(activeEditor.document, outputChannel)
@@ -191,7 +191,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       })
       const selectedFile = await vscode.window.showQuickPick(glassFilesQuickPick, {
-        placeHolder: 'Select a Promptfile file to run',
+        placeHolder: 'Select a `.prompt` file to run',
       })
       if (!selectedFile) {
         return
@@ -201,17 +201,17 @@ export async function activate(context: vscode.ExtensionContext) {
         return relativePath === selectedFile.description
       })
       if (!selectedDocument) {
-        await vscode.window.showErrorMessage('Unable to find Promptfile file')
+        await vscode.window.showErrorMessage('Unable to find `.prompt` file')
         return
       }
       await updateRecentlySelectedFiles(selectedDocument)
       const doc = await vscode.workspace.openTextDocument(selectedDocument)
       await launchGlassDocument(doc, outputChannel)
     }),
-    vscode.commands.registerCommand('glass.settings', async () => {
-      await vscode.commands.executeCommand('workbench.action.openSettings', 'Promptfile')
+    vscode.commands.registerCommand('prompt.settings', async () => {
+      await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt')
     }),
-    vscode.commands.registerCommand('glass.transpile', async () => {
+    vscode.commands.registerCommand('prompt.transpile', async () => {
       const languageMode: string = vscode.workspace.getConfiguration('prompt').get('defaultLanguageMode') as any
       async function transpileAll() {
         const workspaceFolders = vscode.workspace.workspaceFolders
@@ -232,7 +232,7 @@ export async function activate(context: vscode.ExtensionContext) {
               output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir)
 
               const extension = languageMode === 'javascript' ? 'js' : 'ts'
-              const outputPath = path.join(outDir, `glass.${extension}`)
+              const outputPath = path.join(outDir, `prompt.${extension}`)
               fs.writeFileSync(outputPath, output)
               const doc = await vscode.workspace.openTextDocument(outputPath)
               await vscode.window.showTextDocument(doc)
