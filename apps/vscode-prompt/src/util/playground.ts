@@ -237,7 +237,7 @@ export async function createPlayground(
             viewColumn: vscode.ViewColumn.Active,
           })
         } catch {
-          await vscode.window.showErrorMessage('Unable to open Promptfile file')
+          await vscode.window.showErrorMessage('Unable to open `.prompt` file')
         }
         break
       case 'openOutput':
@@ -257,7 +257,7 @@ export async function createPlayground(
               const anthropicKey = getAnthropicKey()
               if (anthropicKey == null || anthropicKey === '') {
                 await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.anthropicKey')
-                await vscode.window.showErrorMessage('Add Anthropic API key to run Promptfile files.')
+                await vscode.window.showErrorMessage('Add Anthropic API key to run `.prompt` file.')
                 return
               }
               break
@@ -265,7 +265,7 @@ export async function createPlayground(
               const openaiKey = getOpenaiKey()
               if (openaiKey == null || openaiKey === '') {
                 await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.openaiKey')
-                await vscode.window.showErrorMessage('Add OpenAI API key to run Promptfile files.')
+                await vscode.window.showErrorMessage('Add OpenAI API key to run `.prompt` file.')
                 return
               }
               break

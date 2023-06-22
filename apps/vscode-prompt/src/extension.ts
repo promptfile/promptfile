@@ -37,7 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   client = new LanguageClient(
-    'Promptfile',
+    'prompt',
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the options are used
     {
@@ -50,7 +50,7 @@ export async function activate(context: vscode.ExtensionContext) {
     },
     {
       documentSelector: [{ scheme: 'file', language: 'prompt' }],
-      outputChannelName: 'Promptfile Language Server',
+      outputChannelName: 'prompt language server',
     }
   )
   await client.start()
@@ -70,7 +70,7 @@ export async function activate(context: vscode.ExtensionContext) {
   tokenCount.command = undefined
   tokenCount.show()
 
-  const outputChannel = vscode.window.createOutputChannel('Promptfile')
+  const outputChannel = vscode.window.createOutputChannel('prompt')
 
   async function launchGlassDocument(selectedDocument: vscode.TextDocument, outputChannel: vscode.OutputChannel) {
     const relativePath = vscode.workspace.asRelativePath(selectedDocument.uri.fsPath)
@@ -80,7 +80,7 @@ export async function activate(context: vscode.ExtensionContext) {
     const filepath = selectedDocument.uri.fsPath
     const filename = getDocumentFilename(selectedDocument)
 
-    outputChannel.appendLine(`${filename} — launching Promptfile playground`)
+    outputChannel.appendLine(`${filename} — launching prompt playground`)
     const initialMetadata = parseGlassMetadata(initialGlass)
     const playground = await createPlayground(
       filepath,
@@ -149,7 +149,7 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    vscode.commands.registerCommand('prompt.showGlassOutput', async () => {
+    vscode.commands.registerCommand('prompt.showOutput', async () => {
       outputChannel.show()
     }),
     vscode.commands.registerCommand('prompt.run', async () => {
@@ -161,7 +161,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       const glassFiles = await getAllPromptFiles()
       if (glassFiles.length === 0) {
-        await vscode.window.showErrorMessage('Unable to find any Promptfile files')
+        await vscode.window.showErrorMessage('Unable to find any `.prompt` files')
         return
       } else if (glassFiles.length === 1) {
         const doc = await vscode.workspace.openTextDocument(glassFiles[0])
@@ -255,7 +255,7 @@ export async function activate(context: vscode.ExtensionContext) {
           },
           {
             label: `Transpile all files`,
-            description: `Converts all Promptfile files in this workspace to ${languageMode}`,
+            description: `Converts all \`.prompt\` files in this workspace to ${languageMode}`,
             action: 'all',
           },
         ]
