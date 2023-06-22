@@ -3,29 +3,30 @@ import {Steps} from 'nextra-theme-docs'
 import {Callout} from 'nextra-theme-docs'
 
 # What is the Playground?
-<br / >
-<br / >
 
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
-     <Image src="/screenshots/cleanPlayground.png" width={300} height={100} />
-    </div>
+The Glass Playground provides an interactive testing space for Glass files, making it easy to try your prompts. It features a Monaco-based editor, similar to VSCode, which offers syntax highlighting and formatting when enclosing code within triple backticks and the language identifier, like ```` ```js const foo = "bar" ``` ```` for JavaScript.
 
-The Glass Playground offers an interactive environment for creating and testing Glass files, allowing you to communicate with your prompt. It features a Monaco-based composer just like VSCode so that the code you write and receive will benefit from syntax highlighting and formatting when surrounded by triple backticks and the language identifier, such as ```js for JavaScript.
+## Interacting with your Glass File
+<Callout type="warning"> When running a file in the Playground, Glass appends some code to enable a back-and-forth with your prompt. Glass does not modify the actual file, just a temporary session file.</Callout>
 
-<Callout type="info" emoji="⚠️">
-When making a request in the Playground, a `<Request>{:glass}` block is automatically added, introducing an uninitialized input variable for the user to interact with. A corresponding `<Request>{:glass}` block is also added to the raw session file, with matching arguments from the initial request.
-</Callout>
+To enable dynamic conversations with your prompt, Glass automatically adds a `<User>{:glass}` block containing an uninitialized input variable, along with a `<Request>{:glass}` block with the same arguments found in the most recent request.
+For example:
 
-
+```glass
+Copy code
+<User>
+@{input}
+</User>
+<Request args />
+```
+This automatic addition allows you to interact smoothly with your prompt, the `@{input}` variable is evaluated as the subsequent user message. To view the raw Glass file rendered in the Playground, click the `Open Session File` button.
+<br/>
+<Image src="/screenshots/newPlayground.gif" width={850} height={850} />
 
 ## How to Use the Playground
 
 <Steps>
-### Create a folder and create a new Glass file in VSCode
+### Create a workspace and create a new Glass file in VSCode
  - Need some inspiration? Check out our examples [here](/examples) and copy one into your Glass file.
 ### Launch the Playground:
    - Press `Command (⌘) + Enter (↩)`.
@@ -41,20 +42,26 @@ When making a request in the Playground, a `<Request>{:glass}` block is automati
 - Click the share button to create a sharable GitHub Gist of your Glass file. Remember to set your GitHub access token for the GitHub REST API as GITHUB_API_KEY in a .env file or in your .zshrc file. This enables you to create Gists via the API.
 
 <br />
-<Image src="/screenshots/newPlayground.gif" width={750} height={750} />
 </Steps>
 
+<style jsx global>{`
+  .image-container {
+    display: flex;
+    justify-content: center;
+  }
+`}</style>
+<div className="image-container">
+<Image src="/screenshots/formattedPlayground.png" height={750} width={750} />
+</div>
 
 
-## Playground Status Indicator
+## Keeping your file and Playground in sync
+<Image src="/screenshots/statusIndicator.png" height={750} width={750} />
 
 In the Playground, a status indicator is displayed next to the name of your Glass file. This helps you monitor the synchronization between the Glass Playground and any changes made to your file.
 
-- Orange Dot: If you see an orange dot, it means the Playground is not using the most recent version of your Glass file. To update the Playground with your latest changes, click the New Session button to restart.
+- Orange Dot: If you see an orange dot, it means the Playground is not using the most recent version of your Glass file. To update the Playground with your latest changes, click the `New Session` button to restart.
 - No Dot: Your Playground is using your most recent version of your Glass file.
-
-<br />
-<Image src="/screenshots/newPlayground.gif" width={750} height={750} />
 
 
 

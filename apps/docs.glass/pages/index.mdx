@@ -2,13 +2,13 @@ import { Tab, Tabs } from 'nextra-theme-docs'
 import Image from 'next/image'
 import {Steps} from 'nextra-theme-docs'
 
-# **Glass: Iterate and build prompts quickly**
+# Glass: Iterate and build prompts quickly
 
 Glass is an open-source templating syntax and VSCode playground specifically designed for crafting prompts to large language models (LLMs).
 
-By enabling users to work within the familiar VSCode environment, Glass eliminates the need for external services like OpenAI's Playground to iterate quickly on prompts.
+By enabling developers to work within the familiar VSCode environment, Glass makes writing prompts as familiar as writing code.
 
-Featuring an intuitive and straightforward syntax, Glass makes it easy for users to learn and apply the language effectively.
+Featuring an intuitive and straightforward syntax, Glass makes it easy for users to quickly learn and use in writing complicated prompts.
 
 Once your prompt is ready, generate a function with just a single line of code, ensuring seamless integration of Glass into your project.
 
@@ -16,51 +16,50 @@ Once your prompt is ready, generate a function with just a single line of code, 
 
 <Steps>
 ### **Build in VSCode**
-   - Utilize syntax highlighting, IntelliSense, and existing tools like GitHub Co-Pilot to make writing prompts as similar as writing code.
+   - Get syntax highlighting, IntelliSense, and existing tools like GitHub Co-Pilot to make the prompt writing experience as similar to the code writing experience as possible. Your prompts should behave more like code than strings.
 
 ### **Construct complex prompts**
-   - Design dynamic templates with conditional logic, state management, and multiple model requests in a single prompt.
+   - Design dynamic templates with conditional logic, state management, and multiple model requests in a single prompt. Easily define tools for your LLM to use to achieve its task.
 
 ### **Iterate quicker**
-   - Effortlessly switch between models, edit your prompt, and test in real-time.
+   - Switch between model providers, monitor token usage, and test in real-time. Rapidly perfect your prompt as you would your code.
 </Steps>
 
 
 
 ## Quickstart
-<Steps>
 For detailed instructions, refer to our [Getting Started Guide](/guide).
 
-### 1. Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)
-Add your OpenAI or Anthropic API Key by running the `Glass: open settings` command in the VSCode Command Palette. For further assistance, follow this [guide](/guide#save-your-openai-andor-anthropic-keys).
+<Steps>
+### **Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)**
+Add your OpenAI or Anthropic API Key by running the `Glass: open settings` command in the VSCode Command Palette. For further assistance, follow this [guide](/guide#save-your-api-keys).
 
-### 2. Create your first Glass file
-Create a dedicated workspace for your Glass files. Then, create a file named `example.glass` and copy the provided contents into it.
+### **Create your first Glass file**
+Create a workspace for your Glass files. Then, create a file named `example.glass` and copy the provided `example.glass` file into it.
 
 ```glass copy filename="example.glass"
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
+
 <User>
 Write me a haiku about the ocean
 </User>
+
 <Request model="gpt-3.5-turbo" />
 ```
-### 3. Run the Glass File: `Command (⌘) + Enter (↩)`
-The [Playground](/playground) should appear and run your Glass file.
+### **Run the Glass File: `Command (⌘) + Enter (↩)`**
+The Glass [Playground](/playground) should appear and run your Glass file.
 
-### 4. See more Glass Features in our [Cookbook](/examples)
+### **See more Glass Features in our [Cookbook](/examples)**
 Explore the examples in the Cookbook to learn about Glass' many features.
-
-### 5. Connect with Others and Share Your Work
-Join the Glass community on [Discord](www.discord.glass).
 
 </Steps>
 
 
 ## The Glass Difference
 
-Glass provides a more readable and intuitive alternative to traditional JSON requests. It offers the same benefits as Markdown or MDX but is specifically designed for writing prompts. This makes your prompts not only more readable but also easier to iterate on, especially in the VSCode playground.
+Glass provides a more readable and intuitive alternative to traditional JSON requests. It offers the same benefits as Markdown or MDX but adds more functionality specifically designed for writing prompts. This makes your prompts not only more readable but also easier to iterate on, especially in the Glass Playground.
 
 <Tabs items={['JSON', 'Glass']}>
   <Tab>
@@ -86,6 +85,10 @@ Glass provides a more readable and intuitive alternative to traditional JSON req
   {
     "role": "assistant",
     "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}\n```"
+  },
+  {
+    "role": "user",
+    "content": "Write me a function to find a prime number"
   }
 ]
 ````
@@ -130,6 +133,10 @@ function generateRandomOddIntegers(): number[] {
 }
 ```
 </Assistant>
+
+<User>
+Write me a function to find a prime number
+</User>
 
 <Request model="gpt-4" />
 ````
