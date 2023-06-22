@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.14.6
+
+### Patch Changes
+
+- [`62ed4d7`](https://github.com/glass-lang/glass/commit/62ed4d77464e7f62a831e830012cbf0587fe4382) Thanks [@elliottburris](https://github.com/elliottburris)! - code block
+
 ## 0.14.5
 
 ### Patch Changes
