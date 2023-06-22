@@ -29,7 +29,7 @@
     "openai",
     "llm"
   ],
-  "icon": "assets/glass.png",
+  "icon": "assets/prompt.png",
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "esbuild extension=./src/extension.ts language-server=../../packages/language-server/src/server.ts --bundle --platform=node --target=node16 --external:vscode --external:esbuild --external:@glass-lang/glasslib --outdir=out && npm run build:rig",
@@ -67,42 +67,32 @@
     "activationEvents": [
       "onLanguage:glass"
     ],
-    "colors": [
-      {
-        "id": "glass.prompt.background",
-        "description": "Background color for prompt blocks",
-        "defaults": {
-          "dark": "#00000070",
-          "light": "#b8caf9"
-        }
-      }
-    ],
     "commands": [
       {
-        "command": "glass.run",
+        "command": "prompt.run",
         "title": "Promptfile: run",
         "description": "Runs a Promptfile file."
       },
       {
-        "command": "glass.settings",
+        "command": "prompt.settings",
         "title": "Promptfile: open settings",
         "description": "Opens the Promptfile settings in your VSCode settings.json file."
       },
       {
-        "command": "glass.transpile",
+        "command": "prompt.transpile",
         "title": "Promptfile: transpile",
         "description": "This command transpiles all .prompt files in your workspace to the language of your choice."
       }
     ],
     "keybindings": [
       {
-        "command": "glass.run",
+        "command": "prompt.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && editorLangId == prompt"
       },
       {
-        "command": "glass.run",
+        "command": "prompt.run",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter"
       }
@@ -111,6 +101,14 @@
       {
         "title": "Promptfile",
         "properties": {
+          "prompt.defaultModel": {
+            "type": "string",
+            "default": "gpt-3.5-turbo",
+            "description": "Default model for playground use",
+            "enum": [
+
+            ]
+          },
           "prompt.openaiKey": {
             "type": "string",
             "default": "",
@@ -249,7 +247,7 @@
       {
         "language": "prompt",
         "scopeName": "source.prompt",
-        "path": "./syntaxes/glass.tmLanguage.json",
+        "path": "./syntaxes/prompt.tmLanguage.json",
         "embeddedLanguages": {
           "source.js": "javascript",
           "source.js.jsx": "javascriptreact",

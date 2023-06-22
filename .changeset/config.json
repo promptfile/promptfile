@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "glass-platform/prompt"
+      "repo": "glass-platform/promptfile"
     }
   ],
   "commit": false,

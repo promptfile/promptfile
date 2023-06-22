@@ -1,8 +1,8 @@
-# glass
+# Promptfile (`.prompt`)
 
 ![main](https://github.com/glass-platform/promptfile/actions/workflows/main.yml/badge.svg)
 
-_**ALERT: GLASS IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
+_**ALERT: `.prompt` IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
 
 Getting started? Head to [promptfile.org](https://promptfile.org) for all of our documentation.
 
@@ -18,7 +18,7 @@ This project uses npm workspaces and [Turborepo](https://turbo.build/).
 
 ### `apps/`
 
-- `vscode-glass`: VS Code extension for Promptfile
+- `vscode-prompt`: VS Code extension for Promptfile
 - `promptfile.org`: a Next.js/Nextra app serving [promptfile.org](https://promptfile.org/)
 - `demo`: examples of using Promptfile, some of these are in active development and may not currently work
 
