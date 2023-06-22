@@ -1,6 +1,6 @@
 {
   "name": "@glass-lang/glassc",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "Promptfile language compiler",
   "type": "module",
   "module": "dist/index.js",
