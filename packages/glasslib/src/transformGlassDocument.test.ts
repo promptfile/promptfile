@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
-import { addNodeToDocument, handleRequestNode, replaceDocumentNode, replaceStateNode } from './transformGlassDocument'
+import { addNodeToDocument, handleRequestNode, replaceDocumentNode } from './transformGlassDocument'
 
 describe('transformGlassDocument', () => {
   it('should parse document nodes and recreate document', () => {
@@ -86,81 +86,6 @@ user
 
 <User />`)
   })
-
-  describe('replaceStateNode', () => {
-    it('should transform document with frontmatter', () => {
-      const newState = `<State>\nstate\n</State>`
-
-      const doc = `---
-langauge: typescript
----
-
-const a = "foo"
-
-<User>
-hello
-</User>`
-
-      expect(replaceStateNode(newState, doc)).to.equal(`---
-langauge: typescript
----
-
-<State>
-state
-</State>
-
-const a = "foo"
-
-<User>
-hello
-</User>`)
-    })
-
-    it('should transform document without frontmatter', () => {
-      const newState = '<State>\nstate\n</State>'
-
-      const doc = `const a = "foo"
-
-<User>
-hello
-</User>`
-
-      expect(replaceStateNode(newState, doc)).to.equal(`<State>
-state
-</State>
-
-const a = "foo"
-
-<User>
-hello
-</User>`)
-    })
-
-    it('should transform document with existing state node', () => {
-      const newState = `<State>\nstate\n</State>`
-
-      const doc = `const a = "foo"
-
-<State>
-foo
-</State>
-
-<User>
-hello
-</User>`
-
-      expect(replaceStateNode(newState, doc)).to.equal(`const a = "foo"
-
-<State>
-state
-</State>
-
-<User>
-hello
-</User>`)
-    })
-  })
-
   describe('handleRequestNode', () => {
     it('should handle request without transcript', () => {
       const interpDoc = `---

@@ -22,29 +22,6 @@ export function replaceDocumentNode(content: string, index: number, doc: string)
   return reconstructGlassDocument(nodes)
 }
 
-export function replaceStateNode(newStateNode: string, doc: string) {
-  const parsed = parseGlassDocument(doc)
-
-  const stateNode = parsed.find(node => (node as any).tag === 'State')
-  if (!stateNode) {
-    // see if the first node is a text node, if so, insert the state node after its frontmatter
-    const existingFrontmatter = /---\n?([\s\S]*?)\n?---/.exec(doc)?.[1] ?? ''
-    if (existingFrontmatter) {
-      // find the index of the second '---\n' sequence
-      const secondFrontmatterIndex = doc.indexOf('---\n', doc.indexOf('---\n') + 1)
-      // return doc with the state node inserted after the second frontmatter, otherwise doc unchanged
-      return secondFrontmatterIndex > -1
-        ? doc.slice(0, secondFrontmatterIndex + 4) + '\n' + newStateNode + '\n' + doc.slice(secondFrontmatterIndex + 4)
-        : doc
-    } else {
-      return addNodeToDocument(newStateNode + '\n' + '\n', 0, doc)
-    }
-  }
-
-  const stateIndex = parsed.indexOf(stateNode)
-  return replaceDocumentNode(newStateNode, stateIndex, doc)
-}
-
 export function addToDocument(addToDocument: { tag: string; content: string; attrs?: any }[], doc: string) {
   const bs = addToDocument
     .map(b => {

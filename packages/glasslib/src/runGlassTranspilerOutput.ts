@@ -1,30 +1,12 @@
 import { checkOk } from '@glass-lang/util'
 import fetch from 'node-fetch'
-import { Readable } from 'stream'
+import { TranspilerOutput } from '.'
+import { ResponseData } from '../dist/runGlassTranspilerOutput'
 import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 import { ChatBlock, parseChatBlocks2 } from './parseChatBlocks'
-import { FunctionData, RequestData, parseGlassBlocks, parseGlassRequestBlock } from './parseGlassBlocks'
+import { FunctionData, RequestData } from './parseGlassBlocks'
 import { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'
 import { addToDocument, handleRequestNode } from './transformGlassDocument'
-
-interface LLMResponse {
-  content: string
-  function_call?: { name: string; arguments: string } | null
-}
-
-export interface ResponseData {
-  response: string
-  function_call?: { name: string; arguments: string } | null
-  functionObservation?: string
-  requestTokens?: number
-  responseTokens?: number
-}
-
-export interface TranspilerOutput {
-  interpolatedDoc: string
-  defaultModel?: string
-  functions: FunctionData[]
-}
 
 export async function runGlassTranspilerOutput(
   { interpolatedDoc, defaultModel, functions }: TranspilerOutput,
@@ -40,35 +22,7 @@ export async function runGlassTranspilerOutput(
   response: ChatBlock[]
   nextGlassfile: string
 }> {
-  // replace initDoc instances of
-  //
-  // ```
-  // <Chat.*>
-  // (content)
-  // </Chat>
-  // ```
-  //
-  // with
-  //
-  // ```
-  // <User>
-  // (content)
-  // </User>
-
-  let transformedInterpolatedDoc = interpolatedDoc
-
-  const requestBlocks = parseGlassBlocks(interpolatedDoc)
-    .map(n => (n.tag === 'Request' ? parseGlassRequestBlock(n) : null))
-    .filter(n => Boolean(n)) as RequestData[]
-
-  if (requestBlocks.length === 0) {
-    checkOk(defaultModel, 'no Request blocks and no model provided in frontmatter -- cannot run glass file')
-    requestBlocks.push({
-      model: defaultModel,
-    })
-
-    transformedInterpolatedDoc += `\n\n<Request model="${defaultModel}" />`
-  }
+  const transformedInterpolatedDoc = interpolatedDoc
 
   const newBlockIds: string[] = []
 
@@ -367,24 +321,6 @@ async function runGlassChatAnthropic(
   nextGlassfile: string
 }> {
   const request = requestBlocks[responseData.length]
-  let anthropicQuery = ''
-  for (const msg of messagesSoFar.concat(messages)) {
-    if (msg.role === 'assistant') {
-      anthropicQuery += `\n\nAssistant: ${msg.content}`
-    } else if (msg.role === 'user') {
-      anthropicQuery += `\n\nHuman: ${msg.content}`
-    } else if (msg.role === 'system') {
-      anthropicQuery += `\n\nHuman: ${msg.content}`
-    } else {
-      throw new Error(`Unknown role for anthropic  query: ${msg.role}`)
-    }
-  }
-  anthropicQuery += '\n\nAssistant: '
-  console.log('runGlass: anthropic', anthropicQuery)
-  if (options.output) {
-    options.output('runGlass: anthropic')
-    options.output(anthropicQuery)
-  }
 
   const tokenCounter = options.tokenCounter || DEFAULT_TOKEN_COUNTER
 
@@ -580,71 +516,6 @@ async function runGlassCompletion(
   )
 }
 
-async function handleStream(
-  r: any,
-  processChunk: (currResult: LLMResponse, eventData: any) => LLMResponse,
-  progress: (nextVal: LLMResponse) => void
-) {
-  if (!r.ok) {
-    throw new Error(`HTTP error: ${r.status}`)
-  }
-
-  if (!r.headers.get('content-type').startsWith('text/event-stream')) {
-    throw new Error(`Expected "text/event-stream" content type, but received "${r.headers.get('content-type')}"`)
-  }
-
-  let fullResult: LLMResponse = { content: '' }
-  const decoder = new TextDecoder()
-
-  let buffer = ''
-
-  await new Promise((resolve, reject) => {
-    const readStream = new Readable().wrap(r.body as any)
-
-    readStream.on('data', chunk => {
-      const lines = decoder.decode(chunk).split('\n')
-
-      for (const line of lines) {
-        if (line.startsWith('data:')) {
-          const content = line.slice('data:'.length).trim()
-          if (content === '[DONE]') {
-            return
-          }
-          buffer = content
-          try {
-            const eventData = JSON.parse(buffer)
-            fullResult = processChunk(fullResult, eventData)
-            progress(fullResult)
-            buffer = ''
-          } catch (e) {
-            // ignore
-          }
-        } else if (buffer !== '') {
-          buffer += line
-          try {
-            const eventData = JSON.parse(buffer)
-            fullResult = processChunk(fullResult, eventData)
-            progress(fullResult)
-            buffer = ''
-          } catch (e) {
-            // ignore
-          }
-        }
-      }
-    })
-
-    readStream.on('end', () => {
-      resolve(fullResult)
-    })
-
-    readStream.on('error', error => {
-      reject(error)
-    })
-  })
-
-  return fullResult
-}
-
 function handleChatChunk(
   currResult: LLMResponse,
   eventData: {
@@ -680,13 +551,6 @@ function handleChatChunk(
     const newResult = { ...currResult }
     newResult.content += eventData.choices[0].delta.content
     return newResult
-  }
-  return currResult
-}
-
-function handleAnthropicChunk(currResult: LLMResponse, eventData: { completion: string }) {
-  if (eventData.completion) {
-    return { content: eventData.completion }
   }
   return currResult
 }

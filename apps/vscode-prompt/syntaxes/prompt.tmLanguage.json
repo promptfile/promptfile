@@ -84,14 +84,14 @@
         }
       }
     },
-    "flow-expression": {
+    "variable": {
       "begin": "^(.*)(\\@\\{)",
       "end": "(\\})(.*)$",
       "beginCaptures": {
         "1": {
           "patterns": [
             {
-              "include": "#flow-expression"
+              "include": "#variable"
             },
             {
               "include": "text.html.markdown"
@@ -109,7 +109,7 @@
         "2": {
           "patterns": [
             {
-              "include": "#flow-expression"
+              "include": "#variable"
             },
             {
               "include": "text.html.markdown"
@@ -119,7 +119,7 @@
       },
       "patterns": [
         {
-          "include": "source.js"
+          "include": "source.prompt.variable"
         }
       ]
     },
@@ -157,7 +157,7 @@
       },
       "patterns": [
         {
-          "include": "#flow-expression"
+          "include": "#variable"
         },
         {
           "include": "text.html.markdown"
@@ -210,7 +210,7 @@
       },
       "patterns": [
         {
-          "include": "#flow-expression"
+          "include": "#variable"
         },
 
         {
@@ -264,7 +264,7 @@
       },
       "patterns": [
         {
-          "include": "#flow-expression"
+          "include": "#variable"
         },
         {
           "include": "text.html.markdown"
@@ -379,7 +379,7 @@
       },
       "patterns": [
         {
-          "include": "#flow-expression"
+          "include": "#variable"
         },
         {
           "include": "text.html.markdown"

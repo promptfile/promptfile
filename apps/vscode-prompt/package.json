@@ -211,9 +211,9 @@
             }
           },
           {
-            "scope": "source.prompt.flow.punctuation",
+            "scope": "source.prompt.variable",
             "settings": {
-              "foreground": "#4dff00",
+              "foreground": "#FFB454",
               "fontStyle": "bold"
             }
           }

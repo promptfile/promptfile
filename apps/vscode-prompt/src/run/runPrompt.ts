@@ -6,9 +6,28 @@ import {
   parseFrontmatterFromGlass,
   parseGlassMetadata,
 } from '@glass-lang/glasslib'
+import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import * as vscode from 'vscode'
-
 import { getAnthropicKey, getOpenaiKey } from '../util/keys'
+
+export interface LLMResponse {
+  content: string
+  function_call?: { name: string; arguments: string } | null
+}
+
+export interface ResponseData {
+  response: string
+  function_call?: { name: string; arguments: string } | null
+  functionObservation?: string
+  requestTokens?: number
+  responseTokens?: number
+}
+
+export interface TranspilerOutput {
+  interpolatedDoc: string
+  defaultModel?: string
+  functions: FunctionData[]
+}
 
 export async function runPrompt(
   outputChannel: vscode.OutputChannel,
@@ -41,7 +60,6 @@ export async function runPrompt(
       }
       break
   }
-
   const blocks = parseChatBlocks(content)
   const metadata = parseGlassMetadata(content)
   const variables = metadata.interpolationVariables
