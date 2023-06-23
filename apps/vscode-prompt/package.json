@@ -69,17 +69,17 @@
     "commands": [
       {
         "command": "prompt.run",
-        "title": "Prompt: run",
+        "title": "Open .prompt file in playground",
         "description": "Runs a .prompt file."
       },
       {
         "command": "prompt.settings",
-        "title": "Prompt: open settings",
+        "title": "Open settings for .prompt files",
         "description": "Opens the .prompt settings in your VSCode settings.json file."
       },
       {
         "command": "prompt.transpile",
-        "title": "Prompt: transpile",
+        "title": "Transpile .prompt file to another language",
         "description": "This command transpiles .prompt files to the language of your choice."
       }
     ],
