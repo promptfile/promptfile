@@ -6,7 +6,7 @@ export interface LLMFunction {
   parameters: any
 }
 
-export function parseGlassFunctions(text: string) {
+export function parseGlassFunctions(text: string): LLMFunction[] {
   const elements = parseGlassBlocks(text)
   const functionsElement = elements.find(e => e.type === 'block' && e.tag === 'Functions')
   if (!functionsElement) {
@@ -19,6 +19,7 @@ export function parseGlassFunctions(text: string) {
       // parse the parsedJson as LLMFunction[]
       return parsedJson as LLMFunction[]
     }
+    return []
   } catch (e) {
     // ignore
     return []
