@@ -1,5 +1,3 @@
-import { checkOk } from '@glass-lang/util'
-import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
 
 export interface GlassContent {
   type: 'block' | 'comment' | 'frontmatter'
@@ -16,7 +14,7 @@ export interface GlassContent {
       end: { offset: number }
     }
   }
-  attrs?: { name: string; stringValue?: string; expressionValue?: string }[]
+  attrs?: { name: string; stringValue?: string;  }[]
 }
 
 /**
@@ -228,9 +226,10 @@ function parseAttributes(origDoc: string, blocks: GlassContent[]) {
         origDoc.substring(b.position.start.offset, b.child.position.start.offset) +
         origDoc.substring(b.child.position.end.offset, b.position.end.offset)
     }
-    const parsedJsx = parseGlassTopLevelJsxElements(blockWithoutChildContent)
-    checkOk(parsedJsx.length === 1, `Expected exactly one top level JSX element in block ${b.content}`)
-    return { ...b, attrs: parsedJsx[0].attrs }
+    const parsedAttributes = {
+
+    }
+    return { ...b, attrs:  }
   })
 }
 
