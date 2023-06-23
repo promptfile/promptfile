@@ -41,6 +41,10 @@ export async function runPlayground(
       return { name, description, parameters }
     })
   const metadata = parseGlassMetadata(content)
+  for (const variable of metadata.interpolationVariables) {
+    const value = inputs[variable] ?? ''
+    content = content.replace(`@{${variable}}`, value)
+  }
   const blocks = parseChatBlocks(content)
   const parsedFrontmater = parseFrontmatterFromGlass(content)
   const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('prompt').get('defaultModel')
@@ -70,10 +74,6 @@ export async function runPlayground(
   if (!languageModel) {
     await vscode.window.showErrorMessage(`Unable to find model ${model}`)
     return
-  }
-  for (const variable of metadata.interpolationVariables) {
-    const value = inputs[variable] ?? ''
-    content = content.replace(`@{${variable}}`, value)
   }
   switch (languageModel.creator) {
     case LanguageModelCreator.anthropic:
