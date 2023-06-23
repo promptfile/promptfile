@@ -39,7 +39,7 @@ export async function runPlaygroundOpenAI(
     functionArgs = {
       functions: await Promise.all(
         functions.map(async f => {
-          if (f.run != null && f.description != null && f.parameters != null) {
+          if (f.testValue != null && f.description != null && f.parameters != null) {
             return {
               name: f.name,
               description: f.description,
@@ -104,13 +104,12 @@ export async function runPlaygroundOpenAI(
   checkOk(fn, `Function ${response.function_call!.name} not found`)
   const args = JSON.parse(response.function_call!.arguments)
   let functionObservation: string
-  if (fn.run != null) {
-    const result = await fn.run(args)
-    functionObservation = JSON.stringify(result)
+  if (fn.testValue != null) {
+    functionObservation = JSON.stringify(fn.testValue)
   } else {
     checkOk(
       options.execFunction,
-      `Function ${response.function_call!.name} not implemented, and no execFunction provided`
+      `Function ${response.function_call!.name} fnot implemented, and no execFunction provided`
     )
     const result = await options.execFunction(response.function_call!.name, args)
     functionObservation = JSON.stringify(result)
