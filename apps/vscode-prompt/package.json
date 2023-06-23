@@ -191,7 +191,8 @@
           {
             "scope": "source.prompt.void",
             "settings": {
-              "foreground": "#7a7a7a"
+              "foreground": "#7a7a7a",
+              "fontStyle": "italic"
             }
           },
           {
