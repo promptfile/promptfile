@@ -137,6 +137,11 @@
             "default": "",
             "description": "OpenAI API key"
           },
+          "prompt.functionEndpoint": {
+            "type": "string",
+            "default": "http://localhost:7777/function",
+            "description": "Endpoint to use for function invocations"
+          },
           "prompt.anthropicKey": {
             "type": "string",
             "default": "",
