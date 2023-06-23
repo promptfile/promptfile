@@ -1,5 +1,4 @@
-import { parseFrontmatterFromGlass } from '@glass-lang/glassc'
-import { parseGlassDocument, removeGlassFrontmatter } from '@glass-lang/glasslib'
+import { parseFrontmatterFromGlass, parseGlassDocument, removeGlassFrontmatter } from '@glass-lang/glasslib'
 import * as prettier from 'prettier'
 import { glassElements } from './elements'
 

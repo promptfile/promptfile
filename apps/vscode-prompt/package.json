@@ -54,7 +54,6 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
-    "@glass-lang/glassc": "*",
     "@glass-lang/language-server": "*",
     "@glass-lang/rig": "*",
     "@glass-lang/util": "*",

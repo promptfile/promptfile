@@ -24,8 +24,7 @@ This project uses npm workspaces and [Turborepo](https://turbo.build/).
 
 ### `packages/`
 
-- `glassc`: the Promptfile compiler (generates `.ts`, `.js`, `.py` output from Promptfile files)
-- `glasslib`: Promptfile client library (runtime for executing Promptfile compiler generated code)
+- `glasslib`: `.prompt` client library (runtime for executing Promptfile compiler generated code)
 - `language-server`: LSP server providing Promptfile intellisense
 - `rig`: a React app for the VS Code Promptfile playground webview
 - `ui`: a React component library shared by web applications
@@ -52,7 +51,7 @@ npm run test
 
 ### Watch mode
 
-Several packages contain tests that can be run in watch mode: `packages/glasslib`, `packages/glassc`, `packages/util`
+Several packages contain tests that can be run in watch mode: `packages/glasslib`, `packages/util`
 
 ```bash
 cd $package

@@ -1,4 +1,4 @@
-import { parseGlassMetadata } from '@glass-lang/glassc'
+import { parseGlassMetadata } from '@glass-lang/glasslib'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'

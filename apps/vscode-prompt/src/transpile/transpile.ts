@@ -1,5 +1,4 @@
-import { parseFrontmatterFromGlass, parseGlassMetadata } from '@glass-lang/glassc'
-import { parseChatBlocks } from '@glass-lang/glasslib'
+import { parseChatBlocks, parseFrontmatterFromGlass, parseGlassMetadata } from '@glass-lang/glasslib'
 import * as vscode from 'vscode'
 import { transpileToJavascript } from './transpileToJavascript'
 import { transpileToPython } from './transpileToPython'
