@@ -81,7 +81,7 @@ function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
 
 function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnostic[] {
   const parsed = parseGlassBlocks(textDocument.getText())
-  const tagsToCheck = glassElements.filter(e => e.closingType === 'nonSelfClosing').map(e => e.name)
+  const tagsToCheck = glassElements.map(e => e.name)
   const emptyTags = parsed.filter(tag => tagsToCheck.includes(tag.tag || '') && tag.child?.content === '')
   return emptyTags.map(tag => {
     const diagnostic: Diagnostic = {
@@ -238,10 +238,7 @@ function findUnmatchedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] 
 }
 
 export function extractUnmatchedTags(text: string) {
-  const nonSelfClosingTags = glassElements
-    .filter(e => e.closingType === 'nonSelfClosing')
-    .map(e => e.name)
-    .join('|')
+  const nonSelfClosingTags = glassElements.map(e => e.name).join('|')
   const tagPattern = new RegExp(`^<\/?(${nonSelfClosingTags})(\\s+[^>]*)?>`, 'gm')
   const tagStack: { tag: string; start: number }[] = []
   const unmatchedTags: { tag: string; start: number }[] = []

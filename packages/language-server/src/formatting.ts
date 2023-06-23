@@ -6,8 +6,6 @@ export function formatDocument(text: string) {
   try {
     text = wrapIfNoBlocks(text)
 
-    const nonSelfClosingTags = glassElements.filter(e => e.closingType !== 'selfClosing')
-
     const tagNames = glassElements.map(e => e.name).join('|')
     const lines = text.split('\n')
     const formattedLines: string[] = []
@@ -22,7 +20,7 @@ export function formatDocument(text: string) {
       }
     }
     let finalText = formattedLines.join('\n').trim()
-    const tags = nonSelfClosingTags.map(e => e.name)
+    const tags = glassElements.map(e => e.name)
     tags.forEach(tag => {
       const regexOpen = new RegExp(`<\\s+${tag}`, 'g')
       const regexClose = new RegExp(`${tag}\\s+>`, 'g')

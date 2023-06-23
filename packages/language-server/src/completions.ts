@@ -46,9 +46,7 @@ export function generateCompletions(
       insertText:
         element.insertText != null
           ? element.insertText
-          : element.closingType === 'nonSelfClosing'
-          ? `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>`
-          : `${element.name}${attributesToInsert.join('')} />`,
+          : `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>`,
       insertTextFormat: InsertTextFormat.Snippet,
     })
   }
