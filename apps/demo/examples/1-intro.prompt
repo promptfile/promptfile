@@ -1,7 +1,7 @@
 ---
 model: gpt-3.5-turbo
-temperature: 0
-maxTokens: 4124
+temperature: 1
+maxTokens: 2048
 ---
 
 
