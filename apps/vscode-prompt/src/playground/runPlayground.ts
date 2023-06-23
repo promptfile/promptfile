@@ -5,9 +5,9 @@ import {
   constructGlassDocument,
   parseChatBlocks,
   parseFrontmatterFromGlass,
+  parseGlassBlocks,
   parseGlassMetadata,
 } from '@glass-lang/glasslib'
-import { parseGlassBlocks } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { getAnthropicKey, getOpenaiKey } from '../util/keys'
