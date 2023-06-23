@@ -111,44 +111,42 @@ export const ComposerView = (props: ComposerViewProps) => {
               flexDirection: 'column',
             }}
           >
-            {keys.length > 1 && (
-              <div style={{ display: 'flex', paddingLeft: '8px' }}>
-                {keys.map(key => {
-                  const isCurrentTab = key === activeKey
-                  const opacity = isCurrentTab ? 1 : 0.5
-                  const color = isCurrentTab ? 'white' : undefined
-                  const borderBottomColor = isCurrentTab ? 'white' : 'transparent'
-                  return (
-                    <div style={{ paddingRight: '24px' }} key={key}>
-                      <div
-                        style={{
-                          opacity,
-                          color,
-                          borderBottomStyle: 'solid',
-                          borderBottomWidth: '2px',
-                          borderBottomColor,
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          paddingBottom: '4px',
-                          paddingTop: '4px',
-                          paddingLeft: '8px',
-                          paddingRight: '8px',
-                        }}
-                        onClick={() => setActiveKey(key)}
-                        onMouseEnter={(event: any) => {
-                          event.target.style.opacity = '1.0'
-                        }}
-                        onMouseLeave={(event: any) => {
-                          event.target.style.opacity = opacity
-                        }}
-                      >
-                        {key}
-                      </div>
+            <div style={{ display: 'flex', paddingLeft: '8px' }}>
+              {keys.map(key => {
+                const isCurrentTab = key === activeKey
+                const opacity = isCurrentTab ? 1 : 0.5
+                const color = isCurrentTab ? 'white' : undefined
+                const borderBottomColor = isCurrentTab ? 'white' : 'transparent'
+                return (
+                  <div style={{ paddingRight: '24px' }} key={key}>
+                    <div
+                      style={{
+                        opacity,
+                        color,
+                        borderBottomStyle: 'solid',
+                        borderBottomWidth: '2px',
+                        borderBottomColor,
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        paddingBottom: '4px',
+                        paddingTop: '4px',
+                        paddingLeft: '8px',
+                        paddingRight: '8px',
+                      }}
+                      onClick={() => setActiveKey(key)}
+                      onMouseEnter={(event: any) => {
+                        event.target.style.opacity = '1.0'
+                      }}
+                      onMouseLeave={(event: any) => {
+                        event.target.style.opacity = opacity
+                      }}
+                    >
+                      {key}
                     </div>
-                  )
-                })}
-              </div>
-            )}
+                  </div>
+                )
+              })}
+            </div>
             {activeKey.length > 0 && (
               <MonacoEditor
                 key={activeKey}

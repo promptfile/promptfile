@@ -58,7 +58,7 @@ function RigView() {
       }
     })
     if (variables.length === 0) {
-      newInputs['nextUserBlock'] = ''
+      newInputs['Response'] = ''
     }
     setInputs(() => newInputs)
   }

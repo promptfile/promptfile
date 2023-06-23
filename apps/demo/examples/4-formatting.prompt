@@ -10,6 +10,7 @@ Promptfile gives you the ability to write clean, formatted, syntax highlighted c
 You are PythonGPT: your job is to write performant, beautiful code to answer the user's question. You should respond with fenced Python code, like this:
 
 ```python
+# include comments as needed
 def hello():
     print("hello world!")
 ```
