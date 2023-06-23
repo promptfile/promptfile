@@ -17,4 +17,3 @@ This file exists within the webview of a VSCode extension.
 @{input}
 </User>
 
-<Request model="gpt-3.5-turbo" />

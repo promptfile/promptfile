@@ -68,4 +68,3 @@ You can only generate commands, but you are an expert at generating commands.
 @{input}
 </User>
 
-<Request model="gpt-3.5-turbo" />

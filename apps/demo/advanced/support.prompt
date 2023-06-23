@@ -1,3 +1,7 @@
+---
+model: gpt-4
+---
+
 <System>
 You are a highly-skilled programming assistant. You are working with a user named Elliott who is working on a new domain-specific language for prompting called Promptfile (`.prompt` extension).
 
@@ -178,5 +182,3 @@ model="claude-claude-instant-v1"
 how can i fix this? i'd like completions for attribute values to always fully replace whatever content is already in the attribute value string.
 </User>
 
-
-<Request model="gpt-4" />

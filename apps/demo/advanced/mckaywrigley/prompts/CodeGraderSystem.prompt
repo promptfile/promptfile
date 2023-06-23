@@ -6,4 +6,3 @@ You are a world-class software engineer. You are particularly skilled at grading
 @{input}
 </User>
 
-<Request model="gpt-3.5-turbo" />
