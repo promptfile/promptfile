@@ -1,4 +1,9 @@
-import { parseChatBlocks, parseFrontmatterFromGlass, parseGlassMetadata } from '@glass-lang/glasslib'
+import {
+  parseChatBlocks,
+  parseFrontmatterFromGlass,
+  parseGlassFunctions,
+  parseGlassMetadata,
+} from '@glass-lang/glasslib'
 import * as vscode from 'vscode'
 import { transpileToJavascript } from './transpileToJavascript'
 import { transpileToPython } from './transpileToPython'
@@ -40,16 +45,17 @@ export async function transpile(text: string) {
   const language = transpilationLanguage.action
   const blocks = parseChatBlocks(text)
   const variables = parseGlassMetadata(text).interpolationVariables
+  const functions = parseGlassFunctions(text)
   let code = ''
   try {
     if (language === 'typescript') {
-      code = transpileToTypescript(blocks, variables, model)
+      code = transpileToTypescript(blocks, variables, functions, model)
     } else if (language === 'javascript') {
-      code = transpileToJavascript(blocks, variables, model)
+      code = transpileToJavascript(blocks, variables, functions, model)
     } else if (language === 'python') {
-      code = transpileToPython(blocks, variables, model)
+      code = transpileToPython(blocks, variables, functions, model)
     } else if (language === 'ruby') {
-      code = transpileToRuby(blocks, variables, model)
+      code = transpileToRuby(blocks, variables, functions, model)
     }
     if (code.length === 0) {
       throw new Error(`No code was generated for ${language}`)

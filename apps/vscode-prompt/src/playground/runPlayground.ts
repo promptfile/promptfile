@@ -5,7 +5,7 @@ import {
   constructGlassDocument,
   parseChatBlocks,
   parseFrontmatterFromGlass,
-  parseGlassBlocks,
+  parseGlassFunctions,
   parseGlassMetadata,
 } from '@glass-lang/glasslib'
 import fetch from 'node-fetch'
@@ -19,27 +19,12 @@ export interface LLMResponse {
   function_call?: { name: string; arguments: string } | null
 }
 
-export interface LLMFunction {
-  name: string
-  description: string
-  parameters: any
-  run?: (data: any) => Promise<any>
-}
-
 export async function runPlayground(
   content: string,
   inputs: any,
   progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
 ) {
-  const elements = parseGlassBlocks(content)
-  const functions: LLMFunction[] = elements
-    .filter(e => e.type === 'block' && e.tag === 'Tool')
-    .map(e => {
-      const name = e.attrs?.find(a => a.name === 'name')?.stringValue ?? ''
-      const description = e.attrs?.find(a => a.name === 'description')?.stringValue ?? 'undefined'
-      const parameters = e.attrs?.find(a => a.name === 'parameters')?.stringValue ?? {}
-      return { name, description, parameters }
-    })
+  const functions = parseGlassFunctions(content)
   const metadata = parseGlassMetadata(content)
   for (const variable of metadata.interpolationVariables) {
     const value = inputs[variable] ?? ''

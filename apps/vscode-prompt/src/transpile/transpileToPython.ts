@@ -1,6 +1,11 @@
-import { ChatBlock } from '@glass-lang/glasslib'
+import { ChatBlock, LLMFunction } from '@glass-lang/glasslib'
 
-export function transpileToPython(blocks: ChatBlock[], variables: string[], model: string): string {
+export function transpileToPython(
+  blocks: ChatBlock[],
+  variables: string[],
+  functions: LLMFunction[],
+  model: string
+): string {
   let transpiledCode = ''
 
   // Define the class and constructor

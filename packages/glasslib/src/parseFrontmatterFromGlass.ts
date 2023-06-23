@@ -17,11 +17,7 @@ export function parseFrontmatterFromGlass(glass: string): ParsedResult | null {
     return null
   }
 
-  return parseFrontmatter(frontmatter)
-}
-
-export function parseFrontmatter(yamlString: string): ParsedResult | null {
-  const yamlContent = yamlString.replace(/---/g, '').trim()
+  const yamlContent = frontmatter.replace(/---/g, '').trim()
 
   const result = parse(yamlContent)
 

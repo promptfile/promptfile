@@ -3,6 +3,7 @@ export { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './lang
 export { ChatBlock, parseChatBlocks } from './parseChatBlocks'
 export { parseFrontmatterFromGlass } from './parseFrontmatterFromGlass'
 export { GlassContent, parseGlassBlocks, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
+export { LLMFunction, parseGlassFunctions } from './parseGlassFunctions'
 export { parseGlassMetadata } from './parseGlassMetadata'
 export { removeGlassFrontmatter } from './removeGlassFrontmatter'
 export { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'

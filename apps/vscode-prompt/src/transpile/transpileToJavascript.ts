@@ -1,6 +1,11 @@
-import { ChatBlock } from '@glass-lang/glasslib'
+import { ChatBlock, LLMFunction } from '@glass-lang/glasslib'
 
-export function transpileToJavascript(blocks: ChatBlock[], variables: string[], model: string): string {
+export function transpileToJavascript(
+  blocks: ChatBlock[],
+  variables: string[],
+  functions: LLMFunction[],
+  model: string
+): string {
   let transpiledCode = ''
 
   // Create Prompt implementation
