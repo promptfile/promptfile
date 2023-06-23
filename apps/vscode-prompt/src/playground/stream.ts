@@ -1,5 +1,5 @@
 import { Readable } from 'stream'
-import { LLMResponse } from './runPrompt'
+import { LLMResponse } from './runPlayground'
 
 export async function handleStream(
   r: any,

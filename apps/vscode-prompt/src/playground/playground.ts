@@ -2,10 +2,10 @@ import { parseChatBlocks, parseGlassBlocks, parseGlassMetadata } from '@glass-la
 import fs from 'fs'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
-import { runPrompt } from '../run/runPrompt'
 import { getGithubKey } from '../util/keys'
 import { generateULID } from '../util/ulid'
 import { getHtmlForWebview } from '../webview'
+import { runPlayground } from './runPlayground'
 import { createSession, getCurrentSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
 import { getCurrentViewColumn } from './viewColumn'
 
@@ -235,7 +235,7 @@ export async function createPlayground(
         async function runGlassExtension(glass: string, sessionToRun: string, inputs: any) {
           try {
             const requestId = generateULID()
-            const resp = await runPrompt(glass, inputs, async ({ nextGlassfile }) => {
+            const resp = await runPlayground(glass, inputs, async ({ nextGlassfile }) => {
               const existingPlayground = playgrounds.get(filepath)
               if (!existingPlayground || stoppedRequestIds.has(requestId)) {
                 return false

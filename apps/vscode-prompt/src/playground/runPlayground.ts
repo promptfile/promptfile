@@ -9,7 +9,7 @@ import {
 import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import * as vscode from 'vscode'
 import { getAnthropicKey, getOpenaiKey } from '../util/keys'
-import { runPromptAnthropic } from './runPromptAnthropic'
+import { runPlaygroundAnthropic } from './runPlaygroundAnthropic'
 
 export interface LLMResponse {
   content: string
@@ -30,7 +30,7 @@ export interface TranspilerOutput {
   functions: FunctionData[]
 }
 
-export async function runPrompt(
+export async function runPlayground(
   content: string,
   inputs: any,
   progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
@@ -65,7 +65,7 @@ export async function runPrompt(
         await vscode.window.showErrorMessage('Add Anthropic API key to run `.prompt` file.')
         return
       }
-      return runPromptAnthropic(blocks, anthropicKey, model, {
+      return runPlaygroundAnthropic(blocks, anthropicKey, model, {
         progress,
       })
     case LanguageModelCreator.openai:

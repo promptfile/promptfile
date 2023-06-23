@@ -6,7 +6,7 @@ import {
   reconstructGlassDocument,
 } from '@glass-lang/glasslib'
 import { RequestData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
-import { ResponseData } from './runPrompt'
+import { ResponseData } from '../playground/runPlayground'
 
 const chatBlockTags = new Set(['User', 'System', 'Assistant', 'Function', 'Block'])
 

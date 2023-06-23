@@ -1,9 +1,9 @@
 import { ChatBlock, DEFAULT_TOKEN_COUNTER, TokenCounter, constructGlassDocument } from '@glass-lang/glasslib'
 import fetch from 'node-fetch'
-import { LLMResponse } from './runPrompt'
+import { LLMResponse } from './runPlayground'
 import { handleStream } from './stream'
 
-export async function runPromptAnthropic(
+export async function runPlaygroundAnthropic(
   messages: ChatBlock[],
   anthropicKey: string,
   model: string,
