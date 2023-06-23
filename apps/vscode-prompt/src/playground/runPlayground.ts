@@ -88,9 +88,26 @@ export async function runPlayground(
         await vscode.window.showErrorMessage('Add OpenAI API key to run `.prompt` file.')
         return
       }
+      const functionEndpoint: string = vscode.workspace.getConfiguration('prompt').get('functionEndpoint') as any
 
       return runPlaygroundOpenAI(blocks, openaiKey, model, [], {
         progress,
+        getFunction: async (name: string) => {
+          const res = await fetch(`${functionEndpoint}/${name}`, {
+            method: 'GET',
+          })
+          return (await res.json()) as any
+        },
+        execFunction: async (name: string, args: any) => {
+          const res = await fetch(`${functionEndpoint}/${name}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json ',
+            },
+            body: JSON.stringify(args),
+          })
+          return (await res.json()) as any
+        },
       })
   }
 }
