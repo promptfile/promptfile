@@ -3,13 +3,14 @@ import Image from 'next/image'
 import {Steps} from 'nextra-theme-docs'
 import {Callout} from 'nextra-theme-docs'
 
-# PromptFile: Iterate and build prompts quickly
+# PromptFile: Engineer Prompts Faster
 
-PromptFile is an open-source templating syntax and playground made to write and iterate on prompts.
+PromptFile is an open-source Markdown-like syntax and playground designed to write and iterate on prompts easier and faster.
 
 Build and prototype your prompts where you and your projects live: **_VSCode_**.
 
-The syntax of a `.prompt` file is straightforward and human-readable. Quickly prototype your prompts without worrying about anything else. When you want to test your prompt, hit one command and get the results streamed in the PromptFile Playground.
+
+The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug.To test your prompt, execute a single command and view the results of your request in the VSCode Playground.
 
 Once your prompt is ready, call a function to load in your prompt in the language of your choice, a seamless and unobtrusive integration of PromptFile into your project.
 
@@ -17,12 +18,12 @@ Once your prompt is ready, call a function to load in your prompt in the languag
 ## Key Features
 
 <Steps>
-### **Built for VSCode**
-   - Get syntax highlighting, IntelliSense, and existing tools like GitHub Co-Pilot to make the prompt writing experience as similar to writing code as possible.
+### **Never leave VSCode**
+   - Enjoy syntax highlighting, IntelliSense, and tools like GitHub Co-Pilot to bring a developer experience to writing prompts.
 ### **Separate Code from Prompt**
    - Code behaves predictably, prompts don't. Separate concerns and gain more control of your project.
-### **Made for Prompt Iteration**
-   - Switch between model providers, monitor token usage, and test in real-time. Rapidly test your prompt as you would your code.
+### **Built for Quick Iteration**
+   - Switch between model providers with one line, monitor token usage, and test in real-time.
 </Steps>
 
 ## Quickstart
@@ -53,13 +54,15 @@ Explore the examples in the Cookbook to learn about PromptFile' many features.
 </Steps>
 
 
-## PromptFile is dead-simple, that's why we love it
+## PromptFile: Simple and Effective Templating
 
-Like you, we just want to build. We don't want to deal with parsing, concatenating, and formatting requests to the LLM. Solutions like Markdown and [MDX](https://mdxjs.com/) are fantastic. We love them.
+Just like you, we want to build using large language models. Parsing, concatenating, and formatting requests to the LLM is annoying. Markdown and MDX help to simplify writing prompts, but aren't made with prompts in mind.
 
-Soon, our projects got more complex. We spent more time working on prompts. Our prompts got more complex. With OpenAI's function calling, it got even more complicated to separate out our code from our prompts.
+When our projects got more complex, we spent more time on prompts. Prompt complexity increased, and with OpenAI's function calling mixing code and prompts, writing and iterating prompts got much harder and slower.
 
-PromptFile is our dead-simple solution. We take a `.prompt` file and transpile it into your preferred language to use in your project.
+That's where PromptFile comes in. A `.prompt` file is easy to write and can be transpiled into your chosen language as a function. Just call the function in your project to get your prompt ready to make the request to the LLM.
+
+Using PromptFile is simple, so you can concentrate on what's important: building amazing things.
 
 {/*Maybe choose a different example that is more intuitive to see how you can interpolate variables and then pass the variables into */}
 
