@@ -1,6 +1,6 @@
 import { ChatBlock } from '@glass-lang/glasslib'
 
-export function transpileToTypescript(blocks: ChatBlock[], variables: string[]): string {
+export function transpileToTypescript(blocks: ChatBlock[], variables: string[], model: string): string {
   let transpiledCode = ''
 
   // Create Args interface
@@ -19,7 +19,7 @@ export function transpileToTypescript(blocks: ChatBlock[], variables: string[]):
 
   // Create Prompt implementation
   transpiledCode += 'const prompt: Prompt = {\n'
-  transpiledCode += '  model: "gpt-4",\n'
+  transpiledCode += `  model: "${model}",\n`
   transpiledCode += '  functions: [],\n'
   transpiledCode += `  blocks: (args: Args): ChatBlock[] => [\n`
 

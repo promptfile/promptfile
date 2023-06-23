@@ -1,11 +1,11 @@
 import { ChatBlock } from '@glass-lang/glasslib'
 
-export function transpileToJavascript(blocks: ChatBlock[], variables: string[]): string {
+export function transpileToJavascript(blocks: ChatBlock[], variables: string[], model: string): string {
   let transpiledCode = ''
 
   // Create Prompt implementation
   transpiledCode += 'const prompt = {\n'
-  transpiledCode += '  model: "gpt-4",\n'
+  transpiledCode += `  model: "${model}",\n`
   transpiledCode += '  functions: [],\n'
   transpiledCode += `  blocks: function(${variables.join(', ')}) {\n`
   transpiledCode += '    return [\n'

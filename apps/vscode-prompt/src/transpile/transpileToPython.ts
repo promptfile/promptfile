@@ -1,12 +1,12 @@
 import { ChatBlock } from '@glass-lang/glasslib'
 
-export function transpileToPython(blocks: ChatBlock[], variables: string[]): string {
+export function transpileToPython(blocks: ChatBlock[], variables: string[], model: string): string {
   let transpiledCode = ''
 
   // Define the class and constructor
   transpiledCode += 'class Prompt:\n'
   transpiledCode += '    def __init__(self, ' + variables.join(', ') + '):\n'
-  transpiledCode += '        self.model = "gpt-4"\n'
+  transpiledCode += `        self.model = "${model}"\n`
   transpiledCode += '        self.functions = []\n'
   transpiledCode += '        self.blocks = [\n'
 

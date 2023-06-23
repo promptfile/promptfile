@@ -1,12 +1,12 @@
 import { ChatBlock } from '@glass-lang/glasslib'
 
-export function transpileToRuby(blocks: ChatBlock[], variables: string[]): string {
+export function transpileToRuby(blocks: ChatBlock[], variables: string[], model: string): string {
   let transpiledCode = ''
 
   // Define the class and initialize method
   transpiledCode += 'class Prompt\n'
   transpiledCode += '    def initialize(' + variables.join(', ') + ')\n'
-  transpiledCode += '        @model = "gpt-4"\n'
+  transpiledCode += `        @model = "${model}"\n`
   transpiledCode += '        @functions = []\n'
   transpiledCode += '        @blocks = [\n'
 

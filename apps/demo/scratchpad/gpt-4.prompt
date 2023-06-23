@@ -5,5 +5,3 @@ model: gpt-4
 <User>
 I'm working on a VSCode extension that I'd like help with.
 </User>
-
-<Request model="gpt-4" />
