@@ -153,7 +153,7 @@ export function handleRequestNode(
 }
 
 function convertResponseData(responseData: ResponseData[][], newBlockIds: string[], streaming: boolean): ChatBlock[] {
-  let idIndex = 0
+  const idIndex = 0
   const totalResponses = responseData.flat().length
   return responseData.flatMap(d =>
     d.flatMap(r => {
@@ -163,7 +163,6 @@ function convertResponseData(responseData: ResponseData[][], newBlockIds: string
         role: 'assistant',
         content: r.response + (streaming && idIndex + 1 === totalResponses ? '█' : ''),
         type: r.function_call != null ? 'function_call' : undefined,
-        id: newBlockIds[idIndex++],
       })
 
       if (r.function_call != null && r.functionObservation != null) {
@@ -171,7 +170,6 @@ function convertResponseData(responseData: ResponseData[][], newBlockIds: string
           role: 'function',
           content: r.functionObservation,
           name: r.function_call!.name,
-          id: newBlockIds[idIndex++],
         })
       }
 

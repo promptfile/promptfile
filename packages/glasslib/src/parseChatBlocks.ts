@@ -9,7 +9,6 @@ export interface ChatBlock {
   content: string
   name?: string
   type?: 'function_call'
-  id?: string
 }
 
 /**
@@ -41,9 +40,8 @@ export function parseChatBlocks(content: string): ChatBlock[] {
       }
     }
     const nameAttr = node.attrs!.find(attr => attr.name === 'name')
-    const idAttr = node.attrs!.find(attr => attr.name === 'id')
     // return { role: role as any, content: doc }
-    res.push({ role: role as any, content: blockContent, name: nameAttr?.stringValue, id: idAttr?.stringValue })
+    res.push({ role: role as any, content: blockContent, name: nameAttr?.stringValue })
   }
 
   console.log('res', res)
@@ -108,8 +106,7 @@ export function parseChatBlocks2(
 
       // return { role: role as any, content: doc }
       const nameAttr = node.attrs!.find(attr => attr.name === 'name')
-      const idAttr = node.attrs!.find(attr => attr.name === 'id')
-      currBlock.push({ role: role as any, content: blockContent, name: nameAttr?.stringValue, id: idAttr?.stringValue })
+      currBlock.push({ role: role as any, content: blockContent, name: nameAttr?.stringValue })
     }
 
     if (currBlock.length > 0) {

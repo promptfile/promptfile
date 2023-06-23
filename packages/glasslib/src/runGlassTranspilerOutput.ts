@@ -171,7 +171,7 @@ async function runGlassChat(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      messages: messagesSoFar.concat(messages).map(m => ({ ...m, id: undefined })),
+      messages: messagesSoFar.concat(messages).map(m => ({ ...m })),
       model: request.model,
       stream: true,
       ...functionArgs,
@@ -291,96 +291,6 @@ async function runGlassChat(
       requestTokens,
       responseTokens,
       streaming: false,
-      index: responseData.length - 1,
-    },
-    options.id
-  )
-}
-
-/**
- * Takes a glass template string and interpolation variables and outputs an array of chat messages you can use to prompt ChatGPT API (e.g. gpt-3.5-turbo or gpt-4).
- */
-async function runGlassChatAnthropic(
-  messages: ChatBlock[],
-  messagesSoFar: ChatBlock[],
-  responseData: ResponseData[][],
-  requestBlocks: RequestData[],
-  newBlockIds: string[],
-  interpolatedDoc: string,
-  options: {
-    tokenCounter?: TokenCounter
-    id?: () => string
-    args?: any
-    openaiKey?: string
-    anthropicKey?: string
-    progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
-    output?: (line: string) => void
-  }
-): Promise<{
-  response: ChatBlock[]
-  nextGlassfile: string
-}> {
-  const request = requestBlocks[responseData.length]
-
-  const tokenCounter = options.tokenCounter || DEFAULT_TOKEN_COUNTER
-
-  const requestTokens = tokenCounter.countTokens(anthropicQuery, request.model)
-
-  const r = await fetch('https://api.anthropic.com/v1/complete', {
-    method: 'POST',
-    headers: {
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
-      'X-API-Key': (options?.anthropicKey || process.env.ANTHROPIC_API_KEY)!,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: request.model,
-      prompt: anthropicQuery,
-      max_tokens_to_sample: 2048,
-      stopSequences: ['Human:', 'Assistant:'],
-      stream: true,
-    }),
-  })
-
-  const response = await handleStream(r, handleAnthropicChunk, next => {
-    if (!r.ok) {
-      throw new Error(`HTTP error: ${r.status}`)
-    }
-    if (options?.progress) {
-      const responseTokens = tokenCounter.countTokens(next.content, request.model)
-      return options.progress(
-        handleRequestNode(
-          interpolatedDoc,
-          {
-            newBlockIds,
-            responseData: responseData.concat([[{ response: next.content.trim(), requestTokens, responseTokens }]]),
-            requestBlocks,
-            requestTokens,
-            responseTokens,
-            streaming: true,
-            index: responseData.length,
-          },
-          options.id
-        )
-      )
-    }
-  })
-
-  const responseTokens = tokenCounter.countTokens(response.content, request.model)
-
-  responseData.push([{ response: response.content.trim(), requestTokens, responseTokens }])
-  messagesSoFar.push(...messages)
-  messagesSoFar.push({ role: 'assistant', content: response.content.trim() })
-
-  return handleRequestNode(
-    interpolatedDoc,
-    {
-      newBlockIds,
-      responseData,
-      requestBlocks,
-      streaming: false,
-      requestTokens,
-      responseTokens,
       index: responseData.length - 1,
     },
     options.id
@@ -514,52 +424,4 @@ async function runGlassCompletion(
     },
     options.id
   )
-}
-
-function handleChatChunk(
-  currResult: LLMResponse,
-  eventData: {
-    choices: {
-      delta: {
-        content: string | null
-        function_call: {
-          name: string
-          arguments: string
-        }
-      }
-    }[]
-  }
-) {
-  const choice = eventData.choices[0]
-  if (choice.delta.function_call) {
-    const newResult: LLMResponse = { ...currResult }
-    if (!newResult.function_call) {
-      newResult.function_call = {
-        name: '',
-        arguments: '',
-      }
-    }
-    if (choice.delta.function_call.name) {
-      newResult.function_call.name = choice.delta.function_call.name
-    }
-    if (choice.delta.function_call.arguments) {
-      newResult.function_call.arguments += choice.delta.function_call.arguments
-    }
-    return newResult
-  }
-  if (eventData.choices[0].delta.content) {
-    const newResult = { ...currResult }
-    newResult.content += eventData.choices[0].delta.content
-    return newResult
-  }
-  return currResult
-}
-
-function handleCompletionChunk(currResult: LLMResponse, eventData: { choices: { text: string }[] }) {
-  if (eventData.choices[0].text) {
-    const newResult = { ...currResult }
-    newResult.content += eventData.choices[0].text
-    return newResult
-  }
-  return currResult
 }

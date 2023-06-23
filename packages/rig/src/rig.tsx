@@ -11,7 +11,6 @@ export interface ChatBlock {
   content: string
   name?: string
   type?: 'function_call'
-  id?: string
 }
 
 export interface GlassSession {
