@@ -1,47 +1,12 @@
-import { LANGUAGE_MODELS } from './languageModels'
-import { ChatBlock } from './parseChatBlocks'
-import { GlassContent, RequestData, parseGlassDocument, reconstructGlassDocument } from './parseGlassBlocks'
-import { ResponseData } from './runGlassTranspilerOutput'
-import { updateGlassBlockAttributes } from './updateGlassBlockAttributes'
-
-export function addNodeToDocument(content: string, index: number, doc: string) {
-  const parsed = parseGlassDocument(doc)
-  const nodes = parsed
-    .slice(0, index)
-    .concat({ content, type: 'block' } as any)
-    .concat(parsed.slice(index))
-  return reconstructGlassDocument(nodes)
-}
-
-export function replaceDocumentNode(content: string, index: number, doc: string) {
-  const parsed = parseGlassDocument(doc)
-  const nodes = parsed
-    .slice(0, index)
-    .concat({ content, type: 'block' } as any)
-    .concat(parsed.slice(index + 1))
-  return reconstructGlassDocument(nodes)
-}
-
-export function addToDocument(addToDocument: { tag: string; content: string; attrs?: any }[], doc: string) {
-  const bs = addToDocument
-    .map(b => {
-      const attrs = b.attrs
-        ? ` ${Object.keys(b.attrs)
-            .map(k => `${k}={${JSON.stringify(b.attrs[k])}}`)
-            .join(' ')}`
-        : ''
-      return `<${b.tag}${attrs}>\n${b.content}\n</${b.tag}>`
-    })
-    .join('\n\n')
-
-  const parsedDoc = parseGlassDocument(doc)
-  const transcriptNodeDoc = parsedDoc.find(node => node.tag === 'Transcript')
-  const transcriptNodeIndex = parsedDoc.indexOf(transcriptNodeDoc!)
-
-  return {
-    doc: addNodeToDocument('\n\n' + bs + '\n\n', transcriptNodeIndex + 1, doc),
-  }
-}
+import {
+  ChatBlock,
+  GlassContent,
+  LANGUAGE_MODELS,
+  parseGlassDocument,
+  reconstructGlassDocument,
+} from '@glass-lang/glasslib'
+import { RequestData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
+import { ResponseData } from './runPrompt'
 
 const chatBlockTags = new Set(['User', 'System', 'Assistant', 'Function', 'Block'])
 
@@ -128,9 +93,6 @@ export function handleRequestNode(
       }
       currRequest++
     } else {
-      if (chatBlockTags.has(block.tag || '') && currId != null && !docId) {
-        block.content = updateGlassBlockAttributes(block, { name: 'id', stringValue: currId })
-      }
       newBlocks.push(block)
     }
 
@@ -231,16 +193,4 @@ const requestNodeReplacement = (
   return `<Assistant${argAttributes}>
 ${response}${streaming ? '█' : ''}
 </Assistant>`
-}
-
-export function replaceRequestNode(newRequestNode: string, doc: string) {
-  const parsed = parseGlassDocument(doc)
-
-  const requestNode = parsed.find(node => (node as any).tag === 'Request')
-  if (!requestNode) {
-    return doc
-  }
-
-  const idx = parsed.indexOf(requestNode)
-  return replaceDocumentNode(newRequestNode, idx, doc)
 }
