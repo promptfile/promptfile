@@ -58,7 +58,7 @@ export const glassElements: GlassElement[] = [
     attributes: [
       {
         name: 'name',
-        detail: 'name of the function call',
+        detail: 'name of the function used in the call',
         documentation: 'The `name` attribute defines the name of the function which was called.',
         type: 'string',
       },

@@ -9,11 +9,10 @@ If you're unfamilar with chat blocks in the context of prompting, you can learn 
 To start, try executing this prompt by using the `Promptfile: run` command. You can find this command by opening the command palette (Cmd+Shift+P on Mac, Ctrl+Shift+P on Windows) and searching for `Promptfile`. You can also execute this prompt by keyboard shortcut Cmd+Enter (Mac) / Ctrl+Enter (Windows).
 
 
-
-
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
+
 
 Feel free to change this text to anything you want!
 <User>
