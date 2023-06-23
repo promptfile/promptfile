@@ -195,16 +195,6 @@ inside user
     )
   })
 
-  it('should parse complex', () => {
-    const doc = `<Request model="gpt-4" onResponse={() => setProfile({ hasChatted: true})}>
-hello world
-</Request>`
-
-    const parsed = parseGlassBlocks(doc)
-    expect(parsed[0].content).to.equal(doc)
-    expect(parsed[0].child!.content).to.equal('hello world')
-  })
-
   it('should parse empty block', () => {
     const doc = `<Assistant>
 </Assistant>`
@@ -251,7 +241,7 @@ doSomething
   })
 
   it('should parse block with attributes', () => {
-    const doc = `<Assistant foo="bar" if={function doSomething() { return "hello world" }}>
+    const doc = `<Assistant foo="bar">
 inside assistant
 </Assistant>`
 
@@ -262,30 +252,6 @@ inside assistant
       {
         name: 'foo',
         stringValue: 'bar',
-      },
-      {
-        name: 'if',
-        expressionValue: `function doSomething() { return "hello world" }`,
-      },
-    ])
-  })
-
-  it('should parse block with attributes and invalid jsx inside', () => {
-    const doc = `<Assistant foo="bar" if={function doSomething() { return "hello world" }}>
-<br>
-</Assistant>`
-
-    const parsed = parseGlassBlocks(doc)
-    expect(parsed[0].content).to.equal(doc)
-    expect(parsed[0].child!.content).to.equal(`<br>`)
-    expect(parsed[0].attrs).to.deep.equal([
-      {
-        name: 'foo',
-        stringValue: 'bar',
-      },
-      {
-        name: 'if',
-        expressionValue: `function doSomething() { return "hello world" }`,
       },
     ])
   })

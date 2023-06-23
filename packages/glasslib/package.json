@@ -6,8 +6,9 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf dist",
-    "test": "mocha --exit --enable-source-maps ./dist/test.js",
-    "test:watch": "mocha --watch --enable-source-maps ./dist/test.js",
+    "test:build": "tsup src/test.ts",
+    "test": "npm run test:build && mocha --exit --enable-source-maps ./dist/test.js",
+    "test:watch": "npm run test:build && mocha --watch --enable-source-maps ./dist/test.js",
     "dev": "ts-node src/index.ts",
     "build": "npm run clean && npm run build:types && npm run build:tsup",
     "build:types": "tsc --emitDeclarationOnly",
