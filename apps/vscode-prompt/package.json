@@ -166,7 +166,7 @@
           {
             "scope": "source.prompt.function.name",
             "settings": {
-              "foreground": "#3EA295",
+              "foreground": "#3e69d1",
               "fontStyle": "italic"
             }
           },
@@ -178,29 +178,9 @@
             }
           },
           {
-            "scope": "source.prompt.request.name",
-            "settings": {
-              "foreground": "#3e69d1",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "scope": "source.prompt.text.name",
-            "settings": {
-              "fontStyle": "italic"
-            }
-          },
-          {
             "scope": "source.prompt.block.name",
             "settings": {
               "foreground": "#9373DE",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "scope": "source.prompt.state.name",
-            "settings": {
-              "foreground": "#7a7a7a",
               "fontStyle": "italic"
             }
           },
@@ -211,30 +191,9 @@
             }
           },
           {
-            "scope": "source.prompt.test.name",
-            "settings": {
-              "foreground": "#FFB454",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "scope": "source.prompt.code.name",
-            "settings": {
-              "foreground": "#FFB454",
-              "fontStyle": "italic"
-            }
-          },
-          {
             "scope": "source.prompt.system.name",
             "settings": {
               "foreground": "#f467c6",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "scope": "source.prompt.for.name",
-            "settings": {
-              "foreground": "#E5C75E",
               "fontStyle": "italic"
             }
           },

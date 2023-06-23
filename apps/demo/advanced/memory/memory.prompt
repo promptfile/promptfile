@@ -1,16 +1,3 @@
-<Code>
-const [profile, setProfile] = useState('{}')
-
-const handleResponse = (response: any) => {
-  const { action, action_input } = JSON.parse(res.message.slice(7, -3))
-  if (action !== 'Final Answer') {
-    const observation = await runAction({ action, action_input })
-    res.addToTranscript('User', observation)
-    res.continue()
-  }
-}
-</Code>
-
 <System>
 You are ChatGPT. You exist to interact with the User. Here is the User's profile:
 

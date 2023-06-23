@@ -1,25 +1,3 @@
-<Code>
-import fs from 'fs'
-import path from 'path'
-import { exec } from 'child_process'
-
-const codePath = path.join(__dirname, 'fibonacci.ts')
-const testPath = path.join(__dirname, 'fibonacci.test.ts')
-
-const code = fs.readFileSync(codePath, 'utf-8').toString()
-const test = fs.readFileSync(testPath, 'utf-8').toString()
-
-async function runTests() {
-  return await new Promise((resolve, reject) => {
-    exec(`npm run test`, { cwd: __dirname }, (error, stdout, stderr) => {
-      resolve(stdout.trim())
-    })
-  })
-}
-
-const testOutput = await runTests()
-</Code>
-
 <System>
 You are a superintelligent AI. You've been tasked with helping the User to write code.
 
