@@ -85,43 +85,8 @@
       }
     },
     "variable": {
-      "begin": "^(.*)(\\@\\{)",
-      "end": "(\\})(.*)$",
-      "beginCaptures": {
-        "1": {
-          "patterns": [
-            {
-              "include": "#variable"
-            },
-            {
-              "include": "text.html.markdown"
-            }
-          ]
-        },
-        "2": {
-          "name": "source.prompt.flow.punctuation"
-        }
-      },
-      "endCaptures": {
-        "1": {
-          "name": "source.prompt.flow.punctuation"
-        },
-        "2": {
-          "patterns": [
-            {
-              "include": "#variable"
-            },
-            {
-              "include": "text.html.markdown"
-            }
-          ]
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.prompt.variable"
-        }
-      ]
+      "match": "@\\{[A-Za-z0-9]+\\}",
+      "name": "source.prompt.variable"
     },
     "block-element": {
       "begin": "^(<)(Block)(.*)(>)$",
