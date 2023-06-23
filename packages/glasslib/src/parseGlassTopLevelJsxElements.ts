@@ -10,7 +10,6 @@ import { mdxJsx } from 'micromark-extension-mdx-jsx'
 import { mdxMd } from 'micromark-extension-mdx-md'
 import { mdxjsEsm } from 'micromark-extension-mdxjs-esm'
 import { combineExtensions } from 'micromark-util-combine-extensions'
-import { removeGlassComments } from './removeGlassComments'
 import { removeGlassFrontmatter } from './removeGlassFrontmatter'
 
 export interface JSXNode {
@@ -43,7 +42,6 @@ export interface JSXNode {
  */
 export function parseGlassTopLevelJsxElements(doc: string) {
   // preprocessing: remove all comments
-  doc = removeGlassComments(doc)
 
   const mdxSettings = {
     acorn: Parser.extend(acornJsx()),

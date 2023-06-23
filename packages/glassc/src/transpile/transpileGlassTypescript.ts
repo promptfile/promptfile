@@ -107,17 +107,6 @@ export function transpileGlassFileTypescript(
 
   // find all the interpolation variables from dynamic code blocks
   for (const jsxNode of parsedDocument.filter(d => d.type === 'block')) {
-    if (jsxNode.tag === 'Test' || jsxNode.tag === 'Code') {
-      // don't strip away codeblocks, yet
-      // doc = doc.substring(0, jsxNode.position.start.offset) + doc.substring(jsxNode.position.end.offset)
-      continue // ignore all interpolation sequences / requirements in code blocks
-    }
-    if (jsxNode.tag === 'State') {
-      continue
-    }
-    if (jsxNode.tag === 'Transcript') {
-      continue
-    }
     if (jsxNode.tag === 'Tool') {
       const nameAttr = jsxNode.attrs!.find(a => a.name === 'name')
       const name = nameAttr!.stringValue!
@@ -156,8 +145,6 @@ export function transpileGlassFileTypescript(
     .filter(d => d.tag === 'Code')
     .map(d => d.child!.content)
     .join('\n')
-
-  const codeBlock = parseCodeBlock(toplevelCode)
 
   const trimmedImports = removeImports(toplevelCode)
   toplevelCode = trimmedImports.trimmedCode
@@ -204,9 +191,6 @@ export function transpileGlassFileTypescript(
   const allInterpolationNames = Array.from(interpolationVarSet)
   const argsString = allInterpolationNames.map(arg => arg + `: ${argsOverride[arg] || 'string'}`).join(', ')
   const functionArgs = argsString.length === 0 ? '' : language === 'javascript' ? 'args' : `args: { ${argsString} }`
-
-
-
 
   const escapedInterpolatedDoc = glasslib
     .parseGlassDocument(codeSanitizedDoc)
