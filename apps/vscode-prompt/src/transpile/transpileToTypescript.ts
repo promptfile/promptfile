@@ -1,5 +1,4 @@
-import { ChatBlock } from '@glass-lang/glasslib'
-import { LLMFunction } from '../playground/runPlayground'
+import { ChatBlock, LLMFunction } from '@glass-lang/glasslib'
 
 export function transpileToTypescript(
   blocks: ChatBlock[],
