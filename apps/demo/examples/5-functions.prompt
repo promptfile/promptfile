@@ -14,9 +14,7 @@ https://platform.openai.com/docs/guides/gpt/function-calling
     "description": "",
     "parameters": {
       "type": "object",
-      "properties": {
-        "": {},
-      }
+      "properties": {}
     }
   }
 ]
