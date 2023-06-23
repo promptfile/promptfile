@@ -4,6 +4,7 @@ interface ParsedResult {
   model?: string
   description?: string
   temperature?: number
+  maxTokens?: number
 }
 
 export function parseFrontmatterFromGlass(glass: string): ParsedResult | null {
@@ -33,6 +34,9 @@ export function parseFrontmatterFromGlass(glass: string): ParsedResult | null {
     }
     if (result.temperature) {
       res['temperature'] = result.temperature
+    }
+    if (result.maxTokens) {
+      res['maxTokens'] = result.maxTokens
     }
     return res as ParsedResult
   }
