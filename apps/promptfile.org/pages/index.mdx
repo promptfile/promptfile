@@ -1,42 +1,39 @@
 import { Tab, Tabs } from 'nextra-theme-docs'
 import Image from 'next/image'
 import {Steps} from 'nextra-theme-docs'
+import {Callout} from 'nextra-theme-docs'
 
-# Promptfile: Iterate and build prompts quickly
+# PromptFile: Iterate and build prompts quickly
 
+PromptFile is an open-source templating syntax and playground made to write and iterate on prompts.
 
-Promptfile is an open-source templating syntax and VSCode playground specifically designed for crafting prompts to large language models (LLMs).
+Build and prototype your prompts where you and your projects live: **_VSCode_**.
 
-By enabling developers to work within the familiar VSCode environment, Promptfile makes writing prompts as familiar as writing code.
+The syntax of a `.prompt` file is straightforward and human-readable. Quickly prototype your prompts without worrying about anything else. When you want to test your prompt, hit one command and get the results streamed in the PromptFile Playground.
 
-Featuring an intuitive and straightforward syntax, Promptfile makes it easy for users to quickly learn and use in writing complicated prompts.
+Once your prompt is ready, call a function to load in your prompt in the language of your choice, a seamless and unobtrusive integration of PromptFile into your project.
 
-Once your prompt is ready, generate a function with just a single line of code, ensuring seamless integration of Promptfile into your project.
-
+<Callout emoji="🔑"> **Your prompt, your keys, your control. Keys are stored locally.** </Callout>
 ## Key Features
 
 <Steps>
 ### **Build in VSCode**
-   - Get syntax highlighting, IntelliSense, and existing tools like GitHub Co-Pilot to make the prompt writing experience as similar to the code writing experience as possible. Your prompts should behave more like code than strings.
-
-### **Construct complex prompts**
-   - Design dynamic templates with conditional logic, state management, and multiple model requests in a single prompt. Easily define tools for your LLM to use to achieve its task.
-
-### **Iterate quicker**
-   - Switch between model providers, monitor token usage, and test in real-time. Rapidly perfect your prompt as you would your code.
+   - Get syntax highlighting, IntelliSense, and existing tools like GitHub Co-Pilot to make the prompt writing experience as similar to writing code as possible.
+### **Separate code from prompt**
+   - Code behaves predictably, prompts don't. Separate concerns and gain more control of your project.
+### **Made for Prompt Iteration**
+   - Switch between model providers, monitor token usage, and test in real-time. Rapidly test your prompt as you would your code.
 </Steps>
 
-
-
 ## Quickstart
-For detailed instructions, refer to our [Getting Started Guide](/guide).
+Get up-and-running in less than a couple ofminutes. For detailed instructions, refer to our [Getting Started Guide](/guide).
 
 <Steps>
 ### **Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-prompt)**
-Add your OpenAI or Anthropic API Key by running the `Promptfile: open settings` command in the VSCode Command Palette. For further assistance, follow this [guide](/guide#save-your-api-keys).
+Add your OpenAI or Anthropic API Key by running the "PromptFile: open settings", command in the VSCode Command Palette. For further assistance, see [here](/guide#saving-your-api-keys).
 
-### **Create your first Promptfile file**
-Create a workspace for your Promptfile files. Then, create a file named `example.prompt` and copy the provided `example.prompt` file into it.
+### **Create your first `.prompt` file**
+Create a file named `example.prompt` and copy the provided `example.prompt` file into it.
 
 ```prompt copy filename="example.prompt"
 <System>
@@ -50,27 +47,27 @@ Write me a haiku about the ocean
 <Request model="gpt-3.5-turbo" />
 ```
 
-### **Run the Promptfile File: `Command (⌘) + Enter (↩)`**
-The Promptfile [Playground](/playground) should appear and run your Promptfile file.
+### **Run the PromptFile File: `Command (⌘) + Enter (↩)`**
+The PromptFile [Playground](/playground) should appear and run your PromptFile file.
 
-### **See more Promptfile Features in our [Cookbook](/examples)**
-Explore the examples in the Cookbook to learn about Promptfile' many features.
+### **See more PromptFile Features in our [Cookbook](/examples)**
+Explore the examples in the Cookbook to learn about PromptFile' many features.
 </Steps>
 
 
-## Experience the Promptfile difference
+## Experience the PromptFile difference
 
-Dealing with JSON requests can be tedious and not very intuitive. Promptfile addresses this issue by offering a more readable and developer-friendly approach to prompting large language models. It brings the benefits of Markdown or MDX, tailor-made for writing prompts.
+Dealing with JSON requests can be tedious and not very intuitive. PromptFile addresses this issue by offering a more readable and developer-friendly approach to prompting large language models. It brings the benefits of Markdown or MDX, tailor-made for writing prompts.
 
-With Promptfile in the VSCode playground, you'll enjoy better readability and effortless iteration on your prompts. But Promptfile is more than just a templating syntax – it simplifies the prompting process and enhances the overall development experience.
+With PromptFile in the VSCode playground, you'll enjoy better readability and effortless iteration on your prompts. But PromptFile is more than just a templating syntax – it simplifies the prompting process and enhances the overall development experience.
 
-Check out the side-by-side comparison of a prompt in JSON format compared to its Promptfile version. Experience firsthand how Promptfile improves your workflow and makes crafting prompts a smoother, more efficient task.
-
-
-Promptfile provides a more readable and intuitive alternative to traditional JSON requests. It offers the same benefits as Markdown or MDX but adds more functionality specifically designed for writing prompts. This makes your prompts not only more readable but also easier to iterate on, especially in the Promptfile Playground.
+Check out the side-by-side comparison of a prompt in JSON format compared to its PromptFile version. Experience firsthand how PromptFile improves your workflow and makes crafting prompts a smoother, more efficient task.
 
 
-<Tabs items={['JSON', 'Promptfile']}>
+PromptFile provides a more readable and intuitive alternative to traditional JSON requests. It offers the same benefits as Markdown or MDX but adds more functionality specifically designed for writing prompts. This makes your prompts not only more readable but also easier to iterate on, especially in the PromptFile Playground.
+
+
+<Tabs items={['JSON', 'PromptFile']}>
   <Tab>
   <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', overflowWrap: 'break-word', overflow: 'hidden'}}>
 ````json copy filename='request.json'
