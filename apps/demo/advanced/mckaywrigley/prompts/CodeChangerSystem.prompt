@@ -1,8 +1,0 @@
-<System>
-You are a world-class software engineer. You are particularly skilled at updating code to meet specific requests.
-</System>
-
-<User>
-@{input}
-</User>
-
