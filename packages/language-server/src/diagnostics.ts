@@ -1,4 +1,10 @@
-import { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType, parseGlassBlocks } from '@glass-lang/glasslib'
+import {
+  LANGUAGE_MODELS,
+  LanguageModelCreator,
+  LanguageModelType,
+  parseFrontmatterFromGlass,
+  parseGlassBlocks,
+} from '@glass-lang/glasslib'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from './elements'
@@ -122,56 +128,6 @@ function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnostic[] {
         })
       }
     }
-    return diagnostics
-  } catch {
-    return []
-  }
-}
-
-function findRequestModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
-  try {
-    const parsed = parseGlassBlocks(textDocument.getText())
-    const requestElement = parsed.find(tag => tag.tag && ['Request'].includes(tag.tag))
-    if (!requestElement) {
-      return []
-    }
-
-    const maxTokensAttribute = requestElement.attrs?.find(attr => attr.name === 'maxTokens')
-
-    const modelAttribute = requestElement.attrs?.find(attr => attr.name === 'model')
-
-    if (!modelAttribute || !modelAttribute.stringValue) {
-      return []
-    }
-
-    const model = modelAttribute.stringValue
-    const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
-
-    if (!languageModel) {
-      return []
-    }
-
-    const diagnostics: Diagnostic[] = []
-
-    if (
-      maxTokensAttribute &&
-      maxTokensAttribute.expressionValue != null &&
-      parseInt(maxTokensAttribute.expressionValue) > languageModel.maxTokens
-    ) {
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range: {
-          start: textDocument.positionAt(requestElement.position.start.offset),
-          end: textDocument.positionAt(requestElement.position.end.offset),
-        },
-        message: `maxTokens exceeds maximum value for ${languageModel.name}: ${languageModel.maxTokens}`,
-        source: 'prompt',
-      }
-      diagnostics.push(diagnostic)
-    }
-
-    // Add more diagnostics for temperature and other attributes here if needed
-
     return diagnostics
   } catch {
     return []

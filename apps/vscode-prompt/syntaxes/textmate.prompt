@@ -12,4 +12,3 @@ Here is the current `prompt.tmLanguage.json` file:
 @{input}
 </User>
 
-<Request model="gpt-4" />

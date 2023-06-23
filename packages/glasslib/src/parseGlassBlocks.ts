@@ -24,7 +24,7 @@ export interface GlassContent {
  *
  * Each part of the file is returned as a `GlassContent` object. There are three types of content:
  * - `frontmatter`: a frontmatter block may be declared at the top of the file
- * - `block`: a top-level block element (e.g. <System>, <Request>)
+ * - `block`: a top-level block element (e.g. <System>, )
  * - `comment`: ignored text (between blocks)
  *
  * For chat-only blocks, use `parseChatBlocks`.

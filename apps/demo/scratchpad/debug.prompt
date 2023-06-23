@@ -30,4 +30,3 @@ vscode.commands.registerCommand('glass.openPlayground', async () => {
 I'd like to modify this behavior such that the `glass.openPlayground` command can be run even if the file has not been saved. how would you recomend i accomplish this?
 </User>
 
-<Request model="gpt-4" />

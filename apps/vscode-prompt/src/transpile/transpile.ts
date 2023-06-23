@@ -38,9 +38,7 @@ export async function transpile(text: string) {
   const frontmatter = parseFrontmatterFromGlass(text)
   const model = frontmatter?.model ?? defaultModel
   const language = transpilationLanguage.action
-  console.log(text)
   const blocks = parseChatBlocks(text)
-  console.log(blocks)
   const variables = parseGlassMetadata(text).interpolationVariables
   let code = ''
   try {

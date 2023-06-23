@@ -1,15 +1,9 @@
-import {
-  LANGUAGE_MODELS,
-  LanguageModelCreator,
-  parseChatBlocks,
-  parseGlassBlocks,
-  parseGlassMetadata,
-} from '@glass-lang/glasslib'
+import { parseChatBlocks, parseGlassBlocks, parseGlassMetadata } from '@glass-lang/glasslib'
 import fs from 'fs'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { runPrompt } from '../run/runPrompt'
-import { getAnthropicKey, getGithubKey, getOpenaiKey } from '../util/keys'
+import { getGithubKey } from '../util/keys'
 import { generateULID } from '../util/ulid'
 import { getHtmlForWebview } from '../webview'
 import { createSession, getCurrentSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
@@ -250,68 +244,27 @@ export async function createPlayground(
         break
       case 'runSession':
         async function runGlassExtension(glass: string, sessionToRun: string, inputs: any) {
-          const parsedFrontmater = parseFrontmatterFromGlass(glass)
-          const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('prompt').get('defaultModel')
-          const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
-          if (!languageModel) {
-            await vscode.window.showErrorMessage(`Unable to find model ${model}`)
-            return
-          }
-          switch (languageModel.creator) {
-            case LanguageModelCreator.anthropic:
-              const anthropicKey = getAnthropicKey()
-              if (anthropicKey == null || anthropicKey === '') {
-                await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.anthropicKey')
-                await vscode.window.showErrorMessage('Add Anthropic API key to run `.prompt` file.')
-                return
-              }
-              break
-            case LanguageModelCreator.openai:
-              const openaiKey = getOpenaiKey()
-              if (openaiKey == null || openaiKey === '') {
-                await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.openaiKey')
-                await vscode.window.showErrorMessage('Add OpenAI API key to run `.prompt` file.')
-                return
-              }
-              break
-          }
-
-          // Ensure a workspace is opened
-          if (!vscode.workspace.workspaceFolders) {
-            await vscode.window.showErrorMessage('No workspace opened')
-            return
-          }
-
-          const sessionDocument = await vscode.workspace.openTextDocument(sessionToRun)
-
           try {
             const requestId = generateULID()
-            const resp = await runPrompt(
-              filepath,
-              outputChannel,
-              sessionDocument,
-              glass,
-              inputs,
-              async ({ nextGlassfile }) => {
-                const existingPlayground = playgrounds.get(filepath)
-                if (!existingPlayground || stoppedRequestIds.has(requestId)) {
-                  return false
-                }
-                writeGlass(sessionToRun, nextGlassfile)
-                const blocksForGlass = parseChatBlocks(nextGlassfile)
-                const metadataForGlass = parseGlassMetadata(nextGlassfile)
-                await panel.webview.postMessage({
-                  action: 'onStream',
-                  data: {
-                    session: sessionToRun,
-                    blocks: blocksForGlass,
-                    variables: metadataForGlass.interpolationVariables,
-                    requestId,
-                  },
-                })
-                return true
+            const resp = await runPrompt(outputChannel, glass, inputs, async ({ nextGlassfile }) => {
+              const existingPlayground = playgrounds.get(filepath)
+              if (!existingPlayground || stoppedRequestIds.has(requestId)) {
+                return false
               }
-            )
+              writeGlass(sessionToRun, nextGlassfile)
+              const blocksForGlass = parseChatBlocks(nextGlassfile)
+              const metadataForGlass = parseGlassMetadata(nextGlassfile)
+              await panel.webview.postMessage({
+                action: 'onStream',
+                data: {
+                  session: sessionToRun,
+                  blocks: blocksForGlass,
+                  variables: metadataForGlass.interpolationVariables,
+                  requestId,
+                },
+              })
+              return true
+            })
 
             const existingPlayground = playgrounds.get(filepath)
             if (!existingPlayground || stoppedRequestIds.has(requestId)) {
