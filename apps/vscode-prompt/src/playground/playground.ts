@@ -18,7 +18,6 @@ export async function createPlayground(
   filepath: string,
   playgrounds: Map<string, GlassPlayground>,
   extensionUri: vscode.Uri,
-  outputChannel: vscode.OutputChannel,
   stoppedRequestIds: Set<string>
 ) {
   // load the document at the filepath
@@ -239,14 +238,11 @@ export async function createPlayground(
           await vscode.window.showErrorMessage('Unable to open `.prompt` file')
         }
         break
-      case 'openOutput':
-        outputChannel.show()
-        break
       case 'runSession':
         async function runGlassExtension(glass: string, sessionToRun: string, inputs: any) {
           try {
             const requestId = generateULID()
-            const resp = await runPrompt(outputChannel, glass, inputs, async ({ nextGlassfile }) => {
+            const resp = await runPrompt(glass, inputs, async ({ nextGlassfile }) => {
               const existingPlayground = playgrounds.get(filepath)
               if (!existingPlayground || stoppedRequestIds.has(requestId)) {
                 return false
@@ -270,13 +266,7 @@ export async function createPlayground(
             if (!existingPlayground || stoppedRequestIds.has(requestId)) {
               return false
             }
-            const newGlassfile = `${resp.nextGlassfile}
-
-<User>
-@{input}
-</User>
-
-<Request model="${model}" />`
+            const newGlassfile = resp?.nextGlassfile ?? ''
             const blocksForGlass = parseChatBlocks(newGlassfile)
             const metadataForGlass = parseGlassMetadata(newGlassfile)
             writeGlass(sessionToRun, newGlassfile) // wait for this?
@@ -287,7 +277,6 @@ export async function createPlayground(
                 glass: newGlassfile,
                 blocks: blocksForGlass,
                 variables: metadataForGlass.interpolationVariables,
-                model,
               },
             })
           } catch (error) {

@@ -49,7 +49,7 @@ export async function activate(context: vscode.ExtensionContext) {
     },
     {
       documentSelector: [{ scheme: 'file', language: 'prompt' }],
-      outputChannelName: 'prompt language server',
+      outputChannelName: 'Prompt Language Server',
     }
   )
   await client.start()
@@ -60,9 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
   tokenCount.command = undefined
   tokenCount.show()
 
-  const outputChannel = vscode.window.createOutputChannel('prompt')
-
-  async function launchGlassDocument(selectedDocument: vscode.TextDocument, outputChannel: vscode.OutputChannel) {
+  async function launchGlassDocument(selectedDocument: vscode.TextDocument) {
     const relativePath = vscode.workspace.asRelativePath(selectedDocument.uri.fsPath)
     fileTimestamps.set(relativePath, Date.now())
 
@@ -70,15 +68,8 @@ export async function activate(context: vscode.ExtensionContext) {
     const filepath = selectedDocument.uri.fsPath
     const filename = getDocumentFilename(selectedDocument)
 
-    outputChannel.appendLine(`${filename} — launching prompt playground`)
     const initialMetadata = parseGlassMetadata(initialGlass)
-    const playground = await createPlayground(
-      filepath,
-      playgrounds,
-      context.extensionUri,
-      outputChannel,
-      stoppedRequestIds
-    )
+    const playground = await createPlayground(filepath, playgrounds, context.extensionUri, stoppedRequestIds)
     if (!playground) {
       await vscode.window.showErrorMessage('Unable to create playground')
       return
@@ -139,13 +130,10 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    vscode.commands.registerCommand('prompt.showOutput', async () => {
-      outputChannel.show()
-    }),
     vscode.commands.registerCommand('prompt.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && isPromptFile(activeEditor.document)) {
-        await launchGlassDocument(activeEditor.document, outputChannel)
+        await launchGlassDocument(activeEditor.document)
         await updateRecentlySelectedFiles(activeEditor.document.uri)
         return
       }
@@ -155,7 +143,7 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       } else if (promptFiles.length === 1) {
         const doc = await vscode.workspace.openTextDocument(promptFiles[0])
-        await launchGlassDocument(doc, outputChannel)
+        await launchGlassDocument(doc)
         return
       }
       const promptFilesQuickPick = promptFiles.map(documentUri => {
@@ -196,7 +184,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       await updateRecentlySelectedFiles(selectedDocument)
       const doc = await vscode.workspace.openTextDocument(selectedDocument)
-      await launchGlassDocument(doc, outputChannel)
+      await launchGlassDocument(doc)
     }),
     vscode.commands.registerCommand('prompt.settings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt')
@@ -214,7 +202,7 @@ export async function activate(context: vscode.ExtensionContext) {
         return
       } else if (promptFiles.length === 1) {
         const doc = await vscode.workspace.openTextDocument(promptFiles[0])
-        await launchGlassDocument(doc, outputChannel)
+        await launchGlassDocument(doc)
         return
       }
       const promptFilesQuickPick = promptFiles.map(documentUri => {

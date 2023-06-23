@@ -9,6 +9,7 @@ import {
 import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import * as vscode from 'vscode'
 import { getAnthropicKey, getOpenaiKey } from '../util/keys'
+import { runPromptAnthropic } from './runPromptAnthropic'
 
 export interface LLMResponse {
   content: string
@@ -30,7 +31,6 @@ export interface TranspilerOutput {
 }
 
 export async function runPrompt(
-  outputChannel: vscode.OutputChannel,
   content: string,
   inputs: any,
   progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
@@ -40,7 +40,7 @@ export async function runPrompt(
   const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
   const openaiKey = getOpenaiKey()
   const anthropicKey = getAnthropicKey()
-  if (!languageModel) {
+  if (!languageModel || !model) {
     await vscode.window.showErrorMessage(`Unable to find model ${model}`)
     return
   }
@@ -60,9 +60,13 @@ export async function runPrompt(
       }
       break
   }
-  const blocks = parseChatBlocks(content)
   const metadata = parseGlassMetadata(content)
-  const variables = metadata.interpolationVariables
-
-  return ''
+  for (const variable of metadata.interpolationVariables) {
+    const value = inputs[variable] ?? ''
+    content = content.replace(`@{${variable}}`, value)
+  }
+  const blocks = parseChatBlocks(content)
+  return runPromptAnthropic(blocks, anthropicKey!, model, {
+    progress,
+  })
 }

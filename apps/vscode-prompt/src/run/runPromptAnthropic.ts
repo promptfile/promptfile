@@ -1,5 +1,5 @@
-import { ChatBlock } from '@glass-lang/glasslib'
-import { DEFAULT_TOKEN_COUNTER, TokenCounter } from '@glass-lang/glasslib/'
+import { ChatBlock, DEFAULT_TOKEN_COUNTER, TokenCounter, constructGlassDocument } from '@glass-lang/glasslib'
+import fetch from 'node-fetch'
 import { LLMResponse } from './runPrompt'
 import { handleStream } from './stream'
 
@@ -54,24 +54,26 @@ export async function runPromptAnthropic(
       throw new Error(`HTTP error: ${r.status}`)
     }
     if (options?.progress) {
-      const responseTokens = tokenCounter.countTokens(next.content, model)
-      return options.progress(
-        handleRequestNode(
-          interpolatedDoc,
-          {
-            newBlockIds,
-            responseData: responseData.concat([[{ response: next.content.trim(), requestTokens, responseTokens }]]),
-            requestBlocks,
-            requestTokens,
-            responseTokens,
-            streaming: true,
-            index: responseData.length,
-          },
-          options.id
-        )
-      )
+      const newChatBlock: ChatBlock = {
+        role: 'assistant',
+        content: `${next.content.trim()}█`,
+      }
+      const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), model)
+      return options.progress({
+        response: [newChatBlock],
+        nextGlassfile: nextGlassfile,
+      })
     }
   })
+  const newChatBlock: ChatBlock = {
+    role: 'assistant',
+    content: response.content.trim(),
+  }
+  const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), model)
+  return {
+    response: [newChatBlock],
+    nextGlassfile: nextGlassfile,
+  }
 }
 
 function handleAnthropicChunk(currResult: LLMResponse, eventData: { completion: string }) {

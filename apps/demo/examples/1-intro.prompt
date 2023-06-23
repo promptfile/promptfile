@@ -1,5 +1,5 @@
 ---
-model: gpt-3.5-turbo
+model: claude-instant-v1
 ---
 
 Welcome to Promptfile! Promptfile is a domain-specific language (DSL) for working with language models. Promptfile combines the power of your favorite programming language (Typescript & Javascript supported today) with a declarative syntax for constructing prompts for language models. This provides a flexible and powerful way to interact with various language models across different platforms.

@@ -101,13 +101,6 @@ export function handleRequestNode(
     }
   }
 
-  // const lastRequest = request.responseData[request.responseData.length - 1]
-  // let response =
-  //   lastRequest.function_call != null ? JSON.stringify(lastRequest.function_call, null, 2) : lastRequest.response
-  // if (request.streaming) {
-  //   response += '█'
-  // }
-
   return {
     nextGlassfile: reconstructGlassDocument(newBlocks),
     response: convertResponseData(request.responseData, responseBlockIds, request.streaming),
@@ -175,10 +168,6 @@ const requestNodeReplacement = (
   // if (cost !== 0) {
   //   args.cost = cost.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 5 })
   // }
-
-  if (id != null) {
-    args.id = id
-  }
 
   const response =
     responseData.function_call != null ? JSON.stringify(responseData.function_call, null, 2) : responseData.response

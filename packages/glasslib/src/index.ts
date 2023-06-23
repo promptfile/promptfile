@@ -1,3 +1,4 @@
+export { constructGlassDocument } from './constructGlassDocument'
 export { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 export { ChatBlock, parseChatBlocks } from './parseChatBlocks'
 export { parseFrontmatterFromGlass } from './parseFrontmatterFromGlass'

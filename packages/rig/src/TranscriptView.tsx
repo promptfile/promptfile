@@ -19,6 +19,11 @@ export const TranscriptView = (props: TranscriptViewProps) => {
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
 
+  const capitalize = (s: string) => {
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  }
+
   const CodeBlock = ({ language, value }: { language: string; value: string }) => {
     return (
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -74,28 +79,6 @@ export const TranscriptView = (props: TranscriptViewProps) => {
     }
   }, [blocks, autoScroll])
 
-  // function modelName(block: ChatBlock): string | undefined {
-  //   const modelAttr = block.
-  //   return modelAttr.stringValue
-  // }
-
-  // function requestSummary(block: ChatBlock): string | undefined {
-  //   const requestTokens = block.attrs?.find(attr => attr.name === 'requestTokens')
-  //   const temperature = block.attrs?.find(attr => attr.name === 'temperature')
-  //   if (block.tag !== 'Assistant' || !requestTokens || !temperature) {
-  //     return undefined
-  //   }
-  //   return `Request: ${requestTokens.expressionValue} tokens (temperature: ${temperature.expressionValue})`
-  // }
-
-  // function responseSummary(block: ChatBlock): string | undefined {
-  //   const responseTokens = block.attrs?.find(attr => attr.name === 'responseTokens')
-  //   if (block.role !== 'assistant' || !responseTokens || !cost) {
-  //     return undefined
-  //   }
-  //   return `Response: ${responseTokens.expressionValue} tokens (${cost.stringValue})`
-  // }
-
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div
@@ -125,9 +108,6 @@ export const TranscriptView = (props: TranscriptViewProps) => {
         {blocks
           .filter(b => b.content !== `@{input}`)
           .map((block, index) => {
-            // const model = modelName(block)
-            // const request = requestSummary(block)
-            // const response = responseSummary(block)
             return (
               <div
                 key={index}
@@ -148,7 +128,7 @@ export const TranscriptView = (props: TranscriptViewProps) => {
                       fontSize: '12px',
                     }}
                   >
-                    {block.role}
+                    {capitalize(block.role)}
                   </span>
                   {/* {model && <span style={{ fontFamily: 'monospace', opacity: 0.5, fontSize: '10px' }}>{model}</span>} */}
                 </div>
