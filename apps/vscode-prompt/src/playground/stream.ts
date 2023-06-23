@@ -1,5 +1,5 @@
+import { LLMResponse } from '@glass-lang/glasslib'
 import { Readable } from 'stream'
-import { LLMResponse } from './runPlayground'
 
 export async function handleStream(
   r: any,

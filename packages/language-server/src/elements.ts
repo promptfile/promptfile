@@ -4,7 +4,6 @@ interface GlassElement {
   detail?: string
   documentation?: string
   insertText?: string
-  closingType: 'selfClosing' | 'nonSelfClosing' | 'both'
 }
 
 interface GlassAttribute {
@@ -28,7 +27,6 @@ export const glassElements: GlassElement[] = [
     name: 'Assistant',
     detail: '(block) chat block with role="assistant"',
     documentation: 'Creates an Assistant chat block with inner content',
-    closingType: 'nonSelfClosing',
     attributes: [
       {
         name: 'name',
@@ -54,7 +52,7 @@ export const glassElements: GlassElement[] = [
   {
     name: 'Function',
     documentation: 'The result of a function call',
-    closingType: 'nonSelfClosing',
+
     attributes: [
       {
         name: 'name',
@@ -68,54 +66,24 @@ export const glassElements: GlassElement[] = [
     name: 'System',
     documentation: 'Creates a System chat block with inner content',
     detail: '(element) chat block with role="system"',
-    closingType: 'nonSelfClosing',
+
     attributes: [],
   },
   {
-    name: 'Tool',
-    documentation: 'Sets a tool the LLM can use',
-    detail: '(element) define a tool',
-    closingType: 'selfClosing',
-    insertText: 'Tool name="$1" description="$2" parameters={z.object({$3})} run={(arg) => $4} />',
-    attributes: [
-      {
-        name: 'name',
-        detail: 'name of the tool',
-        documentation: 'The `name` attribute defines the name of the tool.',
-        type: 'string',
-      },
-      {
-        name: 'description',
-        detail: 'description of the tool',
-        documentation: 'The `description` attribute defines the description of the tool.',
-        optional: true,
-        type: 'string',
-      },
-      {
-        name: 'parameters',
-        detail: 'parameters of the tool',
-        documentation:
-          'The `parameters` attribute defines the parameters of the tool with JSON schema (https://json-schema.org/understanding-json-schema/)',
-        type: 'object',
-        optional: true,
-        insertText: 'parameters={{}}',
-      },
-      // {
-      //   name: 'run',
-      //   detail: 'code to run when the tool is used',
-      //   documentation: 'The `run` attribute defines the code to run when the tool is used.',
-      //   type: 'function',
-      //   optional: true,
-      //   insertText: 'run={(arg) => {$1}}',
-      // },
-    ],
+    name: 'Functions',
+    documentation: 'Establishes the functions (aka tools) the LLM can use',
+    detail: '(element) define functions',
+
+    insertText:
+      'Functions>\n[\n\t{\n\t\t"name": "$1",\n\t\t"description": "$2",\n\t\t"parameters": {\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t"$3": {$4},\n\t\t\t}\n\t\t}\n\t}\n]\n</Functions>',
+    attributes: [],
   },
   {
     name: 'User',
     insertText: 'User>\n$1\n</User>',
     documentation: 'Creates a User tag with inner content',
     detail: '(block) chat block with role="user"',
-    closingType: 'nonSelfClosing',
+
     attributes: [
       {
         name: 'name',

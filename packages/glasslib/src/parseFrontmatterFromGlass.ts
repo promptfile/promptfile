@@ -1,7 +1,10 @@
 import { parse } from 'yaml'
 
 interface ParsedResult {
-  model: string
+  model?: string
+  description?: string
+  temperature?: number
+  maxTokens?: number
 }
 
 export function parseFrontmatterFromGlass(glass: string): ParsedResult | null {
@@ -25,6 +28,15 @@ export function parseFrontmatterFromGlass(glass: string): ParsedResult | null {
     const res: any = {}
     if (result.model) {
       res['model'] = result.model
+    }
+    if (result.description) {
+      res['description'] = result.description
+    }
+    if (result.temperature) {
+      res['temperature'] = result.temperature
+    }
+    if (result.maxTokens) {
+      res['maxTokens'] = result.maxTokens
     }
     return res as ParsedResult
   }

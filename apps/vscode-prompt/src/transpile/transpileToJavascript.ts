@@ -3,7 +3,7 @@ import { ChatBlock, LLMFunction } from '@glass-lang/glasslib'
 export function transpileToJavascript(
   blocks: ChatBlock[],
   variables: string[],
-  functions: LLMFunction,
+  functions: LLMFunction[],
   model: string
 ): string {
   let transpiledCode = ''

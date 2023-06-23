@@ -1,6 +1,6 @@
 import { CompletionItem, CompletionItemKind, InsertTextFormat, TextDocumentPositionParams } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { extractUnmatchedTags } from './diagnostics'
+import { extractUnmatchedTags } from './diagnostics/findUnmatchedTagsDiagnostics'
 import { glassElements } from './elements'
 
 function generateAttributeValueSuggestions(attribute: any, cursorIndex: number) {
@@ -46,9 +46,7 @@ export function generateCompletions(
       insertText:
         element.insertText != null
           ? element.insertText
-          : element.closingType === 'nonSelfClosing'
-          ? `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>`
-          : `${element.name}${attributesToInsert.join('')} />`,
+          : `${element.name}${attributesToInsert.join('')}>\n$0\n</${element.name}>`,
       insertTextFormat: InsertTextFormat.Snippet,
     })
   }
