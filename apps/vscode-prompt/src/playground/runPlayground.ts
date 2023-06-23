@@ -7,7 +7,7 @@ import {
   parseFrontmatterFromGlass,
   parseGlassMetadata,
 } from '@glass-lang/glasslib'
-import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
+import { parseGlassBlocks } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { getAnthropicKey, getOpenaiKey } from '../util/keys'
@@ -19,18 +19,11 @@ export interface LLMResponse {
   function_call?: { name: string; arguments: string } | null
 }
 
-export interface ResponseData {
-  response: string
-  function_call?: { name: string; arguments: string } | null
-  functionObservation?: string
-  requestTokens?: number
-  responseTokens?: number
-}
-
-export interface TranspilerOutput {
-  interpolatedDoc: string
-  defaultModel?: string
-  functions: FunctionData[]
+export interface LLMFunction {
+  name: string
+  description: string
+  parameters: any
+  run?: (data: any) => Promise<any>
 }
 
 export async function runPlayground(
@@ -38,6 +31,15 @@ export async function runPlayground(
   inputs: any,
   progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
 ) {
+  const elements = parseGlassBlocks(content)
+  const functions: LLMFunction[] = elements
+    .filter(e => e.type === 'block' && e.tag === 'Tool')
+    .map(e => {
+      const name = e.attrs?.find(a => a.name === 'name')?.stringValue ?? ''
+      const description = e.attrs?.find(a => a.name === 'description')?.stringValue ?? 'undefined'
+      const parameters = e.attrs?.find(a => a.name === 'parameters')?.stringValue ?? {}
+      return { name, description, parameters }
+    })
   const metadata = parseGlassMetadata(content)
   const blocks = parseChatBlocks(content)
   const parsedFrontmater = parseFrontmatterFromGlass(content)
@@ -91,7 +93,7 @@ export async function runPlayground(
       }
       const functionEndpoint: string = vscode.workspace.getConfiguration('prompt').get('functionEndpoint') as any
 
-      return runPlaygroundOpenAI(blocks, openaiKey, model, [], {
+      return runPlaygroundOpenAI(blocks, openaiKey, model, functions, {
         progress,
         getFunction: async (name: string) => {
           const res = await fetch(`${functionEndpoint}/${name}`, {

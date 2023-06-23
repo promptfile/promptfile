@@ -1,14 +1,14 @@
 import { ChatBlock, DEFAULT_TOKEN_COUNTER, TokenCounter, constructGlassDocument } from '@glass-lang/glasslib'
-import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import { checkOk } from '@glass-lang/util'
 import fetch from 'node-fetch'
+import { LLMFunction } from './runPlayground'
 import { handleChatChunk, handleStream } from './stream'
 
 export async function runPlaygroundOpenAI(
   messages: ChatBlock[],
   openaiKey: string,
   model: string,
-  functions: FunctionData[],
+  functions: LLMFunction[],
   options: {
     tokenCounter?: TokenCounter
     progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
