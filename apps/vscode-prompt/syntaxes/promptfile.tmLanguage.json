@@ -75,6 +75,34 @@
         }
       ]
     },
+    "variable": {
+      "match": "^(.*)(@\\{[A-Za-z0-9]+\\})(.*)$",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#variable"
+            },
+            {
+              "include": "text.html.markdown"
+            }
+          ]
+        },
+        "2": {
+          "name": "source.promptfile.variable"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#variable"
+            },
+            {
+              "include": "text.html.markdown"
+            }
+          ]
+        }
+      }
+    },
     "system-element": {
       "begin": "^(<)(System)(.*)(>)$",
       "beginCaptures": {
@@ -97,9 +125,6 @@
             },
             {
               "include": "source.tsx#jsx-string-single-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-evaluated-code"
             }
           ]
         },
@@ -150,9 +175,6 @@
             },
             {
               "include": "source.tsx#jsx-string-single-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-evaluated-code"
             }
           ]
         },
@@ -203,9 +225,6 @@
             },
             {
               "include": "source.tsx#jsx-string-single-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-evaluated-code"
             }
           ]
         },
@@ -253,9 +272,6 @@
             },
             {
               "include": "source.tsx#jsx-string-single-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-evaluated-code"
             }
           ]
         },
