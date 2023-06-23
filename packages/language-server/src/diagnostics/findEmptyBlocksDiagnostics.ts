@@ -1,9 +1,9 @@
 import { parseGlassBlocks } from '@glass-lang/glasslib'
-import * as vscode from 'vscode'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from '../elements'
 
-export function findEmptyBlocksDiagnostics(textDocument: vscode.TextDocument): Diagnostic[] {
+export function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnostic[] {
   const parsed = parseGlassBlocks(textDocument.getText())
   const tagsToCheck = glassElements.map(e => e.name)
   const emptyTags = parsed.filter(tag => tagsToCheck.includes(tag.tag || '') && tag.child?.content === '')

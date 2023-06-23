@@ -1,9 +1,9 @@
 import { parseGlassBlocks } from '@glass-lang/glasslib'
-import * as vscode from 'vscode'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from '../elements'
 
-export function findUnsupportedTagsDiagnostics(textDocument: vscode.TextDocument): Diagnostic[] {
+export function findUnsupportedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] {
   const parsed = parseGlassBlocks(textDocument.getText())
   const unsupportedTags = parsed.filter(tag => !glassElements.some(element => element.name === tag.tag))
   return unsupportedTags.map(tag => {

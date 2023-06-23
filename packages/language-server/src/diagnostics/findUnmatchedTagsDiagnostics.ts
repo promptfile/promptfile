@@ -1,8 +1,8 @@
-import * as vscode from 'vscode'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from '../elements'
 
-export function findUnmatchedTagsDiagnostics(textDocument: vscode.TextDocument): Diagnostic[] {
+export function findUnmatchedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] {
   const unmatchedTags = extractUnmatchedTags(textDocument.getText())
   return unmatchedTags.map(({ tag, start }) => {
     const tagName = tag.startsWith('/') ? tag.slice(1) : tag

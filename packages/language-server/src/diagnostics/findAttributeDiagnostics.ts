@@ -1,9 +1,9 @@
 import { parseGlassBlocks } from '@glass-lang/glasslib'
-import * as vscode from 'vscode'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from '../elements'
 
-export function findAttributeDiagnostics(textDocument: vscode.TextDocument): Diagnostic[] {
+export function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
   const parsed = parseGlassBlocks(textDocument.getText())
   const invalidAttributes: { type: string; tag: any; attribute: string }[] = []
   for (const tag of parsed) {

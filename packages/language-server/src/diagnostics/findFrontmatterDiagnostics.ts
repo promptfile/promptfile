@@ -4,10 +4,10 @@ import {
   parseFrontmatterFromGlass,
   parseGlassBlocks,
 } from '@glass-lang/glasslib'
-import * as vscode from 'vscode'
 import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 
-export function findFrontmatterDiagnostics(textDocument: vscode.TextDocument): Diagnostic[] {
+export function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnostic[] {
   const regex = /---\n([\s\S]*?)\n---/
   const match = regex.exec(textDocument.getText())
   if (!match) {

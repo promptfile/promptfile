@@ -57,6 +57,7 @@
     "@glass-lang/language-server": "*",
     "@glass-lang/rig": "*",
     "@glass-lang/util": "*",
+    "@glass-lang/glasslib": "*",
     "diff": "^5.1.0",
     "esbuild": "^0.17.18",
     "node-fetch": "^3.3.1",

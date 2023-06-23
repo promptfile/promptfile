@@ -40,7 +40,7 @@ export async function runPlaygroundOpenAI(
     functionArgs = {
       functions: await Promise.all(
         functions.map(async f => {
-          if (f.testValue != null && f.description != null && f.parameters != null) {
+          if (f.test != null && f.description != null && f.parameters != null) {
             return {
               name: f.name,
               description: f.description,
