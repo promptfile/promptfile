@@ -23,7 +23,7 @@ export function addChatBlocks(glassfile: string, blocks: ChatBlock[]) {
         {
           content: `<${upperCaseFirstChar(block.role)}${block.name ? ` name="${block.name}"` : ''}${
             block.type ? ` type="${block.type}"` : ''
-          }${block.id ? ` id="${block.id}"` : ''}>\n${block.content}\n</${upperCaseFirstChar(block.role)}>`,
+          }>\n${block.content}\n</${upperCaseFirstChar(block.role)}>`,
         },
       ]
     }),
