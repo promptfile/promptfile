@@ -7,10 +7,10 @@ import { parseFrontmatter } from '../parse/parseFrontmatter.js'
 import { parseInterpolations } from '../parse/parseInterpolations.js'
 import { parseJsxAttributes } from '../parse/parseJsxAttributes.js'
 import { parseJsxElement } from '../parse/parseJsxElement.js'
-import { parseCodeBlock, parseCodeBlockUndeclaredSymbols, removeImports } from '../parse/parseTypescript.js'
+
+import { removeImports } from '../index.js'
 import { rewriteImports } from '../transform/rewriteImports.js'
 import { transformDynamicBlocks } from '../transform/transformDynamicBlocks.js'
-import { getUseStatePairs } from '../transform/transformSetState.js'
 import { TYPESCRIPT_GLOBALS } from './typescriptGlobals.js'
 
 const extension = 'prompt'
@@ -205,12 +205,8 @@ export function transpileGlassFileTypescript(
   const argsString = allInterpolationNames.map(arg => arg + `: ${argsOverride[arg] || 'string'}`).join(', ')
   const functionArgs = argsString.length === 0 ? '' : language === 'javascript' ? 'args' : `args: { ${argsString} }`
 
-  const codePairs = getUseStatePairs(toplevelCode)
-  // join them all together
-  const context: any = {}
-  for (const [k, v] of Object.entries(codePairs)) {
-    context[v] = `(val) => GLASS_STATE[${k}] = val`
-  }
+
+
 
   const escapedInterpolatedDoc = glasslib
     .parseGlassDocument(codeSanitizedDoc)

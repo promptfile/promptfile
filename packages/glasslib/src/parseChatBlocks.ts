@@ -1,5 +1,4 @@
 import { RequestData, parseGlassBlocks } from './parseGlassBlocks'
-import { removeGlassComments } from './removeGlassComments'
 import { DEFAULT_TOKEN_COUNTER } from './tokenCounter'
 
 /**
@@ -17,12 +16,8 @@ export interface ChatBlock {
  * From a glass document, parse the chat blocks and return them as an array.
  */
 export function parseChatBlocks(content: string): ChatBlock[] {
-  console.log('parseChatBlocks')
-  const doc = removeGlassComments(content)
-  console.log('doc', doc)
-
   // first interpolate the jsx interpolations
-  const nodes = parseGlassBlocks(doc)
+  const nodes = parseGlassBlocks(content)
   console.log('nodes', nodes)
 
   const res: ChatBlock[] = []
@@ -61,10 +56,8 @@ export function parseChatBlocks2(
   requestBlocks: RequestData[],
   tokenCounter = DEFAULT_TOKEN_COUNTER
 ): ChatBlock[][] {
-  const doc = removeGlassComments(content)
-
   // first interpolate the jsx interpolations
-  const nodes = parseGlassBlocks(doc)
+  const nodes = parseGlassBlocks(content)
 
   const res: ChatBlock[][] = []
 
