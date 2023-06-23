@@ -1,7 +1,6 @@
 import {
   LANGUAGE_MODELS,
   LanguageModelCreator,
-  LanguageModelType,
   parseFrontmatterFromGlass,
   parseGlassBlocks,
 } from '@glass-lang/glasslib'
@@ -77,21 +76,43 @@ export function findFrontmatterDiagnostics(textDocument: vscode.TextDocument): D
           })
         )
       }
-      if (languageModel.type === LanguageModelType.completion) {
-        diagnostics.push(
-          ...systemBlocks.map(tag => {
-            const diagnostic: Diagnostic = {
-              severity: DiagnosticSeverity.Warning,
-              range: {
-                start: textDocument.positionAt(tag.position.start.offset + 1),
-                end: textDocument.positionAt(tag.position.start.offset + 7),
-              },
-              message: `<System> blocks not supported by ${languageModel.name} — this will get converted to a <User> block.`,
-              source: 'promptfile',
-            }
-            return diagnostic
+      const maxTokens = frontmatter.maxTokens
+      if (maxTokens != null) {
+        if (maxTokens > languageModel.maxTokens) {
+          diagnostics.push({
+            severity: DiagnosticSeverity.Error,
+            range,
+            message: `Max tokens (${maxTokens}) exceeds limit of ${languageModel.maxTokens} for ${languageModel.name}.`,
+            source: 'promptfile',
           })
-        )
+        } else if (maxTokens < 1) {
+          diagnostics.push({
+            severity: DiagnosticSeverity.Error,
+            range,
+            message: `Max tokens must be at least 1.`,
+            source: 'promptfile',
+          })
+        }
+      }
+      const temperature = frontmatter.temperature
+      if (temperature != null) {
+        const minTemp = 0
+        const maxTemp = languageModel.creator === LanguageModelCreator.openai ? 2 : 1
+        if (temperature > maxTemp) {
+          diagnostics.push({
+            severity: DiagnosticSeverity.Error,
+            range,
+            message: `Temperature (${temperature}) exceeds limit of ${maxTemp} for ${languageModel.name}.`,
+            source: 'promptfile',
+          })
+        } else if (temperature < minTemp) {
+          diagnostics.push({
+            severity: DiagnosticSeverity.Error,
+            range,
+            message: `Temperature must be at least 0.`,
+            source: 'promptfile',
+          })
+        }
       }
     }
   }
