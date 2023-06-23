@@ -35,6 +35,16 @@ export async function runPrompt(
   inputs: any,
   progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
 ) {
+  const metadata = parseGlassMetadata(content)
+  const blocks = parseChatBlocks(content)
+  if (metadata.interpolationVariables.length === 0 && Object.keys(inputs).length > 0) {
+    const newUserValue = inputs[Object.keys(inputs)[0]]
+    const newUserBlock: ChatBlock = {
+      role: 'user',
+      content: newUserValue.trim(),
+    }
+    blocks.push(newUserBlock)
+  }
   const parsedFrontmater = parseFrontmatterFromGlass(content)
   const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('prompt').get('defaultModel')
   const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
@@ -44,12 +54,10 @@ export async function runPrompt(
     await vscode.window.showErrorMessage(`Unable to find model ${model}`)
     return
   }
-  const metadata = parseGlassMetadata(content)
   for (const variable of metadata.interpolationVariables) {
     const value = inputs[variable] ?? ''
     content = content.replace(`@{${variable}}`, value)
   }
-  const blocks = parseChatBlocks(content)
   switch (languageModel.creator) {
     case LanguageModelCreator.anthropic:
       if (anthropicKey == null || anthropicKey === '') {

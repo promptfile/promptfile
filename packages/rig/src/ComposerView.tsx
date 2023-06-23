@@ -104,14 +104,14 @@ export const ComposerView = (props: ComposerViewProps) => {
             alignItems: 'center',
           }}
         >
-          {keys.length > 0 && (
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {keys.length > 1 && (
               <div style={{ display: 'flex', paddingLeft: '8px' }}>
                 {keys.map(key => {
                   const isCurrentTab = key === activeKey
@@ -148,36 +148,36 @@ export const ComposerView = (props: ComposerViewProps) => {
                   )
                 })}
               </div>
-              {activeKey.length > 0 && (
-                <MonacoEditor
-                  key={activeKey}
-                  width="100%"
-                  height={`${height - 50}px`}
-                  theme={mapVSCodeThemeToMonaco(theme)}
-                  language={'markdown'}
-                  value={inputs[activeKey]}
-                  onChange={value => setValue(activeKey, value ?? '')}
-                  options={{
-                    minimap: {
-                      enabled: false,
-                    },
-                    padding: {
-                      top: 8,
-                    },
-                    wordWrap: 'on',
-                    fontSize: 12,
-                    lineDecorationsWidth: 0,
-                  }}
-                  onMount={(editor, monaco) => {
-                    editor.focus()
-                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-                      run(inputsRef.current, sessionRef.current)
-                    })
-                  }}
-                />
-              )}
-            </div>
-          )}
+            )}
+            {activeKey.length > 0 && (
+              <MonacoEditor
+                key={activeKey}
+                width="100%"
+                height={`${height - 50}px`}
+                theme={mapVSCodeThemeToMonaco(theme)}
+                language={'markdown'}
+                value={inputs[activeKey]}
+                onChange={value => setValue(activeKey, value ?? '')}
+                options={{
+                  minimap: {
+                    enabled: false,
+                  },
+                  padding: {
+                    top: 8,
+                  },
+                  wordWrap: 'on',
+                  fontSize: 12,
+                  lineDecorationsWidth: 0,
+                }}
+                onMount={(editor, monaco) => {
+                  editor.focus()
+                  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                    run(inputsRef.current, sessionRef.current)
+                  })
+                }}
+              />
+            )}
+          </div>
         </div>
         {streaming ? (
           <VSCodeButton style={{ width: '100%' }} appearance="secondary" onClick={stop} disabled={false}>

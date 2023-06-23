@@ -188,12 +188,9 @@ export async function createPlayground(
         try {
           const newSessionFile = await vscode.workspace.openTextDocument(sessionToShare)
           const url = 'https://api.github.com/gists'
-          // eslint-disable-next-line turbo/no-undeclared-env-vars
-
           const description = await vscode.window.showInputBox({
             prompt: 'Enter a description for your gist',
           })
-
           const gistToCreate = {
             description: description || '(no description)',
             public: false,
@@ -203,7 +200,6 @@ export async function createPlayground(
               },
             },
           }
-
           const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -212,13 +208,10 @@ export async function createPlayground(
             },
             body: JSON.stringify(gistToCreate),
           })
-
           const data = (await response.json()) as any
-
           if (!response.ok) {
             throw new Error(`GitHub Gist API error: ${JSON.stringify(data)}`)
           }
-
           await vscode.env.clipboard.writeText(data.html_url)
           await vscode.window.showInformationMessage(`Copied gist URL to clipboard`)
         } catch (e: any) {
