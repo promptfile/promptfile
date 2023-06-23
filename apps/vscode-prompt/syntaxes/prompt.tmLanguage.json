@@ -85,8 +85,32 @@
       }
     },
     "variable": {
-      "match": "@\\{[A-Za-z0-9]+\\}",
-      "name": "source.prompt.variable"
+      "match": "^(.*)(@\\{[A-Za-z0-9]+\\})(.*)$",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#variable"
+            },
+            {
+              "include": "text.html.markdown"
+            }
+          ]
+        },
+        "2": {
+          "name": "source.prompt.variable"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#variable"
+            },
+            {
+              "include": "text.html.markdown"
+            }
+          ]
+        }
+      }
     },
     "block-element": {
       "begin": "^(<)(Block)(.*)(>)$",
@@ -177,7 +201,6 @@
         {
           "include": "#variable"
         },
-
         {
           "include": "text.html.markdown"
         }
