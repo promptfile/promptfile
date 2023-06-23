@@ -75,7 +75,7 @@
   "watch": {
     "test": {
       "patterns": [
-        "./src",
+        "./src"
       ],
       "inherit": true,
       "extensions": "ts,glass,py"

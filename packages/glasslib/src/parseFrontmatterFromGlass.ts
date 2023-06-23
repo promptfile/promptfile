@@ -32,12 +32,6 @@ export function parseFrontmatter(yamlString: string): ParsedResult | null {
 
   if (typeof result === 'object' && result !== null) {
     const res: any = {}
-    if (result.language) {
-      res['language'] = result.language
-    }
-    if (result.args) {
-      res['args'] = result.args
-    }
     if (result.session) {
       res['session'] = result.session
     }
