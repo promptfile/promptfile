@@ -2,11 +2,11 @@ import { parseGlassMetadata } from '@glass-lang/glassc'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
+import { GlassPlayground, createPlayground } from './playground/playground'
+import { getCurrentViewColumn } from './playground/viewColumn'
 import { transpile } from './transpile/transpile'
 import { getAllPromptFiles, getDocumentFilename, isPromptFile } from './util/isPromptFile'
-import { GlassPlayground, createPlayground } from './util/playground'
 import { updateTokenCount } from './util/tokenCounter'
-import { getCurrentViewColumn } from './util/viewColumn'
 
 let client: LanguageClient | null = null
 

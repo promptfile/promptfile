@@ -3,11 +3,11 @@ import { LANGUAGE_MODELS, LanguageModelCreator, parseChatBlocks, parseGlassBlock
 import fs from 'fs'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
-import { executeGlassFile } from '../runGlassExtension'
+import { runPrompt } from '../run/runPrompt'
+import { getAnthropicKey, getGithubKey, getOpenaiKey } from '../util/keys'
+import { generateULID } from '../util/ulid'
 import { getHtmlForWebview } from '../webview'
-import { getAnthropicKey, getGithubKey, getOpenaiKey } from './keys'
 import { createSession, getCurrentSessionFilepath, loadGlass, loadSessionDocuments, writeGlass } from './session'
-import { generateULID } from './ulid'
 import { getCurrentViewColumn } from './viewColumn'
 
 export interface GlassPlayground {
@@ -281,7 +281,7 @@ export async function createPlayground(
 
           try {
             const requestId = generateULID()
-            const resp = await executeGlassFile(
+            const resp = await runPrompt(
               filepath,
               outputChannel,
               sessionDocument,
