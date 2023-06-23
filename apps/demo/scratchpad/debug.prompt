@@ -7,27 +7,25 @@ I'm currently working on a VSCode extension for my `promptfile` DSP (`.prompt` f
 
 ```typescript
 vscode.commands.registerCommand('glass.openPlayground', async () => {
-      const activeEditor = vscode.window.activeTextEditor
-      if (!activeEditor || !hasPromptFileOpen(activeEditor)) {
-        return
-      }
+  const activeEditor = vscode.window.activeTextEditor
+  if (!activeEditor || !hasPromptFileOpen(activeEditor)) {
+    return
+  }
 
-      const initialGlass = activeEditor.document.getText()
-      const languageId = activeEditor.document.languageId
-      const filepath = activeEditor.document.uri.fsPath
-      const filename = getDocumentFilename(activeEditor.document)
-      const initialMetadata =
-        languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
-      const playground = await createPlayground(filepath, playgrounds, sessions, context.extensionUri, outputChannel)
-      if (!playground) {
-        await vscode.window.showErrorMessage('Unable to create playground')
-        return
-      }
-      playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
-    })
+  const initialGlass = activeEditor.document.getText()
+  const languageId = activeEditor.document.languageId
+  const filepath = activeEditor.document.uri.fsPath
+  const filename = getDocumentFilename(activeEditor.document)
+  const initialMetadata =
+    languageId === 'glass-py' ? await parseGlassMetadataPython(initialGlass) : parseGlassMetadata(initialGlass)
+  const playground = await createPlayground(filepath, playgrounds, sessions, context.extensionUri, outputChannel)
+  if (!playground) {
+    await vscode.window.showErrorMessage('Unable to create playground')
+    return
+  }
+  playground.panel.reveal(getCurrentViewColumn(playgrounds), initialMetadata.interpolationVariables.length === 0)
+})
 ```
 
 I'd like to modify this behavior such that the `glass.openPlayground` command can be run even if the file has not been saved. how would you recomend i accomplish this?
 </User>
-
-<Request model="gpt-4" />

@@ -1,9 +1,0 @@
-<Code>
-const foo = "bar"
-</Code>
-
-<User>
-@{foo}
-</User>
-
-<Request model="claude-instant-v1" />

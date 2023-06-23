@@ -1,17 +1,12 @@
+---
+model: gpt-3.5-turbo
+---
+
 https://github.com/dave1010/tree-of-thought-prompting
 https://github.com/princeton-nlp/tree-of-thought-llm
 https://github.com/kyegomez/tree-of-thoughts
 
-<Test>
-return [{
-        input: `Bob is in the living room.
-He walks to the kitchen, carrying a cup.
-He puts a ball in the cup and carries the cup to the bedroom.
-He turns the cup upside down, then walks to the garden.
-He puts the cup down in the garden, then walks to the garage.
-Where is the ball?`
-}]
-</Test>
+
 
 <System>
 Imagine three different experts are answering this question. All experts will write down 1 step of their thinking, then share it with the group. Then all experts will go on to the next step, etc. If any expert realises they're wrong at any point then they leave. The question is...
@@ -28,7 +23,11 @@ The question is...
 </System>
 
 <User>
-@{input}
+Bob is in the living room.
+He walks to the kitchen, carrying a cup.
+He puts a ball in the cup and carries the cup to the bedroom.
+He turns the cup upside down, then walks to the garden.
+He puts the cup down in the garden, then walks to the garage.
+Where is the ball?
 </User>
 
-<Request model="gpt-3.5-turbo" />

@@ -1,13 +1,12 @@
-import { parseGlassMetadata, transpileGlassTypescript } from '@glass-lang/glassc'
-import fs from 'fs'
+import { parseGlassMetadata } from '@glass-lang/glasslib'
 import path from 'path'
 import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
+import { GlassPlayground, createPlayground } from './playground/playground'
+import { getCurrentViewColumn } from './playground/viewColumn'
+import { transpile } from './transpile/transpile'
 import { getAllPromptFiles, getDocumentFilename, isPromptFile } from './util/isPromptFile'
-import { GlassPlayground, createPlayground } from './util/playground'
 import { updateTokenCount } from './util/tokenCounter'
-import { transpileCurrentFile } from './util/transpile'
-import { getCurrentViewColumn } from './util/viewColumn'
 
 let client: LanguageClient | null = null
 
@@ -50,29 +49,18 @@ export async function activate(context: vscode.ExtensionContext) {
     },
     {
       documentSelector: [{ scheme: 'file', language: 'prompt' }],
-      outputChannelName: 'prompt language server',
+      outputChannelName: 'Prompt Language Server',
     }
   )
   await client.start()
 
   let activeEditor = vscode.window.activeTextEditor
 
-  // const codeDecorations: vscode.TextEditorDecorationType = vscode.window.createTextEditorDecorationType({
-  //   backgroundColor: new vscode.ThemeColor('prompt.code.background'),
-  //   isWholeLine: true,
-  // })
-
-  // if (activeEditor) {
-  //   updateDecorations(activeEditor, codeDecorations)
-  // }
-
   const tokenCount = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000000)
   tokenCount.command = undefined
   tokenCount.show()
 
-  const outputChannel = vscode.window.createOutputChannel('prompt')
-
-  async function launchGlassDocument(selectedDocument: vscode.TextDocument, outputChannel: vscode.OutputChannel) {
+  async function launchGlassDocument(selectedDocument: vscode.TextDocument) {
     const relativePath = vscode.workspace.asRelativePath(selectedDocument.uri.fsPath)
     fileTimestamps.set(relativePath, Date.now())
 
@@ -80,15 +68,8 @@ export async function activate(context: vscode.ExtensionContext) {
     const filepath = selectedDocument.uri.fsPath
     const filename = getDocumentFilename(selectedDocument)
 
-    outputChannel.appendLine(`${filename} — launching prompt playground`)
     const initialMetadata = parseGlassMetadata(initialGlass)
-    const playground = await createPlayground(
-      filepath,
-      playgrounds,
-      context.extensionUri,
-      outputChannel,
-      stoppedRequestIds
-    )
+    const playground = await createPlayground(filepath, playgrounds, context.extensionUri, stoppedRequestIds)
     if (!playground) {
       await vscode.window.showErrorMessage('Unable to create playground')
       return
@@ -149,26 +130,23 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    vscode.commands.registerCommand('prompt.showOutput', async () => {
-      outputChannel.show()
-    }),
     vscode.commands.registerCommand('prompt.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && isPromptFile(activeEditor.document)) {
-        await launchGlassDocument(activeEditor.document, outputChannel)
+        await launchGlassDocument(activeEditor.document)
         await updateRecentlySelectedFiles(activeEditor.document.uri)
         return
       }
-      const glassFiles = await getAllPromptFiles()
-      if (glassFiles.length === 0) {
+      const promptFiles = await getAllPromptFiles()
+      if (promptFiles.length === 0) {
         await vscode.window.showErrorMessage('Unable to find any `.prompt` files')
         return
-      } else if (glassFiles.length === 1) {
-        const doc = await vscode.workspace.openTextDocument(glassFiles[0])
-        await launchGlassDocument(doc, outputChannel)
+      } else if (promptFiles.length === 1) {
+        const doc = await vscode.workspace.openTextDocument(promptFiles[0])
+        await launchGlassDocument(doc)
         return
       }
-      const glassFilesQuickPick = glassFiles.map(documentUri => {
+      const promptFilesQuickPick = promptFiles.map(documentUri => {
         const relativePath = vscode.workspace.asRelativePath(documentUri.fsPath)
         return {
           label: path.basename(documentUri.fsPath),
@@ -176,7 +154,7 @@ export async function activate(context: vscode.ExtensionContext) {
           uri: documentUri,
         }
       })
-      glassFilesQuickPick.sort((a, b) => {
+      promptFilesQuickPick.sort((a, b) => {
         const indexA = recentlySelectedFiles.findIndex(uri => uri.fsPath === a.uri.fsPath)
         const indexB = recentlySelectedFiles.findIndex(uri => uri.fsPath === b.uri.fsPath)
 
@@ -190,13 +168,13 @@ export async function activate(context: vscode.ExtensionContext) {
           return indexA - indexB
         }
       })
-      const selectedFile = await vscode.window.showQuickPick(glassFilesQuickPick, {
+      const selectedFile = await vscode.window.showQuickPick(promptFilesQuickPick, {
         placeHolder: 'Select a `.prompt` file to run',
       })
       if (!selectedFile) {
         return
       }
-      const selectedDocument = glassFiles.find(documentUri => {
+      const selectedDocument = promptFiles.find(documentUri => {
         const relativePath = vscode.workspace.asRelativePath(documentUri.fsPath)
         return relativePath === selectedFile.description
       })
@@ -206,82 +184,65 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       await updateRecentlySelectedFiles(selectedDocument)
       const doc = await vscode.workspace.openTextDocument(selectedDocument)
-      await launchGlassDocument(doc, outputChannel)
+      await launchGlassDocument(doc)
     }),
     vscode.commands.registerCommand('prompt.settings', async () => {
       await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt')
     }),
     vscode.commands.registerCommand('prompt.transpile', async () => {
-      const languageMode: string = vscode.workspace.getConfiguration('prompt').get('defaultLanguageMode') as any
-      async function transpileAll() {
-        const workspaceFolders = vscode.workspace.workspaceFolders
-        if (workspaceFolders) {
-          for (const workspaceFolder of workspaceFolders) {
-            const outputDirectory: string = vscode.workspace.getConfiguration('prompt').get('outputDirectory') as any
-            const defaultModel: string = vscode.workspace.getConfiguration('prompt').get('defaultModel') as any
-
-            const folderPath = workspaceFolder.uri.fsPath
-            /* eslint no-template-curly-in-string: "off" */
-            const outDir = outputDirectory.replace('${workspaceFolder}', folderPath)
-
-            if (!fs.existsSync(outDir)) {
-              fs.mkdirSync(outDir)
-            }
-
-            try {
-              let output = ''
-              output = transpileGlassTypescript(folderPath, folderPath, languageMode, outDir, defaultModel)
-
-              const extension = languageMode === 'javascript' ? 'js' : 'ts'
-              const outputPath = path.join(outDir, `prompt.${extension}`)
-              fs.writeFileSync(outputPath, output)
-              const doc = await vscode.workspace.openTextDocument(outputPath)
-              await vscode.window.showTextDocument(doc)
-            } catch (error) {
-              await vscode.window.showErrorMessage(`Unable to transpile files: ${error}`)
-            }
-          }
-        }
-      }
-
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && isPromptFile(activeEditor.document)) {
-        const filename = getDocumentFilename(activeEditor.document)
-        const transpilationModes = [
-          {
-            label: `Transpile current file`,
-            description: `Converts current file (${filename}) to ${languageMode}`,
-            action: 'current',
-          },
-          {
-            label: `Transpile all files`,
-            description: `Converts all \`.prompt\` files in this workspace to ${languageMode}`,
-            action: 'all',
-          },
-        ]
-        const transpilationMode = await vscode.window.showQuickPick(transpilationModes, {
-          placeHolder: `Transpile to ${languageMode}`,
-        })
-        if (transpilationMode?.action === 'current') {
-          try {
-            const code = await transpileCurrentFile(activeEditor.document)
-            // open a new buffer with this transpiled code
-            const doc = await vscode.workspace.openTextDocument({
-              language: languageMode,
-              content: code,
-            })
-            await vscode.window.showTextDocument(doc)
-          } catch (error) {
-            await vscode.window.showErrorMessage(`Unable to transpile file: ${error}`)
-          }
-          return
-        } else if (transpilationMode?.action === 'all') {
-          await transpileAll()
-          return
-        }
+        const text = activeEditor.document.getText()
+        await transpile(text)
+        return
       }
-
-      await transpileAll()
+      const promptFiles = await getAllPromptFiles()
+      if (promptFiles.length === 0) {
+        await vscode.window.showErrorMessage('Unable to find any `.prompt` files')
+        return
+      } else if (promptFiles.length === 1) {
+        const doc = await vscode.workspace.openTextDocument(promptFiles[0])
+        await launchGlassDocument(doc)
+        return
+      }
+      const promptFilesQuickPick = promptFiles.map(documentUri => {
+        const relativePath = vscode.workspace.asRelativePath(documentUri.fsPath)
+        return {
+          label: path.basename(documentUri.fsPath),
+          description: relativePath,
+          uri: documentUri,
+        }
+      })
+      promptFilesQuickPick.sort((a, b) => {
+        const indexA = recentlySelectedFiles.findIndex(uri => uri.fsPath === a.uri.fsPath)
+        const indexB = recentlySelectedFiles.findIndex(uri => uri.fsPath === b.uri.fsPath)
+        if (indexA === -1 && indexB === -1) {
+          return a.label.localeCompare(b.label)
+        } else if (indexA === -1) {
+          return 1
+        } else if (indexB === -1) {
+          return -1
+        } else {
+          return indexA - indexB
+        }
+      })
+      const selectedFile = await vscode.window.showQuickPick(promptFilesQuickPick, {
+        placeHolder: 'Select a `.prompt` file to transpile',
+      })
+      if (!selectedFile) {
+        return
+      }
+      const selectedDocument = promptFiles.find(documentUri => {
+        const relativePath = vscode.workspace.asRelativePath(documentUri.fsPath)
+        return relativePath === selectedFile.description
+      })
+      if (!selectedDocument) {
+        await vscode.window.showErrorMessage('Unable to find `.prompt` file')
+        return
+      }
+      await updateRecentlySelectedFiles(selectedDocument)
+      const doc = await vscode.workspace.openTextDocument(selectedDocument)
+      await transpile(doc.getText())
     })
   )
 }

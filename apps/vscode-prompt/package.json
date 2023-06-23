@@ -54,7 +54,6 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
-    "@glass-lang/glassc": "*",
     "@glass-lang/language-server": "*",
     "@glass-lang/rig": "*",
     "@glass-lang/util": "*",
@@ -70,18 +69,18 @@
     "commands": [
       {
         "command": "prompt.run",
-        "title": "Promptfile: run",
-        "description": "Runs a Promptfile file."
+        "title": "Open .prompt file in playground",
+        "description": "Runs a .prompt file."
       },
       {
         "command": "prompt.settings",
-        "title": "Promptfile: open settings",
-        "description": "Opens the Promptfile settings in your VSCode settings.json file."
+        "title": "Open settings for .prompt files",
+        "description": "Opens the .prompt settings in your VSCode settings.json file."
       },
       {
         "command": "prompt.transpile",
-        "title": "Promptfile: transpile",
-        "description": "This command transpiles all .prompt files in your workspace to the language of your choice."
+        "title": "Transpile .prompt file to another language",
+        "description": "This command transpiles .prompt files to the language of your choice."
       }
     ],
     "keybindings": [
@@ -152,11 +151,6 @@
             "type": "string",
             "default": "",
             "description": "GitHub API key"
-          },
-          "prompt.outputDirectory": {
-            "type": "string",
-            "default": "${workspaceFolder}",
-            "description": "Output directory for generated code"
           }
         }
       }
@@ -176,7 +170,7 @@
           {
             "scope": "source.prompt.function.name",
             "settings": {
-              "foreground": "#3EA295",
+              "foreground": "#3e69d1",
               "fontStyle": "italic"
             }
           },
@@ -188,19 +182,6 @@
             }
           },
           {
-            "scope": "source.prompt.request.name",
-            "settings": {
-              "foreground": "#3e69d1",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "scope": "source.prompt.text.name",
-            "settings": {
-              "fontStyle": "italic"
-            }
-          },
-          {
             "scope": "source.prompt.block.name",
             "settings": {
               "foreground": "#9373DE",
@@ -208,29 +189,9 @@
             }
           },
           {
-            "scope": "source.prompt.state.name",
-            "settings": {
-              "foreground": "#7a7a7a",
-              "fontStyle": "italic"
-            }
-          },
-          {
             "scope": "source.prompt.void",
             "settings": {
-              "foreground": "#7a7a7a"
-            }
-          },
-          {
-            "scope": "source.prompt.test.name",
-            "settings": {
-              "foreground": "#FFB454",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "scope": "source.prompt.code.name",
-            "settings": {
-              "foreground": "#FFB454",
+              "foreground": "#7a7a7a",
               "fontStyle": "italic"
             }
           },
@@ -238,13 +199,6 @@
             "scope": "source.prompt.system.name",
             "settings": {
               "foreground": "#f467c6",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "scope": "source.prompt.for.name",
-            "settings": {
-              "foreground": "#E5C75E",
               "fontStyle": "italic"
             }
           },
@@ -263,9 +217,9 @@
             }
           },
           {
-            "scope": "source.prompt.flow.punctuation",
+            "scope": "source.prompt.variable",
             "settings": {
-              "foreground": "#4dff00",
+              "foreground": "#FFB454",
               "fontStyle": "bold"
             }
           }

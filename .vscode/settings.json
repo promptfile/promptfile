@@ -16,7 +16,6 @@
   "eslint.workingDirectories": [
     { "directory": "apps/vscode-prompt", "changeProcessCWD": true },
     { "directory": "apps/glassfile.org", "changeProcessCWD": true },
-    { "directory": "packages/glassc", "changeProcessCWD": true },
     { "directory": "packages/glasslib", "changeProcessCWD": true },
     { "directory": "packages/pythonlib", "changeProcessCWD": true },
     { "directory": "packages/language-server", "changeProcessCWD": true },

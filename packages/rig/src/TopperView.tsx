@@ -6,7 +6,6 @@ interface TopperViewProps {
   tabs: string[]
   tab: string
   setTab: (tab: string) => void
-  openOutput: () => void
   reload: () => void
   dirty: boolean
   reloadable: boolean
@@ -15,18 +14,8 @@ interface TopperViewProps {
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const {
-    dirty,
-    reloadable,
-    filename,
-    tabs,
-    tab,
-    setTab,
-    reload,
-    openOutput,
-    openCurrentSessionFile,
-    shareCurrentSessionGist,
-  } = props
+  const { dirty, reloadable, filename, tabs, tab, setTab, reload, openCurrentSessionFile, shareCurrentSessionGist } =
+    props
 
   return (
     <div
@@ -60,18 +49,6 @@ export const TopperView = (props: TopperViewProps) => {
           )}
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <div
-            onMouseEnter={(event: any) => {
-              event.target.style.opacity = '1.0'
-            }}
-            onMouseLeave={(event: any) => {
-              event.target.style.opacity = '0.5'
-            }}
-            onClick={openOutput}
-            style={{ fontSize: '12px', paddingRight: '16px', opacity: 0.5, cursor: 'pointer' }}
-          >
-            Logs
-          </div>
           <div
             onMouseEnter={(event: any) => {
               event.target.style.opacity = '1.0'

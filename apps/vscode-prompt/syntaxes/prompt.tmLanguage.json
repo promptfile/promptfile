@@ -30,15 +30,6 @@
       "include": "#tool-element"
     },
     {
-      "include": "#request-element"
-    },
-    {
-      "include": "#test-element"
-    },
-    {
-      "include": "#state-element"
-    },
-    {
       "include": "#user-element"
     },
     {
@@ -49,12 +40,6 @@
     },
     {
       "include": "#block-element"
-    },
-    {
-      "include": "#for-element"
-    },
-    {
-      "include": "#init-element"
     },
     {
       "match": ".",
@@ -99,14 +84,13 @@
         }
       }
     },
-    "flow-expression": {
-      "begin": "^(.*)(\\@\\{)",
-      "end": "(\\})(.*)$",
-      "beginCaptures": {
+    "variable": {
+      "match": "^(.*)(@\\{[A-Za-z0-9]+\\})(.*)$",
+      "captures": {
         "1": {
           "patterns": [
             {
-              "include": "#flow-expression"
+              "include": "#variable"
             },
             {
               "include": "text.html.markdown"
@@ -114,98 +98,17 @@
           ]
         },
         "2": {
-          "name": "source.prompt.flow.punctuation"
-        }
-      },
-      "endCaptures": {
-        "1": {
-          "name": "source.prompt.flow.punctuation"
+          "name": "source.prompt.variable"
         },
-        "2": {
+        "3": {
           "patterns": [
             {
-              "include": "#flow-expression"
+              "include": "#variable"
             },
             {
               "include": "text.html.markdown"
             }
           ]
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.js"
-        }
-      ]
-    },
-    "init-element": {
-      "begin": "^(<)(Code)(>)$",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.code.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      },
-      "end": "^(<\\/)(Code)(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.code.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.js"
-        }
-      ]
-    },
-    "for-element": {
-      "begin": "(?<=^|\\n)[\\t ]*(<)(/?)(For)(?=[\\s\\/\\>\\{])",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "punctuation.definition.tag.closing.jsx"
-        },
-        "3": {
-          "name": "source.prompt.for.name"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.tsx#jsx-tag-attribute-name"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        }
-      ],
-      "end": "(?:(\\/)\\s*)?(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
-        },
-        "2": {
-          "name": "punctuation.definition.tag.end.jsx"
         }
       }
     },
@@ -243,10 +146,7 @@
       },
       "patterns": [
         {
-          "include": "#flow-expression"
-        },
-        {
-          "include": "#text-element"
+          "include": "#variable"
         },
         {
           "include": "text.html.markdown"
@@ -299,10 +199,7 @@
       },
       "patterns": [
         {
-          "include": "#flow-expression"
-        },
-        {
-          "include": "#text-element"
+          "include": "#variable"
         },
         {
           "include": "text.html.markdown"
@@ -355,10 +252,7 @@
       },
       "patterns": [
         {
-          "include": "#flow-expression"
-        },
-        {
-          "include": "#text-element"
+          "include": "#variable"
         },
         {
           "include": "text.html.markdown"
@@ -371,37 +265,6 @@
         },
         "2": {
           "name": "source.prompt.assistant.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
-    },
-    "state-element": {
-      "begin": "^(<)(State)(>)$",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.state.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.json"
-        }
-      ],
-      "end": "^(<\\/)(State)(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.state.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
@@ -458,59 +321,6 @@
         }
       ]
     },
-    "text-element": {
-      "begin": "^(<)(Text)(.*)(>)$",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.text.name"
-        },
-        "3": {
-          "patterns": [
-            {
-              "include": "source.tsx#jsx-tag-attribute-name"
-            },
-            {
-              "include": "source.tsx#jsx-tag-attribute-assignment"
-            },
-            {
-              "include": "source.tsx#jsx-string-double-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-string-single-quoted"
-            },
-            {
-              "include": "source.tsx#jsx-evaluated-code"
-            }
-          ]
-        },
-        "4": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      },
-      "end": "^(<\\/)(Text)(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.text.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#flow-expression"
-        },
-        {
-          "include": "text.html.markdown"
-        }
-      ]
-    },
     "user-element": {
       "begin": "^(<)(User)(.*)(>)$",
       "beginCaptures": {
@@ -557,83 +367,12 @@
       },
       "patterns": [
         {
-          "include": "#flow-expression"
-        },
-        {
-          "include": "#text-element"
+          "include": "#variable"
         },
         {
           "include": "text.html.markdown"
         }
       ]
-    },
-    "request-element": {
-      "begin": "^(<)(Request)(?=[\\s\\/\\>\\{])",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.request.name"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.tsx#jsx-tag-attribute-name"
-        },
-        {
-          "include": "source.tsx#jsx-tag-attribute-assignment"
-        },
-        {
-          "include": "source.tsx#jsx-string-double-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-string-single-quoted"
-        },
-        {
-          "include": "source.tsx#jsx-evaluated-code"
-        }
-      ],
-      "end": "(?:(\\/)\\s*)?(>)",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.self-closing.jsx"
-        },
-        "2": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
-    },
-    "test-element": {
-      "begin": "^(<)(Test)(>)$",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.test.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      },
-      "patterns": [
-        {
-          "include": "source.js"
-        }
-      ],
-      "end": "^(<\\/)(Test)(>)$",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.tag.end.jsx"
-        },
-        "2": {
-          "name": "source.prompt.test.name"
-        },
-        "3": {
-          "name": "punctuation.definition.tag.end.jsx"
-        }
-      }
     }
   }
 }

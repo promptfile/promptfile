@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { parseChatBlocks, parseChatBlocks2 } from './parseChatBlocks'
+import { parseChatBlocks } from './parseChatBlocks'
 
 describe('parseChatBlocks', () => {
   it('should parse empty document', () => {
@@ -13,7 +13,7 @@ describe('parseChatBlocks', () => {
 Hello world
 </System>`
       )
-    ).to.deep.equal([{ role: 'system', name: undefined, id: undefined, content: 'Hello world' }])
+    ).to.deep.equal([{ role: 'system', name: undefined, content: 'Hello world' }])
   })
 
   it('should interpolate a document with system and user block', () => {
@@ -28,8 +28,8 @@ Goodbye world
 </User>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -44,18 +44,18 @@ Hello world
 </Block>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, content: 'Goodbye world' },
     ])
   })
 
   it('should ignore comments', () => {
     expect(
       parseChatBlocks(
-        `// this is a comment
+        `this is a comment
+
 <System>
 Hello world
-@{/* this is also a comment */}
 </System>
 
 ignore me
@@ -65,8 +65,8 @@ Goodbye world
 </User>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -85,8 +85,8 @@ Goodbye world
 </User>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -106,8 +106,8 @@ Goodbye world
 </User>`
       )
     ).to.deep.equal([
-      { role: 'system', name: undefined, id: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, id: undefined, content: 'Goodbye world' },
+      { role: 'system', name: undefined, content: 'Hello world' },
+      { role: 'user', name: undefined, content: 'Goodbye world' },
     ])
   })
 
@@ -127,74 +127,78 @@ Goodbye world
   //     ).to.deep.equal([{ role: 'system', content: 'Hello world' }])
   //   })
 
-  it('should parse chat completion blocks with token counter', () => {
-    expect(
-      parseChatBlocks2(
-        `<User>
-1
-</User>
+  //   it('should parse chat completion blocks with token counter', () => {
+  //     expect(
+  //       parseChatBlocks2(
+  //         `---
+  // model: gpt-3.5-turbo
+  // ---
 
-<User>
-2
-</User>
+  // <User>
+  // 1
+  // </User>
 
-<User>
-3
-</User>
+  // <User>
+  // 2
+  // </User>
 
-<Request model="gpt-3.5-turbo" />`,
-        [
-          {
-            model: 'gpt-3.5-turbo',
-          },
-        ],
-        {
-          countTokens: () => 1,
-          maxTokens: () => Infinity,
-          reserveCount: 1,
-        }
-      )
-    ).to.deep.equal([
-      [
-        { role: 'user', name: undefined, id: undefined, content: '1' },
-        { role: 'user', name: undefined, id: undefined, content: '2' },
-        { role: 'user', name: undefined, id: undefined, content: '3' },
-      ],
-    ])
-  })
+  // <User>
+  // 3
+  // </User>`,
+  //         [
+  //           {
+  //             model: 'gpt-3.5-turbo',
+  //           },
+  //         ],
+  //         {
+  //           countTokens: () => 1,
+  //           maxTokens: () => Infinity,
+  //           reserveCount: 1,
+  //         }
+  //       )
+  //     ).to.deep.equal([
+  //       [
+  //         { role: 'user', name: undefined, content: '1' },
+  //         { role: 'user', name: undefined, content: '2' },
+  //         { role: 'user', name: undefined, content: '3' },
+  //       ],
+  //     ])
+  //   })
 
-  it('should parse chat completion blocks with token counter, complex', () => {
-    expect(
-      parseChatBlocks2(
-        `<User>
-1
-</User>
+  //   it('should parse chat completion blocks with token counter, complex', () => {
+  //     expect(
+  //       parseChatBlocks2(
+  //         `---
+  // model: gpt-3.5-turbo
+  // ---
 
-<User>
-2
-</User>
+  // <User>
+  // 1
+  // </User>
 
-<User>
-3
-</User>
+  // <User>
+  // 2
+  // </User>
 
-<Request model="gpt-3.5-turbo" />`,
-        [
-          {
-            model: 'gpt-3.5-turbo',
-          },
-        ],
-        {
-          countTokens: () => 1,
-          maxTokens: () => 4,
-          reserveCount: 2,
-        }
-      )
-    ).to.deep.equal([
-      [
-        { role: 'user', name: undefined, id: undefined, content: '2' },
-        { role: 'user', name: undefined, id: undefined, content: '3' },
-      ],
-    ])
-  })
+  // <User>
+  // 3
+  // </User>`,
+  //         [
+  //           {
+  //             model: 'gpt-3.5-turbo',
+  //           },
+  //         ],
+  //         {
+  //           countTokens: () => 1,
+  //           maxTokens: () => 4,
+  //           reserveCount: 2,
+  //         }
+  //       )
+  //     ).to.deep.equal([
+  //       [
+  //         { role: 'user', name: undefined, content: '2' },
+  //         { role: 'user', name: undefined, content: '3' },
+  //       ],
+  //     ])
+  //   })
 })

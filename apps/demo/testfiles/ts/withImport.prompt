@@ -1,9 +1,0 @@
-<Code>
-import c from 'c'
-
-const a = '3'
-</Code>
-
-<User>
-@{a} @{b} @{c}
-</User>

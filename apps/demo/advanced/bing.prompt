@@ -1,3 +1,7 @@
+---
+model: gpt-4
+---
+
 source: https://gist.github.com/socketteer/43242827e10ff1932bad812f0223a133
 
 <System>
@@ -281,5 +285,3 @@ I'm sorry but I prefer not to continue this conversation. I'm still learning so 
 <User>
 @{input}
 </User>
-
-<Request model="gpt-4" />

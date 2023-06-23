@@ -104,80 +104,78 @@ export const ComposerView = (props: ComposerViewProps) => {
             alignItems: 'center',
           }}
         >
-          {keys.length > 0 && (
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div style={{ display: 'flex', paddingLeft: '8px' }}>
-                {keys.map(key => {
-                  const isCurrentTab = key === activeKey
-                  const opacity = isCurrentTab ? 1 : 0.5
-                  const color = isCurrentTab ? 'white' : undefined
-                  const borderBottomColor = isCurrentTab ? 'white' : 'transparent'
-                  return (
-                    <div style={{ paddingRight: '24px' }} key={key}>
-                      <div
-                        style={{
-                          opacity,
-                          color,
-                          borderBottomStyle: 'solid',
-                          borderBottomWidth: '2px',
-                          borderBottomColor,
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          paddingBottom: '4px',
-                          paddingTop: '4px',
-                          paddingLeft: '8px',
-                          paddingRight: '8px',
-                        }}
-                        onClick={() => setActiveKey(key)}
-                        onMouseEnter={(event: any) => {
-                          event.target.style.opacity = '1.0'
-                        }}
-                        onMouseLeave={(event: any) => {
-                          event.target.style.opacity = opacity
-                        }}
-                      >
-                        {key}
-                      </div>
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <div style={{ display: 'flex', paddingLeft: '8px' }}>
+              {keys.map(key => {
+                const isCurrentTab = key === activeKey
+                const opacity = isCurrentTab ? 1 : 0.5
+                const color = isCurrentTab ? 'white' : undefined
+                const borderBottomColor = isCurrentTab ? 'white' : 'transparent'
+                return (
+                  <div style={{ paddingRight: '24px' }} key={key}>
+                    <div
+                      style={{
+                        opacity,
+                        color,
+                        borderBottomStyle: 'solid',
+                        borderBottomWidth: '2px',
+                        borderBottomColor,
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        paddingBottom: '4px',
+                        paddingTop: '4px',
+                        paddingLeft: '8px',
+                        paddingRight: '8px',
+                      }}
+                      onClick={() => setActiveKey(key)}
+                      onMouseEnter={(event: any) => {
+                        event.target.style.opacity = '1.0'
+                      }}
+                      onMouseLeave={(event: any) => {
+                        event.target.style.opacity = opacity
+                      }}
+                    >
+                      {key}
                     </div>
-                  )
-                })}
-              </div>
-              {activeKey.length > 0 && (
-                <MonacoEditor
-                  key={activeKey}
-                  width="100%"
-                  height={`${height - 50}px`}
-                  theme={mapVSCodeThemeToMonaco(theme)}
-                  language={'markdown'}
-                  value={inputs[activeKey]}
-                  onChange={value => setValue(activeKey, value ?? '')}
-                  options={{
-                    minimap: {
-                      enabled: false,
-                    },
-                    padding: {
-                      top: 8,
-                    },
-                    wordWrap: 'on',
-                    fontSize: 12,
-                    lineDecorationsWidth: 0,
-                  }}
-                  onMount={(editor, monaco) => {
-                    editor.focus()
-                    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-                      run(inputsRef.current, sessionRef.current)
-                    })
-                  }}
-                />
-              )}
+                  </div>
+                )
+              })}
             </div>
-          )}
+            {activeKey.length > 0 && (
+              <MonacoEditor
+                key={activeKey}
+                width="100%"
+                height={`${height - 50}px`}
+                theme={mapVSCodeThemeToMonaco(theme)}
+                language={'markdown'}
+                value={inputs[activeKey]}
+                onChange={value => setValue(activeKey, value ?? '')}
+                options={{
+                  minimap: {
+                    enabled: false,
+                  },
+                  padding: {
+                    top: 8,
+                  },
+                  wordWrap: 'on',
+                  fontSize: 12,
+                  lineDecorationsWidth: 0,
+                }}
+                onMount={(editor, monaco) => {
+                  editor.focus()
+                  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+                    run(inputsRef.current, sessionRef.current)
+                  })
+                }}
+              />
+            )}
+          </div>
         </div>
         {streaming ? (
           <VSCodeButton style={{ width: '100%' }} appearance="secondary" onClick={stop} disabled={false}>

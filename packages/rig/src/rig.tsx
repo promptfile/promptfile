@@ -11,7 +11,6 @@ export interface ChatBlock {
   content: string
   name?: string
   type?: 'function_call'
-  id?: string
 }
 
 export interface GlassSession {
@@ -58,6 +57,9 @@ function RigView() {
         newInputs[v] = inputs[v] || ''
       }
     })
+    if (variables.length === 0) {
+      newInputs['Response'] = ''
+    }
     setInputs(() => newInputs)
   }
 
@@ -189,12 +191,6 @@ function RigView() {
     })
   }
 
-  const openOutput = () => {
-    vscode.postMessage({
-      action: 'openOutput',
-    })
-  }
-
   const stop = () => {
     vscode.postMessage({
       action: 'stopSession',
@@ -237,7 +233,6 @@ function RigView() {
         tabs={tabs}
         filename={filename}
         reload={reload}
-        openOutput={openOutput}
       />
       {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
       {/* {tab === 'State' && <StateView />} */}

@@ -43,4 +43,3 @@ finally, here's the actual `task` input from the user.
 @{task}
 </User>
 
-<Request model="gpt-3.5-turbo" />
