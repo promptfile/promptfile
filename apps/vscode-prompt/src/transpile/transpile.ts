@@ -9,22 +9,22 @@ export async function transpile(text: string) {
   const transpilationLanguages = [
     {
       label: 'TypeScript',
-      description: '(.ts)',
+      description: '.ts',
       action: 'typescript',
     },
     {
       label: 'Python',
-      description: '(.py)',
+      description: '.py',
       action: 'python',
     },
     {
       label: 'JavaScript',
-      description: '(.js)',
+      description: '.js',
       action: 'javascript',
     },
     {
       label: 'Ruby',
-      description: '(.rb)',
+      description: '.rb',
       action: 'ruby',
     },
   ]
