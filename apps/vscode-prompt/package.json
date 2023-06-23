@@ -175,7 +175,7 @@
             }
           },
           {
-            "scope": "source.promptfile.tool.name",
+            "scope": "source.promptfile.functions.name",
             "settings": {
               "foreground": "#67f49d",
               "fontStyle": "italic"
