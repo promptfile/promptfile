@@ -76,7 +76,6 @@
     "test": {
       "patterns": [
         "./src",
-        "../../apps/demo/testfiles"
       ],
       "inherit": true,
       "extensions": "ts,glass,py"

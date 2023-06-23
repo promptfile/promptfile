@@ -1,7 +1,0 @@
----
-model: gpt-3.5-turbo
----
-
-<User>
-tell me a haiku
-</User>

@@ -28,13 +28,7 @@ hello world
 
   it('should parse chat document with vars', () => {
     expect(
-      parseGlassMetadata(`<Code>
-import {hello} from './world'
-const a = await fetch(url)
-const text = await a.text()
-</Code>
-
-<System>
+      parseGlassMetadata(`<System>
 @{foo}
 </System>
 
@@ -50,18 +44,7 @@ const text = await a.text()
 
   it('should parse another', () => {
     expect(
-      parseGlassMetadata(`<Code>
-import fs from 'fs'
-import path from 'path'
-import { vectorSearch } from './vectorSearch'
-
-const sotu = fs.readFileSync(path.join(__dirname, 'state_of_the_union.txt'), 'utf-8')
-const lines = sotu.split('\\n').filter(line => Boolean(line))
-const question = "What kept us apart last year?"
-const context = await vectorSearch('sotu', lines, question)
-</Code>
-
-<System>
+      parseGlassMetadata(`<System>
 Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 </System>
 

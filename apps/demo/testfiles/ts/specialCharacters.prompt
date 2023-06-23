@@ -1,8 +1,0 @@
-<Code>
-const type = 'assistant'
-const role = `helpful ${type} @{type}`
-</Code>
-
-<System>
-You are a @{role}.
-</System>

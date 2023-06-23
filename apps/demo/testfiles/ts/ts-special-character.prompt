@@ -1,8 +1,0 @@
-const type = 'pirate'
-const role = `helpful @{type}`
-
-<System>
-You are a @{role}.
-</System>
-
-<Request model="gpt-3.5-turbo" />

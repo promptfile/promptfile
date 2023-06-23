@@ -12,5 +12,5 @@
     },
     "editor.formatOnSave": true
   },
-  "folders": [{ "path": "examples" }, { "path": "testfiles" }, { "path": "advanced" }, { "path": "scratchpad" }]
+  "folders": [{ "path": "examples" }, { "path": "advanced" }, { "path": "scratchpad" }]
 }
