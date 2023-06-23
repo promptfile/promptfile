@@ -85,10 +85,7 @@ export function parseGlassDocument(doc: string): GlassContent[] {
  *
  * If parseNestedForBlocks is true, then the nested child blocks of `<For>` will be parsed instead of the `<For>` block itself.
  */
-export function parseGlassBlocks(doc: string, parseNestedForBlocks = false): GlassContent[] {
-  if (parseNestedForBlocks) {
-    return parseGlassBlocksRecursive(doc)
-  }
+export function parseGlassBlocks(doc: string): GlassContent[] {
   const blocks: GlassContent[] = []
   const lines = doc.split('\n')
 
@@ -218,19 +215,6 @@ export function parseGlassBlocks(doc: string, parseNestedForBlocks = false): Gla
   }
 
   return parseAttributes(doc, blocks)
-}
-
-function parseGlassBlocksRecursive(doc: string): GlassContent[] {
-  const blocks = parseGlassBlocks(doc)
-  return blocks.flatMap(b => {
-    if (!b.child?.content) {
-      return [b]
-    }
-    if (b.tag !== 'For') {
-      return [b]
-    }
-    return [b, ...parseGlassBlocksRecursive(b.child.content)]
-  })
 }
 
 function parseAttributes(origDoc: string, blocks: GlassContent[]) {

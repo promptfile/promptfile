@@ -54,7 +54,6 @@ export async function transpile(text: string) {
     if (code.length === 0) {
       throw new Error(`No code was generated for ${language}`)
     }
-    // open a new buffer with this transpiled code
     const doc = await vscode.workspace.openTextDocument({
       language,
       content: code,

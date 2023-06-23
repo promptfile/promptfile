@@ -3,7 +3,7 @@ import { parseGlassBlocks } from './parseGlassBlocks'
 const contentBlocks = new Set(['System', 'User', 'Assistant', 'Block'])
 
 export function parseGlassMetadata(document: string) {
-  const blocks = parseGlassBlocks(document, true)
+  const blocks = parseGlassBlocks(document)
   const relevantBlocks = blocks.filter(block => contentBlocks.has(block.tag || ''))
 
   const vars = relevantBlocks.flatMap(block => {

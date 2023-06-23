@@ -1,5 +1,3 @@
-export { addChatBlock, addChatBlocks } from './addChatBlocks'
-export { initGlass } from './initGlass'
 export { LANGUAGE_MODELS, LanguageModelCreator, LanguageModelType } from './languageModels'
 export { ChatBlock, parseChatBlocks } from './parseChatBlocks'
 export { parseFrontmatterFromGlass } from './parseFrontmatterFromGlass'
