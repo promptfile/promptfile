@@ -14,18 +14,8 @@ interface TopperViewProps {
 }
 
 export const TopperView = (props: TopperViewProps) => {
-  const {
-    dirty,
-    reloadable,
-    filename,
-    tabs,
-    tab,
-    setTab,
-    reload,
-    openOutput,
-    openCurrentSessionFile,
-    shareCurrentSessionGist,
-  } = props
+  const { dirty, reloadable, filename, tabs, tab, setTab, reload, openCurrentSessionFile, shareCurrentSessionGist } =
+    props
 
   return (
     <div

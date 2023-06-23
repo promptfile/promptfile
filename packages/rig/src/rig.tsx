@@ -233,7 +233,6 @@ function RigView() {
         tabs={tabs}
         filename={filename}
         reload={reload}
-        openOutput={openOutput}
       />
       {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
       {/* {tab === 'State' && <StateView />} */}

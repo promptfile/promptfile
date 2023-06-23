@@ -2,6 +2,7 @@ import {
   ChatBlock,
   LANGUAGE_MODELS,
   LanguageModelCreator,
+  constructGlassDocument,
   parseChatBlocks,
   parseFrontmatterFromGlass,
   parseGlassMetadata,
@@ -10,6 +11,7 @@ import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import * as vscode from 'vscode'
 import { getAnthropicKey, getOpenaiKey } from '../util/keys'
 import { runPlaygroundAnthropic } from './runPlaygroundAnthropic'
+import { runPlaygroundOpenAI } from './runPlaygroundOpenAI'
 
 export interface LLMResponse {
   content: string
@@ -37,6 +39,12 @@ export async function runPlayground(
 ) {
   const metadata = parseGlassMetadata(content)
   const blocks = parseChatBlocks(content)
+  const parsedFrontmater = parseFrontmatterFromGlass(content)
+  const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('prompt').get('defaultModel')
+  if (!model) {
+    await vscode.window.showErrorMessage('No model specified in frontmatter or defaultModel setting.')
+    return
+  }
   if (metadata.interpolationVariables.length === 0 && Object.keys(inputs).length > 0) {
     const newUserValue = inputs[Object.keys(inputs)[0]]
     const newUserBlock: ChatBlock = {
@@ -44,13 +52,19 @@ export async function runPlayground(
       content: newUserValue.trim(),
     }
     blocks.push(newUserBlock)
+    content = constructGlassDocument(blocks, model)
+    if (progress) {
+      progress({
+        nextGlassfile: content,
+        response: [newUserBlock],
+      })
+    }
   }
-  const parsedFrontmater = parseFrontmatterFromGlass(content)
-  const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('prompt').get('defaultModel')
+
   const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
   const openaiKey = getOpenaiKey()
   const anthropicKey = getAnthropicKey()
-  if (!languageModel || !model) {
+  if (!languageModel) {
     await vscode.window.showErrorMessage(`Unable to find model ${model}`)
     return
   }
@@ -74,6 +88,9 @@ export async function runPlayground(
         await vscode.window.showErrorMessage('Add OpenAI API key to run `.prompt` file.')
         return
       }
-      throw new Error('OpenAI not yet supported')
+
+      return runPlaygroundOpenAI(blocks, openaiKey, model, [], {
+        progress,
+      })
   }
 }

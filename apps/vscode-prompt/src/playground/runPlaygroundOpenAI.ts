@@ -1,7 +1,7 @@
-import { ChatBlock, DEFAULT_TOKEN_COUNTER, TokenCounter } from '@glass-lang/glasslib'
+import { ChatBlock, DEFAULT_TOKEN_COUNTER, TokenCounter, constructGlassDocument } from '@glass-lang/glasslib'
 import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import { checkOk } from '@glass-lang/util'
-import { handleRequestNode } from '../util/transformDocument'
+import fetch from 'node-fetch'
 import { handleChatChunk, handleStream } from './stream'
 
 export async function runPlaygroundOpenAI(
@@ -59,116 +59,42 @@ export async function runPlaygroundOpenAI(
       throw new Error(`HTTP error: ${r.status}`)
     }
     if (options?.progress) {
-      const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${next}<|im_end|>`, model)
-      return options.progress(
-        handleRequestNode(
-          interpolatedDoc,
-          {
-            newBlockIds,
-            responseData:
-              responseDataToAppendTo == null
-                ? responseData.concat([
-                    [
-                      {
-                        response: next.content.trim(),
-                        function_call: next.function_call,
-                        requestTokens,
-                        responseTokens,
-                      },
-                    ],
-                  ])
-                : responseData.map((r, i) =>
-                    i === responseIndex
-                      ? r.concat([
-                          {
-                            response: next.content.trim(),
-                            function_call: next.function_call,
-                            requestTokens,
-                            responseTokens,
-                          },
-                        ])
-                      : r
-                  ),
-            requestBlocks,
-            requestTokens,
-            responseTokens,
-            streaming: true,
-            index: responseData.length,
-          },
-          options.id
-        )
-      )
+      const newChatBlock: ChatBlock = {
+        role: 'assistant',
+        content: `${next.content.trim()}█`,
+        type: next.function_call ? 'function_call' : undefined,
+      }
+      const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), model)
+      return options.progress({
+        response: [newChatBlock],
+        nextGlassfile,
+      })
     }
   })
 
-  let functionObservation: string | undefined = undefined
-  if (response.function_call != null) {
-    const fn = functions.find(f => f.name === response.function_call!.name)!
-    checkOk(fn, `Function ${response.function_call!.name} not found`)
-    const args = JSON.parse(response.function_call!.arguments)
-    const result = await fn.run(args)
-    functionObservation = JSON.stringify(result, null, 2)
-  }
-
-  // TODO: handle counting tokens for function response
-  const responseTokens = tokenCounter.countTokens(`<|im_start|>assistant\n${response.content}<|im_end|>`, model)
-
-  if (responseDataToAppendTo == null) {
-    responseData.push([
-      {
-        response: response.content.trim(),
-        function_call: response.function_call,
-        functionObservation,
-        requestTokens,
-        responseTokens,
-      },
-    ])
-  } else {
-    responseData[responseIndex].push({
-      response: response.content.trim(),
-      function_call: response.function_call,
-      functionObservation,
-      requestTokens,
-      responseTokens,
-    })
-  }
-  messagesSoFar.push(...messages)
-  messagesSoFar.push({
+  const assistantBlock: ChatBlock = {
     role: 'assistant',
-    content: response.content.trim().length ? response.content.trim() : JSON.stringify(response.function_call, null, 2),
-  })
-
-  if (functionObservation) {
-    messagesSoFar.push({
-      role: 'function',
-      content: functionObservation,
-      name: response.function_call!.name,
-    })
-
-    return await runGlassChat(
-      [],
-      messagesSoFar,
-      responseData,
-      requestBlocks,
-      newBlockIds,
-      functions,
-      interpolatedDoc,
-      responseIndex, // don't increment, gotta continue
-      options
-    )
+    content: response.content.trim(),
+    type: response.function_call ? 'function_call' : undefined,
   }
-
-  return handleRequestNode(
-    interpolatedDoc,
-    {
-      newBlockIds,
-      responseData,
-      requestBlocks,
-      requestTokens,
-      responseTokens,
-      streaming: false,
-      index: responseData.length - 1,
-    },
-    options.id
-  )
+  messages.push(assistantBlock)
+  if (response.function_call == null) {
+    const nextGlassfile = constructGlassDocument(messages, model)
+    return {
+      response: [assistantBlock],
+      nextGlassfile: nextGlassfile,
+    }
+  }
+  const fn = functions.find(f => f.name === response.function_call!.name)!
+  checkOk(fn, `Function ${response.function_call!.name} not found`)
+  const args = JSON.parse(response.function_call!.arguments)
+  const result = await fn.run(args)
+  const functionObservation = JSON.stringify(result, null, 2)
+  const functionChatBlock: ChatBlock = {
+    role: 'function',
+    content: functionObservation,
+    name: response.function_call!.name,
+  }
+  messages.push(functionChatBlock)
+  return runPlaygroundOpenAI(messages, openaiKey, model, functions, options)
 }
