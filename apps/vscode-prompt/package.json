@@ -217,9 +217,15 @@
             }
           },
           {
-            "scope": "source.promptfile.variable",
+            "scope": "source.promptfile.highlight",
             "settings": {
-              "foreground": "#FFB454",
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": "source.promptfile.variable.punctuation",
+            "settings": {
+              "foreground": "#4dff00",
               "fontStyle": "bold"
             }
           }

@@ -76,7 +76,7 @@
       ]
     },
     "variable": {
-      "match": "^(.*)(@\\{[A-Za-z0-9]+\\})(.*)$",
+      "match": "^(.*)(@\\{)([A-Za-z0-9]+)(\\})(.*)$",
       "captures": {
         "1": {
           "patterns": [
@@ -89,9 +89,15 @@
           ]
         },
         "2": {
-          "name": "source.promptfile.variable"
+          "name": "source.promptfile.variable.punctuation"
         },
         "3": {
+          "name": "source.promptfile.highlight"
+        },
+        "4": {
+          "name": "source.promptfile.variable.punctuation"
+        },
+        "5": {
           "patterns": [
             {
               "include": "#variable"
