@@ -32,7 +32,7 @@ export async function runPlayground(
   }
   const blocks = parseChatBlocks(content)
   const parsedFrontmater = parseFrontmatterFromGlass(content)
-  const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('prompt').get('defaultModel')
+  const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('promptfile').get('defaultModel')
   if (!model) {
     await vscode.window.showErrorMessage('No model specified in frontmatter or defaultModel setting.')
     return
@@ -63,7 +63,7 @@ export async function runPlayground(
   switch (languageModel.creator) {
     case LanguageModelCreator.anthropic:
       if (anthropicKey == null || anthropicKey === '') {
-        await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.anthropicKey')
+        await vscode.commands.executeCommand('workbench.action.openSettings', 'promptfile.anthropicKey')
         await vscode.window.showErrorMessage('Add Anthropic API key to run `.prompt` file.')
         return
       }
@@ -72,11 +72,11 @@ export async function runPlayground(
       })
     case LanguageModelCreator.openai:
       if (openaiKey == null || openaiKey === '') {
-        await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.openaiKey')
+        await vscode.commands.executeCommand('workbench.action.openSettings', 'promptfile.openaiKey')
         await vscode.window.showErrorMessage('Add OpenAI API key to run `.prompt` file.')
         return
       }
-      const functionEndpoint: string = vscode.workspace.getConfiguration('prompt').get('functionEndpoint') as any
+      const functionEndpoint: string = vscode.workspace.getConfiguration('promptfile').get('functionEndpoint') as any
 
       return runPlaygroundOpenAI(blocks, openaiKey, model, functions, {
         progress,

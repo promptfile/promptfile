@@ -1,7 +1,7 @@
 {
   "settings": {
     "git.openRepositoryInParentFolders": "never",
-    "prompt.outputDirectory": "${workspaceFolder}",
+    "promptfile.outputDirectory": "${workspaceFolder}",
     "files.trimTrailingWhitespace": false,
     "files.insertFinalNewline": false,
     "editor.wordWrap": "on",

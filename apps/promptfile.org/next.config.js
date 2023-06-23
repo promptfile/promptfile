@@ -7,7 +7,7 @@ const vscodePackageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../vs
 const colors = vscodePackageJson.contributes?.configurationDefaults['editor.tokenColorCustomizations'].textMateRules
 
 const glass = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../vscode-prompt/syntaxes/prompt.tmLanguage.json')).toString()
+  fs.readFileSync(path.join(__dirname, '../vscode-prompt/syntaxes/promptfile.tmLanguage.json')).toString()
 )
 
 const syntaxTheme = JSON.parse(fs.readFileSync(path.join(__dirname, 'shiki-theme.json')).toString())
@@ -23,10 +23,10 @@ const withNextra = require('nextra')({
       getHighlighter: async options => {
         const highlighter = await shiki.getHighlighter(options)
         await highlighter.loadLanguage({
-          id: 'prompt',
-          scopeName: 'source.prompt',
+          id: 'promptfile',
+          scopeName: 'source.promptfile',
           grammar: glass,
-          aliases: ['prompt'],
+          aliases: ['prompt', 'Prompt'],
         })
         return highlighter
       },

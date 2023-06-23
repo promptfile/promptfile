@@ -16,7 +16,7 @@
     "prettier": "^2.5.1",
     "turbo": "^1.9.3"
   },
-  "name": "prompt",
+  "name": "promptfile",
   "packageManager": "npm@9.3.1",
   "workspaces": [
     "apps/*",

@@ -2,7 +2,7 @@
   "name": "vscode-prompt",
   "version": "0.14.6",
   "displayName": "Promptfile",
-  "description": "Language support for Promptfile",
+  "description": "Language support for .prompt files",
   "categories": [
     "Programming Languages"
   ],
@@ -29,7 +29,7 @@
     "openai",
     "llm"
   ],
-  "icon": "assets/prompt.png",
+  "icon": "assets/promptfile.png",
   "scripts": {
     "vscode:prepublish": "npm run build",
     "build": "esbuild extension=./src/extension.ts language-server=../../packages/language-server/src/server.ts --bundle --platform=node --target=node16 --external:vscode --external:esbuild --external:@glass-lang/glasslib --outdir=out && npm run build:rig",
@@ -68,30 +68,30 @@
     ],
     "commands": [
       {
-        "command": "prompt.run",
-        "title": "Open .prompt file in playground",
+        "command": "promptfile.run",
+        "title": "Promptfile: run in playground",
         "description": "Runs a .prompt file."
       },
       {
-        "command": "prompt.settings",
-        "title": "Open settings for .prompt files",
+        "command": "promptfile.settings",
+        "title": "Promptfile: open settings",
         "description": "Opens the .prompt settings in your VSCode settings.json file."
       },
       {
-        "command": "prompt.transpile",
-        "title": "Transpile .prompt file to another language",
+        "command": "promptfile.transpile",
+        "title": "Promptfile: transpile to another language",
         "description": "This command transpiles .prompt files to the language of your choice."
       }
     ],
     "keybindings": [
       {
-        "command": "prompt.run",
+        "command": "promptfile.run",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorTextFocus && editorLangId == prompt"
+        "when": "editorTextFocus && editorLangId == promptfile"
       },
       {
-        "command": "prompt.run",
+        "command": "promptfile.run",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter"
       }
@@ -100,7 +100,7 @@
       {
         "title": "Promptfile",
         "properties": {
-          "prompt.defaultModel": {
+          "promptfile.defaultModel": {
             "type": "string",
             "default": "gpt-3.5-turbo",
             "description": "Default model for playground use",
@@ -132,22 +132,22 @@
               "claude-instant-v1-100k"
             ]
           },
-          "prompt.openaiKey": {
+          "promptfile.openaiKey": {
             "type": "string",
             "default": "",
             "description": "OpenAI API key"
           },
-          "prompt.functionEndpoint": {
+          "promptfile.functionEndpoint": {
             "type": "string",
             "default": "http://localhost:7777/function",
             "description": "Endpoint to use for function invocations"
           },
-          "prompt.anthropicKey": {
+          "promptfile.anthropicKey": {
             "type": "string",
             "default": "",
             "description": "Anthropic API key"
           },
-          "prompt.githubKey": {
+          "promptfile.githubKey": {
             "type": "string",
             "default": "",
             "description": "GitHub API key"
@@ -168,56 +168,56 @@
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
-            "scope": "source.prompt.function.name",
+            "scope": "source.promptfile.function.name",
             "settings": {
               "foreground": "#3e69d1",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.prompt.tool.name",
+            "scope": "source.promptfile.tool.name",
             "settings": {
               "foreground": "#67f49d",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.prompt.block.name",
+            "scope": "source.promptfile.block.name",
             "settings": {
               "foreground": "#9373DE",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.prompt.void",
+            "scope": "source.promptfile.void",
             "settings": {
               "foreground": "#7a7a7a",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.prompt.system.name",
+            "scope": "source.promptfile.system.name",
             "settings": {
               "foreground": "#f467c6",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.prompt.user.name",
+            "scope": "source.promptfile.user.name",
             "settings": {
               "foreground": "#5EC5E5",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.prompt.assistant.name",
+            "scope": "source.promptfile.assistant.name",
             "settings": {
               "foreground": "#4EC9B0",
               "fontStyle": "italic"
             }
           },
           {
-            "scope": "source.prompt.variable",
+            "scope": "source.promptfile.variable",
             "settings": {
               "foreground": "#FFB454",
               "fontStyle": "bold"
@@ -228,9 +228,9 @@
     },
     "grammars": [
       {
-        "language": "prompt",
-        "scopeName": "source.prompt",
-        "path": "./syntaxes/prompt.tmLanguage.json",
+        "language": "promptfile",
+        "scopeName": "source.promptfile",
+        "path": "./syntaxes/promptfile.tmLanguage.json",
         "embeddedLanguages": {
           "source.js": "javascript",
           "source.js.jsx": "javascriptreact",
@@ -282,14 +282,14 @@
       }
     ],
     "documentFormattingProvider": {
-      "language": "prompt",
+      "language": "promptfile",
       "scheme": "file"
     },
     "languages": [
       {
-        "id": "prompt",
+        "id": "promptfile",
         "aliases": [
-          "Promptfile"
+          "Prompt"
         ],
         "extensions": [
           ".prompt"

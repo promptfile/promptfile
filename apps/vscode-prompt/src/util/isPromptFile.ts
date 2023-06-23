@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 
 export function isPromptFile(document: vscode.TextDocument) {
-  return document.languageId === 'prompt'
+  return document.languageId === 'promptfile'
 }
 
 export function hasPromptFileOpen(editor: vscode.TextEditor) {

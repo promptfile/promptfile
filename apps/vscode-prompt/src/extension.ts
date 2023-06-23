@@ -36,7 +36,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   client = new LanguageClient(
-    'prompt',
+    'promptfile',
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the options are used
     {
@@ -48,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     },
     {
-      documentSelector: [{ scheme: 'file', language: 'prompt' }],
+      documentSelector: [{ scheme: 'file', language: 'promptfile' }],
       outputChannelName: 'Prompt Language Server',
     }
   )
@@ -130,7 +130,7 @@ export async function activate(context: vscode.ExtensionContext) {
       null,
       context.subscriptions
     ),
-    vscode.commands.registerCommand('prompt.run', async () => {
+    vscode.commands.registerCommand('promptfile.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && isPromptFile(activeEditor.document)) {
         await launchGlassDocument(activeEditor.document)
@@ -186,10 +186,10 @@ export async function activate(context: vscode.ExtensionContext) {
       const doc = await vscode.workspace.openTextDocument(selectedDocument)
       await launchGlassDocument(doc)
     }),
-    vscode.commands.registerCommand('prompt.settings', async () => {
-      await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt')
+    vscode.commands.registerCommand('promptfile.settings', async () => {
+      await vscode.commands.executeCommand('workbench.action.openSettings', 'promptfile')
     }),
-    vscode.commands.registerCommand('prompt.transpile', async () => {
+    vscode.commands.registerCommand('promptfile.transpile', async () => {
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && isPromptFile(activeEditor.document)) {
         const text = activeEditor.document.getText()

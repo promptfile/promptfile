@@ -54,7 +54,7 @@ export async function createPlayground(
 
   // If there's no existing panel, create a new one
   const panel = vscode.window.createWebviewPanel(
-    'prompt.webView',
+    'promptfile.webView',
     `${filename} (playground)`,
     {
       viewColumn: getCurrentViewColumn(playgrounds),
@@ -173,7 +173,7 @@ export async function createPlayground(
         const sessionToShare = message.data.session
         const githubKey = getGithubKey()
         if (githubKey == null || githubKey === '') {
-          await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.githubKey')
+          await vscode.commands.executeCommand('workbench.action.openSettings', 'promptfile.githubKey')
           await vscode.window.showErrorMessage('Add GitHub API key to share as gist.')
           return
         }
