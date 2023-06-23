@@ -19,7 +19,6 @@ https://platform.openai.com/docs/guides/gpt/function-calling
     },
     required: ['expression'],
   }}
-  run={({ expression }) => '' + eval(expression)}
 />
 
 <User>

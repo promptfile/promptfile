@@ -205,22 +205,6 @@ hello world
     expect(parsed[0].child!.content).to.equal('hello world')
   })
 
-  it('should parse complex with nesting', () => {
-    const doc = `<For each={[
-    { role: 'user', content: 'name an ice cream' },
-    { role: "assistant", content: 'Vanilla' },
-    { role: 'user', content: 'name a fruit' }
-]} as="m">
-<Block role={m.role}>
-@{m.content}
-</Block>
-</For>`
-
-    const parsed = parseGlassBlocks(doc)
-    expect(parsed[0].content).to.equal(doc)
-    expect(parsed[0].child!.content).to.equal('<Block role={m.role}>\n@{m.content}\n</Block>')
-  })
-
   it('should parse empty block', () => {
     const doc = `<Assistant>
 </Assistant>`

@@ -11,6 +11,8 @@ Instead of typing your input into the `User` block, let's use a variable instead
 same System prompt as before...
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
+
+Include at least one emoji per response.
 </System>
 
 ...but let's use a variable for the User's input!

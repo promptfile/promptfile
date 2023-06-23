@@ -1,0 +1,32 @@
+---
+model: gpt-3.5-turbo
+---
+
+this prompt creates a transcript from a given User + Assistant interaction
+
+TODO: eventually support a longer transcript?
+TODO: eventually include names of users and assistants?
+
+<System>
+You are ChatGPT
+</System>
+
+
+<User>
+Provide a short and useful title for the following transcript:
+
+###
+Human: @{userInput}
+AI: @{assistantInput}
+###
+
+Only include the most important information in the title. The title should be ≤50 characters.
+
+Edit the title you generate based on these instructions:
+- Only include punctuation if absolutely necessary.
+- Do not include a period at the end of your response.
+- Do not wrap your response in quotes.
+- Only include the title itself — do not include any additional text.
+
+Return the edited title with no additional characters.
+</User>

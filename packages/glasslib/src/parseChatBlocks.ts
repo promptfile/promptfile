@@ -21,22 +21,11 @@ export function parseChatBlocks(content: string): ChatBlock[] {
   const res: ChatBlock[] = []
 
   for (const node of nodes.filter(n => n.type === 'block')) {
-    let role = node.tag?.toLowerCase()
-    let blockContent = node.child!.content
+    const role = node.tag?.toLowerCase()
+    const blockContent = node.child!.content
     console.log('role', role)
     if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block' && role !== 'function') {
       continue // ignore
-    }
-    if (role === 'block') {
-      const roleAttr = node.attrs!.find(attr => attr.name === 'role')
-      const contentAttr = node.attrs!.find(attr => attr.name === 'content')
-      if (roleAttr == null) {
-        throw new Error('<Block> tag must have role attribute')
-      }
-      role = parseAttr(roleAttr).toLowerCase()
-      if (contentAttr != null) {
-        blockContent = parseAttr(contentAttr) // TODO: don't modify existing value. don't interpolate content if string literal?
-      }
     }
     const nameAttr = node.attrs!.find(attr => attr.name === 'name')
     // return { role: role as any, content: doc }

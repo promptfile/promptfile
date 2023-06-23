@@ -33,22 +33,6 @@ Goodbye world
     ])
   })
 
-  it('should interpolate a document with <Block>', () => {
-    expect(
-      parseChatBlocks(
-        `<Block role="System">
-Hello world
-</Block>
-
-<Block role="user" content={"Goodbye world"}>
-</Block>`
-      )
-    ).to.deep.equal([
-      { role: 'system', name: undefined, content: 'Hello world' },
-      { role: 'user', name: undefined, content: 'Goodbye world' },
-    ])
-  })
-
   it('should ignore comments', () => {
     expect(
       parseChatBlocks(

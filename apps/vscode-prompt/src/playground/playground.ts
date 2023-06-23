@@ -26,9 +26,6 @@ export async function createPlayground(
     return
   }
   const session = await createSession(filepath)
-  if (!session) {
-    return
-  }
   const languageId = document.languageId
   const existingPlayground = playgrounds.get(filepath)
   if (existingPlayground) {
@@ -144,10 +141,6 @@ export async function createPlayground(
         break
       case 'resetSession':
         const newSession = await createSession(filepath)
-        if (!newSession) {
-          await vscode.window.showErrorMessage('Unable to reset session')
-          return
-        }
         const newGlass = loadGlass(newSession)
         const newBlocks = parseChatBlocks(newGlass)
         const newAllBlocks = parseGlassBlocks(newGlass)
@@ -274,7 +267,7 @@ export async function createPlayground(
             })
           } catch (error) {
             console.error(error)
-            void vscode.window.showErrorMessage(`ERROR: ${error}`)
+            await vscode.window.showErrorMessage(`ERROR: ${error}`)
           }
         }
         const sessionToRun = message.data.session

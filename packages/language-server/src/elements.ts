@@ -1,5 +1,3 @@
-import { LANGUAGE_MODELS } from '@glass-lang/glasslib'
-
 interface GlassElement {
   name: string
   attributes: GlassAttribute[]
@@ -40,27 +38,6 @@ export const glassElements: GlassElement[] = [
         optional: true,
       },
       {
-        name: 'model',
-        detail: 'model used to generate the content',
-        documentation: 'The `model` attribute allows you to track which model generated the assistant text.',
-        type: 'enum',
-        optional: true,
-        values: LANGUAGE_MODELS.filter(
-          m => !m.deprecatedOn || m.deprecatedOn < new Date().toISOString().split('T')[0]
-        ).map(model => ({
-          name: model.name,
-          detail: model.creator,
-          documentation: model.description,
-        })),
-      },
-      {
-        name: 'temperature',
-        detail: 'temperature for inference',
-        documentation: 'The `temperature` attribute determines the temperature for inference',
-        type: 'number',
-        optional: true,
-      },
-      {
         name: 'type',
         detail: 'type of assistant response',
         documentation: 'The `type` attribute determines what kind of response came from the assistant.',
@@ -71,38 +48,6 @@ export const glassElements: GlassElement[] = [
             name: 'function_call',
           },
         ],
-      },
-    ],
-  },
-  {
-    name: 'Block',
-    insertText: 'Block role="$1">',
-    documentation: 'Creates a chat block',
-    detail: '(block) chat block',
-    closingType: 'nonSelfClosing',
-    attributes: [
-      {
-        name: 'role',
-        detail: 'system, user, or assistant',
-        documentation: 'The `role` attribute allows you to assign a role to a chat block.',
-        values: [
-          {
-            name: 'system',
-            detail: 'system chat block',
-            documentation: 'The `system` role is used for system chat blocks.',
-          },
-          {
-            name: 'user',
-            detail: 'user chat block',
-            documentation: 'The `user` role is used for user chat blocks.',
-          },
-          {
-            name: 'assistant',
-            detail: 'assistant chat block',
-            documentation: 'The `assistant` role is used for assistant chat blocks.',
-          },
-        ],
-        type: 'enum',
       },
     ],
   },
@@ -155,14 +100,14 @@ export const glassElements: GlassElement[] = [
         optional: true,
         insertText: 'parameters={{}}',
       },
-      {
-        name: 'run',
-        detail: 'code to run when the tool is used',
-        documentation: 'The `run` attribute defines the code to run when the tool is used.',
-        type: 'function',
-        optional: true,
-        insertText: 'run={(arg) => {$1}}',
-      },
+      // {
+      //   name: 'run',
+      //   detail: 'code to run when the tool is used',
+      //   documentation: 'The `run` attribute defines the code to run when the tool is used.',
+      //   type: 'function',
+      //   optional: true,
+      //   insertText: 'run={(arg) => {$1}}',
+      // },
     ],
   },
   {
