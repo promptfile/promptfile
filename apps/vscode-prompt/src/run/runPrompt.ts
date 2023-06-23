@@ -44,6 +44,12 @@ export async function runPrompt(
     await vscode.window.showErrorMessage(`Unable to find model ${model}`)
     return
   }
+  const metadata = parseGlassMetadata(content)
+  for (const variable of metadata.interpolationVariables) {
+    const value = inputs[variable] ?? ''
+    content = content.replace(`@{${variable}}`, value)
+  }
+  const blocks = parseChatBlocks(content)
   switch (languageModel.creator) {
     case LanguageModelCreator.anthropic:
       if (anthropicKey == null || anthropicKey === '') {
@@ -51,22 +57,15 @@ export async function runPrompt(
         await vscode.window.showErrorMessage('Add Anthropic API key to run `.prompt` file.')
         return
       }
-      break
+      return runPromptAnthropic(blocks, anthropicKey, model, {
+        progress,
+      })
     case LanguageModelCreator.openai:
       if (openaiKey == null || openaiKey === '') {
         await vscode.commands.executeCommand('workbench.action.openSettings', 'prompt.openaiKey')
         await vscode.window.showErrorMessage('Add OpenAI API key to run `.prompt` file.')
         return
       }
-      break
+      throw new Error('OpenAI not yet supported')
   }
-  const metadata = parseGlassMetadata(content)
-  for (const variable of metadata.interpolationVariables) {
-    const value = inputs[variable] ?? ''
-    content = content.replace(`@{${variable}}`, value)
-  }
-  const blocks = parseChatBlocks(content)
-  return runPromptAnthropic(blocks, anthropicKey!, model, {
-    progress,
-  })
 }
