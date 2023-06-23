@@ -4,17 +4,14 @@ export interface GlassAttribute {
 }
 
 export function parseAttributes(element: string): GlassAttribute[] {
-  const parser = new DOMParser()
-  const doc = parser.parseFromString(element, 'application/xml')
-
-  const node = doc.children[0]
+  const attributePattern = /(\w+)="([^"]*)"/g
   const attrs: GlassAttribute[] = []
+  let match
 
-  for (let i = 0; i < node.attributes.length; i++) {
-    const attr = node.attributes[i]
+  while ((match = attributePattern.exec(element)) !== null) {
     attrs.push({
-      name: attr.name,
-      stringValue: attr.value,
+      name: match[1],
+      stringValue: match[2],
     })
   }
 

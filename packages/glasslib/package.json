@@ -8,8 +8,8 @@
     "clean": "rm -rf dist",
     "test": "mocha --exit --enable-source-maps ./dist/test.js",
     "test:watch": "mocha --watch --enable-source-maps ./dist/test.js",
-    "dev": "webpack --watch --mode development",
-    "build": "npm run build:types && webpack --mode production",
+    "dev": "ts-node src/index.ts",
+    "build": "npm run clean && npm run build:types && npm run build:tsup",
     "build:types": "tsc --emitDeclarationOnly",
     "build:tsup": "tsup src/index.ts",
     "lint": "eslint src --ext ts"
@@ -30,15 +30,10 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.21.8",
-    "@babel/plugin-transform-modules-commonjs": "^7.21.5",
-    "@babel/preset-env": "^7.21.5",
-    "@babel/preset-typescript": "^7.21.5",
     "@glass-lang/util": "*",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.3",
-    "babel-loader": "^9.1.2",
     "chai": "^4.3.7",
     "eslint-config-custom": "*",
     "mocha": "^10.2.0",
@@ -47,9 +42,7 @@
     "tslib": "^2.5.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4",
-    "ulid": "^2.3.0",
-    "webpack": "^5.83.1",
-    "webpack-cli": "^5.1.1"
+    "ulid": "^2.3.0"
   },
   "tsup": {
     "sourcemap": true,
