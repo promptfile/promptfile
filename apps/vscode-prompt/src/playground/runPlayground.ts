@@ -8,6 +8,7 @@ import {
   parseGlassMetadata,
 } from '@glass-lang/glasslib'
 import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
+import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { getAnthropicKey, getOpenaiKey } from '../util/keys'
 import { runPlaygroundAnthropic } from './runPlaygroundAnthropic'
