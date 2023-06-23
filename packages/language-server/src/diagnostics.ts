@@ -10,225 +10,212 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import { glassElements } from './elements'
 
 export function getDiagnostics(textDocument: TextDocument): Diagnostic[] {
-  return [
-    ...findUnmatchedTagsDiagnostics(textDocument),
-    ...findUnsupportedTagsDiagnostics(textDocument),
-    ...findAttributeDiagnostics(textDocument),
-    ...findModelDiagnostics(textDocument),
-    ...findRequestModelDiagnostics(textDocument),
-    ...findEmptyBlocksDiagnostics(textDocument),
-    ...findFrontmatterDiagnostics(textDocument),
-  ]
+  try {
+    return [
+      ...findUnmatchedTagsDiagnostics(textDocument),
+      ...findUnsupportedTagsDiagnostics(textDocument),
+      ...findAttributeDiagnostics(textDocument),
+      ...findModelDiagnostics(textDocument),
+      ...findEmptyBlocksDiagnostics(textDocument),
+      ...findFrontmatterDiagnostics(textDocument),
+    ]
+  } catch {
+    return []
+  }
 }
 
 function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
-  try {
-    const parsed = parseGlassBlocks(textDocument.getText())
-    const invalidAttributes: { type: string; tag: any; attribute: string }[] = []
-    for (const tag of parsed) {
-      const existingAttributes = tag.attrs ?? []
-      const glassElement = glassElements.find(element => element.name === tag.tag)
-      const validAttributes = glassElement?.attributes ?? []
-      const missingRequiredAttributes = validAttributes.filter(
-        attribute =>
-          attribute.optional !== true &&
-          !existingAttributes.some((existingAttribute: any) => existingAttribute.name === attribute.name)
-      )
-      invalidAttributes.push(
-        ...missingRequiredAttributes.map(attribute => ({ tag, attribute: attribute.name, type: 'missing' }))
-      )
-      const analyzedAttributes: string[] = []
-      for (const attribute of existingAttributes) {
-        const validAttribute = validAttributes.find(validAttribute => validAttribute.name === attribute.name)
-        if (validAttribute) {
-          if (
-            validAttribute.values &&
-            !validAttribute.values.some(a => a.name === attribute.stringValue || a.name === attribute.expressionValue)
-          ) {
-            invalidAttributes.push({ tag, attribute: attribute.name, type: 'invalid' })
-          }
-          if (analyzedAttributes.includes(attribute.name)) {
-            invalidAttributes.push({ tag, attribute: attribute.name, type: 'duplicate' })
-          }
-          analyzedAttributes.push(attribute.name)
-        } else {
-          invalidAttributes.push({ tag, attribute: attribute.name, type: 'unknown' })
+  const parsed = parseGlassBlocks(textDocument.getText())
+  const invalidAttributes: { type: string; tag: any; attribute: string }[] = []
+  for (const tag of parsed) {
+    const existingAttributes = tag.attrs ?? []
+    const glassElement = glassElements.find(element => element.name === tag.tag)
+    const validAttributes = glassElement?.attributes ?? []
+    const missingRequiredAttributes = validAttributes.filter(
+      attribute =>
+        attribute.optional !== true &&
+        !existingAttributes.some((existingAttribute: any) => existingAttribute.name === attribute.name)
+    )
+    invalidAttributes.push(
+      ...missingRequiredAttributes.map(attribute => ({ tag, attribute: attribute.name, type: 'missing' }))
+    )
+    const analyzedAttributes: string[] = []
+    for (const attribute of existingAttributes) {
+      const validAttribute = validAttributes.find(validAttribute => validAttribute.name === attribute.name)
+      if (validAttribute) {
+        if (
+          validAttribute.values &&
+          !validAttribute.values.some(a => a.name === attribute.stringValue || a.name === attribute.expressionValue)
+        ) {
+          invalidAttributes.push({ tag, attribute: attribute.name, type: 'invalid' })
         }
+        if (analyzedAttributes.includes(attribute.name)) {
+          invalidAttributes.push({ tag, attribute: attribute.name, type: 'duplicate' })
+        }
+        analyzedAttributes.push(attribute.name)
+      } else {
+        invalidAttributes.push({ tag, attribute: attribute.name, type: 'unknown' })
       }
     }
-    return invalidAttributes.map(item => {
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range: {
-          start: textDocument.positionAt(item.tag.position.start.offset),
-          end: textDocument.positionAt(item.tag.position.end.offset),
-        },
-        message:
-          item.type === 'duplicate'
-            ? `Duplicate attribute: "${item.attribute}"`
-            : item.type === 'unknown'
-            ? `Unknown "${item.attribute}" attribute`
-            : item.type === 'invalid'
-            ? `Invalid value for attribute "${item.attribute}"`
-            : `Missing attribute: "${item.attribute}"`,
-        source: 'prompt',
-      }
-      return diagnostic
-    })
-  } catch {
-    return []
   }
+  return invalidAttributes.map(item => {
+    const diagnostic: Diagnostic = {
+      severity: DiagnosticSeverity.Error,
+      range: {
+        start: textDocument.positionAt(item.tag.position.start.offset),
+        end: textDocument.positionAt(item.tag.position.end.offset),
+      },
+      message:
+        item.type === 'duplicate'
+          ? `Duplicate attribute: "${item.attribute}"`
+          : item.type === 'unknown'
+          ? `Unknown "${item.attribute}" attribute`
+          : item.type === 'invalid'
+          ? `Invalid value for attribute "${item.attribute}"`
+          : `Missing attribute: "${item.attribute}"`,
+      source: 'prompt',
+    }
+    return diagnostic
+  })
 }
 
 function findEmptyBlocksDiagnostics(textDocument: TextDocument): Diagnostic[] {
-  try {
-    const parsed = parseGlassBlocks(textDocument.getText())
-    const tagsToCheck = glassElements.filter(e => e.closingType === 'nonSelfClosing').map(e => e.name)
-    const emptyTags = parsed.filter(tag => tagsToCheck.includes(tag.tag || '') && tag.child?.content === '')
-    return emptyTags.map(tag => {
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Warning,
-        range: {
-          start: textDocument.positionAt(tag.position.start.offset),
-          end: textDocument.positionAt(tag.position.end.offset),
-        },
-        message: `Empty <${tag.tag}> tag.`,
-        source: 'prompt',
-      }
+  const parsed = parseGlassBlocks(textDocument.getText())
+  const tagsToCheck = glassElements.filter(e => e.closingType === 'nonSelfClosing').map(e => e.name)
+  const emptyTags = parsed.filter(tag => tagsToCheck.includes(tag.tag || '') && tag.child?.content === '')
+  return emptyTags.map(tag => {
+    const diagnostic: Diagnostic = {
+      severity: DiagnosticSeverity.Warning,
+      range: {
+        start: textDocument.positionAt(tag.position.start.offset),
+        end: textDocument.positionAt(tag.position.end.offset),
+      },
+      message: `Empty <${tag.tag}> tag.`,
+      source: 'prompt',
+    }
 
-      return diagnostic
-    })
-  } catch {
-    return []
-  }
+    return diagnostic
+  })
 }
 
 function findFrontmatterDiagnostics(textDocument: TextDocument): Diagnostic[] {
-  try {
-    // get the range of the frontmatter
-    const regex = /---\n([\s\S]*?)\n---/
-    const match = regex.exec(textDocument.getText())
-    if (!match) {
-      return []
-    }
-    const range = {
-      start: textDocument.positionAt(match.index),
-      end: textDocument.positionAt(match.index + match[0].length),
-    }
-    const frontmatter = parseFrontmatterFromGlass(textDocument.getText()) as any | null
-    const diagnostics: Diagnostic[] = []
-    if (frontmatter && frontmatter.model) {
-      const languageModel = LANGUAGE_MODELS.find(m => m.name === frontmatter.model)
-      if (!languageModel) {
-        diagnostics.push({
-          severity: DiagnosticSeverity.Error,
-          range,
-          message: `Unsupported model: ${frontmatter.model}`,
-          source: 'prompt',
-        })
-      }
-    }
-    return diagnostics
-  } catch {
+  // get the range of the frontmatter
+  const regex = /---\n([\s\S]*?)\n---/
+  const match = regex.exec(textDocument.getText())
+  if (!match) {
     return []
   }
+  const range = {
+    start: textDocument.positionAt(match.index),
+    end: textDocument.positionAt(match.index + match[0].length),
+  }
+  const frontmatter = parseFrontmatterFromGlass(textDocument.getText()) as any | null
+  const diagnostics: Diagnostic[] = []
+  if (frontmatter && frontmatter.model) {
+    const languageModel = LANGUAGE_MODELS.find(m => m.name === frontmatter.model)
+    if (!languageModel) {
+      diagnostics.push({
+        severity: DiagnosticSeverity.Error,
+        range,
+        message: `Unsupported model: ${frontmatter.model}`,
+        source: 'prompt',
+      })
+    }
+  }
+  return diagnostics
 }
 
 function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
-  try {
-    const parsed = parseGlassBlocks(textDocument.getText())
-    const requestElement = parsed.find(tag => tag.tag && ['Request'].includes(tag.tag))
-    if (!requestElement) {
-      return []
+  const parsed = parseGlassBlocks(textDocument.getText())
+  const requestElement = parsed.find(tag => tag.tag && ['Request'].includes(tag.tag))
+  if (!requestElement) {
+    return []
+  }
+
+  const modelAttribute = requestElement.attrs?.find(attr => attr.name === 'model')
+  if (!modelAttribute || !modelAttribute.stringValue) {
+    return []
+  }
+
+  const model = modelAttribute.stringValue
+  const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
+
+  if (!languageModel) {
+    const diagnostic: Diagnostic = {
+      severity: DiagnosticSeverity.Error,
+      range: {
+        start: textDocument.positionAt(requestElement.position.start.offset),
+        end: textDocument.positionAt(requestElement.position.end.offset),
+      },
+      message: `Unknown model: ${model}`,
+      source: 'prompt',
     }
+    return [diagnostic]
+  }
 
-    const modelAttribute = requestElement.attrs?.find(attr => attr.name === 'model')
-    if (!modelAttribute || !modelAttribute.stringValue) {
-      return []
-    }
+  const diagnostics: Diagnostic[] = []
 
-    const model = modelAttribute.stringValue
-    const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
-
-    if (!languageModel) {
-      const diagnostic: Diagnostic = {
+  const today = new Date().toISOString().split('T')[0]
+  if (languageModel.deprecatedOn) {
+    const isDeprecated = today >= languageModel.deprecatedOn
+    if (isDeprecated) {
+      diagnostics.push({
         severity: DiagnosticSeverity.Error,
         range: {
           start: textDocument.positionAt(requestElement.position.start.offset),
           end: textDocument.positionAt(requestElement.position.end.offset),
         },
-        message: `Unknown model: ${model}`,
+        message: `${languageModel.name} was deprecated on ${languageModel.deprecatedOn} and is no longer supported.`,
         source: 'prompt',
-      }
-      return [diagnostic]
+      })
+    } else {
+      diagnostics.push({
+        severity: DiagnosticSeverity.Warning,
+        range: {
+          start: textDocument.positionAt(requestElement.position.start.offset),
+          end: textDocument.positionAt(requestElement.position.end.offset),
+        },
+        message: `${languageModel.name} will be deprecated on ${languageModel.deprecatedOn}.`,
+        source: 'prompt',
+      })
     }
+  }
 
-    const diagnostics: Diagnostic[] = []
-
-    const today = new Date().toISOString().split('T')[0]
-    if (languageModel.deprecatedOn) {
-      const isDeprecated = today >= languageModel.deprecatedOn
-      if (isDeprecated) {
-        diagnostics.push({
-          severity: DiagnosticSeverity.Error,
-          range: {
-            start: textDocument.positionAt(requestElement.position.start.offset),
-            end: textDocument.positionAt(requestElement.position.end.offset),
-          },
-          message: `${languageModel.name} was deprecated on ${languageModel.deprecatedOn} and is no longer supported.`,
-          source: 'prompt',
-        })
-      } else {
-        diagnostics.push({
+  const systemBlocks = parsed.filter(tag => tag.tag === 'System')
+  if (languageModel.creator === LanguageModelCreator.anthropic) {
+    diagnostics.push(
+      ...systemBlocks.map(tag => {
+        const diagnostic: Diagnostic = {
           severity: DiagnosticSeverity.Warning,
           range: {
-            start: textDocument.positionAt(requestElement.position.start.offset),
-            end: textDocument.positionAt(requestElement.position.end.offset),
+            start: textDocument.positionAt(tag.position.start.offset + 1),
+            end: textDocument.positionAt(tag.position.start.offset + 7),
           },
-          message: `${languageModel.name} will be deprecated on ${languageModel.deprecatedOn}.`,
+          message: `<System> blocks not supported by Anthropic — this will get converted to a <User> block.`,
           source: 'prompt',
-        })
-      }
-    }
-
-    const systemBlocks = parsed.filter(tag => tag.tag === 'System')
-    if (languageModel.creator === LanguageModelCreator.anthropic) {
-      diagnostics.push(
-        ...systemBlocks.map(tag => {
-          const diagnostic: Diagnostic = {
-            severity: DiagnosticSeverity.Warning,
-            range: {
-              start: textDocument.positionAt(tag.position.start.offset + 1),
-              end: textDocument.positionAt(tag.position.start.offset + 7),
-            },
-            message: `<System> blocks not supported by Anthropic — this will get converted to a <User> block.`,
-            source: 'prompt',
-          }
-          return diagnostic
-        })
-      )
-    }
-    if (languageModel.type === LanguageModelType.completion) {
-      diagnostics.push(
-        ...systemBlocks.map(tag => {
-          const diagnostic: Diagnostic = {
-            severity: DiagnosticSeverity.Warning,
-            range: {
-              start: textDocument.positionAt(tag.position.start.offset + 1),
-              end: textDocument.positionAt(tag.position.start.offset + 7),
-            },
-            message: `<System> blocks not supported by ${languageModel.name} — this will get converted to a <User> block.`,
-            source: 'prompt',
-          }
-          return diagnostic
-        })
-      )
-    }
-
-    return diagnostics
-  } catch {
-    return []
+        }
+        return diagnostic
+      })
+    )
   }
+  if (languageModel.type === LanguageModelType.completion) {
+    diagnostics.push(
+      ...systemBlocks.map(tag => {
+        const diagnostic: Diagnostic = {
+          severity: DiagnosticSeverity.Warning,
+          range: {
+            start: textDocument.positionAt(tag.position.start.offset + 1),
+            end: textDocument.positionAt(tag.position.start.offset + 7),
+          },
+          message: `<System> blocks not supported by ${languageModel.name} — this will get converted to a <User> block.`,
+          source: 'prompt',
+        }
+        return diagnostic
+      })
+    )
+  }
+
+  return diagnostics
 }
 
 function findUnmatchedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] {
@@ -284,23 +271,19 @@ export function extractUnmatchedTags(text: string) {
 }
 
 function findUnsupportedTagsDiagnostics(textDocument: TextDocument): Diagnostic[] {
-  try {
-    const parsed = parseGlassBlocks(textDocument.getText())
-    const unsupportedTags = parsed.filter(tag => !glassElements.some(element => element.name === tag.tag))
-    return unsupportedTags.map(tag => {
-      const diagnostic: Diagnostic = {
-        severity: DiagnosticSeverity.Error,
-        range: {
-          start: textDocument.positionAt(tag.position.start.offset),
-          end: textDocument.positionAt(tag.position.end.offset),
-        },
-        message: `Unsupported <${tag.tag}> tag.`,
-        source: 'prompt',
-      }
+  const parsed = parseGlassBlocks(textDocument.getText())
+  const unsupportedTags = parsed.filter(tag => !glassElements.some(element => element.name === tag.tag))
+  return unsupportedTags.map(tag => {
+    const diagnostic: Diagnostic = {
+      severity: DiagnosticSeverity.Error,
+      range: {
+        start: textDocument.positionAt(tag.position.start.offset),
+        end: textDocument.positionAt(tag.position.end.offset),
+      },
+      message: `Unsupported <${tag.tag}> tag.`,
+      source: 'prompt',
+    }
 
-      return diagnostic
-    })
-  } catch {
-    return []
-  }
+    return diagnostic
+  })
 }

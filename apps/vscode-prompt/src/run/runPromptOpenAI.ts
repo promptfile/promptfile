@@ -1,5 +1,4 @@
-import { ChatBlock } from '@glass-lang/glasslib'
-import { DEFAULT_TOKEN_COUNTER, TokenCounter } from '@glass-lang/glasslib/'
+import { ChatBlock, DEFAULT_TOKEN_COUNTER, TokenCounter } from '@glass-lang/glasslib'
 import { FunctionData } from '@glass-lang/glasslib/dist/parseGlassBlocks'
 import { checkOk } from '@glass-lang/util'
 import { handleChatChunk, handleStream } from './stream'
