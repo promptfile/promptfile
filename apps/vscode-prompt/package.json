@@ -70,18 +70,18 @@
     "commands": [
       {
         "command": "prompt.run",
-        "title": "Promptfile: run",
-        "description": "Runs a Promptfile file."
+        "title": "Prompt: run",
+        "description": "Runs a .prompt file."
       },
       {
         "command": "prompt.settings",
-        "title": "Promptfile: open settings",
-        "description": "Opens the Promptfile settings in your VSCode settings.json file."
+        "title": "Prompt: open settings",
+        "description": "Opens the .prompt settings in your VSCode settings.json file."
       },
       {
         "command": "prompt.transpile",
-        "title": "Promptfile: transpile",
-        "description": "This command transpiles all .prompt files in your workspace to the language of your choice."
+        "title": "Prompt: transpile",
+        "description": "This command transpiles .prompt files to the language of your choice."
       }
     ],
     "keybindings": [
@@ -106,11 +106,31 @@
             "default": "gpt-3.5-turbo",
             "description": "Default model for playground use",
             "enum": [
-              "gpt-4", "gpt-4-0314", "gpt-4-0613", "gpt-4-32k", "gpt-4-32k-0314",
-              "gpt-4-32k-0613", "gpt-3.5-turbo", "gpt-3.5-turbo-0301", "gpt-3.5-turbo-0613",
-              "gpt-3.5-turbo-16k", "gpt-3.5-turbo-16k-0613", "text-davinci-003", "text-davinci-002",
-              "code-davinci-002", "text-curie-001", "text-babbage-001", "text-ada-001", "davinci",
-              "curie", "babbage", "ada", "claude-v1", "claude-v1-100k", "claude-instant-v1", "claude-instant-v1-100k"
+              "gpt-4",
+              "gpt-4-0314",
+              "gpt-4-0613",
+              "gpt-4-32k",
+              "gpt-4-32k-0314",
+              "gpt-4-32k-0613",
+              "gpt-3.5-turbo",
+              "gpt-3.5-turbo-0301",
+              "gpt-3.5-turbo-0613",
+              "gpt-3.5-turbo-16k",
+              "gpt-3.5-turbo-16k-0613",
+              "text-davinci-003",
+              "text-davinci-002",
+              "code-davinci-002",
+              "text-curie-001",
+              "text-babbage-001",
+              "text-ada-001",
+              "davinci",
+              "curie",
+              "babbage",
+              "ada",
+              "claude-v1",
+              "claude-v1-100k",
+              "claude-instant-v1",
+              "claude-instant-v1-100k"
             ]
           },
           "prompt.openaiKey": {
@@ -127,11 +147,6 @@
             "type": "string",
             "default": "",
             "description": "GitHub API key"
-          },
-          "prompt.outputDirectory": {
-            "type": "string",
-            "default": "${workspaceFolder}",
-            "description": "Output directory for generated code"
           }
         }
       }

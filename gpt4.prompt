@@ -1,3 +1,8 @@
+---
+model: gpt-4
+---
+
+
 <System>
 You are ChatGPT. Browsing: disabled
 </System>
@@ -5,5 +10,3 @@ You are ChatGPT. Browsing: disabled
 <User>
 Hello, how are you?
 </User>
-
-<Request model="gpt-4" />
