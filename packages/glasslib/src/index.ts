@@ -6,4 +6,5 @@ export { GlassContent, parseGlassBlocks, parseGlassDocument, reconstructGlassDoc
 export { LLMFunction, parseGlassFunctions } from './parseGlassFunctions'
 export { parseGlassMetadata } from './parseGlassMetadata'
 export { removeGlassFrontmatter } from './removeGlassFrontmatter'
+export { LLMRequest, LLMResponse } from './request'
 export { DEFAULT_TOKEN_COUNTER, TokenCounter } from './tokenCounter'

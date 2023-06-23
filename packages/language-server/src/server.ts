@@ -14,7 +14,7 @@ import {
   createConnection,
 } from 'vscode-languageserver/node'
 import { generateCompletions } from './completions'
-import { getDiagnostics } from './diagnostics'
+import { getDiagnostics } from './diagnostics/diagnostics'
 import { findFoldableTagPairs, findMarkdownFoldingRanges } from './folding'
 import { formatDocument } from './formatting'
 

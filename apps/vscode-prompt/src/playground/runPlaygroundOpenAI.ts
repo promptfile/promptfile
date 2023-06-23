@@ -2,6 +2,7 @@ import {
   ChatBlock,
   DEFAULT_TOKEN_COUNTER,
   LLMFunction,
+  LLMRequest,
   TokenCounter,
   constructGlassDocument,
 } from '@glass-lang/glasslib'
@@ -12,7 +13,7 @@ import { handleChatChunk, handleStream } from './stream'
 export async function runPlaygroundOpenAI(
   messages: ChatBlock[],
   openaiKey: string,
-  model: string,
+  request: LLMRequest,
   functions: LLMFunction[],
   options: {
     tokenCounter?: TokenCounter
@@ -31,7 +32,7 @@ export async function runPlaygroundOpenAI(
       .concat(messages)
       .map(b => `<|im_start|>${b.role}\n${b.content}<|im_end|>`)
       .join(''),
-    model
+    request.model
   )
 
   let functionArgs = {}
@@ -63,8 +64,10 @@ export async function runPlaygroundOpenAI(
     },
     body: JSON.stringify({
       messages: messages.map(m => ({ ...m })),
-      model: model,
+      model: request.model,
       stream: true,
+      temperature: request.temperature,
+      max_tokens: request.maxTokens,
       ...functionArgs,
     }),
   })
@@ -79,7 +82,7 @@ export async function runPlaygroundOpenAI(
         content: `${next.content.trim()}█`,
         type: next.function_call ? 'function_call' : undefined,
       }
-      const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), model)
+      const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), request)
       return options.progress({
         response: [newChatBlock],
         nextGlassfile,
@@ -94,7 +97,7 @@ export async function runPlaygroundOpenAI(
   }
   messages.push(assistantBlock)
   if (response.function_call == null) {
-    const nextGlassfile = constructGlassDocument(messages, model)
+    const nextGlassfile = constructGlassDocument(messages, request)
     return {
       response: [assistantBlock],
       nextGlassfile: nextGlassfile,
@@ -120,5 +123,5 @@ export async function runPlaygroundOpenAI(
     name: response.function_call!.name,
   }
   messages.push(functionChatBlock)
-  return runPlaygroundOpenAI(messages, openaiKey, model, functions, options)
+  return runPlaygroundOpenAI(messages, openaiKey, request, functions, options)
 }
