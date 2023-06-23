@@ -63,8 +63,6 @@ You can only generate commands, but you are an expert at generating commands.
 </System>
 
 
-
 <User>
-@{input}
+Hello! I have a question about my account.
 </User>
-
