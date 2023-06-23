@@ -18,3 +18,9 @@ Feel free to change this text to anything you want!
 <User>
 Tell me about the ocean.
 </User>
+
+<Assistant type="function_call">
+{
+    "hello": "goodbye"
+}
+</Assistant>

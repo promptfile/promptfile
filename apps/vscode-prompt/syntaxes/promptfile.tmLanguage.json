@@ -33,6 +33,9 @@
       "include": "#user-element"
     },
     {
+      "include": "#assistant-element-function-call"
+    },
+    {
       "include": "#assistant-element"
     },
     {
@@ -150,6 +153,50 @@
         },
         "2": {
           "name": "source.promptfile.system.name"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      }
+    },
+    "assistant-element-function-call": {
+      "begin": "^(<)(Assistant)( type=\"function_call\")(>)$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.promptfile.assistant.name"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.tsx#jsx-tag-attribute-name"
+            },
+            {
+              "include": "source.tsx#jsx-tag-attribute-assignment"
+            },
+            {
+              "include": "source.tsx#jsx-string-double-quoted"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.jsx"
+        }
+      },
+      "patterns": [
+        {
+          "include": "source.json"
+        }
+      ],
+      "end": "^(<\\/)(Assistant)(>)$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.jsx"
+        },
+        "2": {
+          "name": "source.promptfile.assistant.name"
         },
         "3": {
           "name": "punctuation.definition.tag.end.jsx"
