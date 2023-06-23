@@ -191,12 +191,6 @@ function RigView() {
     })
   }
 
-  const openOutput = () => {
-    vscode.postMessage({
-      action: 'openOutput',
-    })
-  }
-
   const stop = () => {
     vscode.postMessage({
       action: 'stopSession',
