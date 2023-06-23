@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 
-import fs from 'fs'
 import path from 'path'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import * as glassc from './index'
 
 function main() {
   const res = yargs(hideBin(process.argv))
@@ -49,15 +47,15 @@ function main() {
         const sourceDirectory = path.resolve(argv.sourceDirectory as string)
         const outputDirectory = path.resolve(argv.outputDirectory)
 
-        const output = glassc.transpileGlassTypescript(
-          workspaceDirectory,
-          sourceDirectory,
-          argv.lang,
-          outputDirectory,
-          defaultModel,
-          true
-        )
-        fs.writeFileSync(path.join(outputDirectory, 'glass.ts'), output)
+        // const output = glassc.transpileGlassTypescript(
+        //   workspaceDirectory,
+        //   sourceDirectory,
+        //   argv.lang,
+        //   outputDirectory,
+        //   defaultModel,
+        //   true
+        // )
+        // fs.writeFileSync(path.join(outputDirectory, 'glass.ts'), output)
       }
     ).argv
 }

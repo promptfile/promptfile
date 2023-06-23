@@ -1,10 +1,9 @@
-import { rewriteImports } from '@glass-lang/glassc'
 import * as crypto from 'crypto'
 import fs from 'fs'
 import * as os from 'os'
 import path from 'path'
 import * as vscode from 'vscode'
-import { generateULID } from './ulid'
+import { generateULID } from '../util/ulid'
 
 export function getSessionDirectoryPath(filepath: string): string {
   let baseDir: string
@@ -55,9 +54,8 @@ export async function createSession(filepath: string): Promise<string> {
   const sessionDirectory = getSessionDirectoryPath(filepath)
   const sessionId = generateULID()
   const glass = fs.readFileSync(filepath, 'utf-8')
-  const updatedGlass = rewriteImports(glass, sessionDirectory, filepath)
   const sessionPath = path.join(sessionDirectory, `${sessionId}.prompt`)
-  return writeGlass(sessionPath, updatedGlass)
+  return writeGlass(sessionPath, glass)
 }
 
 export async function loadSessionDocuments(filepath: string): Promise<vscode.TextDocument[]> {
