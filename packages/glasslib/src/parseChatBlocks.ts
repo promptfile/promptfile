@@ -63,7 +63,7 @@ export function parseChatBlocks2(
 
   let totalNumTokensUsed = 0
 
-  const requestIndices: number[] = nodes.map((n, i) => (n.tag === 'Request' ? i : null)).filter(i => i != null) as any
+  const requestIndices: number[] = [] as any
 
   for (let i = 0; i < requestIndices.length; i++) {
     // for each Request, scan backwards to construct the block
@@ -115,51 +115,6 @@ export function parseChatBlocks2(
 
     currBlock = []
   }
-
-  // for (const node of nodes.filter(n => n.type === 'block')) {
-  //   if (node.tag === 'Request') {
-  //     res.push(currBlock)
-  //     currBlock = []
-  //     continue
-  //   }
-  //   let role = node.tag?.toLowerCase()
-
-  //   let blockContent = node.child!.content
-  //   const currRequestBlock = requestBlocks[res.length]
-
-  //   if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block' && role !== 'function') {
-  //     continue // ignore
-  //   }
-  //   if (role === 'block') {
-  //     const roleAttr = node.attrs!.find(attr => attr.name === 'role')
-  //     const contentAttr = node.attrs!.find(attr => attr.name === 'content')
-  //     if (roleAttr == null) {
-  //       throw new Error('<Block> tag must have role attribute')
-  //     }
-  //     role = parseAttr(roleAttr).toLowerCase()
-  //     if (contentAttr != null) {
-  //       blockContent = parseAttr(contentAttr) // TODO: don't modify existing value. don't interpolate content if string literal?
-  //     }
-  //   }
-
-  //   const amountToReserve = tokenCounter.reserveCount || 300
-  //   const blockTokens = tokenCounter.countTokens(node.child!.content, currRequestBlock.model)
-  //   const maxTokens = tokenCounter.maxTokens(currRequestBlock.model)
-
-  //   if (totalNumTokensUsed + blockTokens >= maxTokens - amountToReserve) {
-  //     continue // skip this block
-  //   }
-
-  //   totalNumTokensUsed += blockTokens
-
-  //   // return { role: role as any, content: doc }
-  //   const nameAttr = node.attrs!.find(attr => attr.name === 'name')
-  //   currBlock.push({ role: role as any, content: blockContent, name: nameAttr?.stringValue })
-  // }
-
-  // if (currBlock.length > 0) {
-  //   res.push(currBlock)
-  // }
 
   return res
 }

@@ -43,7 +43,7 @@ export function addToDocument(addToDocument: { tag: string; content: string; att
   }
 }
 
-const chatBlockTags = new Set(['User', 'System', 'Assistant', 'Function', 'Block', 'Request'])
+const chatBlockTags = new Set(['User', 'System', 'Assistant', 'Function', 'Block'])
 
 export function handleRequestNode(
   interpolatedDoc: string,
