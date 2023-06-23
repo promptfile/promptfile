@@ -1,7 +1,5 @@
-interface GlassAttribute {
-  name: string
-  stringValue?: string
-}
+import { GlassAttribute, parseAttributes } from './parseAttributes'
+
 export interface GlassContent {
   type: 'block' | 'comment' | 'frontmatter'
   content: string
@@ -77,15 +75,6 @@ export function parseGlassDocument(doc: string): GlassContent[] {
   return content
 }
 
-/**
- * Parses *all* block elements from a Promptfile file.
- *
- * E.g. `<System>`, `<Request>`, etc.
- *
- * For chat-only blocks, use `parseChatBlocks`.
- *
- * If parseNestedForBlocks is true, then the nested child blocks of `<For>` will be parsed instead of the `<For>` block itself.
- */
 export function parseGlassBlocks(doc: string): GlassContent[] {
   const blocks: GlassContent[] = []
   const lines = doc.split('\n')
@@ -215,10 +204,6 @@ export function parseGlassBlocks(doc: string): GlassContent[] {
     }
   }
 
-  return parseAttributes(doc, blocks)
-}
-
-function parseAttributes(origDoc: string, blocks: GlassContent[]) {
   return blocks.map(b => {
     if (!b.child) {
       return b
@@ -226,10 +211,11 @@ function parseAttributes(origDoc: string, blocks: GlassContent[]) {
     let blockWithoutChildContent = b.content
     if (b.child.content) {
       blockWithoutChildContent =
-        origDoc.substring(b.position.start.offset, b.child.position.start.offset) +
-        origDoc.substring(b.child.position.end.offset, b.position.end.offset)
+        doc.substring(b.position.start.offset, b.child.position.start.offset) +
+        doc.substring(b.child.position.end.offset, b.position.end.offset)
     }
-    const parsedAttributes: GlassAttribute[] = []
+    console.log(blockWithoutChildContent)
+    const parsedAttributes: GlassAttribute[] = parseAttributes(blockWithoutChildContent)
     return { ...b, attrs: parsedAttributes }
   })
 }

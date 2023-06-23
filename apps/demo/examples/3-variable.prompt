@@ -20,3 +20,7 @@ Include at least one emoji per response.
 <User>
 Here's what I want my Haiku to be about: @{haikuTopic} 
 </User>
+
+<User name="blah">
+
+</User>

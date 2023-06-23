@@ -43,10 +43,7 @@ function findAttributeDiagnostics(textDocument: TextDocument): Diagnostic[] {
     for (const attribute of existingAttributes) {
       const validAttribute = validAttributes.find(validAttribute => validAttribute.name === attribute.name)
       if (validAttribute) {
-        if (
-          validAttribute.values &&
-          !validAttribute.values.some(a => a.name === attribute.stringValue || a.name === attribute.expressionValue)
-        ) {
+        if (validAttribute.values && !validAttribute.values.some(a => a.name === attribute.stringValue)) {
           invalidAttributes.push({ tag, attribute: attribute.name, type: 'invalid' })
         }
         if (analyzedAttributes.includes(attribute.name)) {
@@ -133,7 +130,7 @@ function findModelDiagnostics(textDocument: TextDocument): Diagnostic[] {
   }
 
   const modelAttribute = requestElement.attrs?.find(attr => attr.name === 'model')
-  if (!modelAttribute || !modelAttribute.stringValue) {
+  if (!modelAttribute || modelAttribute.stringValue) {
     return []
   }
 
