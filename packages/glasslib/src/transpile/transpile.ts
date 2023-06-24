@@ -80,6 +80,7 @@ interface LLMFunction {
   name: string
   description?: string
   parameters?: any
+  testValue?: string
 }
 
 interface Prompt<T> {

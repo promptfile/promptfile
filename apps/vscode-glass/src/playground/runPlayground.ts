@@ -40,7 +40,7 @@ export async function runPlayground(
       content: newUserValue.trim(),
     }
     blocks.push(newUserBlock)
-    content = constructGlassDocument(blocks, model)
+    content = constructGlassDocument(blocks, { model })
     if (progress) {
       progress({
         nextGlassfile: content,

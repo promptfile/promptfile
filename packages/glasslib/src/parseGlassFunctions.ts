@@ -4,7 +4,7 @@ export interface LLMFunction {
   name: string
   description: string
   parameters: any
-  test?: any
+  testValue?: string
 }
 
 export function parseGlassFunctions(text: string): LLMFunction[] {
