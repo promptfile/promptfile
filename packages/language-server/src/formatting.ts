@@ -53,10 +53,6 @@ export function formatDocument(text: string) {
           'GLASS_INNERBLOCK_SUBSTITUTION' +
           s.content.substring(s.child!.position.end.offset - s.position.start.offset)
 
-        if (s.tag === 'Code' || s.tag === 'Test') {
-          childContent = prettifyTypescript(childContent).trim()
-        }
-
         if (s.tag === 'Functions') {
           childContent = prettifyJson(childContent).trim()
         }

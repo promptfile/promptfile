@@ -4,11 +4,11 @@ import Cards from '@/components/Cards/Cards'
 import { languages } from '@/data/languages'
 import Image from 'next/image'
 
-<Callout type="info"> Note: The feature to execute code within your Promptfile file is currently experimental. We are diligently working on enhancing its syntax and usage. </Callout>
 
-## Languages Currently Supported
+## Using `.prompt` in your project
 
-You can transpile your `.prompt` files into any of the following languages:
+Every `.prompt` file can be easily converted into your programming language of choice. Just run the `Promptfile: transpile to another language` command from VSCode and select your preferred language.
+
+We believe that all transpiled `.prompt` files should be 100% idiomatic to the language you choose and require no dependencies.
 
 <Cards children={languages} />
-

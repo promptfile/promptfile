@@ -1,3 +1,11 @@
-<User>
+https://github.com/glass-platform/promptfile/issues/172
 
+<User>
+Here's a valid variable: @{variable}
+
+Here's another valid variable, but inside of a fenced code block:
+
+```json
+@{anotherVariable}
+```
 </User>
