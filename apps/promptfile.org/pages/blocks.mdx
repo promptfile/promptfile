@@ -10,13 +10,10 @@ Blocks in Promptfile simplify LLM requests by making them easy to read and under
 Use the `<Assistant>{:prompt}` to specify that the content is coming from the model
 
  - **name** <i>(optional string) </i>— Assign a name to the assistant.
- - **if** <i>(optional condition)</i> — Includes the block only if condition evaluates `true`
- - **model** <i>(optional enumerated string)</i> — Automatically generated condition for tracking the model
- - **temperature** <i>(optional number)</i> — Automatically generated condition for tracking the temperature
  - **type** <i>(optional enumerated string)</i> — Automatically generated condition for tracking the assistant response type. Currently only `function_call`.
 
 ```prompt copy filename="assistantBlock_example.prompt"
-<Assistant if={true}>
+<Assistant>
 Hello human!
 </Assistant>
 ```
@@ -27,10 +24,9 @@ Hello human!
 Use the `<User>{:prompt}` block to indicate the text originating from a human user.
 
  - **name** <i>(optional string)  </i> — Assign a name to the user.
- - **if** <i>(optional condition)  </i> — Includes the block in the request only if the given condition evaluates to true.
 
 ```prompt copy filename="user_example.prompt"
-<User if={true}>
+<User>
 Hello AI!
 </User>
 
@@ -42,37 +38,47 @@ Use the `<System>{:prompt}` block to provide instructions to the LLM.
 
 For Anthropic models, the `<System>{:prompt}` block has the same effect as the `<User>{:prompt}` block.
 
- - **if** <i>(optional condition)  </i> — Includes the block only if the given condition evaluates to `true`.
 
 ```prompt copy filename="system_example.prompt"
-<System if={false}>
+<System>
 Even if I want to give the LLM a System prompt here, it won't evaluate because the condition is not met.
 </System>
 ```
 
 
-### Tool
+### Functions
 
-Use the `<Tool>{:prompt}` block to integrate a tool that Promptfile can execute at runtime. Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
-
- - **name** <i>(optional string)  </i> — Assign a name to the tool.
- - **schema** <i>(required string)  </i> — Defines the schema that the tool can accept.
- - **description** <i>(optional string)  </i> — Describes the tool and its potential use.
- - **run** <i>(required function)  </i> — Specifies the code to run when the tool is invoked.
+Use the `<Functions>{:prompt}` block to integrate a tool that Promptfile can execute at runtime. Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
 
 ```prompt copy filename="function.prompt"
-<Tool
-  name="calculator"
-  description="Calculates the result of a math expression."
-  schema={z.object({ expression: z.string().describe('expression to eval with JavaScript') })}
-  run={({ expression }) => '' + eval(expression)}
-/>
+---
+model: gpt-3.5-turbo-0613
+---
+
+
+<Functions>
+[
+  {
+    "name": "calculator",
+    "description": "Calculates the result of a math expression.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "The expression to evaluate in JavaScript.",
+        },
+      },
+      "required": ["expression"],
+    },
+  }
+]
+</Functions>
+
 
 <User>
 what is 2 to the .12345 power?
 </User>
-
-<Request model="gpt - **3.5 - **turbo - **0613" />
 ```
 
 ## PromptFile Generated Blocks
@@ -84,44 +90,86 @@ The `<Function>{:prompt}` block is automatically generated and used to track the
  - **name** <i>(string)</i> The name of the function which was called.
 
 ```prompt copy filename="function_example.prompt"
-<Tool
-  name="calculator"
-  description="Calculates the result of a math expression"
-  schema={z.object({ expression: z.string().describe('expression to eval with JS') })}
-  run={({ expression }) => '' + eval(expression)} />
+---
+model: gpt-3.5-turbo-0613
+---
+
+
+<Functions>
+[
+  {
+    "name": "calculator",
+    "description": "Calculates the result of a math expression.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "The expression to evaluate in JavaScript.",
+        },
+      },
+      "required": ["expression"],
+    },
+  }
+]
+</Functions>
+
 
 <User>
 what is 2 to the .12345 power?
 </User>
-
-<Request model="gpt - **3.5 - **turbo - **0613" />
 ```
+
 
 When we run this Promptfile file, we get the following interaction:
 
 ```prompt
-<Tool
-  name="calculator"
-  description="Calculates the result of a math expression."
-  schema={z.object({ expression: z.string().describe('expression to eval with JS') })}
-  run={({ expression }) => '' + eval(expression)} />
+---
+model: gpt-3.5-turbo-0613
+---
+
+
+<Functions>
+[
+  {
+    "name": "calculator",
+    "description": "Calculates the result of a math expression.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "The expression to evaluate in JavaScript.",
+        },
+      },
+      "required": ["expression"],
+    },
+  }
+]
+</Functions>
+
 
 <User>
 what is 2 to the .12345 power?
 </User>
-// This is the assistant deciding to use the calculator tool and pass in arguments into the schema based on the request
-<Assistant model="gpt - **3.5 - **turbo - **0613" temperature={1} type="function_call">
+
+
+This is the assistant deciding to use the calculator tool and pass in arguments into the schema based on the request
+<Assistant type="function_call">
 {
   "name": "calculator",
   "arguments": "{\n  \"expression\": \"Math.pow(2, 0.12345)\"\n}"
 }
 </Assistant>
+
+
 // This is the automatically generated function block letting you know that the LLM used the tool it had available
 <Function name="calculator">
 "1.0893367441616877"
 </Function>
 
-<Assistant model="gpt - **3.5 - **turbo - **0613" temperature={1}>
+
+<Assistant>
 2 to the power of 0.12345 is approximately 1.08934.
 </Assistant>
 ```

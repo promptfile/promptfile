@@ -37,6 +37,10 @@ Add your OpenAI or Anthropic API Key by running the "PromptFile: open settings",
 Create a file named `example.prompt` and copy the provided `example.prompt` file into it.
 
 ```prompt copy filename="example.prompt"
+---
+model: gpt-3.5-turbo
+---
+
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
@@ -123,7 +127,7 @@ Write me a function to find a prime number
   <Tab>
   <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', overflowWrap: 'break-word', overflow: 'hidden'}}>
 ````json copy filename='request.json'
-  [
+[
   {
     "role": "system",
     "content": "You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response."
