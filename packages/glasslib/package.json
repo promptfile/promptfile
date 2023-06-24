@@ -4,15 +4,15 @@
   "description": "Promptfile language tools",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "glasslib": "./dist/cli.js"
+  },
   "scripts": {
     "clean": "rm -rf dist",
-    "test:build": "tsup src/test.ts",
-    "test": "npm run test:build && mocha --exit --enable-source-maps ./dist/test.js",
-    "test:watch": "npm run test:build && mocha --watch --enable-source-maps ./dist/test.js",
+    "test": "mocha --exit",
+    "test:watch": "npm-watch test",
     "dev": "ts-node src/index.ts",
-    "build": "npm run clean && npm run build:types && npm run build:tsup",
-    "build:types": "tsc --emitDeclarationOnly",
-    "build:tsup": "tsup src/index.ts",
+    "build": "tsup src/index.ts src/cli.ts",
     "lint": "eslint src --ext ts"
   },
   "repository": {
@@ -35,15 +35,15 @@
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.3",
+    "@types/yargs": "^17.0.24",
     "chai": "^4.3.7",
     "eslint-config-custom": "*",
     "mocha": "^10.2.0",
-    "node-fetch": "^2.6.11",
+    "npm-watch": "^0.11.0",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.4",
-    "ulid": "^2.3.0"
+    "typescript": "^5.0.4"
   },
   "tsup": {
     "sourcemap": true,
@@ -52,5 +52,17 @@
     ],
     "clean": true,
     "dts": true
+  },
+  "watch": {
+    "test": {
+      "patterns": [
+        "./src"
+      ],
+      "inherit": true,
+      "extensions": "ts"
+    }
+  },
+  "dependencies": {
+    "yargs": "^17.7.2"
   }
 }

@@ -16,14 +16,12 @@ export interface ChatBlock {
 export function parseChatBlocks(content: string): ChatBlock[] {
   // first interpolate the jsx interpolations
   const nodes = parseGlassBlocks(content)
-  console.log('nodes', nodes)
 
   const res: ChatBlock[] = []
 
   for (const node of nodes.filter(n => n.type === 'block')) {
     const role = node.tag?.toLowerCase()
     const blockContent = node.child!.content
-    console.log('role', role)
     if (role !== 'system' && role !== 'user' && role !== 'assistant' && role !== 'block' && role !== 'function') {
       continue // ignore
     }
@@ -31,8 +29,6 @@ export function parseChatBlocks(content: string): ChatBlock[] {
     // return { role: role as any, content: doc }
     res.push({ role: role as any, content: blockContent, name: nameAttr?.stringValue })
   }
-
-  console.log('res', res)
 
   return res
 }

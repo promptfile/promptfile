@@ -214,7 +214,6 @@ export function parseGlassBlocks(doc: string): GlassContent[] {
         doc.substring(b.position.start.offset, b.child.position.start.offset) +
         doc.substring(b.child.position.end.offset, b.position.end.offset)
     }
-    console.log(blockWithoutChildContent)
     const parsedAttributes: GlassAttribute[] = parseAttributes(blockWithoutChildContent)
     return { ...b, attrs: parsedAttributes }
   })
