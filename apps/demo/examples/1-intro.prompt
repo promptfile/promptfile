@@ -25,18 +25,3 @@ Feel free to change this text to anything you want!
 <User>
 Tell me about the ocean.
 </User>
-
-<Functions>
-[
-    {
-        "name": "",
-        "description": "",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "": {},
-            }
-        }
-    }
-]
-</Functions>
