@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.15.3
+
+### Patch Changes
+
+- [`e140807`](https://github.com/glass-platform/promptfile/commit/e140807d0695db76d565a1e2329fbfb10a5892da) Thanks [@elliottburris](https://github.com/elliottburris)! - tiktoken bundling
+
 ## 0.15.2
 
 ### Patch Changes
