@@ -10,29 +10,16 @@ The PromptFile Cookbook provides a collection of practical examples that demonst
 
 ### **Chatting with your prompt**
 
-Here is a static prompt. Run this prompt and you will get a single haiku about the ocean.
+Here is a static prompt. Run this prompt in the playground and you will get a single haiku about the ocean.
 
 If you want to continue the interaction, you can input something into `Response` and running it again. The Playground appends a `<User>{:prompt}` block with your `Response` inside to your session. You can view the raw session file by clicking `Open session file`.
 
-
 ```prompt
 ---
-model: gpt-3.5-turbo
+model: gpt-4
 temperature: 1
 maxTokens: 2048
 ---
-
-
-Welcome to PromptFile! PromptFile is a domain-specific language (DSL) for working with language models. PromptFile combines the power of your favorite programming language (Typescript & Javascript supported today) with a declarative syntax for constructing prompts for language models. This provides a flexible and powerful way to interact with various language models across different platforms.
-
-To help you learn PromptFile, we'll work through a few examples together and build some LLM applications. We'll start simple by using the `gpt-3.5-turbo` model from OpenAI to generate haikus.
-
-This prompt contains two chat blocks: a System block and a User block. The System block (`<System>`) gives initial instructions to the language model, setting the scene. The User block (`<User>`) represents the user's input or query to the language model. Finally, the Request block (`<Request />`) specifies the language model to be used, in this case `gpt-3.5-turbo`.
-
-If you're unfamilar with chat blocks in the context of prompting, you can learn more from docs provided by OpenAI (https://platform.openai.com/docs/guides/gpt/chat-completions-api) and Anthropic (https://console.anthropic.com/docs/prompt-design).
-
-To start, try executing this prompt by using the `Promptfile: run in playground` command. You can find this command by opening the command palette (Cmd+Shift+P on Mac, Ctrl+Shift+P on Windows) and searching for `Promptfile`. You can also execute this prompt by keyboard shortcut Cmd+Enter (Mac) / Ctrl+Enter (Windows).
-
 
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
@@ -53,43 +40,27 @@ You can also include variables in your template using the `@{variableHere}{:prom
 model: gpt-3.5-turbo
 ---
 
-Awesome, you're well on your way to working with Promptfile!
-
-Being able to run a prompt once is great, but what if you want to run it multiple times? Language models are particularly skilled at back-and-forth conversations, so let's try that out.
-
-Instead of typing your input into the `User` block, let's use a variable instead.
-
-same System prompt as before...
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 
 Include at least one emoji per response.
 </System>
 
-...but let's use a variable for the User's input!
-
 <User>
 Here's what I want my Haiku to be about: @{haikuTopic}
 </User>
 ```
 
-
-
 ### **Calling functions**
 
 Employ the `<Functions>{:prompt}` block to define a function that enhances the model's ability to perform tasks. If your function returns something, it will be wrapped inside a `<Function>{:prompt}` block. For the purposes of the demo example, we include a `testValue` that our function would return.
 
-Please note that, as of now, only `gpt-3.5-turbo-0613` and `gpt-4-0613` models have been fine-tuned to effectively call functions.
+Please note that only `gpt-3.5-turbo-0613` and `gpt-4-0613` models have been fine-tuned to call functions.
 
 ```prompt
 ---
 model: gpt-3.5-turbo-0613
 ---
-
-LLMs have the most power when you give them tools to use. `.prompt` supports the ability to define Tools inside your prompts. Promptfile will give instructions to the LLM for how to use the tools, and will run the code any time the LLM wants to use a tool.
-
-https://platform.openai.com/docs/guides/gpt/function-calling
-
 
 <Functions>
 [
@@ -111,12 +82,10 @@ https://platform.openai.com/docs/guides/gpt/function-calling
 ]
 </Functions>
 
-
 <User>
 what is 2 to the .12345 power?
 </User>
 ```
-
 
 
 </Steps>

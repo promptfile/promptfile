@@ -6,7 +6,7 @@
   "vscode": "VSCode Extension",
   "blocks": "Blocks",
   "models": "Models",
-  "code": "Using prompts in code",
+  "usage": "PromptFile in Your Project",
   "contact": {
     "title": "Platform ↗",
     "type": "page",
