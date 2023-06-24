@@ -65,7 +65,7 @@
   },
   "contributes": {
     "activationEvents": [
-      "onLanguage:promptfile"
+      "*"
     ],
     "commands": [
       {
