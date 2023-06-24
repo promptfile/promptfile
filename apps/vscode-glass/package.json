@@ -54,19 +54,19 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@dqbd/tiktoken": "^1.0.7",
     "@glass-lang/glasslib": "*",
     "@glass-lang/language-server": "*",
     "@glass-lang/rig": "*",
     "@glass-lang/util": "*",
     "diff": "^5.1.0",
+    "js-tiktoken": "^1.0.7",
     "node-fetch": "^3.3.1",
     "vscode-languageclient": "^8.1.0"
   },
+  "activationEvents": [
+    "onLanguage:promptfile"
+  ],
   "contributes": {
-    "activationEvents": [
-      "*"
-    ],
     "commands": [
       {
         "command": "promptfile.run",

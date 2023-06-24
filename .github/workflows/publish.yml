@@ -27,7 +27,7 @@ jobs:
 
       - run: npx --workspace vscode-glass vsce package
 
-      ## required fpr the next step
+      ## required for the next step
       - name: Install Yarn
         run: |
           npm install -g yarn

@@ -18,7 +18,7 @@ unzip $FILE_NAME -d vsix_content
 cd vsix_content/extension
 
 # Update the package.json file
-jq ".dependencies = {\"@dqbd/tiktoken\": \"*\"}" package.json > temp.json && rm -f package.json && mv temp.json package.json
+jq ".dependencies = {}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 jq ".devDependencies = {}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 mv .yarn.lock yarn.lock
 cat package.json

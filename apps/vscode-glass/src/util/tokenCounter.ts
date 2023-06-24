@@ -1,32 +1,11 @@
-import cl100k_base from '@dqbd/tiktoken/encoders/cl100k_base.json'
-import p50k_base from '@dqbd/tiktoken/encoders/p50k_base.json'
-import r50k_base from '@dqbd/tiktoken/encoders/r50k_base.json'
-import { Tiktoken } from '@dqbd/tiktoken/lite'
 import { LANGUAGE_MODELS, parseGlassBlocks } from '@glass-lang/glasslib'
 import { checkOk } from '@glass-lang/util'
+import { TiktokenModel, encodingForModel } from 'js-tiktoken'
 import * as vscode from 'vscode'
 
-const cl100k = new Tiktoken(cl100k_base.bpe_ranks, cl100k_base.special_tokens, cl100k_base.pat_str)
-const r50k = new Tiktoken(r50k_base.bpe_ranks, r50k_base.special_tokens, r50k_base.pat_str)
-const p50k = new Tiktoken(p50k_base.bpe_ranks, p50k_base.special_tokens, p50k_base.pat_str)
-
 export function countTokens(text: string, model?: string) {
-  let encoder: Tiktoken
-  if (model == null) {
-    encoder = cl100k
-  } else {
-    const encoding = modelEncodings[model]
-    if (encoding === 'cl100k_base') {
-      encoder = cl100k
-    } else if (encoding === 'r50k_base') {
-      encoder = r50k
-    } else if (encoding === 'p50k_base') {
-      encoder = p50k
-    } else {
-      encoder = cl100k
-    }
-  }
-
+  const modelFormal = (model ?? 'gpt-3.5-turbo') as TiktokenModel
+  const encoder = encodingForModel(modelFormal)
   const tokens = encoder.encode(text)
   return tokens.length
 }
