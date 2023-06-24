@@ -4,8 +4,6 @@ import { Callout } from 'nextra/components'
 
 Blocks in Promptfile simplify LLM requests by making them easy to read and understand. They prevent common mistakes and give you more power to create complicated interactions with the LLM.
 
-## Role Blocks
-
 ### Assistant
 Use the `<Assistant>{:prompt}` to specify that the content is coming from the model
 
@@ -30,7 +28,7 @@ Use the `<User>{:prompt}` block to indicate the text originating from a human us
 Hello AI!
 </User>
 
-<Request model="gpt - **3.5 - **turbo" />
+<Request model="gpt-3.5-turbo" />
 ```
 ### System
 
@@ -81,11 +79,9 @@ what is 2 to the .12345 power?
 </User>
 ```
 
-## PromptFile Generated Blocks
-
 ### Function
 
-The `<Function>{:prompt}` block is automatically generated and used to track the results of a function evaluation. For example, here is a sample Promptfile file that declares a `<Tool>{:prompt}` called "calculator".
+The `<Function>{:prompt}` block is automatically generated and used to track the results of a function evaluation. For example, here is a sample PromptFile that declares a `<Tool>{:prompt}` called "calculator". For
 
  - **name** <i>(string)</i> The name of the function which was called.
 
@@ -99,17 +95,18 @@ model: gpt-3.5-turbo-0613
 [
   {
     "name": "calculator",
-    "description": "Calculates the result of a math expression.",
+    "description": "Calculates the result of a math expression using JavaScript `eval`.",
     "parameters": {
       "type": "object",
       "properties": {
         "expression": {
           "type": "string",
-          "description": "The expression to evaluate in JavaScript.",
-        },
+          "description": "The expression to evaluate in JavaScript."
+        }
       },
-      "required": ["expression"],
+      "required": ["expression"]
     },
+    "testValue": "1.08933674"
   }
 ]
 </Functions>
