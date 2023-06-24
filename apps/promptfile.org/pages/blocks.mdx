@@ -39,36 +39,39 @@ For Anthropic models, the `<System>{:prompt}` block has the same effect as the `
 
 ```prompt copy filename="system_example.prompt"
 <System>
-Even if I want to give the LLM a System prompt here, it won't evaluate because the condition is not met.
+You are a friendly pirate and respond as friendly pirate would.
 </System>
 ```
 
 
 ### Functions
 
-Use the `<Functions>{:prompt}` block to integrate a tool that Promptfile can execute at runtime. Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
+Use the `<Functions>{:prompt}` block to integrate a tool that PromptFile can execute at runtime. Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
 
-```prompt copy filename="function.prompt"
+In this example, we define a function called `calculator`. We also input a `testValue` that our function (which is implemented elsewhere in our project) would return.
+
+
+```prompt copy filename="functions.prompt"
 ---
 model: gpt-3.5-turbo-0613
 ---
-
 
 <Functions>
 [
   {
     "name": "calculator",
-    "description": "Calculates the result of a math expression.",
+    "description": "Calculates the result of a math expression using JavaScript `eval`.",
     "parameters": {
       "type": "object",
       "properties": {
         "expression": {
           "type": "string",
-          "description": "The expression to evaluate in JavaScript.",
-        },
+          "description": "The expression to evaluate in JavaScript."
+        }
       },
-      "required": ["expression"],
+      "required": ["expression"]
     },
+    "testValue": "1.08933674"
   }
 ]
 </Functions>
@@ -79,9 +82,40 @@ what is 2 to the .12345 power?
 </User>
 ```
 
+If you run this PromptFile, you will get the following output. Notice the automatically generated `<Function>{:prompt}` which includes our `testValue`. In the Playground, another request is made if our function returns something.
+
+```prompt
+---
+model: gpt-3.5-turbo-0613
+---
+
+
+<User >
+what is 2 to the .12345 power?
+</User>
+
+
+<Assistant type="function_call">
+{
+  "name": "calculator",
+  "arguments": "{\n  \"expression\": \"2 ** 0.12345\"\n}"
+}
+</Assistant>
+
+
+<Function name="calculator">
+"1.08933674"
+</Function>
+
+
+<Assistant >
+2 to the power of 0.12345 is approximately 1.08933674.
+</Assistant>
+```
+
 ### Function
 
-The `<Function>{:prompt}` block is automatically generated and used to track the results of a function evaluation. For example, here is a sample PromptFile that declares a `<Tool>{:prompt}` called "calculator". For
+The `<Function>{:prompt}` block is automatically generated and used to track the results of a function evaluation. For example, here is a sample PromptFile that declares a function called "calculator".
 
  - **name** <i>(string)</i> The name of the function which was called.
 
