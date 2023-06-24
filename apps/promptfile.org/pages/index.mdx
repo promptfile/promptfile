@@ -1,44 +1,46 @@
 import { Tab, Tabs } from 'nextra-theme-docs'
 import Image from 'next/image'
 import {Steps} from 'nextra-theme-docs'
+import {Callout} from 'nextra-theme-docs'
 
-# Promptfile: Iterate and build prompts quickly
+# PromptFile: Engineer Prompts Faster
+
+PromptFile is a Markdown-like templating syntax and playground designed to write and iterate on prompts easier and faster. PromptFile is entirely open-source and free-to-use.
+
+Build and prototype your prompts where you and your projects live: **_VSCode_**.
 
 
-Promptfile is an open-source templating syntax and VSCode playground specifically designed for crafting prompts to large language models (LLMs).
+The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug.To test your prompt, execute a single command and view the results of your request in the VSCode Playground.
 
-By enabling developers to work within the familiar VSCode environment, Promptfile makes writing prompts as familiar as writing code.
+Once your prompt is ready, call a function to load in your prompt in the language of your choice, a seamless and unobtrusive integration of PromptFile into your project.
 
-Featuring an intuitive and straightforward syntax, Promptfile makes it easy for users to quickly learn and use in writing complicated prompts.
-
-Once your prompt is ready, generate a function with just a single line of code, ensuring seamless integration of Promptfile into your project.
-
+<Callout emoji="🔑"> **Your prompt, your keys, your control. Keys are stored locally.** </Callout>
 ## Key Features
 
 <Steps>
-### **Build in VSCode**
-   - Get syntax highlighting, IntelliSense, and existing tools like GitHub Co-Pilot to make the prompt writing experience as similar to the code writing experience as possible. Your prompts should behave more like code than strings.
-
-### **Construct complex prompts**
-   - Design dynamic templates with conditional logic, state management, and multiple model requests in a single prompt. Easily define tools for your LLM to use to achieve its task.
-
-### **Iterate quicker**
-   - Switch between model providers, monitor token usage, and test in real-time. Rapidly perfect your prompt as you would your code.
+### **Never leave VSCode**
+   - Enjoy syntax highlighting, IntelliSense, and tools like GitHub Co-Pilot to bring a developer experience to writing prompts.
+### **Separate Code from Prompt**
+   - Code behaves predictably, prompts don't. Separate concerns and gain more control of your project.
+### **Built for Quick Iteration**
+   - Switch between model providers with one line, monitor token usage, and test in real-time.
 </Steps>
 
-
-
 ## Quickstart
-For detailed instructions, refer to our [Getting Started Guide](/guide).
+Get up-and-running in less than a couple ofminutes. For detailed instructions, refer to our [Getting Started Guide](/guide).
 
 <Steps>
 ### **Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-prompt)**
-Add your OpenAI or Anthropic API Key by running the `Promptfile: open settings` command in the VSCode Command Palette. For further assistance, follow this [guide](/guide#save-your-api-keys).
+Add your OpenAI or Anthropic API Key by running the "PromptFile: open settings", command in the VSCode Command Palette. For further assistance, see [here](/guide#saving-your-api-keys).
 
-### **Create your first Promptfile file**
-Create a workspace for your Promptfile files. Then, create a file named `example.prompt` and copy the provided `example.prompt` file into it.
+### **Create your first `.prompt` file**
+Create a file named `example.prompt` and copy the provided `example.prompt` file into it.
 
 ```prompt copy filename="example.prompt"
+---
+model: gpt-3.5-turbo
+---
+
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
@@ -46,59 +48,29 @@ You are HaikuGPT. Always respond to the user in the form of a haiku.
 <User>
 Write me a haiku about the ocean
 </User>
-
-<Request model="gpt-3.5-turbo" />
 ```
 
-### **Run the Promptfile File: `Command (⌘) + Enter (↩)`**
-The Promptfile [Playground](/playground) should appear and run your Promptfile file.
+### **Run the `.prompt` file: `Command (⌘) + Enter (↩)`**
+The PromptFile [Playground](/playground) should appear and run your PromptFile file.
 
-### **See more Promptfile Features in our [Cookbook](/examples)**
-Explore the examples in the Cookbook to learn about Promptfile' many features.
+### **See more PromptFile Features in our [Cookbook](/examples)**
+Explore the examples in the Cookbook to learn about PromptFile' many features.
 </Steps>
 
 
-## Experience the Promptfile difference
+## PromptFile: Simple and Effective Templating
 
-Dealing with JSON requests can be tedious and not very intuitive. Promptfile addresses this issue by offering a more readable and developer-friendly approach to prompting large language models. It brings the benefits of Markdown or MDX, tailor-made for writing prompts.
+Just like you, we want to build using large language models. Parsing, concatenating, and formatting requests to the LLM is annoying. Markdown and MDX help to simplify writing prompts, but aren't made with prompts in mind.
 
-With Promptfile in the VSCode playground, you'll enjoy better readability and effortless iteration on your prompts. But Promptfile is more than just a templating syntax – it simplifies the prompting process and enhances the overall development experience.
+When our projects got more complex, we spent more time on prompts. Prompt complexity increased, and with OpenAI's function calling mixing code and prompts, writing and iterating prompts got much harder and slower.
 
-Check out the side-by-side comparison of a prompt in JSON format compared to its Promptfile version. Experience firsthand how Promptfile improves your workflow and makes crafting prompts a smoother, more efficient task.
+That's where PromptFile comes in. A `.prompt` file is easy to write and can be transpiled into your chosen language as a function. Just call the function in your project to get your prompt ready to make the request to the LLM.
 
+Using PromptFile is simple, so you can concentrate on what's important: building amazing things.
 
-Promptfile provides a more readable and intuitive alternative to traditional JSON requests. It offers the same benefits as Markdown or MDX but adds more functionality specifically designed for writing prompts. This makes your prompts not only more readable but also easier to iterate on, especially in the Promptfile Playground.
+{/*Maybe choose a different example that is more intuitive to see how you can interpolate variables and then pass the variables into */}
 
-
-<Tabs items={['JSON', 'Promptfile']}>
-  <Tab>
-  <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', overflowWrap: 'break-word', overflow: 'hidden'}}>
-````json copy filename='request.json'
-  [
-  {
-    "role": "system",
-    "content": "You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response."
-  },
-  {
-    "role": "user",
-    "content": "How do I add two numbers?"
-  },
-  {
-    "role": "assistant",
-    "content": "```ts\nfunction addNumbers(a: number, b: number): number {\n  return a + b;\n}\n```"
-  },
-  {
-    "role": "user",
-    "content": "Write me a function that creates an array of 10 random odd integers between 0 and 20"
-  },
-  {
-    "role": "assistant",
-    "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}```"
-  }
-]
-````
-    </pre>
-  </Tab>
+<Tabs items={['PromptFile', 'JSON']}>
   <Tab>
 ````prompt copy filename= 'request.prompt'
 <System>
@@ -151,5 +123,33 @@ Write me a function to find a prime number
 
 
 ````
+  </Tab>
+  <Tab>
+  <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', overflowWrap: 'break-word', overflow: 'hidden'}}>
+````json copy filename='request.json'
+[
+  {
+    "role": "system",
+    "content": "You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response."
+  },
+  {
+    "role": "user",
+    "content": "How do I add two numbers?"
+  },
+  {
+    "role": "assistant",
+    "content": "```ts\nfunction addNumbers(a: number, b: number): number {\n  return a + b;\n}\n```"
+  },
+  {
+    "role": "user",
+    "content": "Write me a function that creates an array of 10 random odd integers between 0 and 20"
+  },
+  {
+    "role": "assistant",
+    "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}```"
+  }
+]
+````
+    </pre>
   </Tab>
 </Tabs>
