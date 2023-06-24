@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
+import fs from 'fs'
 import path from 'path'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
+import { transpileFile, transpilePrefix } from './transpile/transpile'
 
 function main() {
   const res = yargs(hideBin(process.argv))
@@ -43,20 +45,25 @@ function main() {
           defaultModel = 'gpt-3.5-turbo'
         }
 
-        const workspaceDirectory = path.resolve('.')
         const sourceDirectory = path.resolve(argv.sourceDirectory as string)
         const outputDirectory = path.resolve(argv.outputDirectory)
 
-        console.log('fixme')
-        // const output = glassc.transpileGlassTypescript(
-        //   workspaceDirectory,
-        //   sourceDirectory,
-        //   argv.lang,
-        //   outputDirectory,
-        //   defaultModel,
-        //   true
-        // )
-        // fs.writeFileSync(path.join(outputDirectory, 'glass.ts'), output)
+        // use fs to find all .prompt files in the sourceDirectory, recursively
+        const walkSync = (dir: string, filelist: string[] = []) => {
+          fs.readdirSync(dir).forEach(file => {
+            filelist = fs.statSync(path.join(dir, file)).isDirectory()
+              ? walkSync(path.join(dir, file), filelist)
+              : filelist.concat(path.basename(file).endsWith('.prompt') ? path.join(dir, file) : [])
+          })
+          return filelist
+        }
+
+        const allFilePaths = walkSync(sourceDirectory)
+        const transpilerOutput = allFilePaths.map(f => transpileFile(f, argv.lang, defaultModel))
+
+        const fullFile = transpilePrefix(argv.lang) + '\n\n' + transpilerOutput.map(o => o.out).join('\n\n')
+
+        fs.writeFileSync(path.join(outputDirectory, 'prompts.ts'), fullFile)
       }
     ).argv
 }

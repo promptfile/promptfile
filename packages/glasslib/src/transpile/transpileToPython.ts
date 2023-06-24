@@ -23,9 +23,9 @@ export function transpileToPython(
       if (key === 'content') {
         let content = block[key] as string
         content = content.replace(/@\{([^\}]*)\}/g, (_, p1) => `{${p1}}`)
-        transpiledCode += `            "${key}": f"""${content}""",\n`
+        transpiledCode += `                "${key}": f"""${content}""",\n`
       } else {
-        transpiledCode += `            "${key}": "${(block as any)[key]}",\n`
+        transpiledCode += `                "${key}": "${(block as any)[key]}",\n`
       }
     }
     transpiledCode += '            },\n'

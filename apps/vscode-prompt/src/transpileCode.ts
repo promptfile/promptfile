@@ -36,7 +36,7 @@ export async function transpileCode(text: string) {
   const language = transpilationLanguage.action
 
   try {
-    const code = transpile(text, language, model)
+    const code = transpile(text, language, { defaultModel: model })
     const doc = await vscode.workspace.openTextDocument({
       language,
       content: code,
