@@ -4,7 +4,7 @@ import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { GlassPlayground, createPlayground } from './playground/playground'
 import { getCurrentViewColumn } from './playground/viewColumn'
-import { transpileCode } from './transpile/transpile'
+import { transpileCode } from './transpile'
 import { getAllPromptFiles, getDocumentFilename, isPromptFile } from './util/isPromptFile'
 import { updateTokenCount } from './util/tokenCounter'
 
