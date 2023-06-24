@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.15.2
+
+### Patch Changes
+
+- [`39a27e0`](https://github.com/glass-platform/promptfile/commit/39a27e00038ac3fc53f7243d58c4e8eec9261fd7) Thanks [@rothfels](https://github.com/rothfels)! - fix command registration
+
 ## 0.15.1
 
 ### Patch Changes
