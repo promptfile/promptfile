@@ -6,8 +6,6 @@ export function formatDocument(text: string) {
   try {
     text = wrapIfNoBlocks(text)
 
-    const nonSelfClosingTags = glassElements.filter(e => e.closingType !== 'selfClosing')
-
     const tagNames = glassElements.map(e => e.name).join('|')
     const lines = text.split('\n')
     const formattedLines: string[] = []
@@ -22,7 +20,7 @@ export function formatDocument(text: string) {
       }
     }
     let finalText = formattedLines.join('\n').trim()
-    const tags = nonSelfClosingTags.map(e => e.name)
+    const tags = glassElements.map(e => e.name)
     tags.forEach(tag => {
       const regexOpen = new RegExp(`<\\s+${tag}`, 'g')
       const regexClose = new RegExp(`${tag}\\s+>`, 'g')
@@ -47,7 +45,7 @@ export function formatDocument(text: string) {
       if (s.type === 'block') {
         let childContent = s.child!.content
         if (childContent.length === 0) {
-          const formatted = prettify(s.content).trim()
+          const formatted = prettifyTypescript(s.content).trim()
           return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
         }
         const blockWithoutChild =
@@ -56,10 +54,14 @@ export function formatDocument(text: string) {
           s.content.substring(s.child!.position.end.offset - s.position.start.offset)
 
         if (s.tag === 'Code' || s.tag === 'Test') {
-          childContent = prettify(childContent).trim()
+          childContent = prettifyTypescript(childContent).trim()
         }
 
-        const formatted = prettify(blockWithoutChild)
+        if (s.tag === 'Functions') {
+          childContent = prettifyJson(childContent).trim()
+        }
+
+        const formatted = prettifyTypescript(blockWithoutChild)
           .replace(/\s*GLASS_INNERBLOCK_SUBSTITUTION\s*/, '\n' + childContent + '\n')
           .trim()
         return { ...s, content: formatted.startsWith(';') ? formatted.substring(1) : formatted }
@@ -91,12 +93,21 @@ function wrapIfNoBlocks(text: string) {
   return text
 }
 
-function prettify(code: string) {
+function prettifyTypescript(code: string) {
   return prettier.format(code, {
     parser: 'typescript',
     printWidth: 120,
     arrowParens: 'avoid',
     semi: false,
+    singleQuote: true,
+    trailingComma: 'es5',
+  })
+}
+
+function prettifyJson(json: string) {
+  return prettier.format(json, {
+    parser: 'json',
+    printWidth: 120,
     singleQuote: true,
     trailingComma: 'es5',
   })

@@ -6,21 +6,21 @@ LLMs have the most power when you give them tools to use. `.prompt` supports the
 
 https://platform.openai.com/docs/guides/gpt/function-calling
 
-<Tool
-  name="calculator"
-  description="Calculates the result of a math expression."
-  parameters={{
-    type: 'object',
-    properties: {
-      expression: {
-        type: 'string',
-        description: 'expression to eval with JavaScript',
-      },
-    },
-    required: ['expression'],
-  }}
-/>
 
-<User>
+<Functions>
+[
+  {
+    "name": "",
+    "description": "",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  }
+]
+</Functions>
+
+
+<User name="blah">
 what is 2 to the .12345 power?
 </User>

@@ -1,8 +1,8 @@
-# Promptfile (`.prompt`)
+# promptfile (`.prompt`)
 
 ![main](https://github.com/glass-platform/promptfile/actions/workflows/main.yml/badge.svg)
 
-_**ALERT: `.prompt` IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
+_**ALERT: PROMPTFILE IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
 
 Getting started? Head to [promptfile.org](https://promptfile.org) for all of our documentation.
 
@@ -67,4 +67,4 @@ npm run dev
 
 ## License
 
-MIT © [Promptfile Platform](https://platform.glass)
+MIT © [Glass Platform](https://platform.glass)

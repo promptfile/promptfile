@@ -1,6 +1,7 @@
 import { ChatBlock } from './parseChatBlocks'
+import { LLMRequest } from './request'
 
-export function constructGlassDocument(blocks: ChatBlock[], model: string) {
+export function constructGlassDocument(blocks: ChatBlock[], request: LLMRequest) {
   const blocksAsTags = blocks.map(b => {
     const capitalizedRole = b.role[0].toUpperCase() + b.role.slice(1)
     const attributesToAdd: Record<string, string> = {}
@@ -16,8 +17,12 @@ export function constructGlassDocument(blocks: ChatBlock[], model: string) {
     return `<${capitalizedRole}${attributeString}>\n${b.content}\n</${capitalizedRole}>`
   })
   const tagsAsString = blocksAsTags.join('\n\n\n')
+  const frontmatter = Object.entries(request)
+    .filter(([k, v]) => v != null)
+    .map(([k, v]) => `${k}: ${v}`)
+    .join('\n')
   return `---
-model: ${model}
+${frontmatter}
 ---
 
 

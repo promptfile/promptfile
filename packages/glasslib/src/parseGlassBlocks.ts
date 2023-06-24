@@ -1,5 +1,4 @@
-import { checkOk } from '@glass-lang/util'
-import { parseGlassTopLevelJsxElements } from './parseGlassTopLevelJsxElements'
+import { GlassAttribute, parseAttributes } from './parseAttributes'
 
 export interface GlassContent {
   type: 'block' | 'comment' | 'frontmatter'
@@ -16,7 +15,7 @@ export interface GlassContent {
       end: { offset: number }
     }
   }
-  attrs?: { name: string; stringValue?: string; expressionValue?: string }[]
+  attrs?: GlassAttribute[]
 }
 
 /**
@@ -76,15 +75,6 @@ export function parseGlassDocument(doc: string): GlassContent[] {
   return content
 }
 
-/**
- * Parses *all* block elements from a Promptfile file.
- *
- * E.g. `<System>`, `<Request>`, etc.
- *
- * For chat-only blocks, use `parseChatBlocks`.
- *
- * If parseNestedForBlocks is true, then the nested child blocks of `<For>` will be parsed instead of the `<For>` block itself.
- */
 export function parseGlassBlocks(doc: string): GlassContent[] {
   const blocks: GlassContent[] = []
   const lines = doc.split('\n')
@@ -214,10 +204,6 @@ export function parseGlassBlocks(doc: string): GlassContent[] {
     }
   }
 
-  return parseAttributes(doc, blocks)
-}
-
-function parseAttributes(origDoc: string, blocks: GlassContent[]) {
   return blocks.map(b => {
     if (!b.child) {
       return b
@@ -225,12 +211,11 @@ function parseAttributes(origDoc: string, blocks: GlassContent[]) {
     let blockWithoutChildContent = b.content
     if (b.child.content) {
       blockWithoutChildContent =
-        origDoc.substring(b.position.start.offset, b.child.position.start.offset) +
-        origDoc.substring(b.child.position.end.offset, b.position.end.offset)
+        doc.substring(b.position.start.offset, b.child.position.start.offset) +
+        doc.substring(b.child.position.end.offset, b.position.end.offset)
     }
-    const parsedJsx = parseGlassTopLevelJsxElements(blockWithoutChildContent)
-    checkOk(parsedJsx.length === 1, `Expected exactly one top level JSX element in block ${b.content}`)
-    return { ...b, attrs: parsedJsx[0].attrs }
+    const parsedAttributes: GlassAttribute[] = parseAttributes(blockWithoutChildContent)
+    return { ...b, attrs: parsedAttributes }
   })
 }
 
@@ -254,33 +239,4 @@ export interface RequestData {
     addToDocument: (tag: string, content: string, attrs?: any) => void
     continue: () => void
   }) => Promise<any>
-}
-
-export function parseGlassRequestBlock(node: GlassContent): RequestData {
-  const modelAttr = node.attrs!.find(a => a.name === 'model')
-  // value is either <Request model="gpt-3.5-turbo" /> or <Request model={"gpt-4"} />
-  // we don't currently support dynamic model values
-  const model = modelAttr ? modelAttr.stringValue || JSON.parse(modelAttr.expressionValue!) : 'gpt-3.5-turbo'
-
-  const maxTokensAttr = node.attrs!.find(a => a.name === 'maxTokens')
-  const maxTokens = maxTokensAttr ? maxTokensAttr.stringValue || JSON.parse(maxTokensAttr.expressionValue!) : undefined
-
-  const temperatureAttr = node.attrs!.find(a => a.name === 'temperature')
-  const temperature = temperatureAttr
-    ? temperatureAttr.stringValue || JSON.parse(temperatureAttr.expressionValue!)
-    : undefined
-
-  const stopSequenceAttr = node.attrs!.find(a => a.name === 'stopSequence')
-  let stopSequence: string[] | undefined = undefined
-  if (stopSequenceAttr?.stringValue) {
-    stopSequence = [stopSequenceAttr.stringValue]
-  } else if (stopSequenceAttr?.stringValue) {
-    const parsedStopSequence = JSON.parse(stopSequenceAttr.expressionValue!)
-    if (Array.isArray(parsedStopSequence)) {
-      stopSequence = parsedStopSequence
-    }
-    stopSequence = [parsedStopSequence]
-  }
-
-  return { model, maxTokens, temperature, stopSequence }
 }

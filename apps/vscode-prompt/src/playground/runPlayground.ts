@@ -1,6 +1,7 @@
 import {
   ChatBlock,
   LANGUAGE_MODELS,
+  LLMRequest,
   LanguageModelCreator,
   constructGlassDocument,
   parseChatBlocks,
@@ -13,11 +14,6 @@ import * as vscode from 'vscode'
 import { getAnthropicKey, getOpenaiKey } from '../util/keys'
 import { runPlaygroundAnthropic } from './runPlaygroundAnthropic'
 import { runPlaygroundOpenAI } from './runPlaygroundOpenAI'
-
-export interface LLMResponse {
-  content: string
-  function_call?: { name: string; arguments: string } | null
-}
 
 export async function runPlayground(
   content: string,
@@ -52,6 +48,11 @@ export async function runPlayground(
       })
     }
   }
+  const request: LLMRequest = {
+    model,
+    temperature: parsedFrontmater?.temperature,
+    maxTokens: parsedFrontmater?.maxTokens,
+  }
 
   const languageModel = LANGUAGE_MODELS.find(m => m.name === model)
   const openaiKey = getOpenaiKey()
@@ -67,7 +68,7 @@ export async function runPlayground(
         await vscode.window.showErrorMessage('Add Anthropic API key to run `.prompt` file.')
         return
       }
-      return runPlaygroundAnthropic(blocks, anthropicKey, model, {
+      return runPlaygroundAnthropic(blocks, anthropicKey, request, {
         progress,
       })
     case LanguageModelCreator.openai:
@@ -78,7 +79,7 @@ export async function runPlayground(
       }
       const functionEndpoint: string = vscode.workspace.getConfiguration('promptfile').get('functionEndpoint') as any
 
-      return runPlaygroundOpenAI(blocks, openaiKey, model, functions, {
+      return runPlaygroundOpenAI(blocks, openaiKey, request, functions, {
         progress,
         getFunction: async (name: string) => {
           const res = await fetch(`${functionEndpoint}/${name}`, {

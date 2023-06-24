@@ -1,12 +1,18 @@
-import { ChatBlock, DEFAULT_TOKEN_COUNTER, TokenCounter, constructGlassDocument } from '@glass-lang/glasslib'
+import {
+  ChatBlock,
+  DEFAULT_TOKEN_COUNTER,
+  LLMRequest,
+  LLMResponse,
+  TokenCounter,
+  constructGlassDocument,
+} from '@glass-lang/glasslib'
 import fetch from 'node-fetch'
-import { LLMResponse } from './runPlayground'
 import { handleStream } from './stream'
 
 export async function runPlaygroundAnthropic(
   messages: ChatBlock[],
   anthropicKey: string,
-  model: string,
+  request: LLMRequest,
   options: {
     tokenCounter?: TokenCounter
     progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
@@ -31,7 +37,7 @@ export async function runPlaygroundAnthropic(
 
   const tokenCounter = options.tokenCounter || DEFAULT_TOKEN_COUNTER
 
-  const requestTokens = tokenCounter.countTokens(anthropicQuery, model)
+  const requestTokens = tokenCounter.countTokens(anthropicQuery, request.model)
 
   const r = await fetch('https://api.anthropic.com/v1/complete', {
     method: 'POST',
@@ -41,9 +47,9 @@ export async function runPlaygroundAnthropic(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: model,
+      model: request.model,
       prompt: anthropicQuery,
-      max_tokens_to_sample: 2048,
+      max_tokens_to_sample: request.maxTokens ?? 2048,
       stopSequences: ['Human:', 'Assistant:'],
       stream: true,
     }),
@@ -58,7 +64,7 @@ export async function runPlaygroundAnthropic(
         role: 'assistant',
         content: `${next.content.trim()}█`,
       }
-      const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), model)
+      const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), request)
       return options.progress({
         response: [newChatBlock],
         nextGlassfile: nextGlassfile,
@@ -69,7 +75,7 @@ export async function runPlaygroundAnthropic(
     role: 'assistant',
     content: response.content.trim(),
   }
-  const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), model)
+  const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), request)
   return {
     response: [newChatBlock],
     nextGlassfile: nextGlassfile,

@@ -4,18 +4,25 @@ export interface LLMFunction {
   name: string
   description: string
   parameters: any
-  run?: (data: any) => Promise<any>
+  test?: any
 }
 
-export function parseGlassFunctions(text: string) {
+export function parseGlassFunctions(text: string): LLMFunction[] {
   const elements = parseGlassBlocks(text)
-  const functions: LLMFunction[] = elements
-    .filter(e => e.type === 'block' && e.tag === 'Tool')
-    .map(e => {
-      const name = e.attrs?.find(a => a.name === 'name')?.stringValue ?? ''
-      const description = e.attrs?.find(a => a.name === 'description')?.stringValue ?? 'undefined'
-      const parameters = e.attrs?.find(a => a.name === 'parameters')?.expressionValue ?? {}
-      return { name, description, parameters }
-    })
-  return functions
+  const functionsElement = elements.find(e => e.type === 'block' && e.tag === 'Functions')
+  if (!functionsElement) {
+    return []
+  }
+  const innerContent = functionsElement.child?.content ?? ''
+  try {
+    const parsedJson = JSON.parse(innerContent)
+    if (Array.isArray(parsedJson)) {
+      // parse the parsedJson as LLMFunction[]
+      return parsedJson as LLMFunction[]
+    }
+    return []
+  } catch (e) {
+    // ignore
+    return []
+  }
 }
