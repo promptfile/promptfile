@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.15.0
+
+### Minor Changes
+
+- [`e29939f`](https://github.com/glass-platform/promptfile/commit/e29939f4007cf44b64ec661925322173c6ccbc1d) Thanks [@rothfels](https://github.com/rothfels)! - major simplification
+
 ## 0.14.6
 
 ### Patch Changes
