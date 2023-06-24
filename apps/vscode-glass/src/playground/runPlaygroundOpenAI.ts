@@ -20,7 +20,8 @@ export async function runPlaygroundOpenAI(
     progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
     getFunction?: (name: string) => Promise<any>
     execFunction?: (name: string, args: string) => Promise<any>
-  }
+  },
+  currResponses: ChatBlock[] = []
 ): Promise<{
   response: ChatBlock[]
   nextGlassfile: string
@@ -40,7 +41,7 @@ export async function runPlaygroundOpenAI(
     functionArgs = {
       functions: await Promise.all(
         functions.map(async f => {
-          if (f.test != null && f.description != null && f.parameters != null) {
+          if (f.testValue != null && f.description != null && f.parameters != null) {
             return {
               name: f.name,
               description: f.description,
@@ -54,7 +55,6 @@ export async function runPlaygroundOpenAI(
       function_call: 'auto',
     }
   }
-
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -63,7 +63,7 @@ export async function runPlaygroundOpenAI(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      messages: messages.map(m => ({ ...m })),
+      messages: messages.map(m => ({ ...m, type: undefined })),
       model: request.model,
       stream: true,
       temperature: request.temperature,
@@ -84,7 +84,7 @@ export async function runPlaygroundOpenAI(
       }
       const nextGlassfile = constructGlassDocument(messages.concat(newChatBlock), request)
       return options.progress({
-        response: [newChatBlock],
+        response: currResponses.concat([newChatBlock]),
         nextGlassfile,
       })
     }
@@ -99,7 +99,7 @@ export async function runPlaygroundOpenAI(
   if (response.function_call == null) {
     const nextGlassfile = constructGlassDocument(messages, request)
     return {
-      response: [assistantBlock],
+      response: currResponses.concat([assistantBlock]),
       nextGlassfile: nextGlassfile,
     }
   }
@@ -123,5 +123,12 @@ export async function runPlaygroundOpenAI(
     name: response.function_call!.name,
   }
   messages.push(functionChatBlock)
-  return runPlaygroundOpenAI(messages, openaiKey, request, functions, options)
+  return runPlaygroundOpenAI(
+    messages,
+    openaiKey,
+    request,
+    functions,
+    options,
+    currResponses.concat([assistantBlock, functionChatBlock])
+  )
 }

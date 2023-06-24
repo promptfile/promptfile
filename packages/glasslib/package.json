@@ -1,6 +1,6 @@
 {
   "name": "@glass-lang/glasslib",
-  "version": "0.0.32",
+  "version": "0.1.0",
   "description": "Promptfile language tools",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

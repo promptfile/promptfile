@@ -14,7 +14,7 @@ export function constructGlassDocument(blocks: ChatBlock[], request: LLMRequest)
     const attributeString = Object.entries(attributesToAdd)
       .map(([k, v]) => `${k}="${v}"`)
       .join(' ')
-    return `<${capitalizedRole}${attributeString}>\n${b.content}\n</${capitalizedRole}>`
+    return `<${capitalizedRole} ${attributeString}>\n${b.content}\n</${capitalizedRole}>`
   })
   const tagsAsString = blocksAsTags.join('\n\n\n')
   const frontmatter = Object.entries(request)

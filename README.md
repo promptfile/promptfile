@@ -18,7 +18,7 @@ This project uses npm workspaces and [Turborepo](https://turbo.build/).
 
 ### `apps/`
 
-- `vscode-prompt`: VS Code extension for Promptfile
+- `vscode-glass`: VS Code extension for Promptfile
 - `promptfile.org`: a Next.js/Nextra app serving [promptfile.org](https://promptfile.org/)
 - `demo`: examples of using Promptfile, some of these are in active development and may not currently work
 

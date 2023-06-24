@@ -95,6 +95,7 @@ export function handleChatChunk(
     if (choice.delta.function_call.arguments) {
       newResult.function_call.arguments += choice.delta.function_call.arguments
     }
+    newResult.content = JSON.stringify(newResult.function_call, null, 2)
     return newResult
   }
   if (eventData.choices[0].delta.content) {

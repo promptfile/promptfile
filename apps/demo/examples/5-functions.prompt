@@ -11,7 +11,7 @@ https://platform.openai.com/docs/guides/gpt/function-calling
 [
   {
     "name": "calculator",
-    "description": "Calculates the result of a math expression using JavaScript `eval` .",
+    "description": "Calculates the result of a math expression using JavaScript `eval`.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -21,7 +21,8 @@ https://platform.openai.com/docs/guides/gpt/function-calling
         }
       },
       "required": ["expression"]
-    }
+    },
+    "testValue": "1.08933674"
   }
 ]
 </Functions>
