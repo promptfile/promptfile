@@ -4,7 +4,7 @@
 [![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/foundation.vscode-prompt)](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-prompt)
 
 Language support for [Promptfile](https://promptfile.org)
-_**Warning: GLASS IS IN ALPHA AND SUBJECT TO CHANGE**_
+_**Warning: PROMPTFILE IS IN ALPHA AND SUBJECT TO CHANGE**_
 
 ## License
 
