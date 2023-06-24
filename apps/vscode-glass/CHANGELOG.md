@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.15.4
+
+### Patch Changes
+
+- [`ab62fdf`](https://github.com/glass-platform/promptfile/commit/ab62fdf99603ef739cea833ed97d6272aaac8cc5) Thanks [@elliottburris](https://github.com/elliottburris)! - build fix
+
 ## 0.15.3
 
 ### Patch Changes
