@@ -21,6 +21,7 @@ cd vsix_content/extension
 jq ".dependencies = {\"@dqbd/tiktoken\": \"*\"}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 jq ".devDependencies = {}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 mv .yarn.lock yarn.lock
+cat package.json
 # touch yarn.lock
 
 # Install the dependency

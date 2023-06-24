@@ -6,7 +6,7 @@ const vscodePackageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../vs
 
 const colors = vscodePackageJson.contributes?.configurationDefaults['editor.tokenColorCustomizations'].textMateRules
 
-const glass = JSON.parse(
+const grammar = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../vscode-glass/syntaxes/promptfile.tmLanguage.json')).toString()
 )
 
@@ -25,7 +25,7 @@ const withNextra = require('nextra')({
         await highlighter.loadLanguage({
           id: 'promptfile',
           scopeName: 'source.promptfile',
-          grammar: glass,
+          grammar: grammar,
           aliases: ['prompt', 'Prompt'],
         })
         return highlighter

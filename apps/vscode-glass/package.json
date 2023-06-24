@@ -65,7 +65,7 @@
   },
   "contributes": {
     "activationEvents": [
-      "onLanguage:glass"
+      "onLanguage:promptfile"
     ],
     "commands": [
       {
@@ -157,7 +157,7 @@
       }
     ],
     "configurationDefaults": {
-      "[glass]": {
+      "[promptfile]": {
         "editor.formatOnSave": true,
         "editor.quickSuggestions": {
           "other": "on",

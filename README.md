@@ -20,11 +20,11 @@ This project uses npm workspaces and [Turborepo](https://turbo.build/).
 
 - `vscode-glass`: VS Code extension for Promptfile
 - `promptfile.org`: a Next.js/Nextra app serving [promptfile.org](https://promptfile.org/)
-- `demo`: examples of using Promptfile, some of these are in active development and may not currently work
+- `demo`: examples of using Promptfile
 
 ### `packages/`
 
-- `glasslib`: `.prompt` client library (runtime for executing Promptfile compiler generated code)
+- `glasslib`: `.prompt` client library, including CLI
 - `language-server`: LSP server providing Promptfile intellisense
 - `rig`: a React app for the VS Code Promptfile playground webview
 - `ui`: a React component library shared by web applications
@@ -56,13 +56,6 @@ Several packages contain tests that can be run in watch mode: `packages/glasslib
 ```bash
 cd $package
 npm run test:watch
-```
-
-For `packages/glasslib` only, the `test:watch` mode requires you also build in watch mode:
-
-```bash
-cd packages/glasslib
-npm run dev
 ```
 
 ## License
