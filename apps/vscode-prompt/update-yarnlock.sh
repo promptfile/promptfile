@@ -2,11 +2,6 @@
 
 set -euo pipefail
 
-# esbuild must be marked `external` when bundling the extension, so we must install it as a dependency in the final .vsix archive
-
-DEPENDENCY=esbuild
-VERSION=^0.17.19
-
 npx vsce package
 
 # Find the .vsix file in the current directory
@@ -25,7 +20,7 @@ unzip $FILE_NAME -d vsix_content
 cd vsix_content/extension
 
 # Update the package.json file
-jq ".dependencies = {\"esbuild\": \"^0.17.19\", \"@glass-lang/glasslib\": \"*\", \"@dqbd/tiktoken\": \"*\"}" package.json > temp.json && rm -f package.json && mv temp.json package.json
+jq ".dependencies = {\"@dqbd/tiktoken\": \"*\"}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 jq ".devDependencies = {}" package.json > temp.json && rm -f package.json && mv temp.json package.json
 touch yarn.lock
 
