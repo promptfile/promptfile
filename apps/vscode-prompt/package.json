@@ -1,5 +1,5 @@
 {
-  "name": "vscode-prompt",
+  "name": "vscode-glass",
   "version": "0.14.6",
   "displayName": "Promptfile",
   "description": "Language support for .prompt files",
@@ -9,7 +9,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/glass-platform/promptfile.git",
-    "directory": "packages/vscode-prompt"
+    "directory": "packages/vscode-glass"
   },
   "publisher": "foundation",
   "private": true,

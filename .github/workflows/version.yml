@@ -21,7 +21,7 @@ jobs:
       - uses: changesets/action@v1
         with:
           publish: git push --follow-tags
-          commit: 'chore: release vscode-prompt'
-          title: 'chore: release vscode-prompt'
+          commit: 'chore: release vscode-glass'
+          title: 'chore: release vscode-glass'
         env:
           GITHUB_TOKEN: ${{secrets.DEPLOYMENT_TOKEN}}

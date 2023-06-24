@@ -14,7 +14,7 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "typescript.preferences.importModuleSpecifier": "relative",
   "eslint.workingDirectories": [
-    { "directory": "apps/vscode-prompt", "changeProcessCWD": true },
+    { "directory": "apps/vscode-glass", "changeProcessCWD": true },
     { "directory": "apps/glassfile.org", "changeProcessCWD": true },
     { "directory": "packages/glasslib", "changeProcessCWD": true },
     { "directory": "packages/pythonlib", "changeProcessCWD": true },
@@ -30,6 +30,6 @@
   "typescript.tsc.autoDetect": "off",
   "editor.wordWrap": "on",
   "[prompt]": {
-    "editor.defaultFormatter": "foundation.vscode-prompt"
+    "editor.defaultFormatter": "foundation.vscode-glass"
   }
 }
