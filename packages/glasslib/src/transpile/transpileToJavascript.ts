@@ -1,4 +1,5 @@
-import { ChatBlock, LLMFunction } from '@glass-lang/glasslib'
+import { ChatBlock } from '../parseChatBlocks'
+import { LLMFunction } from '../parseGlassFunctions'
 
 export function transpileToJavascript(
   blocks: ChatBlock[],
@@ -23,7 +24,7 @@ export function transpileToJavascript(
         content = content.replace(/@\{([^\}]*)\}/g, (_, p1) => `\$\{${p1}\}`)
         transpiledCode += `        ${key}: \`${content}\`,\n`
       } else {
-        transpiledCode += `        ${key}: "${block[key]}",\n`
+        transpiledCode += `        ${key}: "${(block as any)[key]}",\n`
       }
     }
     transpiledCode += '      },\n'

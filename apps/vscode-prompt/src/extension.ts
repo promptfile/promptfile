@@ -4,7 +4,7 @@ import * as vscode from 'vscode'
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { GlassPlayground, createPlayground } from './playground/playground'
 import { getCurrentViewColumn } from './playground/viewColumn'
-import { transpile } from './transpile/transpile'
+import { transpileCode } from './transpile/transpile'
 import { getAllPromptFiles, getDocumentFilename, isPromptFile } from './util/isPromptFile'
 import { updateTokenCount } from './util/tokenCounter'
 
@@ -193,7 +193,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const activeEditor = vscode.window.activeTextEditor
       if (activeEditor && isPromptFile(activeEditor.document)) {
         const text = activeEditor.document.getText()
-        await transpile(text)
+        await transpileCode(text)
         return
       }
       const promptFiles = await getAllPromptFiles()
@@ -242,7 +242,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       await updateRecentlySelectedFiles(selectedDocument)
       const doc = await vscode.workspace.openTextDocument(selectedDocument)
-      await transpile(doc.getText())
+      await transpileCode(doc.getText())
     })
   )
 }

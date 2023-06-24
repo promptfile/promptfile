@@ -1,4 +1,5 @@
-import { ChatBlock, LLMFunction } from '@glass-lang/glasslib'
+import { ChatBlock } from '../parseChatBlocks'
+import { LLMFunction } from '../parseGlassFunctions'
 
 export function transpileToTypescript(
   blocks: ChatBlock[],
@@ -44,10 +45,10 @@ export function transpileToTypescript(
   for (const func of functions) {
     transpiledCode += '    {\n'
     for (const key in func) {
-      if (typeof func[key] === 'string') {
-        transpiledCode += `      ${key}: "${func[key]}",\n`
+      if (typeof (func as any)[key] === 'string') {
+        transpiledCode += `      ${key}: "${(func as any)[key]}",\n`
       } else {
-        transpiledCode += `      ${key}: ${JSON.stringify(func[key])},\n`
+        transpiledCode += `      ${key}: ${JSON.stringify((func as any)[key])},\n`
       }
     }
     transpiledCode += '    },\n'
@@ -70,10 +71,10 @@ export function transpileToTypescript(
         content = content.replace(/@\{([^\}]*)\}/g, (_, p1) => `\$\{args.${p1}\}`)
         transpiledCode += `      ${key}: \`${content}\`,\n`
       } else {
-        if (typeof block[key] === 'string') {
-          transpiledCode += `      ${key}: "${block[key]}",\n`
+        if (typeof (block as any)[key] === 'string') {
+          transpiledCode += `      ${key}: "${(block as any)[key]}",\n`
         } else {
-          transpiledCode += `      ${key}: ${block[key]},\n`
+          transpiledCode += `      ${key}: ${(block as any)[key]},\n`
         }
       }
     }

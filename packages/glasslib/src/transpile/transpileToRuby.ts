@@ -1,4 +1,5 @@
-import { ChatBlock, LLMFunction } from '@glass-lang/glasslib'
+import { ChatBlock } from '../parseChatBlocks'
+import { LLMFunction } from '../parseGlassFunctions'
 
 export function transpileToRuby(
   blocks: ChatBlock[],
@@ -24,7 +25,7 @@ export function transpileToRuby(
         content = content.replace(/@\{([^\}]*)\}/g, '#{\\1}')
         transpiledCode += `                "${key}" => %Q{${content}},\n`
       } else {
-        transpiledCode += `                "${key}" => "${block[key]}",\n`
+        transpiledCode += `                "${key}" => "${(block as any)[key]}",\n`
       }
     }
     transpiledCode += '            },\n'
