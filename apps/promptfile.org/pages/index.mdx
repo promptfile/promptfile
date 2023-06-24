@@ -10,7 +10,7 @@ PromptFile is a Markdown-like templating syntax and playground designed to write
 Build and prototype your prompts where you and your projects live: **_VSCode_**.
 
 
-The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug.To test your prompt, execute a single command and view the results of your request in the VSCode Playground.
+The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug. To test your prompt, execute a single command and view the results of your request in the VSCode Playground.
 
 Once your prompt is ready, call a function to load in your prompt in the language of your choice, a seamless and unobtrusive integration of PromptFile into your project.
 
@@ -119,9 +119,6 @@ function generateRandomOddIntegers(): number[] {
 <User>
 Write me a function to find a prime number
 </User>
-
-
-
 ````
   </Tab>
   <Tab>
@@ -147,6 +144,10 @@ Write me a function to find a prime number
   {
     "role": "assistant",
     "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}```"
+  },
+  {
+    "role": "user",
+    "content": "Write me a function to find a prime number"
   }
 ]
 ````
