@@ -2,7 +2,7 @@ import { Callout } from 'nextra/components'
 
 # What are Blocks?
 
-Blocks in PromptFile simplify LLM requests by making them easy to read and understand. They prevent common mistakes and give you more power to create complicated interactions with the LLM.
+Blocks in Promptfile simplify LLM requests by making them easy to read and understand. They prevent common mistakes and give you more power to create complicated interactions with the LLM.
 
 ### Assistant
 Use the `<Assistant>{:prompt}` to specify that the content is coming from the model
@@ -52,14 +52,14 @@ Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` models support `<Functions
 
 In the example below, we define a function called `calculator`. It includes a `testValue` that our function (implemented elsewhere in our project) might return.
 
-Since OpenAI does not execute the function with the parameters it returns, it's up to you to run it and return a value if you wish to continue the conversation with the output from that function. In PromptFile, the output of your function running the arguments from the LLM are contained in a `<Function>{:prompt}`. See the example below to see how they work together.
+Since OpenAI does not execute the function with the parameters it returns, it's up to you to run it and return a value if you wish to continue the conversation with the output from that function. In Promptfile, the output of your function running the arguments from the LLM are contained in a `<Function>{:prompt}`. See the example below to see how they work together.
 
 ### Function
 
 The `<Function>{:prompt}` block is automatically generated and used to track the results of a function call.
  - **name** <i>(string)</i> The name of the function which was called.
 
-For example, here is a sample PromptFile that declares a function called "calculator".
+For example, here is a sample Promptfile that declares a function called "calculator".
 
 
 ```prompt copy filename="functions.prompt"
@@ -93,7 +93,7 @@ what is 2 to the .12345 power?
 </User>
 ```
 
-If you run this PromptFile, you will get the following output. Notice the automatically generated `<Function>{:prompt}` which includes our `testValue`. In the Playground, another request is made after the function returns to get the next `<Assistant>{:prompt}` response.
+If you run this Promptfile, you will get the following output. Notice the automatically generated `<Function>{:prompt}` which includes our `testValue`. In the Playground, another request is made after the function returns to get the next `<Assistant>{:prompt}` response.
 
 ```prompt
 ... rest of the prompt ...
