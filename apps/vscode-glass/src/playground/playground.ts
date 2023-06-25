@@ -1,5 +1,4 @@
 import { parseChatBlocks, parseGlassBlocks, parseGlassMetadata } from '@glass-lang/glasslib'
-import fs from 'fs'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { getGithubKey } from '../util/keys'
@@ -49,7 +48,6 @@ export async function createPlayground(
     return existingPlayground
   }
 
-  const initialGlass = fs.readFileSync(filepath, 'utf-8')
   const filename = filepath.split('/').pop()
 
   // If there's no existing panel, create a new one

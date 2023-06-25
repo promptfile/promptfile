@@ -5,24 +5,17 @@ import { useEffect, useRef, useState } from 'react'
 
 interface ComposerViewProps {
   theme: string
-  runChat: (chatToRun: string, sessionToRun: string) => void
+  runChat: (chat: string) => void
   stop: () => void
   streaming: boolean
-  session: string
-  chat: string
-  setChat: (chat: string) => void
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { streaming, runChat, stop, theme, session, chat, setChat } = props
+  const { streaming, runChat, stop, theme } = props
 
-  const chatRef = useRef(chat)
-  const sessionRef = useRef(session)
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
 
-  useEffect(() => {
-    chatRef.current = chat
-    sessionRef.current = session
-  }, [chat, session])
+  const [chat, setChat] = useState('')
 
   function mapVSCodeThemeToMonaco(theme: string) {
     const themeMapping: Record<string, string> = {
@@ -43,6 +36,19 @@ export const ComposerView = (props: ComposerViewProps) => {
   const [resizing, setResizing] = useState(false)
   const [height, setHeight] = useState(200)
   const [heightOnStart, setHeightOnStart] = useState(200)
+
+  const run = () => {
+    runChat(chat)
+    setChat('')
+  }
+
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+        run()
+      })
+    }
+  }, [run])
 
   return (
     <Resizable
@@ -99,8 +105,10 @@ export const ComposerView = (props: ComposerViewProps) => {
           }}
           onMount={(editor, monaco) => {
             editor.focus()
+            editorRef.current = editor
+
             editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-              runChat(chatRef.current, sessionRef.current)
+              run()
             })
           }}
         />
@@ -109,11 +117,7 @@ export const ComposerView = (props: ComposerViewProps) => {
             Stop
           </VSCodeButton>
         ) : (
-          <VSCodeButton
-            style={{ width: '100%' }}
-            appearance={'primary'}
-            onClick={() => runChat(chatRef.current, sessionRef.current)}
-          >
+          <VSCodeButton style={{ width: '100%' }} appearance={'primary'} onClick={run}>
             Run
           </VSCodeButton>
         )}

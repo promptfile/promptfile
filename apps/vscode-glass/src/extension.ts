@@ -5,7 +5,7 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { GlassPlayground, createPlayground } from './playground/playground'
 import { getCurrentViewColumn } from './playground/viewColumn'
 import { transpileCode } from './transpileCode'
-import { getAllPromptfiles, getDocumentFilename, isPromptfile } from './util/isPromptfile'
+import { getAllPromptfiles, isPromptfile } from './util/isPromptfile'
 import { updateTokenCount } from './util/tokenCounter'
 
 let client: LanguageClient | null = null
@@ -66,7 +66,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const initialGlass = selectedDocument.getText()
     const filepath = selectedDocument.uri.fsPath
-    const filename = getDocumentFilename(selectedDocument)
 
     const initialMetadata = parseGlassMetadata(initialGlass)
     const playground = await createPlayground(filepath, playgrounds, context.extensionUri, stoppedRequestIds)

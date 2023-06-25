@@ -40,7 +40,6 @@ function RigView() {
   const [source, setSource] = useState('')
   const [blocks, setBlocks] = useState<ChatBlock[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
-  const [chat, setChat] = useState('')
   const [session, setSession] = useState('')
   const [sessions, setSessions] = useState<GlassSession[]>([])
   const [tab, setTab] = useState(tabs[0])
@@ -91,19 +90,19 @@ function RigView() {
           }
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
-          if (message.data.variables.length > 0 && !message.data.testing) {
-            setTimeout(() => {
-              document.getElementById('composer-input-0')?.focus()
-            }, 100)
-          } else {
-            vscode.postMessage({
-              action: 'runSession',
-              data: {
-                inputs: {},
-                session: message.data.session,
-              },
-            })
-          }
+          // if (message.data.variables.length > 0 && !message.data.testing) {
+          //   setTimeout(() => {
+          //     document.getElementById('composer-chat')?.focus()
+          //   }, 100)
+          // } else {
+          //   vscode.postMessage({
+          //     action: 'runSession',
+          //     data: {
+          //       inputs: {},
+          //       session: message.data.session,
+          //     },
+          //   })
+          // }
           break
         case 'onStream':
           if (message.data.session !== session) {
@@ -150,19 +149,21 @@ function RigView() {
     })
   }
 
-  const runChat = (chatToRun: string, sessionToRun: string) => {
-    if (chatToRun.trim().length === 0) {
-      return
-    }
+  useEffect(() => {
+    console.log('new session', session)
+  }, [session])
+
+  const runChat = (chatToRun: string) => {
+    console.log('chatToRun', chatToRun)
+    console.log('session', session)
     vscode.postMessage({
       action: 'runSession',
       data: {
         chat: chatToRun,
         inputs: inputs,
-        session: sessionToRun,
+        session,
       },
     })
-    updateInputsWithVariables([])
   }
 
   const run = (inputsToRun: Record<string, string>, sessionToRun: string) => {
@@ -249,16 +250,7 @@ function RigView() {
         reload={reload}
       />
       {tab === 'Chat' && (
-        <ChatView
-          theme={theme}
-          runChat={runChat}
-          stop={stop}
-          streaming={streaming}
-          session={session}
-          blocks={blocks}
-          chat={chat}
-          setChat={setChat}
-        />
+        <ChatView theme={theme} runChat={runChat} stop={stop} streaming={streaming} session={session} blocks={blocks} />
       )}
       {tab === 'Variables' && (
         <VariablesView

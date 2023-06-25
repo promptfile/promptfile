@@ -12,16 +12,14 @@ import { ChatBlock } from './rig'
 interface ChatViewProps {
   blocks: ChatBlock[]
   theme: string
-  runChat: (chatToRun: string, sessionToRun: string) => void
+  runChat: (chatToRun: string) => void
   stop: () => void
   streaming: boolean
   session: string
-  chat: string
-  setChat: (chat: string) => void
 }
 
 export const ChatView = (props: ChatViewProps) => {
-  const { blocks, streaming, runChat, stop, theme, session, chat, setChat } = props
+  const { blocks, streaming, runChat, stop, theme, session } = props
   const sessionId = session.split('/').pop()
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
@@ -210,15 +208,7 @@ export const ChatView = (props: ChatViewProps) => {
           })}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
-      <ComposerView
-        theme={theme}
-        runChat={runChat}
-        stop={stop}
-        streaming={streaming}
-        session={session}
-        chat={chat}
-        setChat={setChat}
-      />
+      <ComposerView theme={theme} runChat={runChat} stop={stop} streaming={streaming} />
     </div>
   )
 }
