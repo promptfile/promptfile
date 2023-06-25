@@ -58,19 +58,11 @@ Explore the examples in the Cookbook to learn how to use PromptFile.
 </Steps>
 
 
-## PromptFile: Simple and Effective Templating
+## PromptFile: Why Use It?
 
-Just like you, we want to build using large language models. Parsing, concatenating, and formatting requests to the LLM is annoying. Markdown and MDX help to simplify writing prompts, but they were not made for writing prompts.
+PromptFile is a better templating syntax and playground for your prompts. If the early stages of your project involve writing a prompt, we want that to be the most frictionless part of your project. PromptFile eliminates the hassle of parsing, concatenating, and formatting requests to the LLM and allows you to iterate and test much quicker. We found ourselves spending most of our time editing prompts on OpenAI's playground and exporting them as messy JSONs we would never touch again. Like you, we wanted speed and to iterate quickly. We wanted to focus on the actual task at hand: building something with LLMs that people wanted.
 
-When our projects got more complex, we spent more time on prompts. Prompt complexity increased, and with OpenAI's function calling mixing code and prompts, writing and iterating prompts got much harder and slower.
-
-That's where PromptFile comes in. A `.prompt` file is easy to write and can be transpiled into your chosen language as a function. Just call the function in your project to get your prompt ready to make the request to the LLM.
-
-Using PromptFile is simple, so you can concentrate on what's important: building amazing things.
-
-
-See the difference yourself. Even in a simple example like below, not having syntax highlighting or parsing through JSON can get tedious.
-
+Try PromptFile and see the difference:
 
 <Tabs items={['PromptFile', 'JSON']}>
   <Tab>
