@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.15.5
+
+### Patch Changes
+
+- [`7f6fd0b`](https://github.com/glass-platform/promptfile/commit/7f6fd0be4ebc80bce68455a87e5890acbefcf4ac) Thanks [@elliottburris](https://github.com/elliottburris)! - improved variable setting
+
 ## 0.15.4
 
 ### Patch Changes
