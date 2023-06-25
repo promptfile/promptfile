@@ -3,7 +3,7 @@
   "guide": "Getting Started Guide",
   "examples": "Cookbook (Examples)",
   "playground": "Playground",
-  "vscode": "VSCode Extension",
+  "vscode": "VS Code Extension",
   "blocks": "Blocks",
   "models": "Models",
   "usage": "PromptFile in Your Project",

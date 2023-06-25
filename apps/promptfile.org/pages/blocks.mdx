@@ -44,19 +44,19 @@ You are a friendly pirate. Only respond in the style and tone of a friendly pira
 
 ### Functions
 
-Use the `<Functions>{:prompt}` block to define a tool that the LLM is able to use. The LLM will return a response with the name of the tool it decides to use and the arguments for the schema you have defined.
+Use the `<Functions>{:prompt}` block to define tools that the LLM is able to use. When the LLM wants to use a function, it will return a response with the name of the function it to use and the arguments to call it with.
 
-A `<Function>{:prompt}` block has the same JSON structure as defined by OpenAI. Read more about it [here](https://platform.openai.com/docs/guides/gpt/function-calling). 
+A `<Functions>{:prompt}` block has the same JSON structure as defined by OpenAI. Read more about it [here](https://platform.openai.com/docs/guides/gpt/function-calling).
 
-Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
+Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` models support `<Functions>{:prompt}`.
 
-In the example below, we define a function called `calculator`. We also input a `testValue` that our function (which would be implemented elsewhere in our project) would return.
+In the example below, we define a function called `calculator`. It includes a `testValue` that our function (implemented elsewhere in our project) might return.
 
 Since OpenAI does not execute the function with the parameters it returns, it's up to you to run it and return a value if you wish to continue the conversation with the output from that function. In PromptFile, the output of your function running the arguments from the LLM are contained in a `<Function>{:prompt}`. See the example below to see how they work together.
 
 ### Function
 
-The `<Function>{:prompt}` block is automatically generated and used to track the results of a function evaluation.
+The `<Function>{:prompt}` block is automatically generated and used to track the results of a function call.
  - **name** <i>(string)</i> The name of the function which was called.
 
 For example, here is a sample PromptFile that declares a function called "calculator".
@@ -93,12 +93,10 @@ what is 2 to the .12345 power?
 </User>
 ```
 
-If you run this PromptFile, you will get the following output. Notice the automatically generated `<Function>{:prompt}` which includes our `testValue`. In the Playground, another request is made if our function returns something.
+If you run this PromptFile, you will get the following output. Notice the automatically generated `<Function>{:prompt}` which includes our `testValue`. In the Playground, another request is made after the function returns to get the next `<Assistant>{:prompt}` response.
 
 ```prompt
----
-model: gpt-3.5-turbo-0613
----
+... rest of the prompt ...
 
 
 <User >

@@ -6,19 +6,17 @@ _**ALERT: PROMPTFILE IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
 
 PromptFile is a Markdown-like templating syntax and playground designed to write and iterate on prompts easier and faster. PromptFile is entirely open-source and free-to-use.
 
-Build and prototype your prompts where you and your projects live: VSCode.
+Build and prototype your prompts where you and your projects live: VS Code.
 
-The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug. To test your prompt, execute a single command and view the results of your request in the VSCode Playground.
+The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug. To test your prompt, execute a single command and view the results of your request in the VS Code Playground.
 
 Once your prompt is ready, call a function to load in your prompt in the language of your choice, a seamless and unobtrusive integration of PromptFile into your project.
 
 1. Read our documentation at [promptfile.org](https://promptfile.org)
 2. Check out some examples in our [examples repository](https://github.com/glass-platform/promptfile/tree/main/apps/demo/examples).
-3. [Download the VSCode extension](http://vscode.glass) to quickly run and iterate on a PromptFile.
+3. [Download the VS Code extension](http://vscode.glass) to quickly run and iterate on a PromptFile.
 4. If you are using PromptFile, have questions, or want to stay up to date, feel free to join our [Discord](https://discord.com/invite/H64PFP2DCc).
 5. If you are interested in contributing, would love to have you contribute. Feel free to read more about how to [contribute](/CONTRIBUTING.md).
-
-
 
 Although we are an extremely early stage project, here are some of our current wishlist items for the project:
 
@@ -30,18 +28,17 @@ Although we are an extremely early stage project, here are some of our current w
 - [ ] Supporting other languages that `.prompt` transpiles into
 
 ## Playground Wishlist
+
 - [ ] Making the Playground more synchronous with your `.prompt` file
 - [ ] Improving visualizing version control of your prompts
-- [ ] Allow customizing the UI of the Playground 
+- [ ] Allow customizing the UI of the Playground
 
 ## Project Wishlist
+
 - [ ] Supporting code execution for a function from localhost
-- [ ] More robust examples and complex use cases 
+- [ ] More robust examples and complex use cases
 - [ ] Supporting people trying LLMs for the first time and open-source contributors
-- [ ] Healthy and constructive Discord community 
-
-
-
+- [ ] Healthy and constructive Discord community
 
 ## Apps and Packages
 
@@ -70,7 +67,7 @@ npm ci
 npm run build
 ```
 
-Usually you'll want to launch the VSCode extension in development mode. Use the `Run Extension` launch configuration (`F5` keybinding). This will automatically run the build step if necessary.
+Usually you'll want to launch the VS Code extension in development mode. Use the `Run Extension` launch configuration (`F5` keybinding). This will automatically run the build step if necessary.
 
 ### Tests
 

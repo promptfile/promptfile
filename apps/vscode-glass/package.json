@@ -76,7 +76,7 @@
       {
         "command": "promptfile.settings",
         "title": "Promptfile: open settings",
-        "description": "Opens the .prompt settings in your VSCode settings.json file."
+        "description": "Opens the .prompt settings in your VS Code settings.json file."
       },
       {
         "command": "promptfile.transpile",

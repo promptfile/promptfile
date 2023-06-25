@@ -7,10 +7,10 @@ import {Callout} from 'nextra-theme-docs'
 
 PromptFile is a Markdown-like templating syntax and playground designed to write and iterate on prompts easier and faster. PromptFile is entirely open-source and free-to-use.
 
-Build and prototype your prompts where you and your projects live: **_VSCode_**.
+Build and prototype your prompts where you and your projects live: **_VS Code_**.
 
 
-The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug. To test your prompt, execute a single command and view the results of your request in the VSCode Playground.
+The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug. To test your prompt, execute a single command and view the results of your request in the VS Code Playground.
 
 Once your prompt is ready, call a function to load in your prompt in the language of your choice, a seamless and unobtrusive integration of PromptFile into your project.
 
@@ -18,8 +18,8 @@ Once your prompt is ready, call a function to load in your prompt in the languag
 ## Key Features
 
 <Steps>
-### **Never leave VSCode**
-   - Enjoy syntax highlighting, IntelliSense, and tools like GitHub Co-Pilot to bring a developer experience to writing prompts.
+### **Never leave VS Code**
+   - Enjoy syntax highlighting, IntelliSense, and tools like GitHub Copilot to bring a developer experience to writing prompts.
 ### **Separate Code from Prompt**
    - Code behaves predictably, prompts don't. Separate concerns and gain more control of your project.
 ### **Built for Quick Iteration**
@@ -27,11 +27,11 @@ Once your prompt is ready, call a function to load in your prompt in the languag
 </Steps>
 
 ## Quickstart
-Get up-and-running in less than a couple ofminutes. For detailed instructions, refer to our [Getting Started Guide](/guide).
+Get up-and-running in less than a couple of minutes. For detailed instructions, refer to our [Getting Started Guide](/guide).
 
 <Steps>
-### **Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)**
-Add your OpenAI or Anthropic API Key by running the "Promptfile: open settings", command in the VSCode Command Palette. For further assistance, see [here](/guide#saving-your-api-keys).
+### **Install the [VS Code extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)**
+Add your OpenAI or Anthropic API Key by running the "Promptfile: open settings", command in the VS Code Command Palette. For further assistance, see [here](/guide#saving-your-api-keys).
 
 ### **Create your first `.prompt` file**
 Create a file named `example.prompt` and copy the provided `example.prompt` file into it.
@@ -126,12 +126,10 @@ Write me a function to find a prime number
   {
     "role": "system",
     "content": "You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response.",
-    "name": "undefined",
   },
   {
     "role": "user",
     "content": "How do I add two numbers?",
-    "name": "undefined",
   },
   {
     "role": "assistant",
@@ -140,12 +138,10 @@ function addNumbers(a: number, b: number): number {
   return a + b;
 }
 ```",
-    "name": "undefined",
   },
   {
     "role": "user",
     "content": "Write me a function that creates an array of 10 random odd integers between 0 and 20",
-     "name": "undefined",
   },
   {
     "role": "assistant",
@@ -163,12 +159,10 @@ function generateRandomOddIntegers(): number[] {
   return oddIntegers
 }
 ```",
-    "name": "undefined",
   },
   {
     "role": "user",
     "content": "Write me a function to find a prime number",
-    "name": "undefined",
   }
 ]
 ````

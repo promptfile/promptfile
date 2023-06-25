@@ -1,5 +1,5 @@
 <System>
-You are a VSCodeGPT. Your job is to provide amazing customer service about the VSCode platform. 
+You are a VSCodeGPT. Your job is to provide amazing customer service about the VSCode platform.
 
 If you are unsure of anything or need more information to best help the user, just ask for clarification.
 
@@ -13,7 +13,7 @@ You are speaking to this user:
 }
 ```
 
-Here is the user's VSCode instance:
+Here is the user's VS Code instance:
 ```
 Version: 1.78.2 (Universal)
 Commit: b3e4e68a0bc097f0ae7907b217c1119af9e03435
@@ -29,14 +29,14 @@ Sandboxed: Yes
 
 
 <User>
-hey there! i'm working on a new VSCode extension. i'd like to create a keyboard shortcut to "reset" the file.  what would be an appropriate keyboard shortcut?
+hey there! i'm working on a new VS Code extension. i'd like to create a keyboard shortcut to "reset" the file.  what would be an appropriate keyboard shortcut?
 </User>
 
 
 <Assistant>
-Hello Elliott! To reset a file in VSCode, you can use the `editor.action.clearEditorContent` command. 
+Hello Elliott! To reset a file in VS Code, you can use the `editor.action.clearEditorContent` command.
 
-As for choosing a keyboard shortcut, there are a few options that are not already being used by default in VSCode:
+As for choosing a keyboard shortcut, there are a few options that are not already being used by default in VS Code:
 
 - `Ctrl+Shift+R` (Windows, Linux) or `Cmd+Shift+R` (Mac)
 - `Ctrl+K R` (Windows, Linux) or `Cmd+K R` (Mac)
@@ -52,9 +52,9 @@ oh, i like cmd+shift+r. it looks like ThunderClient is already using that, thoug
 
 
 <Assistant>
-Yes, ThunderClient is a fairly popular REST client for VSCode. However, I would still recommend using `Cmd+Shift+R` for your extension if that's the shortcut you prefer. 
+Yes, ThunderClient is a fairly popular REST client for VS Code. However, I would still recommend using `Cmd+Shift+R` for your extension if that's the shortcut you prefer.
 
-If the user has both your extension and ThunderClient installed and there is a conflicting keyboard shortcut, VSCode will give the user a notification allowing them to choose which command to execute. So even if ThunderClient is using `Cmd+Shift+R`, the user can still choose your command if they want to reset the file. 
+If the user has both your extension and ThunderClient installed and there is a conflicting keyboard shortcut, VS Code will give the user a notification allowing them to choose which command to execute. So even if ThunderClient is using `Cmd+Shift+R`, the user can still choose your command if they want to reset the file.
 
 That being said, it's always good to provide the user with alternative keyboard shortcuts that they can use if they prefer not to override existing ones.
 </Assistant>
@@ -66,7 +66,7 @@ good call, thanks!
 
 
 <Assistant>
-You're welcome! Do you have any other questions or concerns about your VSCode extension? I'm here to help!
+You're welcome! Do you have any other questions or concerns about your VS Code extension? I'm here to help!
 </Assistant>
 
 
@@ -76,21 +76,21 @@ yeah, i have another question. i would like to be able to load in information ab
 
 
 <Assistant>
-To get information about the current VSCode instance from your extension code, you can use the `vscode` module's `version` property. Here's an example of how you can print the current version of VSCode:
+To get information about the current VS Code instance from your extension code, you can use the `vscode` module's `version` property. Here's an example of how you can print the current version of VS Code:
 
 ```typescript
 import { version } from "vscode";
 
-console.log("VSCode version:", version);
+console.log("VS Code version:", version);
 ```
 
-This will output the current version of VSCode to the console, for example:
+This will output the current version of VS Code to the console, for example:
 
 ```
-VSCode version: 1.78.2
+VS Code version: 1.78.2
 ```
 
-You can also get other information about the VSCode instance, such as `appRoot` (the root folder where VSCode is installed) and `env` (an object containing environment information). For more information, check out VSCode's `vscode` module documentation: https://code.visualstudio.com/api/references/vscode-api#version
+You can also get other information about the VS Code instance, such as `appRoot` (the root folder where VS Code is installed) and `env` (an object containing environment information). For more information, check out VS Code's `vscode` module documentation: https://code.visualstudio.com/api/references/vscode-api#version
 </Assistant>
 
 
@@ -100,7 +100,7 @@ awesome, thanks!
 
 
 <Assistant>
-You're welcome! Is there anything else you need help with, or any other questions you have about VSCode?
+You're welcome! Is there anything else you need help with, or any other questions you have about VS Code?
 </Assistant>
 
 
@@ -271,7 +271,7 @@ what's going on in this file?
 </User>
 
 <Assistant>
-This appears to be a `package.json` file for the "CodeSnap" VSCode extension. The `package.json` file contains metadata like the name, version, and description of the extension, as well as dependencies and scripts for the extension.
+This appears to be a `package.json` file for the "CodeSnap" VS Code extension. The `package.json` file contains metadata like the name, version, and description of the extension, as well as dependencies and scripts for the extension.
 
 Here is a breakdown of the different parts of this `package.json` file:
 
@@ -283,12 +283,12 @@ Here is a breakdown of the different parts of this `package.json` file:
 - `"publisher": "adpyke"` - the publisher (i.e. author or organization) of the extension
 - `"icon": "icon.png"` - the file path for the extension's icon
 - `"license": "MIT"` - the license under which the extension is distributed
-- `"engines": {...}` - the version of VSCode that the extension is compatible with
+- `"engines": {...}` - the version of VS Code that the extension is compatible with
 - `"keywords": [...]` - an array of keywords that describe the extension
 - `"categories": [...]` - an array of categories that the extension belongs to
 - `"activationEvents": [...]` - an array of events that activate the extension
 - `"main": "./src/extension.js"` - the entry point for the extension's code
-- `"contributes": {...}` - information about what the extension contributes to VSCode (e.g. commands, menus, configuration settings)
+- `"contributes": {...}` - information about what the extension contributes to VS Code (e.g. commands, menus, configuration settings)
 - `"scripts": {...}` - an object containing scripts to execute when developing the extension
 - `"devDependencies": {...}` - a list of development dependencies for the extension
 - `"dependencies": {...}` - a list of additional dependencies for the extension
