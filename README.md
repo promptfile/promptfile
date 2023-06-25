@@ -24,8 +24,8 @@ Although we are an extremely early stage project, here are some of our current w
 
 ## Language Wishlist
 
-- [ ] Adding Monaco support for `.prompt` files #200
-- [ ] Better diagnostics and error handling (for example #248)
+- [ ] Adding Monaco support for `.prompt` files [#200](https://github.com/glass-platform/promptfile/issues/200)
+- [ ] Better diagnostics and error handling (for example [#248](https://github.com/glass-platform/promptfile/issues/248))
 - [ ] Supporting more models, especially open source models
 - [ ] Supporting other languages that `.prompt` transpiles into
 
