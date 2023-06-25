@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
-import { ChatView } from './ChatView'
 import { HistoryView } from './HistoryView'
+import { SessionView } from './SessionView'
 import { TopperView } from './TopperView'
-import { VariablesView } from './VariablesView'
 import { lastElement } from './util'
 
 export interface ChatBlock {
@@ -31,7 +30,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Chat', 'Variables', 'History']
+  const tabs: string[] = ['Session', 'History']
 
   const [theme, setTheme] = useState('')
   const [requestId, setRequestId] = useState('')
@@ -54,10 +53,6 @@ function RigView() {
     variables.forEach(v => {
       newInputs[v] = inputs[v] || ''
     })
-    if (variables.length === 0) {
-      newInputs['Response'] = inputs['Response'] ?? ''
-    }
-    console.log('newInputs', newInputs)
     setInputs(() => newInputs)
   }
 
@@ -90,19 +85,15 @@ function RigView() {
           }
           setBlocks(() => message.data.blocks)
           updateInputsWithVariables(message.data.variables)
-          // if (message.data.variables.length > 0 && !message.data.testing) {
-          //   setTimeout(() => {
-          //     document.getElementById('composer-chat')?.focus()
-          //   }, 100)
-          // } else {
-          //   vscode.postMessage({
-          //     action: 'runSession',
-          //     data: {
-          //       inputs: {},
-          //       session: message.data.session,
-          //     },
-          //   })
-          // }
+          if (message.data.variables.length === 0 && message.data.blocks.some(b => b.role === 'user')) {
+            vscode.postMessage({
+              action: 'runSession',
+              data: {
+                inputs: {},
+                session: message.data.session,
+              },
+            })
+          }
           break
         case 'onStream':
           if (message.data.session !== session) {
@@ -111,6 +102,9 @@ function RigView() {
           setBlocks(() => message.data.blocks)
           if (message.data.requestId) {
             setRequestId(() => message.data.requestId)
+          }
+          if (message.data.variables) {
+            updateInputsWithVariables(message.data.variables)
           }
           break
         case 'onResponse':
@@ -149,13 +143,7 @@ function RigView() {
     })
   }
 
-  useEffect(() => {
-    console.log('new session', session)
-  }, [session])
-
   const runChat = (chatToRun: string) => {
-    console.log('chatToRun', chatToRun)
-    console.log('session', session)
     vscode.postMessage({
       action: 'runSession',
       data: {
@@ -249,18 +237,16 @@ function RigView() {
         filename={filename}
         reload={reload}
       />
-      {tab === 'Chat' && (
-        <ChatView theme={theme} runChat={runChat} stop={stop} streaming={streaming} session={session} blocks={blocks} />
-      )}
-      {tab === 'Variables' && (
-        <VariablesView
+      {tab === 'Session' && (
+        <SessionView
           inputs={inputs}
           setValue={setValue}
-          run={run}
-          session={session}
+          theme={theme}
+          runChat={runChat}
           stop={stop}
           streaming={streaming}
-          theme={theme}
+          session={session}
+          blocks={blocks}
         />
       )}
       {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
