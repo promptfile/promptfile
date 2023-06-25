@@ -8,7 +8,7 @@ message: >-
   metadata from this file.
 type: software
 authors:
-  - given-names: John
+  - given-names: Johnathan
     family-names: Rothfels
     email: john@platform.glass
   - given-names: Elliott
@@ -25,5 +25,5 @@ keywords:
   - DSL
 license: MIT
 commit: ee48980
-version: v0.15.4 Latest 18 hours ago
+version: v0.15.4
 date-released: '2023-06-23'
