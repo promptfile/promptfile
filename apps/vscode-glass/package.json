@@ -1,6 +1,6 @@
 {
   "name": "vscode-glass",
-  "version": "0.15.4",
+  "version": "0.15.5",
   "displayName": "Promptfile",
   "description": "Language support for .prompt files",
   "categories": [
