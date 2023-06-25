@@ -12,7 +12,7 @@ export const models: ICards = {
       fill: '#FFFFFF',
     },
     description:
-      'OpenAI is an AI research and deployment company. Their mission is to ensure that artificial general intelligence benefits all of humanity',
+      'OpenAI is an AI research and deployment company. Their mission is to ensure that artificial general intelligence benefits all of humanity.',
     href: 'https://openai.com/',
   },
   anthropic: {

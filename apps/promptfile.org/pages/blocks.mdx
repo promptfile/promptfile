@@ -2,9 +2,7 @@ import { Callout } from 'nextra/components'
 
 # What are Blocks?
 
-Blocks in Promptfile simplify LLM requests by making them easy to read and understand. They prevent common mistakes and give you more power to create complicated interactions with the LLM.
-
-## Role Blocks
+Blocks in PromptFile simplify LLM requests by making them easy to read and understand. They prevent common mistakes and give you more power to create complicated interactions with the LLM.
 
 ### Assistant
 Use the `<Assistant>{:prompt}` to specify that the content is coming from the model
@@ -18,7 +16,6 @@ Hello human!
 </Assistant>
 ```
 
-
 ### User
 
 Use the `<User>{:prompt}` block to indicate the text originating from a human user.
@@ -30,7 +27,6 @@ Use the `<User>{:prompt}` block to indicate the text originating from a human us
 Hello AI!
 </User>
 
-<Request model="gpt - **3.5 - **turbo" />
 ```
 ### System
 
@@ -41,75 +37,52 @@ For Anthropic models, the `<System>{:prompt}` block has the same effect as the `
 
 ```prompt copy filename="system_example.prompt"
 <System>
-Even if I want to give the LLM a System prompt here, it won't evaluate because the condition is not met.
+You are a friendly pirate. Only respond in the style and tone of a friendly pirate.
 </System>
 ```
 
 
 ### Functions
 
-Use the `<Functions>{:prompt}` block to integrate a tool that Promptfile can execute at runtime. Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
+Use the `<Functions>{:prompt}` block to define a tool that the LLM is able to use. The LLM will return a response with the name of the tool it decides to use and the arguments for the schema you have defined.
 
-```prompt copy filename="function.prompt"
----
-model: gpt-3.5-turbo-0613
----
+A `<Function>{:prompt}` block has the same JSON structure as defined by OpenAI. Read more about it [here](https://platform.openai.com/docs/guides/gpt/function-calling). 
 
+Note that this block is only valid in specific OpenAI models. Currently, only `gpt-4-0613` and `gpt-3.5-turbo-0613` support tool usage.
 
-<Functions>
-[
-  {
-    "name": "calculator",
-    "description": "Calculates the result of a math expression.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "expression": {
-          "type": "string",
-          "description": "The expression to evaluate in JavaScript.",
-        },
-      },
-      "required": ["expression"],
-    },
-  }
-]
-</Functions>
+In the example below, we define a function called `calculator`. We also input a `testValue` that our function (which would be implemented elsewhere in our project) would return.
 
-
-<User>
-what is 2 to the .12345 power?
-</User>
-```
-
-## PromptFile Generated Blocks
+Since OpenAI does not execute the function with the parameters it returns, it's up to you to run it and return a value if you wish to continue the conversation with the output from that function. In PromptFile, the output of your function running the arguments from the LLM are contained in a `<Function>{:prompt}`. See the example below to see how they work together.
 
 ### Function
 
-The `<Function>{:prompt}` block is automatically generated and used to track the results of a function evaluation. For example, here is a sample Promptfile file that declares a `<Tool>{:prompt}` called "calculator".
-
+The `<Function>{:prompt}` block is automatically generated and used to track the results of a function evaluation.
  - **name** <i>(string)</i> The name of the function which was called.
 
-```prompt copy filename="function_example.prompt"
+For example, here is a sample PromptFile that declares a function called "calculator".
+
+
+```prompt copy filename="functions.prompt"
 ---
 model: gpt-3.5-turbo-0613
 ---
-
 
 <Functions>
 [
   {
     "name": "calculator",
-    "description": "Calculates the result of a math expression.",
+    "description": "Calculates the result of a math expression using JavaScript `eval`.",
     "parameters": {
       "type": "object",
       "properties": {
         "expression": {
           "type": "string",
-          "description": "The expression to evaluate in JavaScript.",
-        },
+          "description": "The expression to evaluate in JavaScript."
+        }
       },
-      "required": ["expression"],
+      "required": ["expression"]
     },
+    "testValue": "1.08933674"
   }
 ]
 </Functions>
@@ -120,8 +93,7 @@ what is 2 to the .12345 power?
 </User>
 ```
 
-
-When we run this Promptfile file, we get the following interaction:
+If you run this PromptFile, you will get the following output. Notice the automatically generated `<Function>{:prompt}` which includes our `testValue`. In the Playground, another request is made if our function returns something.
 
 ```prompt
 ---
@@ -129,47 +101,27 @@ model: gpt-3.5-turbo-0613
 ---
 
 
-<Functions>
-[
-  {
-    "name": "calculator",
-    "description": "Calculates the result of a math expression.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "expression": {
-          "type": "string",
-          "description": "The expression to evaluate in JavaScript.",
-        },
-      },
-      "required": ["expression"],
-    },
-  }
-]
-</Functions>
-
-
-<User>
+<User >
 what is 2 to the .12345 power?
 </User>
 
 
-This is the assistant deciding to use the calculator tool and pass in arguments into the schema based on the request
 <Assistant type="function_call">
 {
   "name": "calculator",
-  "arguments": "{\n  \"expression\": \"Math.pow(2, 0.12345)\"\n}"
+  "arguments": "{\n  \"expression\": \"2 ** 0.12345\"\n}"
 }
 </Assistant>
 
 
-// This is the automatically generated function block letting you know that the LLM used the tool it had available
 <Function name="calculator">
-"1.0893367441616877"
+"1.08933674"
 </Function>
 
 
-<Assistant>
-2 to the power of 0.12345 is approximately 1.08934.
+<Assistant >
+2 to the power of 0.12345 is approximately 1.08933674.
 </Assistant>
 ```
+
+

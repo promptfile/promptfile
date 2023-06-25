@@ -14,16 +14,10 @@ const foo = "bar";
 
 ## Interacting with your `.prompt` file
 
-To enable dynamic conversations, when there are no uninitialized variables in your prompt, PromptFile will add the following to allow you to respond to the response from the LLM.
-
-```prompt
-<User>
-@{Input}
-</User>
-```
+After you run your PromptFile in the Playground, you receive the response from the model you defined at the top of the file. In this case, we decide to use the `gpt-3.5-turbo` model. After we run the file, we have the option to continue the conversation by putting something in as a `Response`. Any response to the model in the playground will be wrapped up in an `<User>{:prompt}` block and appended to the conversation. You can see this after entering a response and opening up the session file in the top right-hand corner of the Playground.
 
 <br/>
-<Image src="/screenshots/newPlayground.gif" width={850} height={850} />
+<Image src="/screenshots/playground.gif" width={850} height={850} />
 
 ## How to Use the Playground
 
@@ -33,7 +27,10 @@ To enable dynamic conversations, when there are no uninitialized variables in yo
 ### Launch the Playground:
    - Press `Command (⌘) + Enter (↩)`.
    OR
-   - execute the `PromptFile: run` command from the VSCode Command Palette.
+   - execute the `Promptfile: run playground` command from the VSCode Command Palette.
+
+### Continue the conversation
+- Simply input something into the `Response` variable to keep going back and forth with the LLM.
 ### Review Chat History
 - Access your past requests and responses by clicking a session ID. This opens the selected conversation history as a PromptFile file in a new VSCode tab.
 ### Monitor Token Usage
@@ -59,13 +56,11 @@ Alternatively, you can set your API key in your environment as either `GITHUB_TO
 </div>
 
 
-## Keeping your file and Playground in sync
-<Image src="/screenshots/statusIndicator.png" height={750} width={750} />
+## Keep your file and Playground in sync
 
-In the Playground, a status indicator is displayed next to the name of your PromptFile. This helps you monitor the synchronization between the PromptFile Playground and any changes made to your file.
+In the Playground, a status indicator is displayed next to the name of your PromptFile. This helps you monitor the synchronization between the PromptFile Playground and any changes made to your file. If you make changes in your file, be sure to save them and then reload a `New Session` in the Playground for those changes to be applied.
 
 - Orange Dot: If you see an orange dot, it means the Playground is not using the most recent version of your PromptFile. To update the Playground with your latest changes, click the `New Session` button to restart.
 - No Dot: Your Playground is using your most recent version of your PromptFile.
-
-
-
+<br />
+<Image src="/screenshots/playground_status.png" height={750} width={750} />

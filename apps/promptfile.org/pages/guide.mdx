@@ -41,11 +41,21 @@ Alternatively, you can set your API keys in your environment as either `OPENAI_A
 
 ### **Running your first `.prompt` file**
 
-When you are ready to run the file, run the `.prompt` file by running the VSCode Command Palette `PromptFile: run` command.
+When you are ready to run the file, run the `.prompt` file by running the VSCode Command Palette `PromptFile: run in playground` command.
 
 You can run your file by pressing `Command (⌘) Enter (↩)`.
 
-Alternatively, you can access the VSCode Command Palette by pressing `Command (⌘) + Shift (⇧) + P,` and searching for `PromptFile: run`.
+Alternatively, you can access the VSCode Command Palette by pressing `Command (⌘) + Shift (⇧) + P,` and searching for `PromptFile: run in playground`.
 <br />
+
+### **Trying different models**
+
+You can try different models by changing the model name in the header of your `.prompt` file. Right now we support OpenAI and Anthropic models. You can see a full list [here](/models). Remember to put your API keys and that you can only use models you have access to (for example, if you don't have access to `gpt-4-32k` you will get an error message).
+
+### **Using it in your project**
+
+When you are ready to use your PromptFile in your project, run "Promptfile: transpile to another language" via the VSCode Command Palette. You will be able to choose which language to compile into, currently the following are [supported](/code).
+
+You can then import your PromptFile into your project and then call the function, passing in the variables you want to declare in your template.
 
 </Steps>

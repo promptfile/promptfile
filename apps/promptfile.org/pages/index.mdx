@@ -31,7 +31,7 @@ Get up-and-running in less than a couple ofminutes. For detailed instructions, r
 
 <Steps>
 ### **Install the [VSCode extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)**
-Add your OpenAI or Anthropic API Key by running the "PromptFile: open settings", command in the VSCode Command Palette. For further assistance, see [here](/guide#saving-your-api-keys).
+Add your OpenAI or Anthropic API Key by running the "Promptfile: open settings", command in the VSCode Command Palette. For further assistance, see [here](/guide#saving-your-api-keys).
 
 ### **Create your first `.prompt` file**
 Create a file named `example.prompt` and copy the provided `example.prompt` file into it.
@@ -54,25 +54,23 @@ Write me a haiku about the ocean
 The PromptFile [Playground](/playground) should appear and run your PromptFile file.
 
 ### **See more PromptFile Features in our [Cookbook](/examples)**
-Explore the examples in the Cookbook to learn about PromptFile' many features.
+Explore the examples in the Cookbook to learn how to use PromptFile.
 </Steps>
 
 
-## PromptFile: Simple and Effective Templating
+## PromptFile: Why Use It?
 
-Just like you, we want to build using large language models. Parsing, concatenating, and formatting requests to the LLM is annoying. Markdown and MDX help to simplify writing prompts, but aren't made with prompts in mind.
+PromptFile is a better templating syntax and playground for your prompts. If the early stages of your project involve writing a prompt, we want that to be the most frictionless part of your project. PromptFile eliminates the hassle of parsing, concatenating, and formatting requests to the LLM and allows you to iterate and test much quicker. We found ourselves spending most of our time editing prompts on OpenAI's playground and exporting them as messy JSONs we would never touch again. Like you, we wanted speed and to iterate quickly. We wanted to focus on the actual task at hand: building something with LLMs that people wanted.
 
-When our projects got more complex, we spent more time on prompts. Prompt complexity increased, and with OpenAI's function calling mixing code and prompts, writing and iterating prompts got much harder and slower.
-
-That's where PromptFile comes in. A `.prompt` file is easy to write and can be transpiled into your chosen language as a function. Just call the function in your project to get your prompt ready to make the request to the LLM.
-
-Using PromptFile is simple, so you can concentrate on what's important: building amazing things.
-
-{/*Maybe choose a different example that is more intuitive to see how you can interpolate variables and then pass the variables into */}
+Try PromptFile and see the difference:
 
 <Tabs items={['PromptFile', 'JSON']}>
   <Tab>
 ````prompt copy filename= 'request.prompt'
+---
+model: gpt-3.5-turbo
+---
+
 <System>
 You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response.
 </System>
@@ -127,27 +125,50 @@ Write me a function to find a prime number
 [
   {
     "role": "system",
-    "content": "You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response."
+    "content": "You are a programming assistant tasked with writing performant, concise, beautiful TypeScript code. Respond to the User's message with fenced TypeScript code. Do not include any other content in your response.",
+    "name": "undefined",
   },
   {
     "role": "user",
-    "content": "How do I add two numbers?"
+    "content": "How do I add two numbers?",
+    "name": "undefined",
   },
   {
     "role": "assistant",
-    "content": "```ts\nfunction addNumbers(a: number, b: number): number {\n  return a + b;\n}\n```"
+    "content": "```ts
+function addNumbers(a: number, b: number): number {
+  return a + b;
+}
+```",
+    "name": "undefined",
   },
   {
     "role": "user",
-    "content": "Write me a function that creates an array of 10 random odd integers between 0 and 20"
+    "content": "Write me a function that creates an array of 10 random odd integers between 0 and 20",
+     "name": "undefined",
   },
   {
     "role": "assistant",
-    "content": "```ts\nfunction generateRandomOddIntegers(): number[] {\n  const oddIntegers: number[] = [];\n\n  while (oddIntegers.length < 10) {\n    const randomInt = Math.floor(Math.random() * 21);\n\n    if (randomInt % 2 !== 0) {\n      oddIntegers.push(randomInt);\n    }\n  }\n\n  return oddIntegers;\n}```"
+    "content": "```ts
+function generateRandomOddIntegers(): number[] {
+  const oddIntegers: number[] = []
+
+  while (oddIntegers.length < 10) {
+    const randomInt = Math.floor(Math.random() * 21)
+
+    if (randomInt % 2 !== 0) {
+      oddIntegers.push(randomInt)
+    }
+  }
+  return oddIntegers
+}
+```",
+    "name": "undefined",
   },
   {
     "role": "user",
-    "content": "Write me a function to find a prime number"
+    "content": "Write me a function to find a prime number",
+    "name": "undefined",
   }
 ]
 ````
