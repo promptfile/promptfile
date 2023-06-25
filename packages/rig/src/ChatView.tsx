@@ -5,16 +5,23 @@ import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import rehypeMathjax from 'rehype-mathjax'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
+import { ComposerView } from './ComposerView'
 import { CopyButton } from './CopyButton'
 import { ChatBlock } from './rig'
 
-interface TranscriptViewProps {
+interface ChatViewProps {
   blocks: ChatBlock[]
+  theme: string
+  run: (inputsToRun: Record<string, string>, sessionToRun: string) => void
+  stop: () => void
+  streaming: boolean
+  inputs: Record<string, string>
+  setValue: (key: string, value: string) => void
   session: string
 }
 
-export const TranscriptView = (props: TranscriptViewProps) => {
-  const { blocks, session } = props
+export const ChatView = (props: ChatViewProps) => {
+  const { blocks, inputs, setValue, streaming, run, stop, theme, session } = props
   const sessionId = session.split('/').pop()
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
@@ -203,6 +210,15 @@ export const TranscriptView = (props: TranscriptViewProps) => {
           })}
         <div id={'end'} style={{ width: '100%', height: '0px' }} />
       </div>
+      <ComposerView
+        theme={theme}
+        run={run}
+        stop={stop}
+        streaming={streaming}
+        inputs={inputs}
+        setValue={setValue}
+        session={session}
+      />
     </div>
   )
 }

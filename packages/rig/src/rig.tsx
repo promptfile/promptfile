@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { render } from 'react-dom'
-import { ComposerView } from './ComposerView'
+import { ChatView } from './ChatView'
 import { HistoryView } from './HistoryView'
 import { TopperView } from './TopperView'
-import { TranscriptView } from './TranscriptView'
+import { VariablesView } from './VariablesView'
 import { lastElement } from './util'
 
 export interface ChatBlock {
@@ -31,7 +31,7 @@ const container = document.getElementById('root')
 render(<RigView />, container)
 
 function RigView() {
-  const tabs: string[] = ['Transcript', 'History']
+  const tabs: string[] = ['Chat', 'Variables', 'History']
 
   const [theme, setTheme] = useState('')
   const [requestId, setRequestId] = useState('')
@@ -48,18 +48,16 @@ function RigView() {
     setInputs({ ...inputs, [key]: value })
   }
 
-  const updateInputsWithVariables = (variables: string[], clearAllValues?: boolean) => {
+  const updateInputsWithVariables = (variables: string[]) => {
     const newInputs: Record<string, string> = {}
+    console.log('variables', variables)
     variables.forEach(v => {
-      if (clearAllValues) {
-        newInputs[v] = ''
-      } else {
-        newInputs[v] = inputs[v] || ''
-      }
+      newInputs[v] = inputs[v] || ''
     })
     if (variables.length === 0) {
-      newInputs['Response'] = ''
+      newInputs['Response'] = inputs['Response'] ?? ''
     }
+    console.log('newInputs', newInputs)
     setInputs(() => newInputs)
   }
 
@@ -162,7 +160,7 @@ function RigView() {
         session: sessionToRun,
       },
     })
-    updateInputsWithVariables(Object.keys(inputsToRun), true)
+    updateInputsWithVariables(Object.keys(inputsToRun))
   }
 
   const openCurrentSessionFile = () => {
@@ -234,21 +232,20 @@ function RigView() {
         filename={filename}
         reload={reload}
       />
-      {tab === 'Transcript' && <TranscriptView session={session} blocks={blocks} />}
-      {/* {tab === 'State' && <StateView />} */}
-      {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
-      {tab === 'Transcript' && (
-        <ComposerView
+      {tab === 'Chat' && (
+        <ChatView
           theme={theme}
-          reload={reload}
           run={run}
           stop={stop}
           streaming={streaming}
           inputs={inputs}
           setValue={setValue}
           session={session}
+          blocks={blocks}
         />
       )}
+      {tab === 'Variables' && <VariablesView inputs={inputs} setValue={setValue} />}
+      {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
     </div>
   )
 }

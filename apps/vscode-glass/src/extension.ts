@@ -5,7 +5,7 @@ import { LanguageClient, TransportKind } from 'vscode-languageclient/node'
 import { GlassPlayground, createPlayground } from './playground/playground'
 import { getCurrentViewColumn } from './playground/viewColumn'
 import { transpileCode } from './transpileCode'
-import { getAllPromptFiles, getDocumentFilename, isPromptFile } from './util/isPromptFile'
+import { getAllPromptfiles, getDocumentFilename, isPromptfile } from './util/isPromptfile'
 import { updateTokenCount } from './util/tokenCounter'
 
 let client: LanguageClient | null = null
@@ -80,7 +80,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     tokenCount,
     vscode.workspace.onDidOpenTextDocument(document => {
-      if (isPromptFile(document)) {
+      if (isPromptfile(document)) {
         const relativePath = vscode.workspace.asRelativePath(document.uri.fsPath)
         fileTimestamps.set(relativePath, Date.now())
       }
@@ -97,7 +97,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveTextEditor(
       async editor => {
         activeEditor = editor
-        if (editor && isPromptFile(editor.document)) {
+        if (editor && isPromptfile(editor.document)) {
           updateTokenCount(tokenCount)
           // updateDecorations(editor, codeDecorations)
           const relativePath = vscode.workspace.asRelativePath(editor.document.uri.fsPath)
@@ -132,12 +132,12 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
     vscode.commands.registerCommand('promptfile.run', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (activeEditor && isPromptFile(activeEditor.document)) {
+      if (activeEditor && isPromptfile(activeEditor.document)) {
         await launchGlassDocument(activeEditor.document)
         await updateRecentlySelectedFiles(activeEditor.document.uri)
         return
       }
-      const promptFiles = await getAllPromptFiles()
+      const promptFiles = await getAllPromptfiles()
       if (promptFiles.length === 0) {
         await vscode.window.showErrorMessage('Unable to find any `.prompt` files')
         return
@@ -191,12 +191,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand('promptfile.transpile', async () => {
       const activeEditor = vscode.window.activeTextEditor
-      if (activeEditor && isPromptFile(activeEditor.document)) {
+      if (activeEditor && isPromptfile(activeEditor.document)) {
         const text = activeEditor.document.getText()
         await transpileCode(text)
         return
       }
-      const promptFiles = await getAllPromptFiles()
+      const promptFiles = await getAllPromptfiles()
       if (promptFiles.length === 0) {
         await vscode.window.showErrorMessage('Unable to find any `.prompt` files')
         return
