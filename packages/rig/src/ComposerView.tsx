@@ -5,23 +5,24 @@ import { useEffect, useRef, useState } from 'react'
 
 interface ComposerViewProps {
   theme: string
-  run: (chatToRun: string, sessionToRun: string) => void
+  runChat: (chatToRun: string, sessionToRun: string) => void
   stop: () => void
   streaming: boolean
   session: string
+  chat: string
+  setChat: (chat: string) => void
 }
 
 export const ComposerView = (props: ComposerViewProps) => {
-  const { streaming, run, stop, theme, session } = props
+  const { streaming, runChat, stop, theme, session, chat, setChat } = props
 
-  const [text, setText] = useState('')
-  const textRef = useRef(text)
+  const chatRef = useRef(chat)
   const sessionRef = useRef(session)
 
   useEffect(() => {
-    textRef.current = text
+    chatRef.current = chat
     sessionRef.current = session
-  }, [text, session])
+  }, [chat, session])
 
   function mapVSCodeThemeToMonaco(theme: string) {
     const themeMapping: Record<string, string> = {
@@ -42,8 +43,6 @@ export const ComposerView = (props: ComposerViewProps) => {
   const [resizing, setResizing] = useState(false)
   const [height, setHeight] = useState(200)
   const [heightOnStart, setHeightOnStart] = useState(200)
-
-  const disabled = text.trim().length === 0
 
   return (
     <Resizable
@@ -85,8 +84,8 @@ export const ComposerView = (props: ComposerViewProps) => {
           height={`${height}px`}
           theme={mapVSCodeThemeToMonaco(theme)}
           language={'markdown'}
-          value={text}
-          onChange={value => setText(value ?? '')}
+          value={chat}
+          onChange={value => setChat(value ?? '')}
           options={{
             minimap: {
               enabled: false,
@@ -101,7 +100,7 @@ export const ComposerView = (props: ComposerViewProps) => {
           onMount={(editor, monaco) => {
             editor.focus()
             editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-              run(textRef.current, sessionRef.current)
+              runChat(chatRef.current, sessionRef.current)
             })
           }}
         />
@@ -112,9 +111,8 @@ export const ComposerView = (props: ComposerViewProps) => {
         ) : (
           <VSCodeButton
             style={{ width: '100%' }}
-            appearance={disabled ? 'secondary' : 'primary'}
-            onClick={() => run(textRef.current, sessionRef.current)}
-            disabled={disabled}
+            appearance={'primary'}
+            onClick={() => runChat(chatRef.current, sessionRef.current)}
           >
             Run
           </VSCodeButton>

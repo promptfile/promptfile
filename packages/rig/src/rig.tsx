@@ -40,6 +40,7 @@ function RigView() {
   const [source, setSource] = useState('')
   const [blocks, setBlocks] = useState<ChatBlock[]>([])
   const [inputs, setInputs] = useState<Record<string, string>>({})
+  const [chat, setChat] = useState('')
   const [session, setSession] = useState('')
   const [sessions, setSessions] = useState<GlassSession[]>([])
   const [tab, setTab] = useState(tabs[0])
@@ -149,6 +150,21 @@ function RigView() {
     })
   }
 
+  const runChat = (chatToRun: string, sessionToRun: string) => {
+    if (chatToRun.trim().length === 0) {
+      return
+    }
+    vscode.postMessage({
+      action: 'runSession',
+      data: {
+        chat: chatToRun,
+        inputs: inputs,
+        session: sessionToRun,
+      },
+    })
+    updateInputsWithVariables([])
+  }
+
   const run = (inputsToRun: Record<string, string>, sessionToRun: string) => {
     if (!Object.values(inputsToRun).some(v => v.trim().length > 0)) {
       return
@@ -235,16 +251,26 @@ function RigView() {
       {tab === 'Chat' && (
         <ChatView
           theme={theme}
-          run={run}
+          runChat={runChat}
           stop={stop}
           streaming={streaming}
-          inputs={inputs}
-          setValue={setValue}
           session={session}
           blocks={blocks}
+          chat={chat}
+          setChat={setChat}
         />
       )}
-      {tab === 'Variables' && <VariablesView inputs={inputs} setValue={setValue} />}
+      {tab === 'Variables' && (
+        <VariablesView
+          inputs={inputs}
+          setValue={setValue}
+          run={run}
+          session={session}
+          stop={stop}
+          streaming={streaming}
+          theme={theme}
+        />
+      )}
       {tab === 'History' && <HistoryView openSession={openSession} sessions={sessions} />}
     </div>
   )

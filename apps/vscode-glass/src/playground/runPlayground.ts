@@ -18,6 +18,7 @@ import { runPlaygroundOpenAI } from './runPlaygroundOpenAI'
 export async function runPlayground(
   content: string,
   inputs: any,
+  chat: string | undefined,
   progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
 ) {
   const functions = parseGlassFunctions(content)
@@ -33,11 +34,10 @@ export async function runPlayground(
     await vscode.window.showErrorMessage('No model specified in frontmatter or defaultModel setting.')
     return
   }
-  if (metadata.interpolationVariables.length === 0 && Object.keys(inputs).length > 0) {
-    const newUserValue = inputs[Object.keys(inputs)[0]]
+  if (chat != null && chat.trim().length > 0) {
     const newUserBlock: ChatBlock = {
       role: 'user',
-      content: newUserValue.trim(),
+      content: chat.trim(),
     }
     blocks.push(newUserBlock)
     content = constructGlassDocument(blocks, { model })
