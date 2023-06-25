@@ -90,7 +90,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 }
 
 connection.onDidChangeWatchedFiles(_change => {
-  // Monitored files have change in VSCode
+  // Monitored files have change in VS Code
   connection.console.log('We received an file change event')
 })
 

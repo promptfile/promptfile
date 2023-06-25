@@ -5,38 +5,38 @@ import {Callout} from 'nextra-theme-docs'
 
 # Promptfile: Engineer Prompts Faster
 
-Promptfile is a Markdown-like templating syntax and playground designed to write and iterate on prompts easier and faster. Promptfile is entirely open-source and free-to-use.
+Promptfile is an open-source tool designed to make the process of writing and testing prompts quick and straightforward. Its syntax is similar to Markdown, adding to its simplicity.
 
-Build and prototype your prompts where you and your projects live: **_VS Code_**.
+You can create and refine your prompts directly in **_VS Code_**.
 
+`.prompt` files are easy to read and debug. Simply run a command to test your work, and immediately see the results in the VS Code Playground.
 
-The simple, human-readable syntax of a `.prompt` file makes it easy to understand and debug. To test your prompt, execute a single command and view the results of your request in the VS Code Playground.
+When your prompt is polished, it can be converted into a function that integrates seamlessly into your code. This makes Promptfile a convenient addition to any TypeScript, JavaScript, Python, or Ruby project.
 
-Once your prompt is ready, call a function to load in your prompt in the language of your choice, a seamless and unobtrusive integration of Promptfile into your project.
 
 <Callout emoji="🔑"> **Your prompt, your keys, your control. Keys are stored locally.** </Callout>
 ## Key Features
 
 <Steps>
-### **Never leave VS Code**
-   - Enjoy syntax highlighting, IntelliSense, and tools like GitHub Copilot to bring a developer experience to writing prompts.
-### **Separate Code from Prompt**
-   - Code behaves predictably, prompts don't. Separate concerns and gain more control of your project.
-### **Built for Quick Iteration**
-   - Switch between model providers with one line, monitor token usage, and test in real-time.
+### **Stay in VS Code**
+   - Leverage features like syntax highlighting, IntelliSense, and tools like GitHub Copilot. This gives a familiar developer experience while crafting prompts.
+### **Isolate Code from Prompts**
+   - Unlike code, prompts can behave unpredictably. By separating them, you gain better control over your project.
+### **Designed for Rapid Iterations**
+   - Modify model providers with a single line, keep track of token usage, and perform real-time testing.
 </Steps>
 
 ## Quickstart
-Get up-and-running in less than a couple of minutes. For detailed instructions, refer to our [Getting Started Guide](/guide).
+You can be up and running in under a few minutes. For comprehensive step-by-step instructions, please consult our [Getting Started Guide](/guide).
 
 <Steps>
 ### **Install the [VS Code extension](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass)**
-Add your OpenAI or Anthropic API Key by running the "Promptfile: open settings", command in the VS Code Command Palette. For further assistance, see [here](/guide#saving-your-api-keys).
+Add your OpenAI or Anthropic API Key using the "Promptfile: open settings" command in the VS Code Command Palette. If you need help, visit [this section](/guide#saving-your-api-keys) of our guide.
 
-### **Create your first `.prompt` file**
-Create a file named `example.prompt` and copy the provided `example.prompt` file into it.
+### **Craft your first `.prompt` file**
+Create a file named `example.prompt` and paste the content from the given `example.prompt` file into it.
 
-```prompt copy filename="example.prompt"
+```prompt
 ---
 model: gpt-3.5-turbo
 ---
@@ -50,17 +50,19 @@ Write me a haiku about the ocean
 </User>
 ```
 
-### **Run the `.prompt` file: `Command (⌘) + Enter (↩)`**
-The Promptfile [Playground](/playground) should appear and run your Promptfile file.
+### **Execute the `.prompt` file: `Command (⌘) + Enter (↩)`**
+Your `.prompt` file will run in the Promptfile [Playground](/playground).
 
-### **See more Promptfile Features in our [Cookbook](/examples)**
-Explore the examples in the Cookbook to learn how to use Promptfile.
+### **Explore More Promptfile Features in our [Cookbook](/examples)**
+Discover more about using Promptfile by exploring the examples in our Cookbook.
 </Steps>
 
 
-## Promptfile: Why Use It?
+## Why Choose Promptfile?
 
-Promptfile is a better templating syntax and playground for your prompts. If the early stages of your project involve writing a prompt, we want that to be the most frictionless part of your project. Promptfile eliminates the hassle of parsing, concatenating, and formatting requests to the LLM and allows you to iterate and test much quicker. We found ourselves spending most of our time editing prompts on OpenAI's playground and exporting them as messy JSONs we would never touch again. Like you, we wanted speed and to iterate quickly. We wanted to focus on the actual task at hand: building something with LLMs that people wanted.
+Promptfile offers a superior templating syntax and playground for your prompts. When your project's early stages involve crafting a prompt, Promptfile makes this the smoothest part of your journey. It eliminates the cumbersome steps of parsing, concatenating, and formatting requests for Language Models, speeding up your iteration and testing cycles.
+
+In our experience, we found ourselves spending substantial time tweaking prompts in OpenAI's playground and exporting them as unmanageable JSONs that we wouldn't revisit. Like you, we craved speed, the ability to iterate quickly, and a focus on the real goal: building useful applications with Language Models. And so, Promptfile was born.
 
 Try Promptfile and see the difference:
 

@@ -4,7 +4,7 @@ export function getGithubKey() {
   let githubKey: string = vscode.workspace.getConfiguration('promptfile').get('githubKey') as any
   if (!githubKey) {
     // eslint-disable-next-line turbo/no-undeclared-env-vars
-    githubKey = process.env.OPENAI_API_KEY || ''
+    githubKey = process.env.GITHUB_TOKEN || ''
   }
 
   return githubKey || null

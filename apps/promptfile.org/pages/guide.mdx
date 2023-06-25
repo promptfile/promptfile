@@ -3,18 +3,18 @@ import Image from 'next/image'
 import { Tab, Tabs } from 'nextra-theme-docs'
 import { Steps } from 'nextra-theme-docs'
 
-# Getting Started Guide
+# Getting Started with Promptfile
 
-This guide offers a more comprehensive introduction to getting started with Promptfile.
+This comprehensive guide walks you through the steps to get started with Promptfile.
 
 <Steps>
 
-### **Installing the extension**
-Install the Promptfile VS Code extension through the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass).
+### **Extension Installation**
+Begin by installing the Promptfile extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=foundation.vscode-glass).
 
-### **Creating your first `.prompt` file**
+### **Creating Your Initial `.prompt` File**
 
-After installing the extension, open up a workspace and create a new file called `example.prompt`. Copy/paste the following content:
+Once the extension is installed, open a workspace and create a new file named `example.prompt`. Insert the following content into it:
 
 ```prompt copy filename="example.prompt"
 ---
@@ -30,31 +30,30 @@ The ocean is so big! I wonder what is out there. I want to explore.
 </User>
 ```
 
-### **Saving your API Keys**
+### **Storing Your API Keys**
 
-Save your keys in Promptfile settings by pressing `Command (⌘) + Shift (⇧) + P,` searching for Promptfile: open settings, and pasting your keys in the VS Code settings.
+Store your keys in Promptfile settings by pressing `Command (⌘) + Shift (⇧) + P,` searching for "Promptfile: open settings," and entering your keys in the VS Code settings.
 
-Alternatively, you can set your API keys in your environment as either `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`.
+Alternatively, you can assign your API keys to the `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` environment variables, which will be used by the Promptfile playground.
 
-<Callout type="info">Note: Promptfile does not store or log your API keys. They are saved locally. </Callout>
+<Callout type="info">Note: Your API keys are stored locally and are not logged or saved by Promptfile. </Callout>
 
-### **Running your first `.prompt` file**
+### **Running Your Initial `.prompt` File**
 
-When you are ready to run the file, run the `.prompt` file by running the VS Code Command Palette `Promptfile: run in playground` command.
+To execute your `.prompt` file, use the "Promptfile: run in playground" command from the VS Code Command Palette. Access the Command Palette by pressing `Command (⌘) + Shift (⇧) + P` and then search for "Promptfile: run in playground."
 
-You can run your file by pressing `Command (⌘) Enter (↩)`.
-
-Alternatively, you can access the VS Code Command Palette by pressing `Command (⌘) + Shift (⇧) + P,` and searching for `Promptfile: run in playground`.
+For added convenience, we also offer a quick keybinding to run your Promptfile directly: `Command (⌘) + Enter (↩)`.
 <br />
 
-### **Trying different models**
+### **Experimenting with Different Models**
 
-You can try different models by changing the model name in the header of your `.prompt` file. Right now we support OpenAI and Anthropic models. You can see a full list [here](/models). Remember to put your API keys and that you can only use models you have access to (for example, if you don't have access to `gpt-4-32k` you will get an error message).
+Experiment with different models by changing the model name in your `.prompt` file's header. Currently, OpenAI and Anthropic models are supported. View a complete list [here](/models). Ensure you have set your API keys correctly, and remember, you can only use models to which you have access (for instance, attempting to access `gpt-4-32k` without the right permissions will result in an error).
 
-### **Using it in your project**
+### **Integrating into Your Project**
 
-When you are ready to use your Promptfile in your project, run "Promptfile: transpile to another language" via the VS Code Command Palette. You will be able to choose which language to compile into, currently the following are [supported](/code).
+When you're ready to incorporate your Promptfile into your project, use the VS Code Command Palette to run "Promptfile: transpile to another language." You'll be able to select the target language from the [supported](/code) options.
 
-You can then import your Promptfile into your project and then call the function, passing in the variables you want to declare in your template.
+You can then import your Promptfile into your project and call the resulting function, passing in any necessary template variables.
 
 </Steps>
+

@@ -19,7 +19,7 @@ export interface GlassContent {
 }
 
 /**
- * Parse a Promptfile file.
+ * Parse a Promptfile.
  *
  * Each part of the file is returned as a `GlassContent` object. There are three types of content:
  * - `frontmatter`: a frontmatter block may be declared at the top of the file
