@@ -8,4 +8,4 @@ _**Warning: PROMPTFILE IS IN ALPHA AND SUBJECT TO CHANGE**_
 
 ## License
 
-MIT © [Promptfile Platform](https://platform.glass)
+MIT © [Glass Platform](https://platform.glass)
