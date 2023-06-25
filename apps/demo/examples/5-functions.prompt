@@ -2,9 +2,9 @@
 model: gpt-3.5-turbo-0613
 ---
 
-LLMs have the most power when you give them tools to use. Promptfiles support the ability to define Functions inside your prompts.
+LLMs can reach their full potential when they're provided with the appropriate tools. Promptfiles facilitate the incorporation of Functions within your prompts.
 
-https://platform.openai.com/docs/guides/gpt/function-calling
+You can learn more about function-calling from [OpenAI documentation](https://platform.openai.com/docs/guides/gpt/function-calling).
 
 
 <Functions>

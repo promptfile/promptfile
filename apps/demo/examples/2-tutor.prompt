@@ -2,11 +2,12 @@
 model: gpt-4
 ---
 
-As you probably know, LLMs are already incredibly powerful. They can do far more than just generate haikus!
+Indeed, language models (LLMs) have an astonishing range of capabilities, far beyond creating simple haikus!
 
-Let's explore a different example: Mr. Ranedeer's AI tutor (https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor)
+Let's delve into a more complex example: [Mr. Ranedeer's AI Tutor](https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor).
 
-As you can see below, the System prompt is now a full AI tutor. As you might notice, we apply Markdown formatting and syntax highlighting to all prompt content (aka what's in between the System, User, or Assistant blocks). This makes it easy to read and write prompts, particularly as they get more complex.
+In the following instance, the `<System>` prompt serves as a comprehensive AI tutor. As you'll observe, we apply Markdown formatting and syntax highlighting to all prompt content (the text enclosed within the `<System>`, `<User>`, or `<Assistant>` blocks). This approach significantly simplifies the process of reading and composing prompts, particularly as they increase in complexity.
+
 
 <System>
 # ai_tutor

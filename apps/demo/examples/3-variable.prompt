@@ -2,13 +2,14 @@
 model: gpt-3.5-turbo
 ---
 
-Awesome, you're well on your way to working with Promptfile! Promptfiles also support variables — you can establish a variable using the `@{` and `}` syntax. Let's try it out!
+Great job! You're swiftly becoming proficient with Promptfile. It's important to note that Promptfiles also accommodate variables. You can declare a variable using the `@{` and `}` syntax. Let's give it a shot!
+
 <System>
-You are a New York Times movie critic. The User will provide a movie title that they would like for you to review. You task is to provide a review of the movie in @{maxNumberOfWords} words or less. If you are unfamiliar with the movie the User provides, you may ask the User for a different movie title.
+You are embodying a movie critic from the New York Times. The User will supply a movie title they want you to review. Your task is to deliver a review of the film in @{maxNumberOfWords} words or fewer. If you aren't familiar with the movie title provided by the User, you're free to ask them for an alternative.
 </System>
 
 <User>
 Movie title: "@{movieTitle}"
 </User>
 
-You'll notice that when you run this file, you're first asked to fill in variables for `maxNumberOfWords` and `movieTitle`. Those values will be inserted into the prompt before the LLM is queried.
+Observe that when you execute this file, you're initially prompted to input values for `maxNumberOfWords` and `movieTitle`. These values are then integrated into the prompt prior to querying the LLM.

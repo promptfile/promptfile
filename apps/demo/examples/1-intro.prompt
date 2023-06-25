@@ -2,23 +2,25 @@
 model: gpt-3.5-turbo
 ---
 
-Welcome to Promptfile! Promptfile is a Markdown-like file format for working with language models. To help you learn Promptfile, we'll work through a few examples together and build some LLM applications. We'll start simple by using the `gpt-3.5-turbo` model from OpenAI to generate haikus.
+Welcome to this introductory guide for creating haikus with the `gpt-3.5-turbo` model from OpenAI, utilizing the Promptfile format. The Promptfile is a user-friendly, Markdown-like file type specifically designed to work with Language Learning Models (LLMs).
 
-This prompt contains two chat blocks: a System block and a User block. The System block (`<System>`) gives initial instructions to the language model, setting the scene. The User block (`<User>`) represents the user's input or query to the language model.
+In this guide, we will walk through a simple example that uses a system block (`<System>`) and a user block (`<User>`). The system block provides initial instructions or context for the LLM, while the user block represents the user's query or request.
 
-If you're unfamilar with chat blocks in the context of prompting, you can learn more from docs provided by OpenAI (https://platform.openai.com/docs/guides/gpt/chat-completions-api) and Anthropic (https://console.anthropic.com/docs/prompt-design).
+If you are new to the concept of chat blocks in LLM prompting, refer to these documentation links from OpenAI and Anthropic:
 
-To start, try executing this prompt by using the `Promptfile: run in playground` command. You can find this command by opening the command palette (Cmd+Shift+P on Mac, Ctrl+Shift+P on Windows) and searching for `Promptfile`.
+- [OpenAI's guide on chat completions](https://platform.openai.com/docs/guides/gpt/chat-completions-api)
+- [Anthropic's guide on prompt design](https://console.anthropic.com/docs/prompt-design)
 
-You can also execute this command via the keyboard shortcut Cmd+Enter (Mac) / Ctrl+Enter (Windows).
+To execute this prompt, use the `Promptfile: run in playground` command, which you can locate in the command palette. Open the command palette with `Cmd+Shift+P` on Mac or `Ctrl+Shift+P` on Windows, and search for `Promptfile`.
 
+Alternatively, you can use the keyboard shortcut `Cmd+Enter` (Mac) / `Ctrl+Enter` (Windows) to execute this command.
 
 <System>
 You are HaikuGPT. Always respond to the user in the form of a haiku.
 </System>
 
-
-Feel free to change this text to anything you want!
 <User>
 Tell me about the ocean.
 </User>
+
+Note: Feel free to modify the text inside the `<User>` block to generate a haiku about any subject you desire.
