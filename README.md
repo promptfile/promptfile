@@ -19,6 +19,30 @@ Once your prompt is ready, call a function to load in your prompt in the languag
 5. If you are interested in contributing, would love to have you contribute. Feel free to read more about how to [contribute](/CONTRIBUTING.md).
 
 
+
+Although we are an extremely early stage project, here are some of our current wishlist items for the project:
+
+## Language Wishlist
+
+- [ ] Adding Monaco support for `.prompt` files #200
+- [ ] Better diagnostics and error handling (for example #248)
+- [ ] Supporting more models, especially open source models
+- [ ] Supporting other languages that `.prompt` transpiles into
+
+## Playground Wishlist
+- [ ] Making the Playground more synchronous with your `.prompt` file
+- [ ] Improving visualizing version control of your prompts
+- [ ] Allow customizing the UI of the Playground 
+
+## Project Wishlist
+- [ ] Supporting code execution for a function from localhost
+- [ ] More robust examples and complex use cases 
+- [ ] Supporting people trying LLMs for the first time and open-source contributors
+- [ ] Healthy and constructive Discord community 
+
+
+
+
 ## Apps and Packages
 
 This project uses npm workspaces and [Turborepo](https://turbo.build/).
