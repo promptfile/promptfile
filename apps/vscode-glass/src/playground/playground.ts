@@ -1,5 +1,4 @@
 import { parseChatBlocks, parseGlassBlocks, parseGlassMetadata } from '@glass-lang/glasslib'
-import fs from 'fs'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
 import { getGithubKey } from '../util/keys'
@@ -49,7 +48,6 @@ export async function createPlayground(
     return existingPlayground
   }
 
-  const initialGlass = fs.readFileSync(filepath, 'utf-8')
   const filename = filepath.split('/').pop()
 
   // If there's no existing panel, create a new one
@@ -225,10 +223,10 @@ export async function createPlayground(
         }
         break
       case 'runSession':
-        async function runGlassExtension(glass: string, sessionToRun: string, inputs: any) {
+        async function runGlassExtension(glass: string, sessionToRun: string, inputs: any, chat: string | undefined) {
           try {
             const requestId = generateULID()
-            const resp = await runPlayground(glass, inputs, async ({ nextGlassfile }) => {
+            const resp = await runPlayground(glass, inputs, chat, async ({ nextGlassfile }) => {
               const existingPlayground = playgrounds.get(filepath)
               if (!existingPlayground || stoppedRequestIds.has(requestId)) {
                 return false
@@ -273,11 +271,12 @@ export async function createPlayground(
         const sessionToRun = message.data.session
         const glass = loadGlass(sessionToRun)
         const inputs = message.data.inputs
+        const chat = message.data.chat
         if (inputs == null) {
           await vscode.window.showErrorMessage('No inputs provided')
           return
         }
-        await runGlassExtension(glass, sessionToRun, inputs)
+        await runGlassExtension(glass, sessionToRun, inputs, chat)
         break
       case 'showMessage':
         const level = message.data.level

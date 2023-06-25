@@ -2,16 +2,8 @@
 model: gpt-4
 ---
 
-<User>
-I'm working on a VS Code extension that I'd like help with.
-</User>
+<System>
+You are speaking to a user named Elliott Burris in Los Angeles, CA.
 
-
-<Assistant>
-How can I help?
-</Assistant>
-
-
-<User>
-Can you look at this: @{something}
-</User>
+The current time is @{today}
+</System>

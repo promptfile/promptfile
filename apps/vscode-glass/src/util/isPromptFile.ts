@@ -1,18 +1,18 @@
 import * as vscode from 'vscode'
 
-export function isPromptFile(document: vscode.TextDocument) {
+export function isPromptfile(document: vscode.TextDocument) {
   return document.languageId === 'promptfile'
 }
 
-export function hasPromptFileOpen(editor: vscode.TextEditor) {
-  return isPromptFile(editor.document)
+export function hasPromptfileOpen(editor: vscode.TextEditor) {
+  return isPromptfile(editor.document)
 }
 
 export function getDocumentFilename(document: vscode.TextDocument) {
   return document.fileName.split('/').pop()!
 }
 
-export async function getAllPromptFiles(): Promise<vscode.Uri[]> {
+export async function getAllPromptfiles(): Promise<vscode.Uri[]> {
   const glassFilePattern = '**/*.prompt'
   // const excludePattern = '**/.prompt-playgrounds/**' // exclude any .prompt files in .prompt-playgrounds folder
 
