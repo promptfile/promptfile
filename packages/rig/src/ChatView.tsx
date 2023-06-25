@@ -21,7 +21,7 @@ interface ChatViewProps {
 }
 
 export const ChatView = (props: ChatViewProps) => {
-  const { blocks, streaming, runChat, stop, theme, session } = props
+  const { blocks, streaming, runChat, stop, theme, session, chat, setChat } = props
   const sessionId = session.split('/').pop()
   const [autoScroll, setAutoScroll] = useState(true)
   const chatContainer = useRef<HTMLDivElement | null>(null)
