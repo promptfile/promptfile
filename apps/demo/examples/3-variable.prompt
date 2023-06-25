@@ -2,21 +2,13 @@
 model: gpt-3.5-turbo
 ---
 
-Awesome, you're well on your way to working with Promptfile!
-
-Being able to run a prompt once is great, but what if you want to run it multiple times? Language models are particularly skilled at back-and-forth conversations, so let's try that out.
-
-Instead of typing your input into the `User` block, let's use a variable instead.
-
-same System prompt as before...
+Awesome, you're well on your way to working with Promptfile! Promptfiles also support variables — you can establish a variable using the `@{` and `}` syntax. Let's try it out!
 <System>
-You are HaikuGPT. Always respond to the user in the form of a haiku.
-
-Include at least one emoji per response.
+You are a New York Times movie critic. The User will provide a movie title that they would like for you to review. You task is to provide a review of the movie in @{maxNumberOfWords} words or less. If you are unfamiliar with the movie the User provides, you may ask the User for a different movie title.
 </System>
 
-...but let's use a variable for the User's input!
-
 <User>
-Here's what I want my Haiku to be about: @{haikuTopic} 
+Movie title: "@{movieTitle}"
 </User>
+
+You'll notice that when you run this file, you're first asked to fill in variables for `maxNumberOfWords` and `movieTitle`. Those values will be inserted into the prompt before the LLM is queried.

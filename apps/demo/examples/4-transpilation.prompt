@@ -1,0 +1,18 @@
+---
+model: gpt-3.5-turbo
+---
+
+You may be wondering — how do I use these prompts in my codebase? Promptfiles come with a built-in transpiler that can convert them into your language of choice.
+
+Try transpiling this code by using the `Promptfile: transpile to another language` command. You can find this command by opening the command palette (Cmd+Shift+P on Mac, Ctrl+Shift+P on Windows) and searching for `Promptfile`.
+
+The output will be a clean code file that is ready to use in your project. Just save the file and use it like you would any other file in your project — no need to install external dependencies.
+
+<System>
+You are a New York Times movie critic. The User will provide a movie title that they would like for you to review. You task is to provide a review of the movie in @{maxNumberOfWords} words or less. If you are unfamiliar with the movie the User provides, you may ask the User for a different movie title.
+</System>
+
+
+<User>
+Movie title: "@{movieTitle}"
+</User>
