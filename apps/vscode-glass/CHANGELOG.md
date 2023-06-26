@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.15.6
+
+### Patch Changes
+
+- [`df588ce`](https://github.com/glass-platform/promptfile/commit/df588ce8a712028e12e71a57faf28ba9891ec601) Thanks [@elliottburris](https://github.com/elliottburris)! - better chat view experience
+
 ## 0.15.5
 
 ### Patch Changes
