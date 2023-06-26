@@ -1,7 +1,7 @@
 import MonacoEditor from '@monaco-editor/react'
 import { VSCodeButton, VSCodeDivider } from '@vscode/webview-ui-toolkit/react'
 import { Resizable } from 're-resizable'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface ComposerViewProps {
   theme: string
@@ -37,10 +37,10 @@ export const ComposerView = (props: ComposerViewProps) => {
   const [height, setHeight] = useState(200)
   const [heightOnStart, setHeightOnStart] = useState(200)
 
-  const run = () => {
+  const run = useCallback(() => {
     runChat(chat)
     setChat('')
-  }
+  }, [chat, runChat])
 
   useEffect(() => {
     if (editorRef.current) {
@@ -87,7 +87,7 @@ export const ComposerView = (props: ComposerViewProps) => {
         <VSCodeDivider style={{ margin: 0, padding: 0 }} />
         <MonacoEditor
           width="100%"
-          height={`${height}px`}
+          height={`${height - 28}px`}
           theme={mapVSCodeThemeToMonaco(theme)}
           language={'markdown'}
           value={chat}

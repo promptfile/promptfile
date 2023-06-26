@@ -38,23 +38,10 @@ function RigView() {
   const [currentSource, setCurrentSource] = useState('')
   const [source, setSource] = useState('')
   const [blocks, setBlocks] = useState<ChatBlock[]>([])
-  const [inputs, setInputs] = useState<Record<string, string>>({})
+  const [variables, setVariables] = useState<string[]>([])
   const [session, setSession] = useState('')
   const [sessions, setSessions] = useState<GlassSession[]>([])
   const [tab, setTab] = useState(tabs[0])
-
-  const setValue = (key: string, value: string) => {
-    setInputs({ ...inputs, [key]: value })
-  }
-
-  const updateInputsWithVariables = (variables: string[]) => {
-    const newInputs: Record<string, string> = {}
-    console.log('variables', variables)
-    variables.forEach(v => {
-      newInputs[v] = inputs[v] || ''
-    })
-    setInputs(() => newInputs)
-  }
 
   // register a callback for when the extension sends a message
   useEffect(() => {
@@ -77,19 +64,20 @@ function RigView() {
           if (message.data.filename) {
             setFilename(() => message.data.filename)
           }
+          let isNewSession = false
           if (message.data.session) {
+            isNewSession = message.data.session !== session
             setSession(() => message.data.session)
           }
           if (message.data.theme) {
             setTheme(() => message.data.theme)
           }
           setBlocks(() => message.data.blocks)
-          updateInputsWithVariables(message.data.variables)
-          if (message.data.variables.length === 0 && message.data.blocks.some(b => b.role === 'user')) {
+          setVariables(() => message.data.variables)
+          if (isNewSession && message.data.variables.length === 0 && message.data.blocks.some(b => b.role === 'user')) {
             vscode.postMessage({
               action: 'runSession',
               data: {
-                inputs: {},
                 session: message.data.session,
               },
             })
@@ -104,7 +92,7 @@ function RigView() {
             setRequestId(() => message.data.requestId)
           }
           if (message.data.variables) {
-            updateInputsWithVariables(message.data.variables)
+            setVariables(() => message.data.variables)
           }
           break
         case 'onResponse':
@@ -112,7 +100,7 @@ function RigView() {
             break
           }
           setBlocks(() => message.data.blocks)
-          updateInputsWithVariables(message.data.variables)
+          setVariables(() => message.data.variables)
           break
         default:
           break
@@ -148,24 +136,19 @@ function RigView() {
       action: 'runSession',
       data: {
         chat: chatToRun,
-        inputs: inputs,
         session,
       },
     })
   }
 
-  const run = (inputsToRun: Record<string, string>, sessionToRun: string) => {
-    if (!Object.values(inputsToRun).some(v => v.trim().length > 0)) {
-      return
-    }
+  const interpolateVariables = (inputs: Record<string, string>) => {
     vscode.postMessage({
-      action: 'runSession',
+      action: 'interpolateVariables',
       data: {
-        inputs: inputsToRun,
-        session: sessionToRun,
+        inputs: inputs,
+        session,
       },
     })
-    updateInputsWithVariables(Object.keys(inputsToRun))
   }
 
   const openCurrentSessionFile = () => {
@@ -239,10 +222,10 @@ function RigView() {
       />
       {tab === 'Session' && (
         <SessionView
-          inputs={inputs}
-          setValue={setValue}
+          variables={variables}
           theme={theme}
           runChat={runChat}
+          interpolateVariables={interpolateVariables}
           stop={stop}
           streaming={streaming}
           session={session}

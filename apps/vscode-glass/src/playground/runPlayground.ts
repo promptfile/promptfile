@@ -7,7 +7,6 @@ import {
   parseChatBlocks,
   parseFrontmatterFromGlass,
   parseGlassFunctions,
-  parseGlassMetadata,
 } from '@glass-lang/glasslib'
 import fetch from 'node-fetch'
 import * as vscode from 'vscode'
@@ -17,16 +16,10 @@ import { runPlaygroundOpenAI } from './runPlaygroundOpenAI'
 
 export async function runPlayground(
   content: string,
-  inputs: any,
   chat: string | undefined,
   progress?: (data: { nextGlassfile: string; response: ChatBlock[] }) => void
 ) {
   const functions = parseGlassFunctions(content)
-  const metadata = parseGlassMetadata(content)
-  for (const variable of metadata.interpolationVariables) {
-    const value = inputs[variable] ?? ''
-    content = content.replace(`@{${variable}}`, value)
-  }
   const blocks = parseChatBlocks(content)
   const parsedFrontmater = parseFrontmatterFromGlass(content)
   const model = parsedFrontmater?.model || vscode.workspace.getConfiguration('promptfile').get('defaultModel')

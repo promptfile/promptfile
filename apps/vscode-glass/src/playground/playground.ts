@@ -222,11 +222,36 @@ export async function createPlayground(
           await vscode.window.showErrorMessage('Unable to open `.prompt` file')
         }
         break
+      case 'interpolateVariables':
+        const inputsToInterpolate = message.data.inputs
+        const sessionForInterpolation = message.data.session
+        const glassToInterpolate = loadGlass(sessionForInterpolation)
+        let interpolatedGlass = glassToInterpolate
+        const variablesForInterpolation = parseGlassMetadata(glassToInterpolate)
+        for (const variable of variablesForInterpolation.interpolationVariables) {
+          const value = inputsToInterpolate[variable] ?? ''
+          interpolatedGlass = interpolatedGlass.replace(`@{${variable}}`, value)
+        }
+        writeGlass(sessionForInterpolation, interpolatedGlass)
+        const interpolatedBlocks = parseChatBlocks(interpolatedGlass)
+        await panel.webview.postMessage({
+          action: 'setGlass',
+          data: {
+            session: sessionForInterpolation,
+            glass: interpolatedGlass,
+            blocks: interpolatedBlocks,
+            variables: [],
+          },
+        })
+        if (interpolatedBlocks.some(b => b.role === 'user')) {
+          await runGlassExtension(interpolatedGlass, sessionForInterpolation, undefined)
+        }
+        break
       case 'runSession':
-        async function runGlassExtension(glass: string, sessionToRun: string, inputs: any, chat: string | undefined) {
+        async function runGlassExtension(glass: string, sessionToRun: string, chat: string | undefined) {
           try {
             const requestId = generateULID()
-            const resp = await runPlayground(glass, inputs, chat, async ({ nextGlassfile }) => {
+            const resp = await runPlayground(glass, chat, async ({ nextGlassfile }) => {
               const existingPlayground = playgrounds.get(filepath)
               if (!existingPlayground || stoppedRequestIds.has(requestId)) {
                 return false
@@ -270,13 +295,8 @@ export async function createPlayground(
         }
         const sessionToRun = message.data.session
         const glass = loadGlass(sessionToRun)
-        const inputs = message.data.inputs
         const chat = message.data.chat
-        if (inputs == null) {
-          await vscode.window.showErrorMessage('No inputs provided')
-          return
-        }
-        await runGlassExtension(glass, sessionToRun, inputs, chat)
+        await runGlassExtension(glass, sessionToRun, chat)
         break
       case 'showMessage':
         const level = message.data.level
