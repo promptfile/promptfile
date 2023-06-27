@@ -34,11 +34,13 @@ Tell me about the ocean.
 ```
 ### **Including variables in your template**
 
-You can also include variables in your template using the `@{variableHere}{:prompt}`. This allows you to have a more dynamic prompt. When using your prompt in your project, you can pass these variables in as arguments.
+You can also include variables in your template using the `@{variableHere}{:prompt}`. This allows you to have a more dynamic prompt. When using your prompt in your project, you can pass these variables in as arguments. Here you can also see how we define what model we are going to use and the arguments for our request in the frontmatter.
 
 ```prompt
 ---
 model: gpt-3.5-turbo
+maxTokens: 50
+temperature: 0.5
 ---
 
 Awesome, you're well on your way to working with Promptfile! Promptfiles also support variables — you can establish a variable using the `@{` and `}` syntax. Let's try it out!
@@ -54,6 +56,23 @@ Movie title: "@{movieTitle}"
 
 You'll notice that when you run this file, you're first asked to fill in variables for `maxNumberOfWords` and `movieTitle`. Those values will be inserted into the prompt before the LLM is queried.
 ```
+
+### **Try different models and adjust model settings**
+
+Not only do we support OpenAI models, we support Anthropic. You can change which model you are using by changing the frontmatter where you can also edit the model setttings. Here in this example, we can see we use the `claude-v1` model. We provide diagnostics to help you make sure your request is valid regardless of what model you are using. For example, if you were to try to use a `<System>{:prompt}`block in an Anthropic request, we would notify you that Anthropic models don't support the `<System>{:prompt}`block. Or for example, if you were to try to make a request to OpenAI with a temperature of 100 which would not make a valid request, we'd provide a diagnostic letting you know of that.
+
+```prompt
+---
+model: claude-v1
+---
+
+<User>
+Tell me a joke about dogs.
+</User>
+```
+
+Our goal is to help you run the file and test it out, so for certain situations such as when you use a `<System>{:prompt}`block in an Anthropic request, we automatically convert that to a `<User>{:prompt}` block so you don't have to go in and change your entire prompt.
+
 
 ### **Calling functions**
 
@@ -90,6 +109,5 @@ model: gpt-3.5-turbo-0613
 what is 2 to the .12345 power?
 </User>
 ```
-
 
 </Steps>
