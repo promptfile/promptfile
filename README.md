@@ -15,7 +15,7 @@ Once your prompt is ready, call a function to load in your prompt in the languag
 1. Read our documentation at [promptfile.org](https://promptfile.org)
 2. Check out some examples in our [examples repository](https://github.com/glass-platform/promptfile/tree/main/apps/demo/examples).
 3. [Download the VS Code extension](http://vscode.glass) to quickly run and iterate on a Promptfile.
-4. If you are using Promptfile, have questions, or want to stay up to date, feel free to join our [Discord](https://discord.com/invite/H64PFP2DCc).
+4. If you have any feature requests or bug repots, please [file an issue](https://github.com/glass-platform/promptfile/issues)
 5. If you are interested in contributing, would love to have you contribute. Feel free to read more about how to [contribute](/CONTRIBUTING.md).
 
 Although we are an extremely early stage project, here are some of our current wishlist items for the project:
@@ -38,7 +38,6 @@ Although we are an extremely early stage project, here are some of our current w
 - [ ] Supporting code execution for a function from localhost
 - [ ] More robust examples and complex use cases
 - [ ] Supporting people trying LLMs for the first time and open-source contributors
-- [ ] Healthy and constructive Discord community
 
 ## Apps and Packages
 

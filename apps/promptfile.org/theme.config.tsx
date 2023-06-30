@@ -21,9 +21,6 @@ const config: DocsThemeConfig = {
   project: {
     link: 'https://github.com/glass-platform/promptfile',
   },
-  chat: {
-    link: 'https://discord.com/invite/H64PFP2DCc',
-  },
   docsRepositoryBase: 'https://github.com/glass-platform/promptfile/tree/main/apps/promptfile.org',
   // footer: {
   //   text: '© 2023 Promptfile. All rights reserved.',
