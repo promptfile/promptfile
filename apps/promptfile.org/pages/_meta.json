@@ -6,11 +6,5 @@
   "vscode": "VS Code Extension",
   "blocks": "Blocks",
   "models": "Models",
-  "usage": "Promptfiles in your codebase",
-  "contact": {
-    "title": "Platform ↗",
-    "type": "page",
-    "href": "https://platform.glass",
-    "newWindow": true
-  }
+  "usage": "Promptfiles in your codebase"
 }

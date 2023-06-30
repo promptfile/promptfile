@@ -87,4 +87,4 @@ npm run test:watch
 
 ## License
 
-MIT © [Glass Platform](https://platform.glass)
+MIT © [Glass](https://platform.glass)
