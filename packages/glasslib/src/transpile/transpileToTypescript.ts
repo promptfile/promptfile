@@ -43,6 +43,7 @@ export function transpileToTypescript(
     for (const key in block) {
       if (key === 'content') {
         let content = block[key] as string
+        content = content.replace(/`/g, '\\`') // escape backticks
         content = content.replace(/@\{([^\}]*)\}/g, (_, p1) => `\$\{args.${p1}\}`)
         transpiledCode += `      ${key}: \`${content}\`,\n`
       } else {

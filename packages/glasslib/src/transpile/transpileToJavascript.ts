@@ -21,6 +21,7 @@ export function transpileToJavascript(
     for (const key in block) {
       if (key === 'content') {
         let content = block[key] as string
+        content = content.replace(/`/g, '\\`') // escape backticks
         content = content.replace(/@\{([^\}]*)\}/g, (_, p1) => `\$\{${p1}\}`)
         transpiledCode += `        ${key}: \`${content}\`,\n`
       } else {
