@@ -10,14 +10,14 @@ type: software
 authors:
   - given-names: Johnathan
     family-names: Rothfels
-    email: john@platform.glass
+    email: john@promptfile.org
   - given-names: Elliott
     family-names: Burris
-    email: elliott@platform.glass
+    email: elliott@promptfile.org
 identifiers:
   - type: url
-    value: 'https://github.com/glass-platform/promptfile'
-repository-code: 'https://github.com/glass-platform/promptfile'
+    value: 'https://github.com/promptfile/promptfile'
+repository-code: 'https://github.com/promptfile/promptfile'
 url: 'https://www.promptfile.org'
 keywords:
   - LLM

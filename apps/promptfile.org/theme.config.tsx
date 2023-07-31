@@ -19,9 +19,9 @@ const config: DocsThemeConfig = {
   },
   logo: <span style={{ fontSize: '20px', fontWeight: 'bold' }}>Promptfile</span>,
   project: {
-    link: 'https://github.com/glass-platform/promptfile',
+    link: 'https://github.com/promptfile/promptfile',
   },
-  docsRepositoryBase: 'https://github.com/glass-platform/promptfile/tree/main/apps/promptfile.org',
+  docsRepositoryBase: 'https://github.com/promptfile/promptfile/tree/main/apps/promptfile.org',
   // footer: {
   //   text: '© 2023 Promptfile. All rights reserved.',
   // },
@@ -29,7 +29,7 @@ const config: DocsThemeConfig = {
     component: () => <div />,
   },
   feedback: {
-    useLink: () => `https://github.com/glass-platform/promptfile/issues/new/choose`,
+    useLink: () => `https://github.com/promptfile/promptfile/issues/new/choose`,
   },
   navbar: {
     extraContent: (

@@ -1,6 +1,6 @@
 # Promptfile (`.prompt`)
 
-![main](https://github.com/glass-platform/promptfile/actions/workflows/main.yml/badge.svg)
+![main](https://github.com/promptfile/promptfile/actions/workflows/main.yml/badge.svg)
 
 _**ALERT: PROMPTFILE IS IN ALPHA AND IS SUBJECT TO CHANGE.**_
 
@@ -13,17 +13,17 @@ The simple, human-readable syntax of a `.prompt` file makes it easy to understan
 Once your prompt is ready, call a function to load in your prompt in the language of your choice, a seamless and unobtrusive integration of Promptfile into your project.
 
 1. Read our documentation at [promptfile.org](https://promptfile.org)
-2. Check out some examples in our [examples repository](https://github.com/glass-platform/promptfile/tree/main/apps/demo/examples).
+2. Check out some examples in our [examples repository](https://github.com/promptfile/promptfile/tree/main/apps/demo/examples).
 3. [Download the VS Code extension](http://vscode.glass) to quickly run and iterate on a Promptfile.
-4. If you have any feature requests or bug repots, please [file an issue](https://github.com/glass-platform/promptfile/issues)
+4. If you have any feature requests or bug repots, please [file an issue](https://github.com/promptfile/promptfile/issues)
 5. If you are interested in contributing, would love to have you contribute. Feel free to read more about how to [contribute](/CONTRIBUTING.md).
 
 Although we are an extremely early stage project, here are some of our current wishlist items for the project:
 
 ## Language Wishlist
 
-- [ ] Adding Monaco support for `.prompt` files [#200](https://github.com/glass-platform/promptfile/issues/200)
-- [ ] Better diagnostics and error handling (for example [#248](https://github.com/glass-platform/promptfile/issues/248))
+- [ ] Adding Monaco support for `.prompt` files [#200](https://github.com/promptfile/promptfile/issues/200)
+- [ ] Better diagnostics and error handling (for example [#248](https://github.com/promptfile/promptfile/issues/248))
 - [ ] Supporting more models, especially open source models
 - [ ] Supporting other languages that `.prompt` transpiles into
 
@@ -87,4 +87,4 @@ npm run test:watch
 
 ## License
 
-MIT © [Glass](https://platform.glass)
+MIT © [Promptfile](https://promptfile.org)
